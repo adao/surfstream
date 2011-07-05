@@ -982,6 +982,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 					width: 520px
 					.lastPlayedVideoTitle
 						margin-left: 8px
+						display: inline-block
+						width: 264px
+						height: 50px
+						vertical-align: top
+						margin-top: 15px
 				td
 					border-right: 1px solid #585858
 					.num-viewers
@@ -1013,10 +1018,13 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						.true-room-name
 							display: none
 					.room-history-container
-						display: none
+						display: inline-block!important
 						list-style-type: none
-						margin-left: -30px
-						margin-top: 2px
+						margin-top: -1px
+						float: right
+						height: 54px
+						vertical-align: top
+						margin-top: 11px
 			tr.room-row:nth-child(odd)
 				background-color: #313131
 			tr.room-row:nth-child(odd)
@@ -1077,18 +1085,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .videoThumbnailContainer
 	display: inline-block
 	position: relative
-	.videoTitle
-		position: absolute
-		width: 170px
-		top: -133px
-		left: 2px
 	.videoThumbnail
-		width: 96px
-		height: 72px
-		margin-right: 8px
-		margin-top: 8px
+		width: 72px
+		height: 54px
+		margin-right: 4px
 		border-radius: 2px
-
 			
 #video-div
 	-webkit-border-top-left-radius: 2px

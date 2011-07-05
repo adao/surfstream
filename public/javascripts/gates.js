@@ -2321,9 +2321,9 @@ $(function() {
 			
 			var recentVids = roomModel.get("recentVids");
 			$($("#roomsTable tbody:first")[0]).append(this.el);
-			var recentVidLimit = 4;
+			var recentVidLimit = 2;
 			if (!curVidTitle)
-				recentVidLimit = 5;
+				recentVidLimit = 3;
 			if (recentVids) {
 				var numRecentVids = recentVids.length;
 				for (var i = 0; i < numRecentVids && i < recentVidLimit; i++) {
@@ -2344,7 +2344,7 @@ $(function() {
 			}
 			
 			if (!curVidTitle && !recentVids)
-				$(this.el).find(".room-history-container").prepend("No videos have been played yet. Be the first!");
+				$(this.el).find(".lastPlayedVideoTitle").prepend("No videos have been played yet. Be the first!");
 			return this;
 		},
 		
@@ -2399,7 +2399,6 @@ $(function() {
 				return;
 			//this.channelHistory.stop().slideDown(500);
 			this.channelHistoryDisplayed = true;
-			this.videoTitle.css("margin-top", "10px");
 			this.channelHistory.show();
 		},
 		
@@ -2408,7 +2407,6 @@ $(function() {
 				return;
 			//this.channelHistory.stop().slideUp(500);
 			this.channelHistoryDisplayed = false;
-			this.videoTitle.css("margin-top", "0px");
 			this.channelHistory.hide();
 		}
  });
