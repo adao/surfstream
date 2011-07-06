@@ -595,7 +595,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -82px;
   margin-top: 10px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   width: 75px;
   text-align: left;
   text-indent: 1px;
@@ -704,7 +704,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -41px;
   margin-top: 6px;
   font-size: 5px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   width: 37px;
   text-align: left;
   text-indent: 0.5px;
@@ -1460,7 +1460,7 @@ background-color: green,
 }
 .droppable-playlist-nameholder,
 .dropped-playlist-nameholder {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.20);
   border: 1px solid #808080;
   color: #fff;
 }
@@ -1475,7 +1475,7 @@ background-color: green,
 .active-playlist-nameholder,
 .active-playlist-nameholder:hover,
 .bv-nameholder.active-playlist-nameholder:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.20);
 }
 #playlist-collection-input::-webkit-input-placeholder {
   color: #c0c0c0;
@@ -1514,7 +1514,7 @@ background-color: green,
   padding: 2px;
 }
 .bv-nameholder:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.10);
 }
 .playlist-nameholder.selected-non-playlist-nameholder {
   color: #c0c0c0;
@@ -1751,7 +1751,7 @@ background-color: #4C4C4C,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1859,7 +1859,7 @@ background-color: #4C4C4C,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 #playlist-display #video-list-container .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1943,7 +1943,7 @@ background-color: #4C4C4C,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -2369,7 +2369,7 @@ background-color: #4C4C4C,
   line-height: 50%;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -2379,7 +2379,7 @@ background-color: #4C4C4C,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 .nametip {
   width: 70px;
@@ -2398,7 +2398,7 @@ background-color: #4C4C4C,
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -225px;
-  background: rgba(50,50,50,0.7);
+  background: rgba(50,50,50,0.70);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -2480,7 +2480,7 @@ background-color: #4C4C4C,
 #nowPlayingFull .chFS:hover,
 #nowPlayingFull .voteContainerFS:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 .chFS,
 .voteContainerFS,
@@ -2537,7 +2537,7 @@ background-color: #4C4C4C,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: -13px;
@@ -3719,6 +3719,34 @@ a#fdbk_tab {
   float: left !important;
   margin-left: 55px;
   margin-top: 60px;
+  -webkit-animation-name: avatarBounce;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-direction: alternate;
+  -moz-animation-name: avatarBounce;
+  -moz-animation-duration: 1s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  -moz-animation-direction: alternate;
+}
+@-webkit-keyframes avatarBounce {
+  0% {
+    margin-top: 60px;
+  }
+
+  100% {
+    margin-top: 50px;
+  }
+}
+@-moz-keyframes avatarBounce {
+  0% {
+    margin-top: 60px;
+  }
+
+  100% {
+    margin-top: 50px;
+  }
 }
 .picker-select-text {
   text-indent: 10px;
