@@ -63,9 +63,7 @@ window.fbAsyncInit = function() {
 		window.promoApproved = true;
 		input.keyup(function(){});
 		$("#promoBox").css("background", "#A5F2AA")
-		setTimeout(function(){$("#promoBox").fadeOut(function(){setTimeout(function(){$("#fb-auth-new").fadeIn();}, 300)})}, 600);
-		
-		
+		setTimeout(function(){$("#promoBox").fadeOut(function(){setTimeout(function(){$("#fb-auth-new").fadeIn()}, 300)})}, 600);
 		//$("#check-box").show();
 	});
 	socket_init.on("promo:bad", function() {
