@@ -1,0 +1,9 @@
+SS_PROD is production. 
+
+magic_carpet is the dev_branch.
+
+hotfix-* are branches for fixing prod bugs.
+
+merge your feature branches into magic_carpet, merge hotfix branches into your project as they are made to stay up-to-date.
+
+More to come.
