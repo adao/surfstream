@@ -1,0 +1,43 @@
+!!! 5
+html(lang="en")
+	head
+		title surfstream.tv
+	script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
+	script(type="text/javascript", src="/socket.io/socket.io.js")
+	script(type="text/javascript", src="../widgets/VideoResult.js")
+	script(type="text/javascript", src="/feed.js")
+	body
+	#heading
+		h1 surfstream
+	#content
+		#videoPlayer
+		#state
+		#fbData
+			=data
+		#djInfo 
+			| DJs: 
+			span#djCount 0
+			br
+			span#djStatus You are not a DJ
+			button#beDJ(onClick="becomeDJ()") dj
+			button#quitDJ(onClick="quitDJ()") step down
+		#playlist
+		#addVideo
+			input#videoEntry(type="text")
+			button(onClick="addVideo()") add
+		#searchYouTube
+			input#searchBox(type="text")
+			button(onClick="searchYouTube()") searchhh
+		#youTubeResults
+			ul#videoList
+			
+		li.videoResultTemplate
+			div#videoTitle
+			img#videoThumbnail
+			div#addToPlaylist Click To Add Video to Playlist
+			
+	#footer
+		span#client_count 0
+		|  connected clients
+		span#time
+	
