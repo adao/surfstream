@@ -17,6 +17,7 @@ $(document).ready(function () {
  	var videoLoaded = false;
  	
 	socket = io.connect();
+	window.app = NodeChatController.init(socket);
 	socket.emit('getUserData', JSON.parse($('#fbData').text()));
 	$('#fbData').remove();
 	
@@ -60,7 +61,7 @@ $(document).ready(function () {
 	
 	socket.on('clientUpdate', function(numClients) {
 		console.log("client has been updated: "+numClients);
-		$clientCounter.html(numClients);
+		//$clientCounter.html(numClients);
 	});
 	
 	socket.on('refreshPlaylist', function(data) {
@@ -138,6 +139,7 @@ function showMyVideos(data) {
     $list.append($item);
     console.log("in for statement5");
   }
+}
 
 function becomeDJ() {
 	console.log("user "+me.user.id+ " aka "+me.user.name+ " wants to become a DJ");

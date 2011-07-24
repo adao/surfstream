@@ -1,18 +1,27 @@
-
 /**
  * Module dependencies.
  */
 
-var express = require('express'),
-	http = require('http'), 
+var http = require('http'),
+	_ = require('underscore')._,
+	Backbone = require('backbone'),
 	url = require('url'),
+	express = require('express'),
 	app = express.createServer(),
 	io = require('socket.io').listen(app),
 	redis = require('redis'),
 	redisClient = redis.createClient();
 	
 /* Custom Modules */
-var facebook = require('./facebook');
+var facebook = require('./facebook'),
+	models = require('./public/models/models');
+
+facebook.connect(app, express);
+io.configure(function () {
+	io.set('log level', 2); 
+})
+
+require('jade');
 
 // Configuration
 
@@ -22,14 +31,14 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
-  app.use(express.session({ secret: 'your secret here' }));
+  app.use(express.session({ secret: "dklfj83298fhds" }));
   app.use(require('stylus').middleware({ src: __dirname + '/public' }));
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));   
 });
 
 app.configure('production', function(){
@@ -37,12 +46,14 @@ app.configure('production', function(){
 });
 
 // Routes
-
-facebook.connect(app, express);
-
 app.get('/*.(js|css)', function(req, res){
-  res.sendfile("./public"+req.url);
+  	res.sendfile("./public"+req.url);
 });
+
+
+
+//chat model
+var nodeChatModel = new models.NodeChatModel();
 
 //keep track of the people in the room
 var djList = new Array();
@@ -87,6 +98,9 @@ io.sockets.on('connection', function(socket) {
 		var timeDiff = (timeIn.getTime() - currVideo.timeStart) / 1000; //time difference in seconds
 		socket.emit('videoInfo', { video: currVideo.video, time: Math.ceil(timeDiff) });
 	}
+	
+	//taken from chat tutorial
+	socket.emit('initialChat', { event: 'initial', data: nodeChatModel.xport() });
 });
 
 function addListeners(socket) {
@@ -120,6 +134,9 @@ function addListeners(socket) {
 		console.log("Quit dj event called for socket" + socket.id);
 		removeFromDJ(socket.id) 
 	});
+	
+	//taken from the chat tutorial
+	socket.on('message', function(msg) { chatMessage(socket, msg) });
 }
 
 function getVideoDurationAndPlay(videoId) {
@@ -222,6 +239,22 @@ function clientDisconnect(userId) {
 function announceClients() {
 	console.log("'announceClients' fired to all sockets, client count: "+clients.length);
 	io.sockets.emit('clientUpdate', clients.length);
+}
+//chat tutorial stuff
+function chatMessage(socket, msg){
+    var chat = new models.ChatEntry();
+    chat.mport(msg);
+
+    redisClient.incr('next.chatentry.id', function(err, newId) {
+        chat.set({id: newId});
+        nodeChatModel.chats.add(chat);
+        console.log('(' + socket.id + ') ' + chat.get('id') + ' ' + chat.get('name') + ': ' + chat.get('text'));
+
+        redisClient.rpush('chatentries', chat.xport(), redis.print);
+        redisClient.bgsave();
+				
+        io.sockets.emit('message', { event: 'chat', data: chat.xport() }); 
+    }); 
 }
 
 app.listen(3000);
