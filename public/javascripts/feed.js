@@ -53,7 +53,7 @@ $(document).ready(function () {
 		} else {
 			var params = { allowScriptAccess: "always" };
 			var atts = { id: "myytplayer"};
-			swfobject.embedSWF("http://www.youtube.com/apiplayer?&enablejsapi=1&playerapiid=ytplayer",
+			swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=ytplayer",
 		                       "videoPlayer", "640", "390", "8", null, null, params, atts);
 			playerLoaded = true;
 		}
