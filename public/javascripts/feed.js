@@ -53,7 +53,7 @@ $(document).ready(function () {
 		} else {
 			var params = { allowScriptAccess: "always" };
 			var atts = { id: "myytplayer"};
-			swfobject.embedSWF("http://www.youtube.com/apiplayer?&enablejsapi=1&playerapiid=ytplayer",
+			swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=ytplayer",
 		                       "videoPlayer", "640", "390", "8", null, null, params, atts);
 			playerLoaded = true;
 		}
@@ -86,6 +86,7 @@ function onYouTubePlayerReady(playerId) {
 
 function onytplayerStateChange(newState) {
 	$('#state').html("Player state: "+newState);
+	console.log("New STATE! Is " + newState);
 	if(newState == 0 && currVideo.isLeader) { 
 		console.log("Video finished, broadcasting back to server");
 		socket.emit('videoFinished');
