@@ -18,7 +18,7 @@ function connect(app, express, onUserConnect) {
 	
 	app.configure('production', function(){
 	  app.use(auth( [
-	    auth.Facebook({appId : "163744730365918", appSecret: "800d0250ad831871403fabc3898d23a4", scope: 'email', callback: "http://ec2-75-101-218-155.compute-1.amazonaws.com/", failedUri: '/noauth' })
+	    auth.Facebook({appId : "163744730365918", appSecret: "800d0250ad831871403fabc3898d23a4", scope: 'email', callback: "http://ec2-75-101-218-155.compute-1.amazonaws.com/auth/facebook", failedUri: '/noauth' })
 	  ]) );
 	});
 	
