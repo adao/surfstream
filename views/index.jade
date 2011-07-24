@@ -15,7 +15,7 @@ html(lang="en")
 	body
 	#heading
 		h1 surfstream
-	#content
+	#stage-right
 		#videoPlayer
 		#state
 		#fbData
@@ -32,6 +32,17 @@ html(lang="en")
 			input#videoEntry(type="text")
 			button(onClick="addVideo()") add
 			
+		#searchYouTube
+			input#searchBox(type="text")
+			button(onClick="searchYouTube()") searchhh
+		#youTubeResults
+			ul#videoList
+			
+		li.videoResultTemplate
+			div#videoTitle
+			img#videoThumbnail
+			div#addToPlaylist Click To Add Video to Playlist
+	#stage-left
 		#chat
 			p
 				ul#chat_list
@@ -44,16 +55,6 @@ html(lang="en")
 					label Message:
 						input(type='text',name='message')
 						input(type='submit',value='send')
-		#searchYouTube
-			input#searchBox(type="text")
-			button(onClick="searchYouTube()") searchhh
-		#youTubeResults
-			ul#videoList
-			
-		li.videoResultTemplate
-			div#videoTitle
-			img#videoThumbnail
-			div#addToPlaylist Click To Add Video to Playlist
 			
 	#footer
 		span#client_count 0
