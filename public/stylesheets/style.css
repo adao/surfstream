@@ -1,12 +1,12 @@
 body {
-<<<<<<< HEAD
   width: 100%;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  background-color: #f00;
+  background-color: #008000;
   color: #fff;
 }
 h1 {
   font-size: 20px;
+  margin-bottom: -15px;
 }
 #actionbar {
   width: 960px;
@@ -14,17 +14,12 @@ h1 {
   display: block;
   background-image: url("http://i.imgur.com/Dy0Cr.png");
   position: absolute;
-=======
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: #000;
->>>>>>> ee05005710433a81396d85746b8838f56f69cd03
 }
 a {
   color: #00b7ff;
 }
-<<<<<<< HEAD
 #room {
+  padding: 45px;
   width: 660px;
   display: inline-block;
   background-color: #00f;
@@ -40,6 +35,5 @@ a {
   width: 960px;
   background-color: #000;
   min-height: 800px;
+  margin-top: 50px;
 }
-=======
->>>>>>> ee05005710433a81396d85746b8838f56f69cd03
