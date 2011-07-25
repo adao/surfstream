@@ -32,7 +32,17 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({ secret: "dklfj83298fhds" }));
-  app.use(require('stylus').middleware({ src: __dirname + '/public' }));
+});
+
+app.configure('development', function(){
+	app.use(require('stylus').middleware({ src: __dirname + '/public', force: true}));
+});
+
+app.configure('production', function(){
+	app.use(require('stylus').middleware({ src: __dirname + '/public'}));
+});
+
+app.configure(function(){
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
