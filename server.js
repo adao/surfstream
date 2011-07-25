@@ -35,7 +35,7 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
-	app.use(require('stylus').middleware({ src: __dirname + '/public', force: true}));
+	app.use(require('stylus').middleware({ src: __dirname + '/public', force: true, debug: true}));
 });
 
 app.configure('production', function(){
@@ -56,9 +56,9 @@ app.configure('production', function(){
 });
 
 // Routes
-app.get('/*.(js|css)', function(req, res){
-  	res.sendfile("./public"+req.url);
-});
+//app.get('/*.(js|css)', function(req, res){
+  //	res.sendfile("./public"+req.url);
+//});
 
 
 
