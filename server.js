@@ -34,25 +34,19 @@ app.configure(function(){
   app.use(express.session({ secret: "dklfj83298fhds" }));
   facebook.connect(app, express);
   app.use(app.router);
+  app.use(require('stylus').middleware({ src: __dirname + '/public'}));
   app.use(express.static(__dirname + '/public'));
 });
 	
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  app.use(require('stylus').middleware({ src: __dirname + '/public', force: true, debug: true}));
 });
 
 app.configure('production', function(){
   app.use(express.errorHandler());
-  app.use(require('stylus').middleware({ src: __dirname + '/public'}));
 });
 
 require('./router.js').setupRoutes(app);
-
-// Routes
-//app.get('/*.(js|css)', function(req, res){
-  //	res.sendfile("./public"+req.url);
-//});
 
 //chat model
 var nodeChatModel = new models.NodeChatModel();

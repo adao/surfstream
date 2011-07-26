@@ -12,23 +12,10 @@ function setupRoutes(app) {
 	
 	app.get('/', function(req, res){
 	  if( req.isAuthenticated() ) {
-	    res.end('<html>Hello Facebook User<br/>' + JSON.stringify( req.getAuthDetails() ) + '<br/><h1>' + '</h1></html>')
+	    res.redirect('/index');
 	  }
 	  else {
-	    res.send('<html>                                              \n\
-	          <head>                                             \n\
-	            <title>connect Auth -- Not Authenticated</title> \n\
-	            <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script> \n\
-	          </head><body>                                             \n\
-	            <div id="wrapper">                               \n\
-	              <h1>Not authenticated</h1>                     \n\
-	              <div class="fb_button" id="fb-login" style="float:left; background-position: left -188px">          \n\
-	                <a href="/auth/facebook" class="fb_button_medium">        \n\
-	                  <span id="fb_login_text" class="fb_button_text"> \n\
-	                    Connect with Facebook                    \n\
-	                  </span>                                    \n\
-	                </a>                                         \n\
-	              </div></body></html>');
+	    res.render('login', {locals: { title: "surfstream.tv"}});
 	  }
 	});
 	
