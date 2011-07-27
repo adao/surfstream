@@ -16,7 +16,7 @@ var http = require('http'),
 var facebook = require('./facebook'),
 	models = require('./public/models/models');
 
-facebook.connect(app, express);
+
 io.configure(function () {
 	io.set('log level', 2); 
 })
@@ -32,25 +32,21 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({ secret: "dklfj83298fhds" }));
-  app.use(require('stylus').middleware({ src: __dirname + '/public' }));
+  facebook.connect(app, express);
   app.use(app.router);
+  app.use(require('stylus').middleware({ src: __dirname + '/public'}));
   app.use(express.static(__dirname + '/public'));
 });
-
+	
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));   
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
-  app.use(express.errorHandler()); 
+  app.use(express.errorHandler());
 });
 
-// Routes
-app.get('/*.(js|css)', function(req, res){
-  	res.sendfile("./public"+req.url);
-});
-
-
+require('./router.js').setupRoutes(app);
 
 //chat model
 var nodeChatModel = new models.NodeChatModel();

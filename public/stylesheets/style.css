@@ -1,10 +1,39 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  width: 100%;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  background-color: #000;
+  color: #fff;
+}
+h1 {
+  font-size: 20px;
+  margin-bottom: -15px;
+}
+#actionbar {
+  width: 960px;
+  min-height: 40px;
+  display: block;
+  background-image: url("http://i.imgur.com/Dy0Cr.png");
+  position: absolute;
 }
 a {
   color: #00b7ff;
 }
-#stage-rights {
-	float: right;
+#room {
+  padding: 45px;
+  width: 660px;
+  display: inline-block;
+  background-color: #00f;
+  min-height: 700px;
+}
+#heading {
+  width: 960px;
+  display: block;
+  min-height: 60px;
+  background-color: #000;
+}
+#content {
+  width: 960px;
+  background-color: #000;
+  min-height: 800px;
+  margin-top: 50px;
 }
