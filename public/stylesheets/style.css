@@ -1,7 +1,11 @@
 body {
   width: 100%;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+<<<<<<< HEAD
   background-color: #808080;
+=======
+  background-color: #000;
+>>>>>>> e1eca69e1a2859780ccfea206967ca00c4ddf2fa
   color: #fff;
 }
 #heading {
