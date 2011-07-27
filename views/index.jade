@@ -2,17 +2,17 @@
 html(lang="en")
 	head
 		title surfstream.tv
-	script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
-	script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
-	script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
-	script(type="text/javascript", src="/socket.io/socket.io.js")
-	script(type="text/javascript", src="/javascripts/VideoResult.js")
-	script(type="text/javascript", src="/javascripts/feed.js")
-	script(type="text/javascript", src="/models/models.js")
-	script(type="text/javascript", src="/controllers/controllers.js")
-	script(type="text/javascript", src="/views.js")
-	script(type="text/css", src="/stylesheets/style.css")
-
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
+		script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
+		script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
+		script(type="text/javascript", src="/socket.io/socket.io.js")
+		script(type="text/javascript", src="/javascripts/VideoResult.js")
+		script(type="text/javascript", src="/javascripts/feed.js")
+		script(type="text/javascript", src="/models/models.js")
+		script(type="text/javascript", src="/controllers/controllers.js")
+		script(type="text/javascript", src="/views.js")
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		
 	body
 	#heading
 		h1 surfstream
@@ -30,15 +30,27 @@ html(lang="en")
 				span#djStatus You are not a DJ
 				button#beDJ(onClick="becomeDJ()") dj
 				button#quitDJ(onClick="quitDJ()") step down
-			#playlist
-			#addVideo
-				input#videoEntry(type="text")
-				button(onClick="addVideo()") add
-			
+		#sidebar
+			#library
+				#addVideo
+					input#videoEntry(type="text")
+					button(onClick="addVideo()") add
+				#playlist
+			#searchYouTube
+				input#searchBox(type="text")
+				button(onClick="searchYouTube()") searchhh
+			#videomodule
+				#youTubeResults
+					ul#videoList
+						#results
+							li.videoResultTemplate
+								div#videoBox
+									img#videoThumbnail
+								div#videoTitle
+								div#addToPlaylist
 			#chat
-				p
 					ul#chat_list
-
+			#message
 				form(method="post", action="#",onsubmit="return false")#messageForm
 					p
 						label Name:
@@ -47,16 +59,6 @@ html(lang="en")
 						label Message:
 							input(type='text',name='message')
 							input(type='submit',value='send')
-			#searchYouTube
-				input#searchBox(type="text")
-				button(onClick="searchYouTube()") searchhh
-			#youTubeResults
-				ul#videoList
-			
-			li.videoResultTemplate
-				div#videoTitle
-				img#videoThumbnail
-				div#addToPlaylist Click To Add Video to Playlist
 			
 	#footer
 		span#client_count 0
