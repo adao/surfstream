@@ -2,7 +2,7 @@ var PlaylistView = Backbone.View.extend({
 	initialize: function(options) {
 		_.bindAll(this, 'render');
 		this.model = options.model;
-		this.model.bind('all', this.render);
+		this.model.videos.bind('all', this.render);
 		this.el = options.el;
 	},
 	
@@ -10,19 +10,21 @@ var PlaylistView = Backbone.View.extend({
 		console.log("Refreshing playlist...");
 		if(data) {
 			this.model.mport(data);
+			this.render();
 		}
-		this.render();
 	},
 	
 	//method works
 	render: function() {
-		console.log('Rendering PlaylistView has been called...');
+		console.log('Rendering PlaylistView has been called, playlist has length: '+this.model.videos.length);
 		var playlistHtml = '<ul>';
-		this.model.forEach(function(video) {
-			playlistHtml += '<li>'+video.get('videoId')+'</li>';
-		});
-		playlistHtml += '</ul>';
-		$(this.el).html(playlistHtml);
+		if(this.model.videos.length > 0) {
+			this.model.videos.each(function(video) {
+				playlistHtml += '<li>'+video.get('videoId')+'</li>';
+			});
+			playlistHtml += '</ul>';
+			$(this.el).html(playlistHtml);
+		}
 	}
 })
 

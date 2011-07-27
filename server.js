@@ -244,6 +244,7 @@ function initializeAndSendPlaylist(socket, userId) {
 			var currPlaylist = new models.PlaylistModel();
 			console.log('getting playlist for user '+userId+', reply: '+reply);
 			if(reply) {
+					console.log('...serializing playlist');
 					currPlaylist.mport(reply);
 			}
 			socketToPlaylist[socket.id] = currPlaylist;
