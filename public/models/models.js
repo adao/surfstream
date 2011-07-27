@@ -57,32 +57,15 @@
 			return first;
 		},
 		
-		// xport: function() {
-		// 			var videoArray = new Array();
-		// 			this.each(function(video) {
-		// 				videoArray.push(video.get('videoId'));
-		// 			});
-		// 			console.log("exporting playlist as string: "+JSON.stringify(videoArray));
-		// 			return JSON.stringify(videoArray);
-		// 		},
-		// 		
-		// 		mport: function(playlist) {
-		// 			console.log("importing playlist: "+playlist);
-		// 			var videoArray = JSON.parse(playlist);
-		// 			var collection = this;
-		// 			_.each(videoArray, function(videoId) {
-		// 				collection.addVideoId(videoId);
-		// 			})
-		// 		}
-		
+		deleteVideo: function(videoId) {
+			this.videos.remove(videoId);
+		}
 	});
 	
 	//-----------
 
 	models.User = Backbone.Model.extend({
-		defaults: {
-			
-		}
+		
 	});
 
 	//don't know if necessary....

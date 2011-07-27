@@ -298,8 +298,4 @@ function chatMessage(socket, msg){
 
 app.listen(3000);
 
-// console.log("Starting timer...");
-// setTimeout(function() { console.log("10 seconds have passed")}, 10000);
-// console.log("Timer is active.");
-
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
