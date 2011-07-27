@@ -30,15 +30,27 @@ html(lang="en")
 				span#djStatus You are not a DJ
 				button#beDJ(onClick="becomeDJ()") dj
 				button#quitDJ(onClick="quitDJ()") step down
-			#playlist
-			#addVideo
-				input#videoEntry(type="text")
-				button(onClick="addVideo()") add
-			
+		#sidebar
+			#library
+				#addVideo
+					input#videoEntry(type="text")
+					button(onClick="addVideo()") add
+				#playlist
+			#searchYouTube
+				input#searchBox(type="text")
+				button(onClick="searchYouTube()") searchhh
+			#videomodule
+				#youTubeResults
+					ul#videoList
+						#results
+							li.videoResultTemplate
+								div#videoBox
+									img#videoThumbnail
+								div#videoTitle
+								div#addToPlaylist
 			#chat
-				p
 					ul#chat_list
-
+			#message
 				form(method="post", action="#",onsubmit="return false")#messageForm
 					p
 						label Name:
@@ -47,16 +59,6 @@ html(lang="en")
 						label Message:
 							input(type='text',name='message')
 							input(type='submit',value='send')
-			#searchYouTube
-				input#searchBox(type="text")
-				button(onClick="searchYouTube()") searchhh
-			#youTubeResults
-				ul#videoList
-			
-			li.videoResultTemplate
-				div#videoTitle
-				img#videoThumbnail
-				div#addToPlaylist Click To Add Video to Playlist
 			
 	#footer
 		span#client_count 0
