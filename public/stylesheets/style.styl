@@ -1,112 +1,66 @@
-body
-	width: 100%
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+
+//Chat Box
+div.chatContainer
 	background-color: black
-	color: white
-
-#heading
-	width: 960px
-	max-width: 960px
-	display: block
-	min-height: 60px
-	background-color: black
-	h1
-		font-size: 30px
-		text-indent: 10px
-		
-#actionbar
-	width: 960px
-	max-width: 960px
-	min-height: 40px
-	display: block
-	background-image: url('http://i.imgur.com/Dy0Cr.png')
-	position: absolute
-	margin-top: -19px
-
-a
-	color: #00b7ff
-
-li
-	list-style-type: none
-
-#content
-	margin-top: 40px
-	width: 960px
-	max-width: 960px
-	background-color: black
-	min-height: 800px
-	
-	#room
-		width: 660px
-		max-width: 660px
-		float: left
-		background-color: black
-		min-height: 700px
-		
-	#myytplayer
-		padding-top: 10px
-		padding-left: 10px
-		
-	#sidebar
-		float: right
+	width: 300px
+	height: 225px
+	max-width: 300px
+	max-height: 225px
+	div.chatHeader
 		width: 300px
-		min-height: 700px
+		height: 30px
 		background-color: gray
-		#library
-			height: 150px
-			max-height: 150px
-			overflow-y: scroll
-			overflow-x: none
-		#searchYouTube
-			height: 50px
-			max-height: 50px
-		#videomodule
-			width: 300px
-			height: 350px
-			max-height: 550px
-			background-color: gray
-			display: block
-			overflow-y: scroll
-			li
-				max-height: 65px
-				display: block
-			#addVideo
-				text-indent: 3px
-			#searchYouTube
-				text-indent: 3px
-			#addToPlaylist
-				text-indent: 3px
-			#videoList
-				margin-left: -35px
-			#videoBox
-				display: inline-block
-				width: 70px
-				height: 55px
-				background-color: blue
-				text-align: center
-				#videoThumbnail
-					padding-top: 2px
-					width: 65px
-			#videoTitle
-				display: inline-block
-				max-width: 200px;
-			
-				
-		#chat
-			display: block
-			height: 155px
-			overflow-y: scroll
-			max-height: 155px
-			color: black
-			width: 300px
-			background-color: white
-			#chat_list
-				background-color: blue
-				margin-left: -30px
-				font-size: 16px
-				padding-top: 1px
-				padding-bottom: 1px
-				height: 140px
-				
-		#message
-			display: block
+		img.chatIcon
+			display: inline-block
+			margin-top: 5px
+			margin-left: 5px
+		div.chatTitle
+			font-family: Helvetica, Arial, "Lucida Grande", sans-serif
+			font-weight: 500
+			color: white
+			height: 18px
+			position: absolute
+			top: 15px
+			left: 50px
+			width: 36px
+	div.messages
+		height: 165px
+		overflow-y: scroll
+		overflow-x: hidden
+	form.inputBox
+		background-image: url('http://i.imgur.com/SWiIL.png')
+		height: 40px
+		text-indent: 30px
+		input
+			margin-top: 12px
+			width: 240px
+			height: 14px
+			border: 0
+			outline: 0
+			background: transparent
+
+
+//Chat Cell
+div.messageContainer
+	padding-left: 4px
+	padding-right: 4px
+	padding-top: 2px
+	padding-bottom: 2px
+	min-height: 20px
+	height: auto
+	overflow-x: visible;
+	overflow-y: visible;
+	width: 270px
+	border: 1px solid black
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	font-size: 14px
+	span
+		padding-top: 2px
+		padding-bottom: 2px
+		font-weight: bold
+		display: inline-block
+	div
+		padding-top: 2px
+		padding-bottom: 2px
+		display: inline
+
