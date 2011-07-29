@@ -73,9 +73,6 @@ var NodeChatView = Backbone.View.extend({
 
     , msgReceived: function(message){
         switch(message.event) {
-            case 'initial':
-                this.model.mport(message.data);
-                break;
             case 'chat':
 								console.log("got a chat!"+message.data);
                 var newChatEntry = new models.ChatEntry();

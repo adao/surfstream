@@ -66,16 +66,16 @@ var socketToPlaylist = {};
 var currVideo = null;
 
 function sendDJInfo(socket) {
-	socket.emit('djInfo', djList);
+	socket.emit('dj:announceDJs', djList);
 }
 
-function sendClientInfo(socket, fbInfo) {
-	fbInfo['socketId'] = socket.id;
-	socket.emit('clientInfo', fbInfo);
+function sendSocketInfoToClient(socket, fbInfo) {	//is this absolutely necessary? they 
+	fbInfo['socketId'] = socket.id;					//have the data passed to them
+	socket.emit('user:sendSocketId', fbInfo);			//(yes - turns out it is necessary, to pass the socket id)
 }
 
 io.sockets.on('connection', function(socket) {
-	socket.on('getUserData', function(fbUser) {
+	socket.on('user:sendFBData', function(fbUser) {
 		console.log("Saving to redis...user id: "+fbUser.user.id);
 		//TODO: need to check and see if redis already has the id
 		redisClient.set('user:'+fbUser.user.id+':info', JSON.stringify(fbUser)); 
@@ -87,7 +87,7 @@ io.sockets.on('connection', function(socket) {
 		socketToUser[socket.id] = fbUser.user.id;
 		
 		announceClients();
-		sendClientInfo(socket, fbUser);
+		sendSocketInfoToClient(socket, fbUser);
 		//sendFullPlaylist(socket, fbUser.user.id);
 		initializeAndSendPlaylist(socket, fbUser.user.id);
 		sendDJInfo(socket);
@@ -99,11 +99,11 @@ io.sockets.on('connection', function(socket) {
 		var timeIn = new Date();
 		var timeDiff = (timeIn.getTime() - currVideo.get('timeStart')) / 1000; //time difference in seconds
 		console.log('Sending current video to socket');
-		socket.emit('videoInfo', { video: currVideo.get('videoId'), time: Math.ceil(timeDiff) });
+		socket.emit('video:sendInfo', { video: currVideo.get('videoId'), time: Math.ceil(timeDiff) });
 	}
 	
 	//taken from chat tutorial
-	socket.emit('initialChat', { event: 'initial', data: nodeChatModel.xport() });
+	//socket.emit('chat:initial', { event: 'initial', data: nodeChatModel.xport() });
 });
 
 function addListeners(socket) {
@@ -117,21 +117,22 @@ function addListeners(socket) {
 		// 	//redisClient.rpush("user:"+userId+":queue", data.video, function(err,res) { sendFullPlaylist(socket, userId)});
 		// });
 		// 
-	socket.on('becomeDJ', function() {
+	socket.on('dj:join', function() {
 		console.log('user '+socketToUser[socket.id]+' requesting to be DJ');
 		
 		if(djList.length < 4 && djList.indexOf(socket.id) < 0) {
 			console.log('user '+socketToUser[socket.id]+' is now a DJ');
 			djList.push(socket.id);
 			announceDJs(); 
-		}
-		if(djList.length == 1) {
-			currDJIndex = 0;			//eventually we'll want to replace this with a full DJ model
-			playVideoFromPlaylist(socket.id);
+			
+			if(djList.length == 1) { //this user is the only dj
+				currDJIndex = 0;			//note: eventually we'll want to replace this with a full DJ model
+				playVideoFromPlaylist(socket.id);
+			}
 		}
 	});
 	
-	socket.on('quitDJ', function() { 
+	socket.on('dj:quit', function() { 
 		console.log("Quit dj event called for socket" + socket.id);
 		removeFromDJ(socket.id) 
 	});
@@ -143,12 +144,12 @@ function addListeners(socket) {
 }
 
 function addPlaylistListeners(socket) {
-	socket.on('playlistAddVideo', function(data) {
+	socket.on('playlist:addVideo', function(data) {
 		console.log('Received request to add video '+data.video+' to user '+socketToUser[socket.id]);
 		socketToPlaylist[socket.id].addVideoId(data.video);
 	});
 	
-	socket.on('playlistMoveVideo', function(data) {
+	socket.on('playlist:moveVideo', function(data) {
 		console.log('Received request to move video '+data.video+' to index '+data.indexToMove+' for user '+socketToUser[socket.id]);
 		socketToPlaylist[socket.id].move(data.videoId, data.indexToMove);
 	});
@@ -210,7 +211,7 @@ function announceVideo(videoId, videoDuration) {
 	//setTimeout(function() { playNextVideo() }, videoDuration*1000);	//*1000 for milliseconds
 	
 	//refactor to pass videoModel
-	io.sockets.emit('videoInfo', { video: videoId, time: 0 });
+	io.sockets.emit('video:sendInfo', { video: videoId, time: 0 });
 }
 
 function playVideoFromPlaylist(socketId) {
@@ -233,7 +234,8 @@ function removeFromDJ(socketId) {
 }
 
 function announceDJs() {
-	io.sockets.emit('djInfo', djList);
+	console.log('sending DJs');
+	io.sockets.emit('dj:announceDJs', djList);
 }
 
 function initializeAndSendPlaylist(socket, userId) {
@@ -248,7 +250,7 @@ function initializeAndSendPlaylist(socket, userId) {
 					currPlaylist.mport(reply);
 			}
 			socketToPlaylist[socket.id] = currPlaylist;
-			socket.emit("refreshPlaylist", reply);
+			socket.emit("playlist:refresh", reply);
 		}
 	});
 }

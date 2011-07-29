@@ -5,7 +5,7 @@ var PlaylistController = {
 		this.view = new PlaylistView({ model: this.model, el: el }); 
 		
 		var view = this.view;
-		this.socket.on('refreshPlaylist', function(data) { 
+		this.socket.on('playlist:refresh', function(data) { 
 			console.log('Received playlist from server, value: '+data);
 			view.refreshPlaylist(data);
 		});
@@ -15,12 +15,12 @@ var PlaylistController = {
 	
 	addVideo: function(videoId) {
 		this.model.addVideoId(videoId);
-		this.socket.emit('playlistAddVideo', { video: videoId });
+		this.socket.emit('playlist:addVideo', { video: videoId });
 	},
 	
 	moveVideo: function(videoId, indexToMove) {
 		this.model.moveVideo(videoId, indexToMove);
-		this.socket.emit('playlistMoveVideo', { videoId: videoId, indexToMove: indexToMove });
+		this.socket.emit('playlist:moveVideo', { videoId: videoId, indexToMove: indexToMove });
 	}
 }
 

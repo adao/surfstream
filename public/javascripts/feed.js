@@ -7,6 +7,13 @@ function configureDJButtons() {
 	$('#quitDJ').hide();
 }
 
+function sendClientInfo(socket) {
+	//eventually will need to replace this hack by getting the FB info directly from facebook
+	me = JSON.parse($('#fbData').text());
+	socket.emit('user:sendFBData', me);
+	$('#fbData').remove();
+}
+
 $(document).ready(function () {
   $('#fbData').hide();
 	$clientCounter = $("#client_count")
@@ -17,18 +24,15 @@ $(document).ready(function () {
  	var videoLoaded = false;
  	
 	socket = io.connect();
-	socket.emit('getUserData', JSON.parse($('#fbData').text()));
-	$('#fbData').remove();
-	
+	sendClientInfo(socket);
+	 
 	window.app = NodeChatController.init(socket);
 	window.playlist = PlaylistController.init(socket, $('#playlist'));
 	
-	socket.on('clientInfo', function(info) {
-		console.log("Received client info: "+JSON.stringify(info));
-		me = info;
-	});
-	
-	socket.on('djInfo', function(data) {
+	socket.on('dj:announceDJs', function(data) {
+		me['socketId'] = socket.socket.sessionid;
+		console.log("socket id: "+me['socketId']);
+		
 		console.log("Received dj info: "+JSON.stringify(data));
 		djInfo = data;
 		$('#djCount').html(djInfo.length);
@@ -44,8 +48,7 @@ $(document).ready(function () {
 		}
 	});
 	
-	socket.on('videoInfo', function(data) {
-		
+	socket.on('video:sendInfo', function(data) {
 		console.log("Socket received video info");
 		currVideo.video = data.video;
 		currVideo.timeStart = data.time;
@@ -123,7 +126,9 @@ function becomeDJ() {
 	console.log("user "+me.user.id+ " aka "+me.user.name+ " wants to become a DJ");
 	if(djInfo.length < 4) {
 		console.log("requesting that user becomes a dj");
-		socket.emit('becomeDJ');
+		socket.emit('dj:join');
+		$('#beDJ').hide();
+		$('#quitDJ').show()
 	}
 }
 
@@ -131,5 +136,5 @@ function quitDJ() {
 	if(djInfo.indexOf(me.socketId) < 0) return;
 	configureDJButtons();
 	console.log('Quitting DJ');
-	socket.emit('quitDJ');
+	socket.emit('dj:quit');
 }

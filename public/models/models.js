@@ -45,7 +45,7 @@
 			}
 		},
 		
-		//returns the first video id, and moves the video
+		//returns the first Video, and moves the Video
 		//to the end of the playlist 
 		playFirstVideo: function() {
 			if(this.videos.length == 0) {
@@ -53,7 +53,7 @@
 			}
 			var first = this.videos.at(0);
 			this.videos.remove(first);
-			this.videos.add(first);	//adds video to the end;
+			//this.videos.add(first);	//adds video to the end;
 			return first;
 		},
 		
