@@ -65,10 +65,69 @@ div.messageContainer
 		display: inline
 
 div.historyContainer
+	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	font-size: 14px
 	height: 350px
 	width: 300px
 	overflow-x: hidden
-	overflow-y: visible
+	overflow-y: hidden
 	background-color: #FFA
 	border: 1px solid black
-
+	.roomInfo
+		display: block
+		height: 25px
+		width: 300px
+		vertical-align: middle
+		margin-left: 3px
+		.createdBy
+			font-weight: bold
+			span.historyUser
+				font-weight: 300
+	.roomDescription
+		margin-left: 3px
+		margin-right: 3px
+		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+		display: block
+		height: 35px
+		font-size: 12px
+	.history
+		height: 290px
+		width: 300px
+		background-color: white
+		.historyTitle
+			height: 18px
+			margin-left: 3px
+		.videoHistory
+			height: 272px
+			background-color: gray
+			overflow-x: hidden
+			overflow-y: scroll
+			
+			
+.videoLog
+	width: 285px
+	height: 95px
+	.thumbContainer
+		float: left
+		width: 75px
+		height: 75px
+	.videoInfo
+		float: right
+		width: 197px
+		height: 75px
+		.title
+			width: 185px
+			height: 17px
+			font-weight: bold
+			font-size: 15px
+		.details
+			height: 33px
+			font-size: 12px
+			width: 185px
+			.time
+				height: 14px
+			.score
+				height: 14px
+					
+			
+		

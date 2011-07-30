@@ -69,10 +69,79 @@ div.messageContainer div {
   display: inline;
 }
 div.historyContainer {
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 14px;
   height: 350px;
   width: 300px;
   overflow-x: hidden;
-  overflow-y: visible;
+  overflow-y: hidden;
   background-color: #ffa;
   border: 1px solid #000;
+}
+div.historyContainer .roomInfo {
+  display: block;
+  height: 25px;
+  width: 300px;
+  vertical-align: middle;
+  margin-left: 3px;
+}
+div.historyContainer .roomInfo .createdBy {
+  font-weight: bold;
+}
+div.historyContainer .roomInfo .createdBy span.historyUser {
+  font-weight: 300;
+}
+div.historyContainer .roomDescription {
+  margin-left: 3px;
+  margin-right: 3px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  display: block;
+  height: 35px;
+  font-size: 12px;
+}
+div.historyContainer .history {
+  height: 290px;
+  width: 300px;
+  background-color: #fff;
+}
+div.historyContainer .history .historyTitle {
+  height: 18px;
+  margin-left: 3px;
+}
+div.historyContainer .history .videoHistory {
+  height: 272px;
+  background-color: #808080;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.videoLog {
+  width: 285px;
+  height: 95px;
+}
+.videoLog .thumbContainer {
+  float: left;
+  width: 75px;
+  height: 75px;
+}
+.videoLog .videoInfo {
+  float: right;
+  width: 197px;
+  height: 75px;
+}
+.videoLog .videoInfo .title {
+  width: 185px;
+  height: 17px;
+  font-weight: bold;
+  font-size: 15px;
+}
+.videoLog .videoInfo .details {
+  height: 33px;
+  font-size: 12px;
+  width: 185px;
+}
+.videoLog .videoInfo .details .time {
+  height: 14px;
+}
+.videoLog .videoInfo .details .score {
+  height: 14px;
 }
