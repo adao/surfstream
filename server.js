@@ -56,6 +56,7 @@ var djList = new Array();
 var currDjIndex = -1;
 var clients = new Array();
 var socketToUser = {};
+var socketToPlaylist = {};
 
 //related to the current video
 var currVideo = null;
@@ -83,16 +84,18 @@ io.sockets.on('connection', function(socket) {
 		
 		announceClients();
 		sendClientInfo(socket, fbUser);
-		sendFullPlaylist(socket, fbUser.user.id);
+		//sendFullPlaylist(socket, fbUser.user.id);
+		initializeAndSendPlaylist(socket, fbUser.user.id);
 		sendDJInfo(socket);
 
 		addListeners(socket);
 	});
-	
+
 	if(currVideo) {
 		var timeIn = new Date();
-		var timeDiff = (timeIn.getTime() - currVideo.timeStart) / 1000; //time difference in seconds
-		socket.emit('videoInfo', { video: currVideo.video, time: Math.ceil(timeDiff) });
+		var timeDiff = (timeIn.getTime() - currVideo.get('timeStart')) / 1000; //time difference in seconds
+		console.log('Sending current video to socket');
+		socket.emit('videoInfo', { video: currVideo.get('videoId'), time: Math.ceil(timeDiff) });
 	}
 	
 	//taken from chat tutorial
@@ -101,17 +104,15 @@ io.sockets.on('connection', function(socket) {
 
 function addListeners(socket) {
 	socket.on('disconnect', function() { 
-		clientDisconnect(socketToUser[socket.id]);
-		removeFromDJ(socket.id);	
-		delete socketToUser[socket.id]; 
+		removeSocketFromRoom(socket);
 	});
-	
-	socket.on('addVideoToQueue', function(data) {
-		var userId = socketToUser[socket.id];
-		console.log("user "+ userId +" wants to add video: "+data.video);
-		redisClient.rpush("user:"+userId+":queue", data.video, function(err,res) { sendFullPlaylist(socket, userId)});
-	});
-	
+		// 
+		// socket.on('addVideoToQueue', function(data) {
+		// 	var userId = socketToUser[socket.id];
+		// 	console.log("user "+ userId +" wants to add video: "+data.video);
+		// 	//redisClient.rpush("user:"+userId+":queue", data.video, function(err,res) { sendFullPlaylist(socket, userId)});
+		// });
+		// 
 	socket.on('becomeDJ', function() {
 		console.log('user '+socketToUser[socket.id]+' requesting to be DJ');
 		
@@ -133,6 +134,20 @@ function addListeners(socket) {
 	
 	//taken from the chat tutorial
 	socket.on('message', function(msg) { chatMessage(socket, msg) });
+	
+	addPlaylistListeners(socket);
+}
+
+function addPlaylistListeners(socket) {
+	socket.on('playlistAddVideo', function(data) {
+		console.log('Received request to add video '+data.video+' to user '+socketToUser[socket.id]);
+		socketToPlaylist[socket.id].addVideoId(data.video);
+	});
+	
+	socket.on('playlistMoveVideo', function(data) {
+		console.log('Received request to move video '+data.video+' to index '+data.indexToMove+' for user '+socketToUser[socket.id]);
+		socketToPlaylist[socket.id].move(data.videoId, data.indexToMove);
+	});
 }
 
 function getVideoDurationAndPlay(videoId) {
@@ -182,24 +197,29 @@ function playNextVideo() {
 }
 
 function announceVideo(videoId, videoDuration) {
-	currVideo.video = videoId;
-	currVideo.duration = videoDuration;
-	currVideo.timeStart = (new Date()).getTime();
-	setTimeout(function() { playNextVideo() }, videoDuration*1000);	//*1000 for milliseconds
+	//currVideo.video = videoId;
+	currVideo.set({ 
+		duration: videoDuration, 
+		timeStart: (new Date()).getTime(),
+		timeoutId: setTimeout(function() { playNextVideo() }, videoDuration*1000)
+	});
+	//setTimeout(function() { playNextVideo() }, videoDuration*1000);	//*1000 for milliseconds
+	
+	//refactor to pass videoModel
 	io.sockets.emit('videoInfo', { video: videoId, time: 0 });
 }
 
 function playVideoFromPlaylist(socketId) {
-	var userId = socketToUser[socketId];
-	redisClient.lpop('user:'+userId+':queue', function(err, reply) {
-		if(err) {
-			console.log("error in getting the first video from playlist for "+userId+": "+err);
-			return;
-		}
-		currVideo = {};	//makes it non-null
-		currVideo.socketIdOfDj = socketId;
-		getVideoDurationAndPlay(reply)
-	});
+	var videoToPlay = socketToPlaylist[socketId].playFirstVideo();
+	
+	if(!videoToPlay) {
+		console.log('Request to play video from playlist, but playlist has no videos!');
+		return;
+	}
+	console.log("(playVideoFromPlaylist) Video to play has id: "+videoToPlay.get('videoId'));
+	currVideo = videoToPlay;
+	currVideo.set({ socketIdOfDj: socketId});
+	getVideoDurationAndPlay(currVideo.get('videoId'));
 }
 
 function removeFromDJ(socketId) {
@@ -212,24 +232,43 @@ function announceDJs() {
 	io.sockets.emit('djInfo', djList);
 }
 
-function sendFullPlaylist(socket, userId) {
-	redisClient.llen('user:'+userId+':queue', function(err, size) {
-		console.log('size of '+userId+"'s queue: "+size);
-		redisClient.lrange('user:'+userId+':queue', 0, size, function(err, reply) {
-			if(err) {
-				console.log("error in refreshing playlist for "+userId+": "+err);
-				return;
+function initializeAndSendPlaylist(socket, userId) {
+	redisClient.get('user:'+userId+':playlist', function(err, reply) {
+		if(err) {
+			console.log("Error in getting user "+socketToUser[socket.id]+"'s playlist!");
+		} else {
+			var currPlaylist = new models.PlaylistModel();
+			console.log('getting playlist for user '+userId+', reply: '+reply);
+			if(reply) {
+					console.log('...serializing playlist');
+					currPlaylist.mport(reply);
 			}
-			socket.emit("refreshPlaylist", reply); 
-		});
-	})	
+			socketToPlaylist[socket.id] = currPlaylist;
+			socket.emit("refreshPlaylist", reply);
+		}
+	});
 }
 
 function clientDisconnect(userId) {
 	console.log("userId "+userId+" is disconnecting");
+	announceClients();
+}
+
+function removeSocketFromRoom(socket) {
+	clientDisconnect(socketToUser[socket.id]);
+	removeFromDJ(socket.id);	
+	
+	var userId = socketToUser[socket.id];
 	var index = clients.indexOf(userId);
 	if(index != -1) clients.splice(index,1);
-	announceClients();
+	
+	delete socketToUser[socket.id];
+	
+	//save playlist for user
+	var userPlaylist = socketToPlaylist[socket.id].xport();
+	console.log('Saving playlist for user '+userId+': '+userPlaylist);
+	redisClient.set('user:'+userId+':playlist', userPlaylist);
+	delete socketToPlaylist[socket.id];
 }
 
 function announceClients() {
@@ -238,25 +277,21 @@ function announceClients() {
 }
 //chat tutorial stuff
 function chatMessage(socket, msg){
-    var chat = new models.ChatEntry();
-    chat.mport(msg);
+	var chat = new models.ChatEntry();
+	chat.mport(msg);
 
-    redisClient.incr('next.chatentry.id', function(err, newId) {
-        chat.set({id: newId});
-        nodeChatModel.chats.add(chat);
-        console.log('(' + socket.id + ') ' + chat.get('id') + ' ' + chat.get('name') + ': ' + chat.get('text'));
+	redisClient.incr('next.chatentry.id', function(err, newId) {
+		chat.set({id: newId});
+		nodeChatModel.chats.add(chat);
+		console.log('(' + socket.id + ') ' + chat.get('id') + ' ' + chat.get('name') + ': ' + chat.get('text'));
 
-        redisClient.rpush('chatentries', chat.xport(), redis.print);
-        redisClient.bgsave();
+		redisClient.rpush('chatentries', chat.xport(), redis.print);
+		redisClient.bgsave();
 				
-        io.sockets.emit('message', { event: 'chat', data: chat.xport() }); 
-    }); 
+		io.sockets.emit('message', { event: 'chat', data: chat.xport() }); 
+	}); 
 }
 
 app.listen(3000);
-
-// console.log("Starting timer...");
-// setTimeout(function() { console.log("10 seconds have passed")}, 10000);
-// console.log("Timer is active.");
 
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

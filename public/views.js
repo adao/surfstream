@@ -1,3 +1,34 @@
+var PlaylistView = Backbone.View.extend({
+	initialize: function(options) {
+		_.bindAll(this, 'render');
+		this.model = options.model;
+		this.model.videos.bind('all', this.render);
+		this.el = options.el;
+	},
+	
+	refreshPlaylist: function(data) {
+		console.log("Refreshing playlist...");
+		if(data) {
+			this.model.mport(data);
+			this.render();
+		}
+	},
+	
+	//method works
+	render: function() {
+		console.log('Rendering PlaylistView has been called, playlist has length: '+this.model.videos.length);
+		var playlistHtml = '<ul>';
+		if(this.model.videos.length > 0) {
+			this.model.videos.each(function(video) {
+				playlistHtml += '<li>'+video.get('videoId')+'</li>';
+			});
+			playlistHtml += '</ul>';
+			$(this.el).html(playlistHtml);
+		}
+	}
+})
+
+
 var ChatView = Backbone.View.extend({
     tagName: 'li',
 
