@@ -39,6 +39,10 @@ function setupRoutes(app) {
 		app.get('/history', function(req, res){
 	    res.render('history', { locals: {title: "surfstream.tv"}});
     });
+
+		app.get('/sidebar', function(req, res){
+	    res.render('sidebar', { locals: {title: "surfstream.tv"}});
+    });
 }
 
 exports.setupRoutes = setupRoutes;
