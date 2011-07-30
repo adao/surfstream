@@ -1,129 +1,78 @@
-body {
-  width: 100%;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-<<<<<<< HEAD
-  background-color: #808080;
-=======
+div.chatContainer {
   background-color: #000;
->>>>>>> e1eca69e1a2859780ccfea206967ca00c4ddf2fa
+  width: 300px;
+  height: 225px;
+  max-width: 300px;
+  max-height: 225px;
+}
+div.chatContainer div.chatHeader {
+  width: 300px;
+  height: 30px;
+  background-color: #808080;
+}
+div.chatContainer div.chatHeader img.chatIcon {
+  display: inline-block;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+div.chatContainer div.chatHeader div.chatTitle {
+  font-family: Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 500;
   color: #fff;
-}
-#heading {
-  width: 960px;
-  max-width: 960px;
-  display: block;
-  min-height: 60px;
-  background-color: #000;
-}
-#heading h1 {
-  font-size: 30px;
-  text-indent: 10px;
-}
-#actionbar {
-  width: 960px;
-  max-width: 960px;
-  min-height: 40px;
-  display: block;
-  background-image: url("http://i.imgur.com/Dy0Cr.png");
+  height: 18px;
   position: absolute;
-  margin-top: -19px;
+  top: 15px;
+  left: 50px;
+  width: 36px;
 }
-a {
-  color: #00b7ff;
-}
-li {
-  list-style-type: none;
-}
-#content {
-  margin-top: 40px;
-  width: 960px;
-  max-width: 960px;
-  background-color: #000;
-  min-height: 800px;
-}
-#content #room {
-  width: 660px;
-  max-width: 660px;
-  float: left;
-  background-color: #000;
-  min-height: 700px;
-}
-#content #myytplayer {
-  padding-top: 10px;
-  padding-left: 10px;
-}
-#content #sidebar {
-  float: right;
-  width: 300px;
-  min-height: 700px;
-  background-color: #808080;
-}
-#content #sidebar #library {
-  height: 150px;
-  max-height: 150px;
+div.chatContainer div.messages {
+  height: 165px;
   overflow-y: scroll;
-  overflow-x: none;
+  overflow-x: hidden;
 }
-#content #sidebar #searchYouTube {
-  height: 50px;
-  max-height: 50px;
+div.chatContainer form.inputBox {
+  background-image: url("http://i.imgur.com/SWiIL.png");
+  height: 40px;
+  text-indent: 30px;
 }
-#content #sidebar #videomodule {
-  width: 300px;
-  height: 350px;
-  max-height: 550px;
-  background-color: #808080;
-  display: block;
-  overflow-y: scroll;
+div.chatContainer form.inputBox input {
+  margin-top: 12px;
+  width: 240px;
+  height: 14px;
+  border: 0;
+  outline: 0;
+  background: transparent;
 }
-#content #sidebar #videomodule li {
-  max-height: 65px;
-  display: block;
-}
-#content #sidebar #videomodule #addVideo {
-  text-indent: 3px;
-}
-#content #sidebar #videomodule #searchYouTube {
-  text-indent: 3px;
-}
-#content #sidebar #videomodule #addToPlaylist {
-  text-indent: 3px;
-}
-#content #sidebar #videomodule #videoList {
-  margin-left: -35px;
-}
-#content #sidebar #videomodule #videoBox {
-  display: inline-block;
-  width: 70px;
-  height: 55px;
-  background-color: #00f;
-  text-align: center;
-}
-#content #sidebar #videomodule #videoBox #videoThumbnail {
+div.messageContainer {
+  padding-left: 4px;
+  padding-right: 4px;
   padding-top: 2px;
-  width: 65px;
+  padding-bottom: 2px;
+  min-height: 20px;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: visible;
+  width: 270px;
+  border: 1px solid #000;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 14px;
 }
-#content #sidebar #videomodule #videoTitle {
+div.messageContainer span {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-weight: bold;
   display: inline-block;
-  max-width: 200px;
 }
-#content #sidebar #chat {
-  display: block;
-  height: 155px;
-  overflow-y: scroll;
-  max-height: 155px;
-  color: #000;
+div.messageContainer div {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  display: inline;
+}
+div.historyContainer {
+  height: 350px;
   width: 300px;
-  background-color: #fff;
-}
-#content #sidebar #chat #chat_list {
-  background-color: #00f;
-  margin-left: -30px;
-  font-size: 16px;
-  padding-top: 1px;
-  padding-bottom: 1px;
-  height: 140px;
-}
-#content #sidebar #message {
-  display: block;
+  overflow-x: hidden;
+  overflow-y: visible;
+  background-color: #ffa;
+  border: 1px solid #000;
 }

@@ -27,6 +27,18 @@ function setupRoutes(app) {
 			res.redirect('/');
 		}
 	});
+    
+    app.get('/chat', function(req, res){
+	    res.render('chat', { locals: {title: "surfstream.tv"}});
+    });
+
+		app.get('/chatcell', function(req, res){
+	    res.render('chatcell', { locals: {title: "surfstream.tv"}});
+    });
+
+		app.get('/history', function(req, res){
+	    res.render('history', { locals: {title: "surfstream.tv"}});
+    });
 }
 
 exports.setupRoutes = setupRoutes;
