@@ -50,7 +50,7 @@ div.messageContainer {
   padding-bottom: 2px;
   min-height: 20px;
   height: auto;
-  overflow-x: visible;
+  overflow-x: hidden;
   overflow-y: visible;
   width: 270px;
   border: 1px solid #000;
@@ -67,4 +67,12 @@ div.messageContainer div {
   padding-top: 2px;
   padding-bottom: 2px;
   display: inline;
+}
+div.historyContainer {
+  height: 350px;
+  width: 300px;
+  overflow-x: hidden;
+  overflow-y: visible;
+  background-color: #ffa;
+  border: 1px solid #000;
 }

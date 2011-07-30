@@ -35,6 +35,10 @@ function setupRoutes(app) {
 		app.get('/chatcell', function(req, res){
 	    res.render('chatcell', { locals: {title: "surfstream.tv"}});
     });
+
+		app.get('/history', function(req, res){
+	    res.render('history', { locals: {title: "surfstream.tv"}});
+    });
 }
 
 exports.setupRoutes = setupRoutes;
