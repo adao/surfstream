@@ -222,3 +222,39 @@ div.historyContainer .history .videoHistory {
   display: block;
   background-color: #00f;
 }
+.outer {
+  margin: auto;
+  height: 800px;
+  width: 960px;
+  background-color: #000;
+}
+.outer .header {
+  height: 60px;
+  width: 960px;
+  background-color: #808080;
+  display: block;
+}
+.outer .actionBar {
+  height: 40px;
+  width: 960px;
+  display: block;
+  background-color: #fff;
+}
+.outer .coolshit {
+  height: 700px;
+  width: 960px;
+  background-color: #808080;
+  display: block;
+}
+.outer .coolshit .funroom {
+  float: left;
+  height: 700px;
+  width: 660px;
+  background-color: #000;
+}
+.outer .coolshit .side {
+  float: right;
+  height: 700px;
+  width: 300px;
+  background-color: #00f;
+}
