@@ -15,9 +15,13 @@ window.fbAsyncInit = function() {
 		if (response.authResponse) {
 			//user is already logged in and connected
 			window.location = '/index';
+			console.log("here1");
+		} else if (response.session) {
+			console.log("here2");
+			FB.logout(function(response){});
 		} else {
+			console.log("here3");
 			//yeah right
-			//FB.logout(function(response){});
 		}
 	}
 		
