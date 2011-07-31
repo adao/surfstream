@@ -258,3 +258,60 @@ div.historyContainer .history .videoHistory {
   width: 300px;
   background-color: #00f;
 }
+#searchContainer {
+  height: 400px;
+  width: 300px;
+  border: 1px solid #000;
+}
+#searchContainer #searchBar #inputBox {
+  background-image: url("http://i.imgur.com/SWiIL.png");
+  height: 40px;
+  text-indent: 30px;
+}
+#searchContainer #searchBar #inputBox input {
+  margin-top: 12px;
+  width: 240px;
+  height: 14px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+.searchCellContainer {
+  width: 285px;
+  height: 60px;
+  border: 1px solid #000;
+}
+.searchCellContainer .thumbContainer {
+  float: left;
+  width: 75px;
+  height: 60px;
+}
+.searchCellContainer .cellInfo {
+  float: right;
+  width: 210px;
+  height: 60px;
+}
+.searchCellContainer .cellInfo .videoInfo {
+  background-color: #808080;
+  float: left;
+  width: 180px;
+  height: 60px;
+}
+.searchCellContainer .cellInfo .videoInfo .title {
+  width: 150px;
+  height: 17px;
+  font-weight: bold;
+  font-size: 15px;
+}
+.searchCellContainer .cellInfo .cellButtons {
+  float: right;
+  width: 30px;
+  height: 60px;
+  background-color: #00f;
+}
+.searchCellContainer .cellInfo .cellButtons .addToPlaylist {
+  width: 30px;
+  height: 30px;
+  display: block;
+  background-color: #f00;
+}
