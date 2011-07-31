@@ -8,7 +8,11 @@ window.fbAsyncInit = function() {
 	showLoader(true);
 	button = document.getElementById('fb-auth');
 	button.onclick = function() {
-		FB.login(function(response) {}, {scope:'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence'});
+		FB.login(function(response) {
+				if (response.authRespnse) {
+					window.location = '/index';
+				}
+			}, {scope:'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence'});
 	};
 	
 	function proceed_to_site(response) {
