@@ -42,10 +42,11 @@ $(function(){
 		},
 	
 		initialize: function () {
-			if (this.get("is_main_user")){
-				//FOR ANTHONY -- USE FB SDK HOPEFULLY TO PULL USER DATA HERE
-				
-				
+			if (this.get("is_main_user")) {
+				FB.api('/me', function(info) {
+						this.fbUserObject = info;
+					}
+				);
 			}
 		}
 		
@@ -82,7 +83,7 @@ $(function(){
 			
 			
 			
-			/*
+/*
 			//Sends list of who is DJing
 			//Data is a js array of DJ Socket IDs
 			socket.on('dj:announceDJs', function(data) {
@@ -153,7 +154,7 @@ $(function(){
 					playerLoaded = true;
 				}
 			});
-			*/
+*/
 	
 		},
 		
@@ -181,12 +182,12 @@ $(function(){
 								socket_manager: new SocketManager({
 														socket: this.get("socket"), app: this
 													}),
-								user: new UserModel/*({is_main_user: true, fbid: $(#fb_user_init).html() })*/
+								user: new UserModel({is_main_user: true})
 							});
 			
 			//Give the chat view a reference to the room's chat collection
 			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"), this.get("socket"));
-			
+			//initializeShareBar (this.get(sharing))
 			//Make sure everything gets initialized first before we start the view magic
 			//This can change to render some thing before we init the models and then
 			//finish here later				
@@ -216,7 +217,7 @@ $(function(){
 		model: UserModel,
 		
 		initialize: function () {
-			
+			FB.api('/me/friends')
 		}
 		
 	});
@@ -437,6 +438,17 @@ $(function(){
 		initializeChat: function (chatCollection, socket) {
 			this.chatView = new ChatView({chatCollection: chatCollection, socket: socket});
 		}
+	});
+	
+	/***************/
+	/*****ROUTES*****/
+	/***************/
+	
+	window.BasicRouter = Backbone.Router.extend({
+		routes: {
+			"index": "hideLoginAndSho", 
+		}
+		
 	});
 
 	/* INITIALIZATION */

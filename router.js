@@ -11,7 +11,7 @@ function setupRoutes(app) {
 	});
 	
 	app.get('/', function(req, res){
-		res.render('login', {locals: { title: "surfstream.tv"}});
+		res.render('skeleton', {locals: { title: "surfstream.tv"}});
 	});
 	
 	app.get('/index', function(req, res) {

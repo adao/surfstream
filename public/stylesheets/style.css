@@ -1,3 +1,9 @@
+div.frontdoor {
+  display: none;
+}
+div.outer {
+  display: none;
+}
 div.chatContainer {
   background-color: #000;
   width: 300px;
