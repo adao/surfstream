@@ -12,7 +12,7 @@ function connect(app, express, onUserConnect) {
 
 	app.configure('development', function(){
 	  app.use(auth( [
-	    auth.Facebook({appId : "103932176371457", appSecret: "cc1d3df71633447c7e826171ca12e15d", scope: 'email', callback: "http://127.0.0.1:3000/auth/facebook", failedUri: '/noauth' })
+	    auth.Facebook({appId : "103932176371457", appSecret: "cc1d3df71633447c7e826171ca12e15d", scope: 'email', callback: "http://localhost:3000/auth/facebook", failedUri: '/noauth' })
 	  ]) );
 	});
 	

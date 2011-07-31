@@ -11,17 +11,21 @@ var http = require('http'),
 	io = require('socket.io').listen(app),
 	redis = require('redis'),
 	redisClient = redis.createClient();
+
+// require('tamejs').register();
+// require('mylib.tjs');
+require('jade');
 	
 /* Custom Modules */
 var facebook = require('./facebook'),
 	models = require('./public/models/models');
+	m = require('./models/models');
 
 facebook.connect(app, express);
 io.configure(function () {
 	io.set('log level', 2); 
 })
 
-require('jade');
 
 // Configuration
 
@@ -62,6 +66,9 @@ var clients = new Array();
 var socketToUser = {};
 var socketToPlaylist = {};
 
+//backbone stuff
+var currRoom = new m.Room();
+
 //related to the current video
 var currVideo = null;
 
@@ -69,29 +76,44 @@ function sendDJInfo(socket) {
 	socket.emit('dj:announceDJs', djList);
 }
 
-function sendSocketInfoToClient(socket, fbInfo) {	//is this absolutely necessary? they 
-	fbInfo['socketId'] = socket.id;					//have the data passed to them
-	socket.emit('user:sendSocketId', fbInfo);			//(yes - turns out it is necessary, to pass the socket id)
+function sendRoomState(socket) {
+	announceClients();
+	initializeAndSendPlaylist(socket);
+	sendDJInfo(socket);
+	//sendRoomHistory(socket);
 }
+
+
 
 io.sockets.on('connection', function(socket) {
 	socket.on('user:sendFBData', function(fbUser) {
 		console.log("Saving to redis...user id: "+fbUser.user.id);
-		//TODO: need to check and see if redis already has the id
-		redisClient.set('user:'+fbUser.user.id+':info', JSON.stringify(fbUser)); 
 		console.log('socket id: '+socket.id);
-		console.log('socketToUser[socket.id] = '+socketToUser[socket.id]);
-
+		//TODO: need to check and see if redis already has the id
+		redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
+		
 		console.log('about to push onto clients the user id '+fbUser.user.id);
-		clients.push(fbUser.user.id);
+		clients.push(fbUser.user.id);	
 		socketToUser[socket.id] = fbUser.user.id;
 		
-		announceClients();
-		sendSocketInfoToClient(socket, fbUser);
-		//sendFullPlaylist(socket, fbUser.user.id);
-		initializeAndSendPlaylist(socket, fbUser.user.id);
-		sendDJInfo(socket);
-
+		//Backbone`
+		var name = fbUser.user.name;
+		var currUser = new m.User({name: name, socketId: socket.id, userId: fbUser.user.id});
+		console.log('creating a new User object, with name: '+currUser.get('name'));
+		currRoom.users.add(currUser);
+		
+		redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
+			if(err) {
+				console.log("Error in getting "+fbUser.user.name+" 's points!");
+				return;
+			}
+			if(reply) {
+				console.log("Points for "+fbUser.user.name+": "+reply);
+				currRoom.users.get(socket.id).set({ points: reply});
+			}
+		});
+				
+		sendRoomState(socket);
 		addListeners(socket);
 	});
 
@@ -141,6 +163,31 @@ function addListeners(socket) {
 	socket.on('message', function(msg) { chatMessage(socket, msg) });
 	
 	addPlaylistListeners(socket);
+	addMeterListeners(socket);
+}
+
+function addMeterListeners(socket) {
+	socket.on('meter:upvote', function() {
+		if(!currVideo) return;
+		var currUser = currRoom.users.get(socket.id);
+		console.log('Received upvote request for current video from user '+currUser.get('name'));
+		var success = currRoom.meter.addUpvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
+		if(success) {
+			console.log('...success!');git
+			announceMeter();
+		}
+	});
+	
+	socket.on('meter:downvote', function() {
+		if(!currVideo) return;
+		var currUser = currRoom.users.get(socket.id);
+		console.log('Received upvote request for current video from user '+currUser.get('name'));
+		var success = currRoom.meter.addDownvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
+		if(success) {
+			console.log('..success!');
+			announceMeter();
+		}
+	});
 }
 
 function addPlaylistListeners(socket) {
@@ -201,16 +248,24 @@ function playNextVideo() {
 	playVideoFromPlaylist(djList[currDJIndex]);
 }
 
+function onVideoEnd() {	//add the video the room history
+	var videoFinished = new m.Video({ 
+		videoId: currVideo.get('videoId'), 
+		upvotes: currRoom.meter.up, 
+		downvotes: currRoom.meter.down });
+	currRoom.history.add(videoFinished);
+	
+	
+	playNextVideo();
+}
+
 function announceVideo(videoId, videoDuration) {
-	//currVideo.video = videoId;
 	currVideo.set({ 
 		duration: videoDuration, 
 		timeStart: (new Date()).getTime(),
-		timeoutId: setTimeout(function() { playNextVideo() }, videoDuration*1000)
+		timeoutId: setTimeout(function() { onVideoEnd() }, videoDuration*1000)
 	});
-	//setTimeout(function() { playNextVideo() }, videoDuration*1000);	//*1000 for milliseconds
 	
-	//refactor to pass videoModel
 	io.sockets.emit('video:sendInfo', { video: videoId, time: 0 });
 }
 
@@ -224,7 +279,14 @@ function playVideoFromPlaylist(socketId) {
 	console.log("(playVideoFromPlaylist) Video to play has id: "+videoToPlay.get('videoId'));
 	currVideo = videoToPlay;
 	currVideo.set({ socketIdOfDj: socketId});
+	currRoom.meter.reset();
+	announceMeter();
 	getVideoDurationAndPlay(currVideo.get('videoId'));
+}
+
+function announceMeter() {
+	var meter = currRoom.meter;
+	io.sockets.emit('meter:announce', { upvoteSet: meter.upvoteSet, down: meter.down, up: meter.up });
 }
 
 function removeFromDJ(socketId) {
@@ -238,7 +300,8 @@ function announceDJs() {
 	io.sockets.emit('dj:announceDJs', djList);
 }
 
-function initializeAndSendPlaylist(socket, userId) {
+function initializeAndSendPlaylist(socket) {
+	var userId = socketToUser[socket.id];
 	redisClient.get('user:'+userId+':playlist', function(err, reply) {
 		if(err) {
 			console.log("Error in getting user "+socketToUser[socket.id]+"'s playlist!");
@@ -261,7 +324,7 @@ function clientDisconnect(userId) {
 }
 
 function removeSocketFromRoom(socket) {
-	clientDisconnect(socketToUser[socket.id]);
+	//clientDisconnect(socketToUser[socket.id]);
 	removeFromDJ(socket.id);	
 	
 	var userId = socketToUser[socket.id];
@@ -269,6 +332,11 @@ function removeSocketFromRoom(socket) {
 	if(index != -1) clients.splice(index,1);
 	
 	delete socketToUser[socket.id];
+	
+	//Backbone way
+	var userToRemove = currRoom.users.get(socket.id);
+	redisClient.set('user:'+userId+':points', userToRemove.get('points'));	//save points for user
+	currRoom.users.remove(socket.id);
 	
 	//save playlist for user
 	var userPlaylist = socketToPlaylist[socket.id].xport();
@@ -278,8 +346,20 @@ function removeSocketFromRoom(socket) {
 }
 
 function announceClients() {
-	console.log("'announceClients' fired to all sockets, client count: "+clients.length);
-	io.sockets.emit('clientUpdate', clients.length);
+	var allUsers = [];
+	currRoom.users.each(function(user) {
+		console.log("curr user's attributes: "+JSON.stringify(user.toJSON));
+		var u = {};
+		u.points = user.get('points');
+		u.name = user.get('name');
+		u.avatar = user.get('avatar');
+		u.x = user.get('xCoord');
+		u.y = user.get('yCoord');
+		console.log('curr user: '+u);
+		allUsers.push(u);
+	});
+	console.log("'announceClients' fired to all sockets, client count: "+allUsers.length);
+	io.sockets.emit('users:announce', allUsers);
 }
 //chat tutorial stuff
 function chatMessage(socket, msg){

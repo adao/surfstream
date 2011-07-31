@@ -64,10 +64,22 @@ $(document).ready(function () {
 		}
 	}); 
 	
-	socket.on('clientUpdate', function(numClients) {
-		console.log("client has been updated: "+numClients);
-		//$clientCounter.html(numClients);
+	socket.on('users:announce', function(users) {
+		console.log('received users:announce event, user count: '+users.length);
+		
+		for(var i = 0; i < users.length; i=i+1) {
+			var user = users[i];
+			console.log('received user name: '+user.name)
+			console.log('received user points: '+user.points);
+		}
 	});
+	
+	socket.on('meter:announce', function(data) {
+		console.log('Received meter announce...');
+		console.log('Upvote ids: '+data.up);
+		console.log('Downvote ids: '+data.down);
+		$('#meter').html('Up: '+data.up+' | Down: '+data.down);
+	})
 });
 
 function onYouTubePlayerReady(playerId) {
@@ -137,4 +149,14 @@ function quitDJ() {
 	configureDJButtons();
 	console.log('Quitting DJ');
 	socket.emit('dj:quit');
+}
+
+function upvote() {
+	console.log('trying to upvote');
+	socket.emit('meter:upvote');
+}
+
+function downvote() {
+	console.log('trying to downvote');
+	socket.emit('meter:downvote');
 }
