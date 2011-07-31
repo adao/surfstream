@@ -2,13 +2,15 @@ div.frontdoor
 	display: none
 div.outer
 	display: none
+
 //Chat Box
 div.chatContainer
 	background-color: black
 	width: 300px
-	height: 225px
+	height: 275px
 	max-width: 300px
-	max-height: 225px
+	max-height: 275px
+	display: block
 	div.chatHeader
 		width: 300px
 		height: 30px
@@ -23,11 +25,11 @@ div.chatContainer
 			color: white
 			height: 18px
 			position: absolute
-			top: 15px
-			left: 50px
+			top: 542px
+			left: 740px
 			width: 36px
 	#messages
-		height: 165px
+		height: 215px
 		overflow-y: scroll
 		overflow-x: hidden
 	form.inputBox
@@ -138,9 +140,10 @@ div.historyContainer
 
 //sidebar
 .sidebarContainer
+	background-color: white
+	display: block
 	width: 300px
 	height: 425px
-	border: 1px solid black
 	.viewBar
 		width: 300px
 		height: 25px
@@ -290,3 +293,39 @@ div.historyContainer
 				height: 30px
 				display: block
 				background-color: red
+				
+//room
+#roomContainer
+	width: 600px
+	height: 700px
+	border: 1px solid black
+	
+//room info
+#room-name
+	float: left
+	width: 460px
+	height: 40px
+	text-indent: 10px
+	
+//share
+#share
+	float: right
+	width: 500px
+	height: 40px
+	color: white
+	border: 1px solid black
+	#social
+		float: left
+		width: 250px
+		height: 40px
+		background-color: black
+		#share-text
+			width: 50px
+	#copy
+		float: right
+		width: 250px
+		height: 40px
+		background-color: blue
+	button
+		height: 30px
+		width: 40px
