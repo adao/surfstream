@@ -315,3 +315,8 @@ div.historyContainer .history .videoHistory {
   display: block;
   background-color: #f00;
 }
+#roomContainer {
+  width: 600px;
+  height: 700px;
+  border: 1px solid #000;
+}
