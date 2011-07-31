@@ -5,17 +5,19 @@ html(lang="en")
 	script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
 	script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
 	script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
-	script(type="text/javascript", src="/models/models.js")
-	script(type="text/javascript", src="/controllers/controllers.js")
-	script(type="text/javascript", src="/views.js")
+	script(type="text/javascript", src="/socket.io/socket.io.js")
+	script(type="text/javascript", src="/javascripts/gates.js")
 	link(rel='stylesheet', href='/stylesheets/style.css')
 
 	body
-		.outer
-			.header
-			.actionBar
-			.coolshit
-				.funroom
-				.side
-					.sidebar
-					.chat
+		#outer
+			#header
+			#actionBar
+			#coolshit
+				#funroom
+				#right-side
+					#sidebar
+					#chat
+			include chat
+			include chatcell
+			

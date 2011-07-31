@@ -25,7 +25,7 @@ div.chatContainer div.chatHeader div.chatTitle {
   left: 50px;
   width: 36px;
 }
-div.chatContainer div.messages {
+div.chatContainer #messages {
   height: 165px;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -60,13 +60,16 @@ div.messageContainer {
 div.messageContainer span {
   padding-top: 2px;
   padding-bottom: 2px;
+  margin-right: 3px;
   font-weight: bold;
   display: inline-block;
+  color: #fff;
 }
 div.messageContainer div {
   padding-top: 2px;
   padding-bottom: 2px;
   display: inline;
+  color: #fff;
 }
 div.historyContainer {
   font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -222,37 +225,37 @@ div.historyContainer .history .videoHistory {
   display: block;
   background-color: #00f;
 }
-.outer {
+#outer {
   margin: auto;
   height: 800px;
   width: 960px;
   background-color: #000;
 }
-.outer .header {
+#outer #header {
   height: 60px;
   width: 960px;
   background-color: #808080;
   display: block;
 }
-.outer .actionBar {
+#outer #actionBar {
   height: 40px;
   width: 960px;
   display: block;
   background-color: #fff;
 }
-.outer .coolshit {
+#outer #coolshit {
   height: 700px;
   width: 960px;
   background-color: #808080;
   display: block;
 }
-.outer .coolshit .funroom {
+#outer #coolshit #funroom {
   float: left;
   height: 700px;
   width: 660px;
   background-color: #000;
 }
-.outer .coolshit .side {
+#outer #coolshit #right-side {
   float: right;
   height: 700px;
   width: 300px;

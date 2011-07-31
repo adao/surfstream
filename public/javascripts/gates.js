@@ -1,5 +1,8 @@
 $(function(){
 	
+	_.templateSettings = {
+	  interpolate : /\{\{(.+?)\}\}/g
+	};
 	/**************/
 	/*** MODELS ***/
 	/**************/
@@ -35,8 +38,8 @@ $(function(){
 	
 	window.UserModel = Backbone.Model.extend({
 		defaults: {
-			is_main_user: false,			
-		}
+			is_main_user: false			
+		},
 	
 		initialize: function () {
 			if (this.get("is_main_user")){
@@ -74,7 +77,7 @@ $(function(){
 			
 			//Chat -- msg received
 			socket.on('message', function(msg) {
-				app.get("room").get("chat").add({user: msg.sender, message: msg.text});				
+				app.get("roomModel").get("chatCollection").add({user: "Elliot", message: msg.data});				
 			});
 			
 			
@@ -160,23 +163,33 @@ $(function(){
 	
 	window.SurfStream = Backbone.Model.extend({
 		defaults: {
-			sharing: new SharingModel,			
-		}
+			sharing: new SharingModel			
+		},
 		
-		initialize: function (socket) {
+		initialize: function () {
 			
-			this.set({room: new RoomModel({
+			this.set({mainUI: new MainView()})
+			
+			
+			this.set({roomModel: new RoomModel({
 														player: new PlayerModel,
-														chat: new ChatList, 
+														chatCollection: new ChatList, 
 														search: new SearchModel,
 														video: new VideoModel,
 														user: this.get("user")
 													}),
 								socket_manager: new SocketManager({
-														socket: socket, app: this
+														socket: this.get("socket"), app: this
 													}),
 								user: new UserModel/*({is_main_user: true, fbid: $(#fb_user_init).html() })*/
 							});
+			
+			//Give the chat view a reference to the room's chat collection
+			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"), this.get("socket"));
+			
+			//Make sure everything gets initialized first before we start the view magic
+			//This can change to render some thing before we init the models and then
+			//finish here later				
 							
 		}
 	});
@@ -316,16 +329,49 @@ $(function(){
 		
 	});
 	
-	window.ChatList = Backbone.View.extend({
-		initialize: function () {
-			
-		}
+	window.ChatView = Backbone.View.extend({
+		el: '#chat',
 		
+		chatTemplate: _.template($('#chat-template').html()),
+		
+		
+		initialize: function () {
+			this.render();
+			this.options.chatCollection.bind("add", this.makeNewChatMsg);
+		},
+		
+		render: function() {
+			$(this.el).html(this.chatTemplate());
+			return this;
+		},
+		
+		events: {
+        "submit .inputBox" : "sendMessage"
+    },
+
+		sendMessage : function (event) {
+			var userMessage = this.$('input[name=message]').val();
+			this.options.socket.emit("chat:msgRcvd",{name: "Elliot", text:  userMessage });
+			console.log("FUCKL")
+			return false;
+		},
+		
+		makeNewChatMsg: function (chat) {
+			new ChatCell({user: chat.get("user"), msg: chat.get("message")});
+		}
 	});
 	
 	window.ChatCell = Backbone.View.extend({
+		
+		chatCellTemplate: _.template($('#chatcell-template').html()),
+		
 		initialize: function () {
-			
+			$("#messages").append(this.render().el);
+		},
+		
+		render: function() {
+			$(this.el).html(this.chatCellTemplate({user: this.options.user, msg: this.options.msg }));
+			return this;
 		}
 		
 	});
@@ -380,10 +426,25 @@ $(function(){
 		}
 		
 	});
+	
+	window.MainView = Backbone.View.extend({
+		el: 'body',
+		
+		initialize: function () {
+			
+		},
+		
+		initializeChat: function (chatCollection, socket) {
+			this.chatView = new ChatView({chatCollection: chatCollection, socket: socket});
+		}
+	});
 
 	/* INITIALIZATION */
 	
+
+
 	socket_init = io.connect();
 	window.SurfStream = new SurfStream({socket: socket_init});
+	console.log("started app");
 	
 });

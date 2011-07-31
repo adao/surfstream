@@ -86,9 +86,9 @@ io.sockets.on('connection', function(socket) {
 		sendFullPlaylist(socket, fbUser.user.id);
 		sendDJInfo(socket);
 
-		addListeners(socket);
+		
 	});
-	
+	addListeners(socket);
 	if(currVideo) {
 		var timeIn = new Date();
 		var timeDiff = (timeIn.getTime() - currVideo.timeStart) / 1000; //time difference in seconds
@@ -132,7 +132,7 @@ function addListeners(socket) {
 	});
 	
 	//taken from the chat tutorial
-	socket.on('message', function(msg) { chatMessage(socket, msg) });
+	socket.on('chat:msgRcvd', function(msg) { console.log("christ" + msg); chatMessage(socket, msg) });
 }
 
 function getVideoDurationAndPlay(videoId) {
@@ -239,17 +239,17 @@ function announceClients() {
 //chat tutorial stuff
 function chatMessage(socket, msg){
     var chat = new models.ChatEntry();
-    chat.mport(msg);
-
+    chat.name = msg.name;
+		chat.text = msg.text;
     redisClient.incr('next.chatentry.id', function(err, newId) {
         chat.set({id: newId});
         nodeChatModel.chats.add(chat);
-        console.log('(' + socket.id + ') ' + chat.get('id') + ' ' + chat.get('name') + ': ' + chat.get('text'));
+        console.log('(' + socket.id + ') ' + chat.get('id') + ' ' + chat.name + ': ' + chat.text);
 
         redisClient.rpush('chatentries', chat.xport(), redis.print);
         redisClient.bgsave();
 				
-        io.sockets.emit('message', { event: 'chat', data: chat.xport() }); 
+        io.sockets.emit('message', { event: 'chat', data: chat.text }); 
     }); 
 }
 

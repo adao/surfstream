@@ -22,7 +22,7 @@ function setupRoutes(app) {
 	app.get('/index', function(req, res) {
 		//if (req.isAuthenticated()) {
 			//console.log("received request, calling 'onUserConnect' for "+req.getAuthDetails().user.name);
-			res.render('index', { locals: { title: "surfstream.tv"}});
+			res.render('skeleton', { locals: { title: "surfstream.tv"}});
 		//} else {
 		//	res.redirect('/');
 		//}
