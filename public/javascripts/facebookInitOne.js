@@ -22,6 +22,7 @@ window.fbAsyncInit = function() {
 			console.log("here1");
 		} else if (response.session) {
 			console.log("here2");
+			console.log(response);
 			FB.logout(function(response){});
 		} else {
 			console.log("here3");
@@ -30,7 +31,7 @@ window.fbAsyncInit = function() {
 	}
 		
 	// run once with current status and whenever the status changes
-	FB.getLoginStatus(proceed_to_site);
+	//FB.getLoginStatus(proceed_to_site);
 	FB.Event.subscribe('auth.statusChange', proceed_to_site);
 };
 (function() {
