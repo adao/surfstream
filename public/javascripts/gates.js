@@ -1,8 +1,10 @@
 $(function(){
-	
+	console.log("IN GATES");
 	_.templateSettings = {
 	  interpolate : /\{\{(.+?)\}\}/g
 	};
+	
+	ZeroClipboard.setMoviePath('/swf/ZeroClipboard.swf');
 	/**************/
 	/*** MODELS ***/
 	/**************/
@@ -39,14 +41,21 @@ $(function(){
 	window.UserModel = Backbone.Model.extend({
 		defaults: {
 			is_main_user: false			
-		},
+		}, 
 	
 		initialize: function () {
+			
+		},
+		
+		getUserData: function(self) {
 			if (this.get("is_main_user")) {
 				FB.api('/me', function(info) {
-						this.fbUserObject = info;
-					}
-				);
+					console.log(info);
+					self.set({fbUserInfo: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
+				}.bind(this));
+				FB.api('/me/friends', function(response) {
+					console.log(response);
+				});
 			}
 		}
 		
@@ -81,7 +90,9 @@ $(function(){
 				app.get("roomModel").get("chatCollection").add({user: "Elliot", message: msg.data});				
 			});
 			
-			
+			socket.on('playlist:initial', function(response) {
+				app.get("user").set({playList: 'response'});
+			});
 			
 /*
 			//Sends list of who is DJing
@@ -182,11 +193,16 @@ $(function(){
 								socket_manager: new SocketManager({
 														socket: this.get("socket"), app: this
 													}),
-								user: new UserModel({is_main_user: true})
+								user: new UserModel({
+									is_main_user: true,
+									playList: new VideoList()
+								})
 							});
-			
+			this.get('user').getUserData(this.get('user'));
 			//Give the chat view a reference to the room's chat collection
 			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"), this.get("socket"));
+			this.get("mainUI").initializeTopBar();
+			this.get("mainUI").initializePlayList({collection: this.get("user").get("playList")});
 			//initializeShareBar (this.get(sharing))
 			//Make sure everything gets initialized first before we start the view magic
 			//This can change to render some thing before we init the models and then
@@ -217,14 +233,14 @@ $(function(){
 		model: UserModel,
 		
 		initialize: function () {
-			FB.api('/me/friends')
+			
 		}
 		
 	});
 	
 	/*** BEGIN: PLAYLIST AND SUBCLASSES ***/
 	
-	window.Playlist = Backbone.Collection.extend({
+	window.VideoList = Backbone.Collection.extend({
 		model: VideoModel,
 		
 		initialize: function () {
@@ -233,7 +249,14 @@ $(function(){
 		
 	});
 	
-	window.PersonalHistoryList = window.Playlist.extend({
+	window.PlayList = Backbone.Collection.extend({
+		initialize: function() {
+			
+		}
+		
+	});
+	
+	window.PersonalHistoryList = window.VideoList.extend({
 		initialize: function () {
 			
 		}
@@ -241,14 +264,14 @@ $(function(){
 	});
 	
 	
-	window.RoomHistoryList = window.Playlist.extend({
+	window.RoomHistoryList = window.VideoList.extend({
 		initialize: function () {
 			
 		}
 		
 	});
 	
-	window.SuggestionsList = window.Playlist.extend({
+	window.SuggestionsList = window.VideoList.extend({
 		initialize: function () {
 			
 		}
@@ -281,25 +304,87 @@ $(function(){
 	/*****VIEWS*****/
 	/***************/
 
-  window.TopBar = Backbone.View.extend({
+  window.TopBarView = Backbone.View.extend({
 		initialize: function () {
 			
 		}
-		
 	});
 	
-	window.RoomInfo = Backbone.View.extend({
-		initialize: function () {
-			
-		}
+	window.RoomInfoView = Backbone.View.extend({
+		el: '#roomInfo',
 		
+		roomInfoTemplate: _.template($('#room-info-template').html()),
+		
+		initialize: function () {
+			$(this.el).html(this.roomInfoTemplate({roomName: this.options.roomName}));
+		}
 	});
 	
-	window.ShareBar = Backbone.View.extend({
-		initialize: function () {
-			
-		}
+	window.ShareBarView = Backbone.View.extend({
+		el: '#shareBar',
 		
+		shareTemplate: _.template($('#share-template').html()),
+		
+		initialize: function () {
+			$(this.el).html(this.shareTemplate());
+			$('#shareFB').css('background-image', '/images/fb_small.png');
+			$('#shareTwit').css('background-image', '/images/twitter_small.png');
+			$('#shareEmail').css('background-image', '/images/email_small.png');
+			$('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
+			$('#copy-button-container').html("<div id=\"copy-button\">Copy</div>");
+			var link = $('input:text').val();
+			console.log(link);
+		  var clip = new ZeroClipboard.Client();
+			clip.setText(link);
+			clip.glue('copy-button', 'copy-button-container');
+		},
+		
+		events: {
+        "click #shareFB" : "fbDialog",
+				"click #shareTwit" : "tweetDialog",
+				"click #shareEmail" : "openEmail"
+    },
+
+		fbDialog: function() {
+			FB.ui(
+				{
+					method: 'feed',
+					name: 'Just watched on SurfStream.tv',
+					url: 'www.youtube.com',
+					caption: 'Join your friends and watch videos online!',
+					description: 'SurfStream.tv lets you explore new video content on the web. Very similar to turntable.fm'// ,
+					// 					picture: '/images/logo.png'
+				},
+				function(response) {
+					if (response && response.post_id) {
+						alert('Post was published.');
+					} else {
+						alert('Post was not published.');
+					}
+				}
+			);
+		},
+		
+		tweetDialog: function() {
+			var width  = 575,
+			  height = 400,
+			  left = ($(window).width()  - width)  / 2,
+       	top = ($(window).height() - height) / 2,
+       	url = "http://twitter.com/share?text=Check%20out%20this%20awesome%20brooooooom!",
+       	opts = 'status=1' +
+						',width='  + width  +
+            ',height=' + height +
+           	',top='    + top    +
+            ',left='   + left;
+
+			  window.open(url, 'twitter', opts);
+			
+		},
+		
+		openEmail: function() {
+			window.open("mailto:friend@domainname.com?subject=Come%20to%20SurfStream.tv%20sometime!&body=God%20this%20shit%20is%20" + 
+				"awesome!%2C%20here's%20a%20link%0A%0A" + window.location, '_parent');
+		}
 	});
 
 	window.Tabs = Backbone.View.extend({
@@ -316,18 +401,32 @@ $(function(){
 		
 	});
 	
-	window.VideoList = Backbone.View.extend({
-		initialize: function () {
-			
-		}
+	window.VideoListView = Backbone.View.extend({
+		el: '#video-list',
 		
+		videoListTemplate: _.template($('#video-list-template').html()),
+		
+		initialize: function () {
+			this.collection.bind('add', this.addVideo, this);
+		},
+		
+		addVideo: function (videoModel) {
+			var videoCellView = new VideoCellView({model: videoModel});
+			$(this.el).append(videoCellView.render().el);
+		}
 	});
 	
-	window.VideoCell = Backbone.View.extend({
+	window.VideoCellView = Backbone.View.extend({
+		videoCellTemplate: _.template($('#video-list-cell-template').html()),
+				
 		initialize: function () {
 			
-		}
+		},
 		
+		render: function() {
+			$(this.el).html(this.videoCellTemplate({title: this.model.get('title')}));
+			return this;
+		}
 	});
 	
 	window.ChatView = Backbone.View.extend({
@@ -437,19 +536,36 @@ $(function(){
 		
 		initializeChat: function (chatCollection, socket) {
 			this.chatView = new ChatView({chatCollection: chatCollection, socket: socket});
-		}
-	});
-	
-	/***************/
-	/*****ROUTES*****/
-	/***************/
-	
-	window.BasicRouter = Backbone.Router.extend({
-		routes: {
-			"index": "hideLoginAndSho", 
-		}
+		},
 		
+		initializeTopBar: function () {
+			this.roomInfoView = new RoomInfoView(({roomName: 'Placeholder'}));
+			this.shareBarView = new ShareBarView();
+		},
+		
+		initializePlayList: function(options) {
+			var playList = [
+				{title: 'title1'},
+				{title: 'title2'},
+				{title: 'title3'},
+				{title: 'title4'},
+				{title: 'title5'},
+				{title: 'title6'},
+				{title: 'title7'},
+				{title: 'title8'},
+				{title: 'title9'}
+			];
+			this.videoListView = new VideoListView({collection: options.collection});
+			_.each(playList, this.addToPlayList, this);
+		},
+		
+		addToPlayList: function(video) {
+			this.videoListView.collection.add({
+				title: video.title
+			});
+		}
 	});
+	
 
 	/* INITIALIZATION */
 	

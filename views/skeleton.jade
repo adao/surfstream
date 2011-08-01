@@ -5,6 +5,8 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 	script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
 	script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
 	script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
+	script(type="text/javascript", src="/javascripts/ZeroClipboard.js")
+	script(type="text/javascript", src="/javascripts/jQueryExtension.js")
 	script(type="text/javascript", src="/socket.io/socket.io.js")
 	link(rel='stylesheet', href='/stylesheets/style.css')
 	link(rel='stylesheet', href='/stylesheets/login.css')
@@ -26,11 +28,18 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		#outer
 			#header
 			#actionBar
+				#roomInfo
+				#shareBar
 			#coolshit
 				#funroom
 				#right-side
 					#sidebar
 					#chat
+					#video-list
 			include chat
 			include chatcell
 			include sidebar
+			include roominfo
+			include share
+			include videolist
+			include videolistcell

@@ -41,6 +41,14 @@ function setupRoutes(app) {
 		app.get('/playlistcell', function(req, res){
 	    res.render('playlistcell', { locals: {title: "surfstream.tv"}});
     });
+
+		app.get('/roominfo', function(req, res){
+	    res.render('roominfo', { locals: {title: "surfstream.tv"}});
+    });
+
+		app.get('/share', function(req, res){
+	    res.render('share', { locals: {title: "surfstream.tv"}});
+    });
 }
 
 exports.setupRoutes = setupRoutes;

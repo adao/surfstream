@@ -14,7 +14,10 @@ window.fbAsyncInit = function() {
 		console.log(response);
 		if (response.authResponse) {
 			//user is already logged in and connected
-			$.getScript("/javascripts/gates.js", function(){});
+			$.getScript("/javascripts/gates.js", function(data, textStatus){
+				//console.log(data);
+				console.log(textStatus);
+			});
 			document.getElementById('frontdoor').style.display = 'none';
 			document.getElementById('outer').style.display = 'block';
 		} else if (response.session) {
@@ -27,8 +30,8 @@ window.fbAsyncInit = function() {
 	}
 		
 	// run once with current status and whenever the status changes
-	FB.getLoginStatus(proceed_to_site);
 	FB.Event.subscribe('auth.statusChange', proceed_to_site);
+	
 	document.getElementById('frontdoor').style.display = 'inline-block';
 	document.getElementById('outer').style.display = 'none';
 };
