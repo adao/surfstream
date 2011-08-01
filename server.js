@@ -247,7 +247,7 @@ function chatMessage(socket, msg){
         console.log('(' + socket.id + ') ' + chat.get('id') + ' ' + chat.name + ': ' + chat.text);
 
         redisClient.rpush('chatentries', chat.xport(), redis.print);
-        redisClient.bgsave();
+        //redisClient.bgsave();
 				
         io.sockets.emit('message', { event: 'chat', data: chat.text }); 
     }); 

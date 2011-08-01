@@ -26,9 +26,33 @@ $(function(){
 	});
 	
 	window.SearchModel = Backbone.Model.extend({
-		initialize: function () {
-			
+		
+		executeSearch : function(searchQuery) {
+			this.set({searchTerm: searchQuery});
+			$.ajax({
+				url:"http://gdata.youtube.com/feeds/api/videos?max-results=10&alt=json&q=" + searchQuery,
+			  success: $.proxy(this.processResults, this)
+			});
+		},
+		
+		processResults: function(data) {
+			var feed, entries, resultsCollection, buildup;
+			feed = data.feed;
+		  entries = feed.entry || [];
+			resultsCollection = this.get("resultsList");
+			buildup = [];
+		  for (var i = 0; i < entries.length; i++) {
+		    var entry = entries[i];
+		    var videoResult = {
+		      title: entry.title.$t,
+		      image_src: entry.media$group.media$thumbnail[0].url,
+		      videoUrl: entry.id.$t
+		    };
+					buildup.push(videoResult);			
+		  }
+			resultsCollection.add(buildup);
 		}
+		
 	});
 	
 	window.SharingModel = Backbone.Model.extend({
@@ -67,6 +91,8 @@ $(function(){
 		}
 		
 	});
+	
+	socket_init = io.connect();
 	
 	window.SocketManager = Backbone.Model.extend({
 		initialize: function () {
@@ -169,8 +195,14 @@ $(function(){
 	
 		},
 		
+	},{
+		socket: socket_init,
 		
+		/* Outgoing Socket Events*/
 		
+		sendMsg: function(data) {
+			this.socket.emit("chat:msgRcvd",data);
+		}
 	});
 	
 	window.SurfStream = Backbone.Model.extend({
@@ -185,10 +217,8 @@ $(function(){
 			
 			this.set({roomModel: new RoomModel({
 														player: new PlayerModel,
-														chatCollection: new ChatList, 
-														search: new SearchModel,
+														chatCollection: new ChatList,
 														video: new VideoModel,
-														user: this.get("user")
 													}),
 								socket_manager: new SocketManager({
 														socket: this.get("socket"), app: this
@@ -196,14 +226,15 @@ $(function(){
 								user: new UserModel({
 									is_main_user: true,
 									playList: new VideoList()
-								})
+								}),
+								search: new SearchModel({resultsList: new PlayList})
 							});
-			this.get('user').getUserData(this.get('user'));
+			//this.get('user').getUserData(this.get('user'));
 			//Give the chat view a reference to the room's chat collection
-			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"), this.get("socket"));
 			this.get("mainUI").initializeTopBar();
-			this.get("mainUI").initializePlayList({collection: this.get("user").get("playList")});
 			//initializeShareBar (this.get(sharing))
+			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"));
+			this.get("mainUI").initializeSidebar(this.get("search"), this.get("user").get("playList"));
 			//Make sure everything gets initialized first before we start the view magic
 			//This can change to render some thing before we init the models and then
 			//finish here later				
@@ -229,6 +260,7 @@ $(function(){
 		}
 	});
 	
+	/*
 	window.FriendList = Backbone.Collection.extend({
 		model: UserModel,
 		
@@ -237,7 +269,7 @@ $(function(){
 		}
 		
 	});
-	
+	*/
 	/*** BEGIN: PLAYLIST AND SUBCLASSES ***/
 	
 	window.VideoList = Backbone.Collection.extend({
@@ -249,6 +281,7 @@ $(function(){
 		
 	});
 	
+
 	window.PlayList = Backbone.Collection.extend({
 		initialize: function() {
 			
@@ -256,7 +289,8 @@ $(function(){
 		
 	});
 	
-	window.PersonalHistoryList = window.VideoList.extend({
+
+	/*window.PersonalHistoryList = window.Playlist.extend({
 		initialize: function () {
 			
 		}
@@ -276,11 +310,11 @@ $(function(){
 			
 		}
 		
-	});
+	}); */
 	
 	/*** END: PLAYLIST AND SUBCLASSES ***/
 	
-	
+	/*
 	window.RoomUsersList = Backbone.Collection.extend({
 		model: UserModel,
 		
@@ -288,15 +322,15 @@ $(function(){
 			
 		}
 	});
-	
-	/*NOT IMPLEMENTING THIS WEEKEND (7/30)*/
+	*/
+	/*NOT IMPLEMENTING THIS WEEKEND (7/30)*/  /*
 	window.RoomList = Backbone.Collection.extend({
 		model: RoomModel,
 		
 		initialize: function () {
 			
 		}
-	});
+	}); */
 
 	
 	
@@ -394,9 +428,109 @@ $(function(){
 		
 	});
 	
-	window.SearchBar = Backbone.View.extend({
+	window.SideBar = Backbone.View.extend({
+		el: '#sidebar',
+		
+		sidebarTemplate: _.template($('#sidebar-template').html()),
+		
+		events: {
+        "click .search" : "activateSearch",
+				"click .playlist" : "activatePlaylist"
+    },
 		initialize: function () {
-			
+			this.render();
+			this.currentTab = "search";
+			this.search = new SearchView({searchModel: this.options.searchModel});
+			this.playlist = new VideoListView({playList: this.options.playList})
+		},
+		
+		render: function() {
+			$(this.el).html(this.sidebarTemplate());
+			return this;
+		},
+		
+		activatePlaylist : function() {
+			if (this.currentTab == "playlist") return;
+			this.currentTab = "playlist";
+			this.$(".playlist").addClass("active");
+			this.$(".search").removeClass("active");
+			this.search.hide();
+			this.playlist.show();
+		},
+		
+		activateSearch : function() {
+			if (this.currentTab == "search") return;
+			this.currentTab = "search";
+			this.$(".search").addClass("active");
+			this.$(".playlist").removeClass("active");
+			this.playlist.hide();
+			this.search.show();
+		}
+		
+		
+	});
+	
+	window.SearchView = Backbone.View.extend({
+		
+		searchViewTemplate: _.template($('#searchView-template').html()),
+		
+		initialize: function () {
+			this.render();
+			//Hack because of nested view bindings (events get eaten by Sidebar)
+			var input = $("#searchBar .inputBox")
+			input.bind("submit", {searchview: this },this.searchVideos);
+			this.options.searchModel.bind("change:searchQuery", this.updateSearchQuery);
+			this.options.searchModel.get("resultsList").bind("add", this.updateResults);
+		},
+		
+		
+		render: function() {
+			$(".videoView").html(this.searchViewTemplate());
+			return this;
+		},
+		
+		hide : function() {
+			$(this.el).hide(); 
+		},
+		
+		show : function() {
+			$(this.el).show(); 
+		},
+		
+		searchVideos : function(event) {
+			event.preventDefault();
+			var query = $($('input[name=search]')[0]).val();
+			event.data.searchview.options.searchModel.executeSearch(query);
+			return false;
+		},
+		
+		updateSearchQuery : function(query) {
+			this.$('#searchBox').val(query);			
+		},
+		
+		updateResults : function (model, collection) {
+				new SearchCell({video: model})						
+		}
+		
+		
+		
+	});
+	
+	window.SearchCell = Backbone.View.extend({
+		
+		searchCellTemplate: _.template($('#searchCell-template').html()),
+		
+		initialize: function () {
+			this.addToPlaylist();
+		},
+		
+		addToPlaylist: function (){
+			$("#searchContainer").append(this.render({thumb: this.options.video.get("image_src"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoURL")}).el);
+		},
+		
+		render: function(searchResult) {
+			$(this.el).html(this.searchCellTemplate(searchResult));
+			return this;
 		}
 		
 	});
@@ -407,7 +541,20 @@ $(function(){
 		videoListTemplate: _.template($('#video-list-template').html()),
 		
 		initialize: function () {
-			this.collection.bind('add', this.addVideo, this);
+			this.options.playList.bind('add', this.addVideo, this);
+		},
+		
+		hide : function() {
+			$(this.el).hide(); 
+		},
+		
+		show : function() {
+			$(this.el).show(); 
+		},
+		
+		render: function() {
+			$(this.el).html(this.playlistTemplate());
+			return this;
 		},
 		
 		addVideo: function (videoModel) {
@@ -451,8 +598,8 @@ $(function(){
 
 		sendMessage : function (event) {
 			var userMessage = this.$('input[name=message]').val();
-			this.options.socket.emit("chat:msgRcvd",{name: "Elliot", text:  userMessage });
-			console.log("FUCKL")
+			this.$('input[name=message]').val('');
+			SocketManager.sendMsg({name: "Elliot", text:  userMessage });
 			return false;
 		},
 		
@@ -534,45 +681,26 @@ $(function(){
 			
 		},
 		
-		initializeChat: function (chatCollection, socket) {
-			this.chatView = new ChatView({chatCollection: chatCollection, socket: socket});
-		},
-		
 		initializeTopBar: function () {
 			this.roomInfoView = new RoomInfoView(({roomName: 'Placeholder'}));
 			this.shareBarView = new ShareBarView();
 		},
-		
-		initializePlayList: function(options) {
-			var playList = [
-				{title: 'title1'},
-				{title: 'title2'},
-				{title: 'title3'},
-				{title: 'title4'},
-				{title: 'title5'},
-				{title: 'title6'},
-				{title: 'title7'},
-				{title: 'title8'},
-				{title: 'title9'}
-			];
-			this.videoListView = new VideoListView({collection: options.collection});
-			_.each(playList, this.addToPlayList, this);
+			
+		initializeChat: function (chatCollection) {
+			this.chatView = new ChatView({chatCollection: chatCollection});
 		},
 		
-		addToPlayList: function(video) {
-			this.videoListView.collection.add({
-				title: video.title
-			});
+		initializeSidebar: function (search, playlist) {
+			this.sidebar = new SideBar({searchModel: search, playList: playlist});
 		}
+		
+		
 	});
 	
 
 	/* INITIALIZATION */
 	
-
-
-	socket_init = io.connect();
-	window.SurfStream = new SurfStream({socket: socket_init});
+	window.SurfStreamApp = new SurfStream({socket: socket_init});
 	console.log("started app");
 	
 });

@@ -30,6 +30,7 @@ window.fbAsyncInit = function() {
 	}
 		
 	// run once with current status and whenever the status changes
+
 	FB.Event.subscribe('auth.statusChange', proceed_to_site);
 	
 	document.getElementById('frontdoor').style.display = 'inline-block';
