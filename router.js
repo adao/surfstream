@@ -11,21 +11,11 @@ function setupRoutes(app) {
 	});
 	
 	app.get('/', function(req, res){
-	 // if( req.isAuthenticated() ) {
-	    res.redirect('/index');
-	 // }
-	 // else {
-	 //   res.render('login', {locals: { title: "surfstream.tv"}});
-	 // }
+		res.render('skeleton', {locals: { title: "surfstream.tv"}});
 	});
 	
 	app.get('/index', function(req, res) {
-		//if (req.isAuthenticated()) {
-			//console.log("received request, calling 'onUserConnect' for "+req.getAuthDetails().user.name);
-			res.render('skeleton', { locals: { title: "surfstream.tv"}});
-		//} else {
-		//	res.redirect('/');
-		//}
+		res.render('skeleton', { locals: { title: "surfstream.tv"}});
 	});
     
     app.get('/chat', function(req, res){
