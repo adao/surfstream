@@ -66,10 +66,11 @@ $(function(){
 		},
 	
 		initialize: function () {
-			if (this.get("is_main_user")){
-				//FOR ANTHONY -- USE FB SDK HOPEFULLY TO PULL USER DATA HERE
-				
-				
+			if (this.get("is_main_user")) {
+				FB.api('/me', function(info) {
+						this.fbUserObject = info;
+					}
+				);
 			}
 		}
 		
@@ -108,7 +109,7 @@ $(function(){
 			
 			
 			
-			/*
+/*
 			//Sends list of who is DJing
 			//Data is a js array of DJ Socket IDs
 			socket.on('dj:announceDJs', function(data) {
@@ -179,7 +180,7 @@ $(function(){
 					playerLoaded = true;
 				}
 			});
-			*/
+*/
 	
 		},
 		
@@ -211,7 +212,7 @@ $(function(){
 								socket_manager: new SocketManager({
 														socket: this.get("socket"), app: this
 													}),
-								user: new UserModel/*({is_main_user: true, fbid: $(#fb_user_init).html() })*/,
+								user: new UserModel/({is_main_user: true}),
 								search: new SearchModel({resultsList: new Playlist})
 							});
 			
@@ -250,7 +251,7 @@ $(function(){
 		model: UserModel,
 		
 		initialize: function () {
-			
+			FB.api('/me/friends')
 		}
 		
 	});
@@ -473,6 +474,7 @@ $(function(){
 
 		sendMessage : function (event) {
 			var userMessage = this.$('input[name=message]').val();
+			this.$('input[name=message]').val('');
 			SocketManager.sendMsg({name: "Elliot", text:  userMessage });
 			return false;
 		},
@@ -567,6 +569,17 @@ $(function(){
 			this.search = new SearchView({searchModel: search});
 		}
 		
+		
+	});
+	
+	/***************/
+	/*****ROUTES*****/
+	/***************/
+	
+	window.BasicRouter = Backbone.Router.extend({
+		routes: {
+			"index": "hideLoginAndSho", 
+		}
 		
 	});
 
