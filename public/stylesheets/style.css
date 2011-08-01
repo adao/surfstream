@@ -177,6 +177,9 @@ div.historyContainer .history .videoHistory {
   height: 25px;
   float: right;
 }
+.sidebarContainer .viewBar .active {
+  background-color: #a8f3f7;
+}
 .sidebarContainer .videoView {
   width: 300px;
   height: 450px;

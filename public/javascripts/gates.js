@@ -212,14 +212,13 @@ $(function(){
 								socket_manager: new SocketManager({
 														socket: this.get("socket"), app: this
 													}),
-								user: new UserModel/({is_main_user: true}),
+								user: new UserModel({is_main_user: true, playList: new Playlist}),
 								search: new SearchModel({resultsList: new Playlist})
 							});
 			
 			//Give the chat view a reference to the room's chat collection
 			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"));
-			this.get("mainUI").initializeSidebar();
-			this.get("mainUI").initializeSearch(this.get("search"));
+			this.get("mainUI").initializeSidebar(this.get("search"), this.get("user").get("playList"));
 			
 			//Make sure everything gets initialized first before we start the view magic
 			//This can change to render some thing before we init the models and then
@@ -348,15 +347,39 @@ $(function(){
 		
 		sidebarTemplate: _.template($('#sidebar-template').html()),
 		
-		
+		events: {
+        "click .search" : "activateSearch",
+				"click .playlist" : "activatePlaylist"
+    },
 		initialize: function () {
 			this.render();
+			this.currentTab = "search";
+			this.search = new SearchView({searchModel: this.options.searchModel});
+			this.playlist = new VideoList({playList: this.options.playList})
 		},
 		
 		render: function() {
 			$(this.el).html(this.sidebarTemplate());
 			return this;
 		},
+		
+		activatePlaylist : function() {
+			if (this.currentTab == "playlist") return;
+			this.currentTab = "playlist";
+			this.$(".playlist").addClass("active");
+			this.$(".search").removeClass("active");
+			this.search.hide();
+			this.playlist.show();
+		},
+		
+		activateSearch : function() {
+			if (this.currentTab == "search") return;
+			this.currentTab = "search";
+			this.$(".search").addClass("active");
+			this.$(".playlist").removeClass("active");
+			this.playlist.hide();
+			this.search.show();
+		}
 		
 		
 	});
@@ -378,6 +401,14 @@ $(function(){
 		render: function() {
 			$(".videoView").html(this.searchViewTemplate());
 			return this;
+		},
+		
+		hide : function() {
+			$(this.el).hide(); 
+		},
+		
+		show : function() {
+			$(this.el).show(); 
 		},
 		
 		searchVideos : function(event) {
@@ -424,6 +455,14 @@ $(function(){
 		
 		initialize: function () {
 			
+		},
+		
+		hide : function() {
+			$(this.el).hide(); 
+		},
+		
+		show : function() {
+			$(this.el).show(); 
 		},
 		
 		render: function() {
@@ -561,12 +600,8 @@ $(function(){
 			this.chatView = new ChatView({chatCollection: chatCollection});
 		},
 		
-		initializeSidebar: function () {
-			this.sidebar = new SideBar;
-		},
-		
-		initializeSearch: function (search) {
-			this.search = new SearchView({searchModel: search});
+		initializeSidebar: function (search, playlist) {
+			this.sidebar = new SideBar({searchModel: search, playList: playlist});
 		}
 		
 		
