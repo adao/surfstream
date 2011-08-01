@@ -1,9 +1,9 @@
-#video-list-cell-template
+#video-list-cell-template(style="display:none;")
 	.videoListCellContainer
-		.thumbContainer
+		img.thumbContainer
 		.cellInfo
 			.videoInfo
 				.title {{ title }}
 			.cellButtons
-				.remove
-				.toTheTop
+				button.remove(id ='playlist_video_{{ vid_id }}') 
+				button.toTheTop

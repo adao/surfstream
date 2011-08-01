@@ -225,9 +225,9 @@ $(function(){
 													}),
 								user: new UserModel({
 									is_main_user: true,
-									playList: new VideoList()
+									playList: new VideoList
 								}),
-								search: new SearchModel({resultsList: new PlayList})
+								search: new SearchModel({resultsList: new VideoList})
 							});
 			//this.get('user').getUserData(this.get('user'));
 			//Give the chat view a reference to the room's chat collection
@@ -282,12 +282,7 @@ $(function(){
 	});
 	
 
-	window.PlayList = Backbone.Collection.extend({
-		initialize: function() {
-			
-		}
-		
-	});
+
 	
 
 	/*window.PersonalHistoryList = window.Playlist.extend({
@@ -421,12 +416,6 @@ $(function(){
 		}
 	});
 
-	window.Tabs = Backbone.View.extend({
-		initialize: function () {
-			
-		}
-		
-	});
 	
 	window.SideBar = Backbone.View.extend({
 		el: '#sidebar',
@@ -440,7 +429,7 @@ $(function(){
 		initialize: function () {
 			this.render();
 			this.currentTab = "search";
-			this.search = new SearchView({searchModel: this.options.searchModel});
+			this.search = new SearchView({searchModel: this.options.searchModel, playList: this.options.playList});
 			this.playlist = new VideoListView({playList: this.options.playList})
 		},
 		
@@ -474,42 +463,48 @@ $(function(){
 		
 		searchViewTemplate: _.template($('#searchView-template').html()),
 		
+		id: "search-view",
+		
 		initialize: function () {
 			this.render();
 			//Hack because of nested view bindings (events get eaten by Sidebar)
 			var input = $("#searchBar .inputBox")
 			input.bind("submit", {searchview: this },this.searchVideos);
 			this.options.searchModel.bind("change:searchQuery", this.updateSearchQuery);
-			this.options.searchModel.get("resultsList").bind("add", this.updateResults);
+			this.options.searchModel.get("resultsList").bind("add", this.updateResults, this);
 		},
 		
 		
 		render: function() {
-			$(".videoView").html(this.searchViewTemplate());
+			$(".videoView").append($(this.el).html(this.searchViewTemplate()));
 			return this;
 		},
 		
 		hide : function() {
-			$(this.el).hide(); 
+			$("#search-view").hide();
 		},
 		
 		show : function() {
-			$(this.el).show(); 
+			$("#search-view").show();
 		},
 		
 		searchVideos : function(event) {
 			event.preventDefault();
 			var query = $($('input[name=search]')[0]).val();
-			event.data.searchview.options.searchModel.executeSearch(query);
+			$("#search-view").html($(event.data.searchview.el.innerHTML));
+			event.data.searchview.options.searchModel.executeSearch(query);			
+			event.data.searchview.updateSearchQuery(query);
+			var input = $("#searchBar .inputBox")
+			input.bind("submit", {searchview: event.data.searchview },event.data.searchview.searchVideos);
 			return false;
 		},
 		
 		updateSearchQuery : function(query) {
-			this.$('#searchBox').val(query);			
+			$($('input[name=search]')[0]).val(query);			
 		},
 		
 		updateResults : function (model, collection) {
-				new SearchCell({video: model})						
+				new SearchCell({video: model, playlist: this.options.playList})						
 		}
 		
 		
@@ -520,46 +515,54 @@ $(function(){
 		
 		searchCellTemplate: _.template($('#searchCell-template').html()),
 		
+		events: {
+				"click .addToPlaylist" : "addToPlaylist"
+    },
+		
 		initialize: function () {
-			this.addToPlaylist();
+			$("#searchContainer").append(this.render({thumb: this.options.video.get("image_src"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl")}).el);
 		},
 		
 		addToPlaylist: function (){
-			$("#searchContainer").append(this.render({thumb: this.options.video.get("image_src"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoURL")}).el);
+			this.options.playlist.add(this.options.video)
 		},
 		
 		render: function(searchResult) {
 			$(this.el).html(this.searchCellTemplate(searchResult));
+			this.$(".thumbContainer").attr("src", searchResult.thumb);
 			return this;
 		}
 		
 	});
 	
 	window.VideoListView = Backbone.View.extend({
-		el: '#video-list',
+		id: 'video-list',
 		
 		videoListTemplate: _.template($('#video-list-template').html()),
 		
 		initialize: function () {
 			this.options.playList.bind('add', this.addVideo, this);
+			this.render();
 		},
 		
 		hide : function() {
-			$(this.el).hide(); 
+			$("#video-list").hide();
 		},
 		
 		show : function() {
-			$(this.el).show(); 
+			$("#video-list").show();
 		},
 		
 		render: function() {
-			$(this.el).html(this.playlistTemplate());
+			$(this.el).html(this.videoListTemplate());
+			$(".videoView").append(this.el);
 			return this;
 		},
 		
 		addVideo: function (videoModel) {
 			var videoCellView = new VideoCellView({model: videoModel});
-			$(this.el).append(videoCellView.render().el);
+			$("#video-list .videoListContainer").append(videoCellView.render().el);
+			console.log("yea");
 		}
 	});
 	
@@ -571,7 +574,8 @@ $(function(){
 		},
 		
 		render: function() {
-			$(this.el).html(this.videoCellTemplate({title: this.model.get('title')}));
+			$(this.el).html(this.videoCellTemplate({title: this.model.get('title'), vid_id: this.model.get("vid_id")}));
+			this.$(".thumbContainer").attr("src", this.model.get("image_src"));
 			return this;
 		}
 	});
@@ -580,8 +584,7 @@ $(function(){
 		el: '#chat',
 		
 		chatTemplate: _.template($('#chat-template').html()),
-		
-		
+	
 		initialize: function () {
 			this.render();
 			this.options.chatCollection.bind("add", this.makeNewChatMsg);
@@ -612,6 +615,7 @@ $(function(){
 		
 		chatCellTemplate: _.template($('#chatcell-template').html()),
 		
+		className: "messageContainer",
 		initialize: function () {
 			$("#messages").append(this.render().el);
 		},
