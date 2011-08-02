@@ -59,13 +59,6 @@ app.get('/*.(js|css)', function(req, res){
 //chat model
 var nodeChatModel = new models.NodeChatModel();
 
-//keep track of the people in the room
-var djList = new Array();
-var currDJIndex = -1;
-var clients = new Array();
-var socketToUser = {};
-var socketToPlaylist = {};
-
 //backbone stuff
 var currRoom = new m.Room();
 
@@ -89,8 +82,8 @@ io.sockets.on('connection', function(socket) {
 		redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
 		
 		console.log('about to push onto clients the user id '+fbUser.user.id);
-		clients.push(fbUser.user.id);	
-		socketToUser[socket.id] = fbUser.user.id;
+//		clients.push(fbUser.user.id);	
+//	socketToUser[socket.id] = fbUser.user.id;
 		
 		//Backbone`
 		var name = fbUser.user.name;
@@ -139,12 +132,12 @@ function addListeners(socket) {
 		// });
 		// 
 	socket.on('dj:join', function() {
-		console.log('user '+socketToUser[socket.id]+' requesting to be DJ');
+		console.log('user '+currRoom.users.get(socket.id).get('userId')+' requesting to be DJ');
 		
 		var djs = currRoom.djs;
 		console.log('is this user already a dj? '+!djs.get(socket.id));
 		if(djs.length < 4 && !djs.get(socket.id)) {
-			console.log('user '+socketToUser[socket.id]+' is now a DJ');
+			console.log('user '+currRoom.users.get(socket.id).get('userId')+' is now a DJ');
 			
 			//backbone way
 			var currUser = currRoom.users.get(socket.id);
@@ -193,7 +186,7 @@ function addMeterListeners(socket) {
 		var success = currRoom.meter.addUpvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
 		if(success) {
 			console.log('...success!');
-			currRoom.users.get(socket.id).addPoint();
+			currRoom.djs.currDJ.addPoint();
 			announceMeter();
 		}
 	});
@@ -216,13 +209,20 @@ function addMeterListeners(socket) {
 
 function addPlaylistListeners(socket) {
 	socket.on('playlist:addVideo', function(data) {
-		console.log('Received request to add video '+data.video+' to user '+socketToUser[socket.id]);
-		socketToPlaylist[socket.id].addVideoId(data.video);
+		console.log('Received request to add video '+data.video+' to user '+currRoom.users.get(socket.id).get('userId'));
+		currRoom.users.get(socket.id).playlist.addVideoId(data.video);
 	}); 
 	
-	socket.on('playlist:moveVideo', function(data) {
-		console.log('Received request to move video '+data.video+' to index '+data.indexToMove+' for user '+socketToUser[socket.id]);
-		socketToPlaylist[socket.id].move(data.videoId, data.indexToMove);
+	socket.on('playlist:moveVideoToTop', function(data) {
+		console.log('Received request to move video '+data.video+' to index '+data.indexToMove+' for user ' + 	
+			currRoom.users.get(socket.id).get('userId'));
+		currRoom.users.get(socket.id).playlist.moveToTop(data.video);
+	});
+	
+	socket.on('playlist:delete', function(data) {
+		console.log('Received request to delete video '+data.video+' from the playlist for user '+ 
+							currRoom.users.get(socket.id).get('userId'));
+		
 	});
 }
 
@@ -298,7 +298,8 @@ function announceVideo(videoId, videoDuration) {
 }
 
 function playVideoFromPlaylist(socketId) {
-	var videoToPlay = socketToPlaylist[socketId].playFirstVideo();
+//	var videoToPlay = socketToPlaylist[socketId].playFirstVideo();
+	var videoToPlay = currRoom.users.get(socketId).playlist.playFirstVideo();
 	
 	if(!videoToPlay) {
 		console.log('Request to play video from playlist, but playlist has no videos!');
@@ -320,8 +321,8 @@ function announceMeter() {
 }
 
 function removeFromDJ(socketId) {
-	var index = djList.indexOf(socketId);
-	if(index != -1) djList.splice(index,1);
+//	var index = djList.indexOf(socketId);
+//	if(index != -1) djList.splice(index,1);
 	
 	currRoom.djs.removeDJ(socketId);
 	announceDJs();
@@ -338,14 +339,14 @@ function initializeAndSendPlaylist(socket) {
 		if(err) {
 			console.log("Error in getting user"+userId+"'s playlist!");
 		} else {
-			var currPlaylist = new models.PlaylistModel();
+			var currPlaylist = new m.PlaylistModel();
 			console.log('getting playlist for user '+userId+', reply: '+reply);
 			if(reply) {
-					console.log('...serializing playlist');
-					currPlaylist.mport(reply);
+				console.log('...serializing playlist');
+				currPlaylist.mport(reply);
+				currRoom.users.get(socket.id).setPlaylist(currPlaylist);
+				socket.emit("playlist:refresh", reply);
 			}
-			socketToPlaylist[socket.id] = currPlaylist;
-			socket.emit("playlist:refresh", reply);
 		}
 	});
 }
@@ -360,10 +361,10 @@ function removeSocketFromRoom(socket) {
 	removeFromDJ(socket.id);	
 	
 	var userId = currRoom.users.get(socket.id).get('userId');
-	var index = clients.indexOf(userId);
-	if(index != -1) clients.splice(index,1);
+	// var index = clients.indexOf(userId);
+	// 	if(index != -1) clients.splice(index,1);
 	
-	delete socketToUser[socket.id];
+//	delete socketToUser[socket.id];
 	
 	//Backbone way
 	var userToRemove = currRoom.users.get(socket.id);
@@ -373,10 +374,11 @@ function removeSocketFromRoom(socket) {
 	console.log('there are now '+currRoom.users.length+ ' users in the room, and dj count: '+currRoom.djs.length);
 	
 	//save playlist for user
-	var userPlaylist = socketToPlaylist[socket.id].xport();
+//	var userPlaylist = socketToPlaylist[socket.id].xport();
+	var userPlaylist = userToRemove.playlist.xport();
 	console.log('Saving playlist for user '+userId+': '+userPlaylist);
 	redisClient.set('user:'+userId+':playlist', userPlaylist);
-	delete socketToPlaylist[socket.id];
+//	delete socketToPlaylist[socket.id];
 }
 
 function announceClients() {

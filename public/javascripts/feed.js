@@ -36,7 +36,16 @@ $(document).ready(function () {
 		console.log("Received dj info: "+JSON.stringify(data));
 		djInfo = data;
 		$('#djCount').html(djInfo.length);
-		//var index = djInfo.indexOf(me['socketId']);
+		var index;
+		
+		var count = 0;
+		_.each(djInfo, function(dj) {
+			console.log('dj: '+dj.name);
+			if(dj.name == me.user.name) {
+				index = count;
+			};
+			count = count + 1;
+		});
 		
 		
 		if(index >= 0) {	//client is dj

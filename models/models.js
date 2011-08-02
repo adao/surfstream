@@ -38,6 +38,10 @@
 			'up': 0,
 			'down': 0
 		},
+		
+		xport: function() {
+			return { videoId: this.videoId };
+		}
 	});
 	
 	models.VideoCollection = Backbone.Collection.extend({
@@ -58,12 +62,21 @@
 			this.videos.add(vid);
 		},
 		
-		moveVideo: function(videoId, indexToMove) {
+		// moveVideo: function(videoId, indexToMove) {
+		// 		var video = this.get(videoId);
+		// 		if(video) {
+		// 			this.videos.remove(video);
+		// 			this.videos.add(video, { at: indexToMove });
+		// 		}
+		// 	},
+		moveToTop: function(videoId) {
 			var video = this.get(videoId);
 			if(video) {
 				this.videos.remove(video);
-				this.videos.add(video, { at: indexToMove });
+				this.videos.add(video, { at: 0 });
+				return true;
 			}
+			return false;
 		},
 		
 		//returns the first Video, and moves the Video
@@ -74,17 +87,31 @@
 			}
 			var first = this.videos.at(0);
 			this.videos.remove(first);
-			//this.videos.add(first);	//adds video to the end;
+			this.videos.add(first);	//adds video to the end;
 			return first;
 		},
 		
 		deleteVideo: function(videoId) {
 			this.videos.remove(videoId);
+		},
+		
+		xport: function() {
+			var videoExport = [];
+			this.videos.each(function(video) {
+				videoExport.push(video.xport());
+			});
+		},
+		
+		mport: function(rawVideoData) {
+			_.each(rawVideoData, function(video) { 	//rawVideoData is a JavaScript array
+				this.videos.add({ videoId: video.videoId });
+			});
 		}
+		
 	});
 	
-	var X_MAX = 100;
-	var Y_MAX = 100;
+	var X_MAX = 610;
+	var Y_MAX = 250;
 	
 	models.User = Backbone.Model.extend({
 		defaults: {
@@ -99,6 +126,7 @@
 		
 		initialize: function() {
 			this.id = this.get('socketId');	
+			this.playlist = new models.PlaylistModel();
 			this.randLoc();
 		},
 		
@@ -132,7 +160,9 @@
 				userId: this.get('userId'), 
 				name: this.get('name'), 
 				avatar: this.get('avatar'), 
-				points: this.get('points')
+				points: this.get('points'),
+				x: this.get('xCoord'),
+				y: this.get('yCoord')
 			};
 		}
 	});
