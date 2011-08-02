@@ -23,13 +23,13 @@ div.chatContainer div.chatHeader img.chatIcon {
   margin-left: 5px;
 }
 div.chatContainer div.chatHeader div.chatTitle {
+  text-indent: 10px;
+  vertical-align: top;
+  display: inline-block;
   font-family: Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 500;
   color: #fff;
   height: 18px;
-  position: absolute;
-  top: 542px;
-  left: 740px;
   width: 36px;
 }
 div.chatContainer #messages {
@@ -205,9 +205,9 @@ div.historyContainer .history .videoHistory {
   float: right;
   width: 210px;
   height: 60px;
+  border-bottom: 2px solid #ececec;
 }
 .videoListCellContainer .cellInfo .videoInfo {
-  background-color: #808080;
   float: left;
   width: 180px;
   height: 60px;
@@ -222,21 +222,27 @@ div.historyContainer .history .videoHistory {
   float: right;
   width: 30px;
   height: 60px;
-  background-color: #00f;
 }
 .videoListCellContainer .cellInfo .cellButtons .remove {
-  width: 30px;
-  height: 30px;
+  border: none;
+  cursor: point;
+  width: 25px;
+  height: 25px;
   display: block;
-  background-color: #f00;
+  background: url("http://i.imgur.com/pS23M.png");
 }
 .videoListCellContainer .cellInfo .cellButtons .toTheTop {
-  width: 30px;
-  height: 30px;
+  border: none;
+  cursor: points;
+  width: 25px;
+  height: 25px;
   display: block;
-  background-color: #00f;
+  background: url("http://i.imgur.com/pS23M.png");
 }
 #outer {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  weight: bold;
+  font-size: 25px;
   margin: auto;
   height: 800px;
   width: 960px;
@@ -245,14 +251,22 @@ div.historyContainer .history .videoHistory {
 #outer #header {
   height: 60px;
   width: 960px;
-  background-color: #808080;
+  background-color: #000;
   display: block;
 }
 #outer #actionBar {
   height: 40px;
   width: 960px;
   display: block;
-  background-color: #fff;
+  background-color: #000;
+  background-image: url("/images/room/actionbar.png");
+}
+#outer #actionBar #roomInfo {
+  height: 40px;
+  vertical-align: middle;
+}
+#outer #actionBar #roomInfo #room-name {
+  color: #000;
 }
 #outer #coolshit {
   height: 700px;
@@ -293,7 +307,7 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer {
   width: 285px;
   height: 60px;
-  border: 1px solid #000;
+  border-bottom: 2px solid #ececec;
 }
 .searchCellContainer .thumbContainer {
   float: left;
@@ -306,7 +320,6 @@ div.historyContainer .history .videoHistory {
   height: 60px;
 }
 .searchCellContainer .cellInfo .videoInfo {
-  background-color: #808080;
   float: left;
   width: 180px;
   height: 60px;
@@ -321,13 +334,14 @@ div.historyContainer .history .videoHistory {
   float: right;
   width: 30px;
   height: 60px;
-  background-color: #00f;
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist {
-  width: 30px;
-  height: 30px;
+  border: none;
+  cursor: point;
+  width: 25px;
+  height: 25px;
   display: block;
-  background-color: #f00;
+  background: url("http://i.imgur.com/pS23M.png");
 }
 #room-container {
   width: 660px;
@@ -353,34 +367,96 @@ div.historyContainer .history .videoHistory {
   height: 40px;
   text-indent: 10px;
 }
+#room-name #room-name,
+#roomInfo #room-name {
+  margin-top: 3px;
+}
 #share,
 #shareBar {
   float: right;
   width: 500px;
   height: 40px;
   color: #fff;
-  border: 1px solid #000;
 }
 #share #social,
 #shareBar #social {
+  margin-top: 3px;
   float: left;
   width: 250px;
   height: 40px;
-  background-color: #000;
 }
 #share #social #share-text,
 #shareBar #social #share-text {
   width: 50px;
+  margin-right: 10px;
 }
 #share #copy,
 #shareBar #copy {
+  margin-top: 3px;
   float: right;
   width: 250px;
   height: 40px;
-  background-color: #00f;
 }
-#share button,
-#shareBar button {
+#share #copy #link,
+#shareBar #copy #link {
+  display: inline-block;
+}
+#share #copy #link input,
+#shareBar #copy #link input {
+  vertical-align: top;
+  height: 22px;
+  margin-left: 10px;
+  width: 60px;
+  margin-right: 15px;
+}
+#share #copy #copy-button-container,
+#shareBar #copy #copy-button-container {
+  display: inline-block;
   height: 30px;
-  width: 40px;
+  width: 75px;
+}
+#share #copy #copy-button-container #copy-button,
+#shareBar #copy #copy-button-container #copy-button {
+  margin-top: 2px;
+  background-color: #808080;
+  text-indent: 7px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+}
+#shareFB {
+  vertical-align: middle;
+  margin-right: 4px;
+  cursor: pointer;
+  border: none;
+  height: 31px;
+  width: 31px;
+  background: url("http://i.imgur.com/1OB6R.png");
+}
+#shareTwit {
+  vertical-align: middle;
+  margin-right: 4px;
+  cursor: pointer;
+  border: none;
+  height: 31px;
+  width: 31px;
+  background: url("http://i.imgur.com/pmbBg.png");
+}
+#shareEmail {
+  vertical-align: middle;
+  margin-right: 4px;
+  cursor: pointer;
+  border: none;
+  height: 31px;
+  width: 31px;
+  background: url("http://i.imgur.com/mz8Sc.png");
+}
+button.playlist,
+button.playlist.active,
+button.search,
+button.search.active {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  weight: bold;
+  font-size: 12px;
+  color: #808080;
 }
