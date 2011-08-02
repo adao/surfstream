@@ -75,6 +75,7 @@ $(function(){
 			if (this.get("is_main_user")) {
 				FB.api('/me', function(info) {
 					console.log(info);
+					console.log('fuck');
 					self.set({fbUserInfo: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
 				}.bind(this));
 				FB.api('/me/friends', function(response) {
@@ -229,7 +230,7 @@ $(function(){
 								}),
 								search: new SearchModel({resultsList: new VideoList})
 							});
-			//this.get('user').getUserData(this.get('user'));
+			this.get('user').getUserData(this.get('user'));
 			//Give the chat view a reference to the room's chat collection
 			this.get("mainUI").initializeTopBar();
 			//initializeShareBar (this.get(sharing))
@@ -426,6 +427,7 @@ $(function(){
         "click .search" : "activateSearch",
 				"click .playlist" : "activatePlaylist"
     },
+
 		initialize: function () {
 			this.render();
 			this.currentTab = "search";
@@ -545,6 +547,8 @@ $(function(){
 			this.render();
 		},
 		
+		
+		
 		hide : function() {
 			$("#video-list").hide();
 		},
@@ -561,7 +565,7 @@ $(function(){
 		
 		addVideo: function (videoModel) {
 			var videoCellView = new VideoCellView({model: videoModel});
-			$("#video-list .videoListContainer").append(videoCellView.render().el);
+			$("#video-list .videoListContainer").append(videoCellView.el);
 			console.log("yea");
 		}
 	});
@@ -569,7 +573,21 @@ $(function(){
 	window.VideoCellView = Backbone.View.extend({
 		videoCellTemplate: _.template($('#video-list-cell-template').html()),
 				
+		
 		initialize: function () {
+			//Hack because of nested view bindings part 2 (events get eaten by Sidebar)
+			this.render();
+			var buttonRemove = this.$(".remove")
+			buttonRemove.bind("click", {videocell: this },this.removeFromPlaylist);
+		},
+		
+		removeFromPlaylist : function() {
+			alert("fuck")
+			
+		},
+		
+		toTheTop : function() {
+			alert("fuck33")
 			
 		},
 		
