@@ -131,7 +131,18 @@ $(function(){
 			
 			socket.on("video:sendInfo", function(video) {
 				//video.video = videoID, video.time = seconds into video
-				window.YTPlayer.loadVideoById(video.video, video.time)
+				if(!window.playerLoaded) {
+					window.playerLoaded = true;
+					var params = { allowScriptAccess: "always" };
+					var atts = { id: "YouTubePlayer"};
+					swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=YouTubePlayer",
+				                       "video-container", "640", "390", "8", null, null, params, atts);
+					window.secs = video.time;
+					window.video = video.video;
+					playerLoaded = true;
+				} else {
+					window.YTPlayer.loadVideoById(video.video, video.time)		
+				}
 			});
 			
 			socket.on('playlist:refresh', function(videoArray) {
@@ -139,7 +150,7 @@ $(function(){
 			});
 			
 			socket.on('message', function(msg) {
-				app.get("roomModel").get("chatCollection").add({user: "Elliot", message: msg.data});				
+				app.get("roomModel").get("chatCollection").add({user: msg.data.attrs.name, message: msg.data.attrs.text});				
 			});
 			
 			socket.on('playlist:initial', function(response) {
@@ -150,13 +161,13 @@ $(function(){
 				//userJSONArray is an array of users, with .userId = fbid#, .name = full name, .avatar = TBD,
 				// .points = TBA, .x = top coord for room-conatiner, .y = leftmost coord for room-container
 				var hash;
-				if(!this.get("userhash")) {
-					this.set("userhash") = {};
+				if(!this.userhash) {
+					this.userhash = {};
 				}
-				hash = this.get("userhash");
+				hash = this.userhash;
 				for (var user in userJSONArray) {
-					if (!app.curRoomHasUser(user)) {
-						app.addUserToCurRoom(user);
+					if (!app.curRoomHasUser(userJSONArray[user])) {
+						app.addUserToCurRoom(userJSONArray[user]);
 					}
 					hash[user.userId] = true;
 				}	
@@ -165,7 +176,7 @@ $(function(){
 			
 			socket.on('dj:announceDJs', function(djArray) {
 				for (dj in djArray) {
-					$("#"+djArray[dj].name).style("border-style", "solid").style("border-color","#98bf21");
+					$("[id="+djArray[dj].name+"]").style("border-style", "solid").style("border-color","#98bf21");
 				}
 			});
 			
@@ -221,7 +232,7 @@ $(function(){
 			this.get("mainUI").initializePlayer(this.get("roomModel").get("player"));
 			
 			
-			this.setVideos([{video: "THIS"}, {video: "WORKS"}]);
+			//this.setVideos([{video: "THIS"}, {video: "WORKS"}]);
 			//this.addUserToCurRoom({userId: "ebabchick", x: 20, y:60})
 			//Make sure everything gets initialized first before we start the view magic
 			//This can change to render some thing before we init the models and then
@@ -478,7 +489,7 @@ $(function(){
 		addToPlaylist: function (){
 			this.options.playlist.add(this.options.video);
 			//HACK			
-			this.window.SurfStreamApp.attributes.socket.emit('playlist:addVideo', {video: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")});
+			window.SurfStreamApp.attributes.socket.emit('playlist:addVideo', {video: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")});
 			//ENDHACK
 		},
 		
@@ -505,12 +516,10 @@ $(function(){
 				//WUT LOL
 				//ytplayer.loadVideoById(currVideo.video, currVideo.time);
 			} else {
-				window.playerLoaded = true;
 				var params = { allowScriptAccess: "always" };
-				var atts = { id: "myytplayer"};
+				var atts = { id: "YouTubePlayer"};
 				swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer",
 			                       "video-container", "640", "390", "8", null, null, params, atts);
-				playerLoaded = true;
 			}
 		}			
 		
@@ -767,6 +776,27 @@ $(function(){
 });
 
 function onYouTubePlayerReady(playerId) {
+	if(!window.YTPlayer) {
     window.YTPlayer = document.getElementById('YouTubePlayer');
-    ytplayer.addEventListener('onStateChange', 'onytplayerStateChange');
+    window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
+		window.playerLoaded = true;
+		if(window.video) {
+			window.YTPlayer.loadVideoById(window.video, window.secs);
+		}
+	}
+}
+
+function setToTime() {
+		window.YTPlayer = document.getElementById('YouTubePlayer');
+		window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
+		window.YTPlayer.seekTo(window.secs);
+}
+
+function onytplayerStateChange(newState) {
+	$('#state').html("Player state: "+newState);
+	if(newState == 0 && currVideo.isLeader) { 
+		console.log("Video finished, broadcasting back to server");
+		socket.emit('videoFinished');
+		currVideo = {};
+	}
 }

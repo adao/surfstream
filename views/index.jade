@@ -1,64 +1,69 @@
 !!! 5
-html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.facebook.com/2008/fbml")
+html(lang="en")
 	head
 		title surfstream.tv
-		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
-		script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
-		script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
-		script(type="text/javascript", src="/socket.io/socket.io.js")
-		script(type="text/javascript", src="/javascripts/gates.js")
-		script(type="text/javascript", src="/views.js")
-		link(rel='stylesheet', href='/stylesheets/style.css')
-		
+	script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
+	script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
+	script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
+	script(type="text/javascript", src="/socket.io/socket.io.js")
+	script(type="text/javascript", src="/models/models.js")
+	script(type="text/javascript", src="/controllers/controllers.js")
+	script(type="text/javascript", src="/views.js")
+	script(type="text/javascript", src="/javascripts/VideoResult.js")
+	script(type="text/javascript", src="/javascripts/feed.js")
+
 	body
 	#heading
 		h1 surfstream
-	#actionbar
 	#content
-		#room
-			#videoPlayer
-			#state
-			#fbData
-			#djInfo 
-				| DJs: 
-				span#djCount 0
-				br
-				span#djStatus You are not a DJ
-				button#beDJ(onClick="becomeDJ()") dj
-				button#quitDJ(onClick="quitDJ()") step down
-		#sidebar
-			#library
-				#addVideo
-					input#videoEntry(type="text")
-					button(onClick="addVideo()") add
-				#playlist
-			#searchYouTube
-				input#searchBox(type="text")
-				button(onClick="searchYouTube()") searchhh
-			#videomodule
-				#youTubeResults
-					ul#videoList
-						#results
-							li.videoResultTemplate
-								div#videoBox
-									img#videoThumbnail
-								div#videoTitle
-								div#addToPlaylist
-			#chat
-					ul#chat_list
-			#message
-				form(method="post", action="#",onsubmit="return false")#messageForm
-					p
-						label Name:
-							input(type='text',name='user_name')
-					p
-						label Message:
-							input(type='text',name='message')
-							input(type='submit',value='send')
+		#videoPlayer
+		#meter
+		button(onClick="upvote()") up
+		button(onClick="downvote()") down
+		
+
+		#state
+		#fbData
+			=data
+		#djInfo 
+			| DJs: 
+			span#djCount 0
+			br
+			span#djStatus You are not a DJ
+			button#beDJ(onClick="becomeDJ()") dj
+			button#quitDJ(onClick="quitDJ()") step down
+		#playlist
+		#addVideo
+			input#videoEntry(type="text")
+			button(onClick="addVideo()") add
+			
+		#chat
+			p
+				ul#chat_list
+
+			form(method="post", action="#",onsubmit="return false")#messageForm
+				p
+					label Name:
+						input(type='text',name='user_name')
+				p
+					label Message:
+						input(type='text',name='message')
+						input(type='submit',value='send')
+		#searchYouTube
+			input#searchBox(type="text")
+			button(onClick="searchYouTube()") searchhh
+		#youTubeResults
+			ul#videoList
+			
+		li.videoResultTemplate
+			div#videoTitle
+			img#videoThumbnail
+			div#addToPlaylist Click To Add Video to Playlist
 			
 	#footer
 		span#client_count 0
 		|  connected clients
 		span#time
+		
 	
 
