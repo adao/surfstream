@@ -36,7 +36,8 @@ $(document).ready(function () {
 		console.log("Received dj info: "+JSON.stringify(data));
 		djInfo = data;
 		$('#djCount').html(djInfo.length);
-		var index = djInfo.indexOf(me['socketId']);
+		//var index = djInfo.indexOf(me['socketId']);
+		
 		
 		if(index >= 0) {	//client is dj
 			index += 1;

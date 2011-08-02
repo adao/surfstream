@@ -14,20 +14,29 @@
 			this.users = new models.UserCollection();
 			this.djs = new models.DJCollection();
 			this.meter = new models.Meter();
-			this.currVideo = new models.Video();
+			this.currVideo = null;
 			this.history = new models.VideoCollection();
 		},
+		
+		clearVideo: function() {
+			this.currVideo = null;
+		},
+		
+		remove: function(socketId) {
+			this.users.remove(socketId);
+			this.djs.remove(socketId);
+		}
 	});
 
 	models.Video = Backbone.Model.extend({
 		defaults: {
 			'videoId': null,
-			'duration': 0,
+			'duration': -1,
 			'timeStart': null,
 			'timeoutId': null,
-			'timesPlayed': 0,
-			'upvotes': 0,
-			'downvotes': 0
+			'timesPlayed': -1,
+			'up': 0,
+			'down': 0
 		},
 	});
 	
@@ -82,7 +91,10 @@
 			'avatar': null,
 			'points': 0,
 			'xCoord': 0,
-			'yCoord': 0
+			'yCoord': 0,
+			'userId': 0,
+			'socketId': 0,
+			'name': null
 		},
 		
 		initialize: function() {
@@ -103,22 +115,86 @@
 		
 		getLoc: function() {
 			return { x: this.get('xCoord'), y: this.get('yCoord')};
-		}
+		},
 		
+		addPoint: function() {
+			var points = this.get('points');
+			this.set({ points: points+1 });
+		},
+		
+		subtractPoint: function() {
+			var points = this.get('points');
+			if(points > 0) this.set({ points: points-1 });
+		},
+		
+		xport: function() {
+			return { 
+				userId: this.get('userId'), 
+				name: this.get('name'), 
+				avatar: this.get('avatar'), 
+				points: this.get('points')
+			};
+		}
 	});
 
 	models.UserCollection = Backbone.Collection.extend({
-		model: models.User
+		model: models.User,
+		
+		xport: function() {
+			var array = new Array();
+			this.each(function(user) {
+				array.push(user.xport());
+			});
+			return array;
+		}
 	});
 	
 	var MAX_DJS = 4;
+	
 	models.DJCollection = Backbone.Collection.extend({
 		model: models.User,
+		
+		initialize: function() {
+			this.currDJIndex = 0;
+			this.currDJ = null;
+		},
 		
 		addDJ: function(user, index) {
 			if(this.length >= MAX_DJS || index > MAX_DJS || index < 0) return false;
 			this.add(user, {at: index});
-		}		
+		},
+		
+		removeDJ: function(socketId) {
+			var djIndex = this.indexOf(socketId);
+			if(this.currDJIndex >= djIndex) {
+				this.currDJIndex = this.currDJIndex - 1;
+			} 
+			this.remove(socketId);	
+			
+			// if(this.currDJ.get('userId') == user.get('userId')) {
+			// 			this.nextDJ();
+			// 		} else {
+			// 			this.currDJIndex = this.currDJIndex - 1;
+			// 		}
+		},
+		
+		xport: function() {
+			var list = new Array();
+			this.each(function(user) {
+				var u = {};
+				u.points = user.get('points');
+				u.name = user.get('name');
+				u.avatar = user.get('avatar');
+				list.push(u);
+			});
+			return list;
+		},
+		
+		nextDJ: function() {
+			this.currDJIndex = (this.currDJIndex + 1) % this.length;
+			this.currDJ = this.at(this.currDJIndex);
+			return { dj: this.currDJ, index: this.currDJIndex };
+		}
 	});
 	
 	models.Meter = Backbone.Model.extend({
@@ -181,6 +257,6 @@
 		reset: function() {
 			this.initialize();
 		}, 
-	
 	});
+
 }) ()
