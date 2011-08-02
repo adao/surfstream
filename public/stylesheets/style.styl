@@ -20,13 +20,13 @@ div.chatContainer
 			margin-top: 5px
 			margin-left: 5px
 		div.chatTitle
+			text-indent: 10px
+			vertical-align: top
+			display: inline-block
 			font-family: Helvetica, Arial, "Lucida Grande", sans-serif
 			font-weight: 500
 			color: white
 			height: 18px
-			position: absolute
-			top: 542px
-			left: 740px
 			width: 36px
 	#messages
 		height: 215px
@@ -185,8 +185,8 @@ div.historyContainer
 		float: right
 		width: 210px
 		height: 60px
+		border-bottom: 2px solid #ECECEC
 		.videoInfo
-			background-color: gray
 			float: left
 			width: 180px
 			height: 60px
@@ -199,20 +199,27 @@ div.historyContainer
 			float: right
 			width: 30px
 			height: 60px
-			background-color: blue
 			.remove
+				border: none
+				cursor: point
 				width: 30px
 				height: 30px
 				display: block
-				background-color: red
+				margin-right: 1px
+				background: url('http://i.imgur.com/00MDL.png')
 			.toTheTop
+				border: none
+				cursor: points
 				width: 30px
 				height: 30px
 				display: block
-				background-color: blue
+				background: url('http://i.imgur.com/CEiZf.png')
 				
 //skeleton
 #outer
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	weight: bold
+	font-size: 25px
 	margin: auto
 	height: 800px
 	width: 960px
@@ -220,13 +227,20 @@ div.historyContainer
 	#header
 		height: 60px
 		width: 960px
-		background-color: gray
+		background-color: black
 		display: block
 	#actionBar
 		height: 40px
 		width: 960px
 		display: block
-		background-color: white
+		background-color: black
+		background-image: url('/images/room/actionbar.png')
+		#roomInfo
+			height: 40px
+			vertical-align: middle
+			#room-name
+				color: black
+				
 	#coolshit
 		height: 700px
 		width: 960px
@@ -266,7 +280,7 @@ div.historyContainer
 .searchCellContainer
 	width: 285px
 	height: 60px
-	border: 1px solid black
+	border-bottom: 2px solid #ECECEC
 	.thumbContainer
 		float: left
 		width: 75px
@@ -276,7 +290,6 @@ div.historyContainer
 		width: 210px
 		height: 60px
 		.videoInfo
-			background-color: gray
 			float: left
 			width: 180px
 			height: 60px
@@ -289,12 +302,14 @@ div.historyContainer
 			float: right
 			width: 30px
 			height: 60px
-			background-color: blue
 			.addToPlaylist
+				vertical-align: middle
+				border: none
+				cursor: point
 				width: 30px
 				height: 30px
 				display: block
-				background-color: red
+				background: url('http://i.imgur.com/FLxQf.png')
 				
 //room
 #room-container
@@ -318,6 +333,8 @@ div.historyContainer
 	width: 460px
 	height: 40px
 	text-indent: 10px
+	#room-name
+		margin-top: 3px
 	
 //share
 #share, #shareBar
@@ -325,19 +342,68 @@ div.historyContainer
 	width: 500px
 	height: 40px
 	color: white
-	border: 1px solid black
 	#social
+		margin-top: 3px
 		float: left
 		width: 250px
 		height: 40px
-		background-color: black
 		#share-text
 			width: 50px
+			margin-right: 10px
 	#copy
+		margin-top: 3px
 		float: right
 		width: 250px
 		height: 40px
-		background-color: blue
-	button
-		height: 30px
-		width: 40px
+		#link
+			display: inline-block
+			input
+				vertical-align: top
+				height: 22px
+				margin-left: 10px
+				width: 60px
+				margin-right: 15px
+		#copy-button-container
+			display: inline-block
+			height: 30px
+			width: 75px
+			#copy-button
+				margin-top: 2px
+				background-color: gray
+				text-indent: 7px
+				border-radius: 5px
+				-webkit-border-radius: 5px
+				-moz-border-radius: 5px
+				
+#shareFB
+	vertical-align: middle
+	margin-right: 4px
+	cursor: pointer
+	border: none
+	height: 31px
+	width: 31px
+	background: url('http://i.imgur.com/1OB6R.png')
+#shareTwit
+	vertical-align: middle
+	margin-right: 4px
+	cursor: pointer
+	border: none
+	height: 31px
+	width: 31px
+	background: url('http://i.imgur.com/pmbBg.png')
+#shareEmail
+	vertical-align: middle
+	margin-right: 4px
+	cursor: pointer
+	border: none
+	height: 31px
+	width: 31px
+	background: url('http://i.imgur.com/mz8Sc.png')
+
+
+button.playlist, button.playlist.active, button.search, button.search.active
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	weight: bold
+	font-size: 12px
+	color: gray
+	
