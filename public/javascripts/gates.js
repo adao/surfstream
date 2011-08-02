@@ -20,7 +20,16 @@ $(function(){
 	
 	window.RoomModel = Backbone.Model.extend({		
 		initialize: function () {
-			
+			this.users = [];
+		},
+		
+		addUser : function(user) {
+			this.users.push(user.userId);
+			$("#people-area").append("<img id='" + user.name + "' src=http://graph.facebook.com/"+ user.userId + "/picture style='position:absolute; margin-left:" + user.x + "px; margin-top:" + user.y + "px;' >");
+		},
+		
+		removeUser: function(userModel) {
+			//this.get("users").remove(userModel);
 		}
 		
 	});
@@ -68,19 +77,22 @@ $(function(){
 		}, 
 	
 		initialize: function () {
-			
-		},
-		
-		getUserData: function(self) {
 			if (this.get("is_main_user")) {
 				FB.api('/me', function(info) {
 					console.log(info);
 					console.log('fuck');
-					self.set({fbUserInfo: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
+					this.set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
+					this.get("socket_manager").makeFirstContact({user: info});
 				}.bind(this));
 				FB.api('/me/friends', function(response) {
 					console.log(response);
 				});
+			}
+		},
+		
+		getUserData: function(self) {
+			if (this.get("fbUserInfo")){
+				return this.get("fbUserInfo");
 			}
 		}
 		
@@ -112,7 +124,20 @@ $(function(){
 				console.log("Got app. " + app);
 			}
 			
+			
+			
+			/* First set up all listeners */
 			//Chat -- msg received
+			
+			socket.on("video:sendInfo", function(video) {
+				//video.video = videoID, video.time = seconds into video
+				window.YTPlayer.loadVideoById(video.video, video.time)
+			});
+			
+			socket.on('playlist:refresh', function(videoArray) {
+				app.setVideos(videoArray);
+			});
+			
 			socket.on('message', function(msg) {
 				app.get("roomModel").get("chatCollection").add({user: "Elliot", message: msg.data});				
 			});
@@ -121,80 +146,38 @@ $(function(){
 				app.get("user").set({playList: 'response'});
 			});
 			
-/*
-			//Sends list of who is DJing
-			//Data is a js array of DJ Socket IDs
-			socket.on('dj:announceDJs', function(data) {
-				console.log("Received dj info: "+JSON.stringify(data));
-				djInfo = data;
-				$('#djCount').html(djInfo.length);
-				var index = djInfo.indexOf(me['socketId']);
-
-				if(index >= 0) {	//client is dj
-					index += 1;
-					$('#djStatus').html("You are DJ number "+index);
-					$('#beDJ').hide();
-					$('#quitDJ').show();
-				} else {
-					configureDJButtons();
+			socket.on('users:announce', function(userJSONArray) {
+				//userJSONArray is an array of users, with .userId = fbid#, .name = full name, .avatar = TBD,
+				// .points = TBA, .x = top coord for room-conatiner, .y = leftmost coord for room-container
+				var hash;
+				if(!this.get("userhash")) {
+					this.set("userhash") = {};
 				}
-				
+				hash = this.get("userhash");
+				for (var user in userJSONArray) {
+					if (!app.curRoomHasUser(user)) {
+						app.addUserToCurRoom(user);
+					}
+					hash[user.userId] = true;
+				}	
 			});
 			
-			socket.on('playlist:refresh', function(data) {
-
-				console.log("Socket received video info");
-				currVideo.video = data.video;
-				currVideo.timeStart = data.time;
-
-				if(playerLoaded) {
-					ytplayer.loadVideoById(currVideo.video, currVideo.time);
-				} else {
-					var params = { allowScriptAccess: "always" };
-					var atts = { id: "myytplayer"};
-					swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=ytplayer",
-				                       "videoPlayer", "640", "390", "8", null, null, params, atts);
-					playerLoaded = true;
+			
+			socket.on('dj:announceDJs', function(djArray) {
+				for (dj in djArray) {
+					$("#"+djArray[dj].name).style("border-style", "solid").style("border-color","#98bf21");
 				}
 			});
 			
-			socket.on('clientUpdate', function(numClients) {
-				console.log("client has been updated: "+numClients);
-				//$clientCounter.html(numClients);
-			});
 
-			socket.on('playlist:refresh', function(data) {
-				console.log("Refreshing playlist..."+data);
-				data = String(data);
-				videos = data.split(',');
-				if(videos.length > 0) {
-					var playlistHtml = '<ul>';
-					for(var v in videos)
-						playlistHtml += '<li>'+videos[v]+'</li>';
-					playlistHtml += '</li>';
-					$("#playlist").html(playlistHtml);
-				}
-			});
-			
-			socket.on('videoInfo', function(data) {
-
-				console.log("Socket received video info");
-				currVideo.video = data.video;
-				currVideo.timeStart = data.time;
-
-				if(playerLoaded) {
-					ytplayer.loadVideoById(currVideo.video, currVideo.time);
-				} else {
-					var params = { allowScriptAccess: "always" };
-					var atts = { id: "myytplayer"};
-					swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=ytplayer",
-				                       "videoPlayer", "640", "390", "8", null, null, params, atts);
-					playerLoaded = true;
-				}
-			});
-*/
-	
 		},
+		
+		/* Initialize first contact */
+		makeFirstContact : function(user) {	
+			var socket = this.get("socket");		
+			socket.emit('user:sendFBData', user);		
+		}
+		
 		
 	},{
 		socket: socket_init,
@@ -202,7 +185,7 @@ $(function(){
 		/* Outgoing Socket Events*/
 		
 		sendMsg: function(data) {
-			this.socket.emit("chat:msgRcvd",data);
+			this.socket.emit("message",data);
 		}
 	});
 	
@@ -220,26 +203,48 @@ $(function(){
 														player: new PlayerModel,
 														chatCollection: new ChatList,
 														video: new VideoModel,
+														users: new RoomUsersList
 													}),
 								socket_manager: new SocketManager({
 														socket: this.get("socket"), app: this
 													}),
-								user: new UserModel({
-									is_main_user: true,
-									playList: new VideoList
-								}),
 								search: new SearchModel({resultsList: new VideoList})
 							});
+			this.set({user: new UserModel({is_main_user: true, playList: new VideoList, socket_manager: this.get("socket_manager")})})
+								
 			this.get('user').getUserData(this.get('user'));
 			//Give the chat view a reference to the room's chat collection
 			this.get("mainUI").initializeTopBar();
 			//initializeShareBar (this.get(sharing))
 			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"));
 			this.get("mainUI").initializeSidebar(this.get("search"), this.get("user").get("playList"));
+			this.get("mainUI").initializePlayer(this.get("roomModel").get("player"));
+			
+			
+			this.setVideos([{video: "THIS"}, {video: "WORKS"}]);
+			//this.addUserToCurRoom({userId: "ebabchick", x: 20, y:60})
 			//Make sure everything gets initialized first before we start the view magic
 			//This can change to render some thing before we init the models and then
 			//finish here later				
 							
+		},
+		
+		curRoomHasUser : function(user) {
+			if (_.indexOf(this.get("roomModel").users, user) == -1) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		
+		addUserToCurRoom : function(user){
+			this.get("roomModel").addUser(user);
+		},
+		
+		setVideos : function(videos) {
+			for (video in videos){
+				this.get("user").get("playList").add({title: videos[video].video});
+			}
 		}
 	});
 	
@@ -310,7 +315,7 @@ $(function(){
 	
 	/*** END: PLAYLIST AND SUBCLASSES ***/
 	
-	/*
+	
 	window.RoomUsersList = Backbone.Collection.extend({
 		model: UserModel,
 		
@@ -318,7 +323,7 @@ $(function(){
 			
 		}
 	});
-	*/
+	
 	/*NOT IMPLEMENTING THIS WEEKEND (7/30)*/  /*
 	window.RoomList = Backbone.Collection.extend({
 		model: RoomModel,
@@ -334,87 +339,32 @@ $(function(){
 	/*****VIEWS*****/
 	/***************/
 
-  window.TopBarView = Backbone.View.extend({
-		initialize: function () {
-			
-		}
-	});
-	
-	window.RoomInfoView = Backbone.View.extend({
-		el: '#roomInfo',
-		
-		roomInfoTemplate: _.template($('#room-info-template').html()),
+		window.MainView = Backbone.View.extend({
+		el: 'body',
 		
 		initialize: function () {
-			$(this.el).html(this.roomInfoTemplate({roomName: this.options.roomName}));
-		}
-	});
-	
-	window.ShareBarView = Backbone.View.extend({
-		el: '#shareBar',
-		
-		shareTemplate: _.template($('#share-template').html()),
-		
-		initialize: function () {
-			$(this.el).html(this.shareTemplate());
-			$('#shareFB').css('background-image', '/images/fb_small.png');
-			$('#shareTwit').css('background-image', '/images/twitter_small.png');
-			$('#shareEmail').css('background-image', '/images/email_small.png');
-			$('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
-			$('#copy-button-container').html("<div id=\"copy-button\">Copy</div>");
-			var link = $('input:text').val();
-			console.log(link);
-		  var clip = new ZeroClipboard.Client();
-			clip.setText(link);
-			clip.glue('copy-button', 'copy-button-container');
-		},
-		
-		events: {
-        "click #shareFB" : "fbDialog",
-				"click #shareTwit" : "tweetDialog",
-				"click #shareEmail" : "openEmail"
-    },
-
-		fbDialog: function() {
-			FB.ui(
-				{
-					method: 'feed',
-					name: 'Just watched on SurfStream.tv',
-					url: 'www.youtube.com',
-					caption: 'Join your friends and watch videos online!',
-					description: 'SurfStream.tv lets you explore new video content on the web. Very similar to turntable.fm'// ,
-					// 					picture: '/images/logo.png'
-				},
-				function(response) {
-					if (response && response.post_id) {
-						alert('Post was published.');
-					} else {
-						alert('Post was not published.');
-					}
-				}
-			);
-		},
-		
-		tweetDialog: function() {
-			var width  = 575,
-			  height = 400,
-			  left = ($(window).width()  - width)  / 2,
-       	top = ($(window).height() - height) / 2,
-       	url = "http://twitter.com/share?text=Check%20out%20this%20awesome%20brooooooom!",
-       	opts = 'status=1' +
-						',width='  + width  +
-            ',height=' + height +
-           	',top='    + top    +
-            ',left='   + left;
-
-			  window.open(url, 'twitter', opts);
 			
 		},
 		
-		openEmail: function() {
-			window.open("mailto:friend@domainname.com?subject=Come%20to%20SurfStream.tv%20sometime!&body=God%20this%20shit%20is%20" + 
-				"awesome!%2C%20here's%20a%20link%0A%0A" + window.location, '_parent');
+		initializeTopBar: function () {
+			this.roomInfoView = new RoomInfoView(({roomName: 'Placeholder'}));
+			this.shareBarView = new ShareBarView();
+		},
+			
+		initializeChat: function (chatCollection) {
+			this.chatView = new ChatView({chatCollection: chatCollection});
+		},
+		
+		initializeSidebar: function (search, playlist) {
+			this.sidebar = new SideBar({searchModel: search, playList: playlist});
+		},
+		
+		initializePlayer : function (player) {
+			this.player = new Player({player: player});
+			this.floor = new Theatre;			
 		}
+		
+		
 	});
 
 	
@@ -526,7 +476,10 @@ $(function(){
 		},
 		
 		addToPlaylist: function (){
-			this.options.playlist.add(this.options.video)
+			this.options.playlist.add(this.options.video);
+			//HACK			
+			this.window.SurfStreamApp.attributes.socket.emit('playlist:addVideo', {video: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")});
+			//ENDHACK
 		},
 		
 		render: function(searchResult) {
@@ -534,6 +487,34 @@ $(function(){
 			this.$(".thumbContainer").attr("src", searchResult.thumb);
 			return this;
 		}
+		
+	});
+	
+	//The Actual Video Player Presentation
+	window.Player = Backbone.View.extend({
+		
+		el: "#funroom",
+		
+		roomTemplate: _.template($('#room-template').html()),
+		
+		
+		
+		initialize: function () {
+			$(this.el).html(this.roomTemplate());
+			if(window.playerLoaded) {
+				//WUT LOL
+				//ytplayer.loadVideoById(currVideo.video, currVideo.time);
+			} else {
+				window.playerLoaded = true;
+				var params = { allowScriptAccess: "always" };
+				var atts = { id: "myytplayer"};
+				swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer",
+			                       "video-container", "640", "390", "8", null, null, params, atts);
+				playerLoaded = true;
+			}
+		}			
+		
+		
 		
 	});
 	
@@ -645,6 +626,89 @@ $(function(){
 		
 	});
 	
+	window.TopBarView = Backbone.View.extend({
+		initialize: function () {
+			
+		}
+	});
+	
+	window.RoomInfoView = Backbone.View.extend({
+		el: '#roomInfo',
+		
+		roomInfoTemplate: _.template($('#room-info-template').html()),
+		
+		initialize: function () {
+			$(this.el).html(this.roomInfoTemplate({roomName: this.options.roomName}));
+		}
+	});
+	
+	window.ShareBarView = Backbone.View.extend({
+		el: '#shareBar',
+		
+		shareTemplate: _.template($('#share-template').html()),
+		
+		initialize: function () {
+			$(this.el).html(this.shareTemplate());
+			$('#shareFB').css('background-image', '/images/fb_small.png');
+			$('#shareTwit').css('background-image', '/images/twitter_small.png');
+			$('#shareEmail').css('background-image', '/images/email_small.png');
+			$('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
+			$('#copy-button-container').html("<div id=\"copy-button\">Copy</div>");
+			var link = $('input:text').val();
+			console.log(link);
+		  var clip = new ZeroClipboard.Client();
+			clip.setText(link);
+			clip.glue('copy-button', 'copy-button-container');
+		},
+		
+		events: {
+        "click #shareFB" : "fbDialog",
+				"click #shareTwit" : "tweetDialog",
+				"click #shareEmail" : "openEmail"
+    },
+
+		fbDialog: function() {
+			FB.ui(
+				{
+					method: 'feed',
+					name: 'Just watched on SurfStream.tv',
+					url: 'www.youtube.com',
+					caption: 'Join your friends and watch videos online!',
+					description: 'SurfStream.tv lets you explore new video content on the web. Very similar to turntable.fm'// ,
+					// 					picture: '/images/logo.png'
+				},
+				function(response) {
+					if (response && response.post_id) {
+						alert('Post was published.');
+					} else {
+						alert('Post was not published.');
+					}
+				}
+			);
+		},
+		
+		tweetDialog: function() {
+			var width  = 575,
+			  height = 400,
+			  left = ($(window).width()  - width)  / 2,
+       	top = ($(window).height() - height) / 2,
+       	url = "http://twitter.com/share?text=Check%20out%20this%20awesome%20brooooooom!",
+       	opts = 'status=1' +
+						',width='  + width  +
+            ',height=' + height +
+           	',top='    + top    +
+            ',left='   + left;
+
+			  window.open(url, 'twitter', opts);
+			
+		},
+		
+		openEmail: function() {
+			window.open("mailto:friend@domainname.com?subject=Come%20to%20SurfStream.tv%20sometime!&body=God%20this%20shit%20is%20" + 
+				"awesome!%2C%20here's%20a%20link%0A%0A" + window.location, '_parent');
+		}
+	});
+	
 	//The Avatar + Seating Area
 	window.Theatre = Backbone.View.extend({
 		initialize: function () {
@@ -653,13 +717,6 @@ $(function(){
 		
 	});
 	
-	//The Actual Video Player Presentation
-	window.Screen = Backbone.View.extend({
-		initialize: function () {
-			
-		}
-		
-	});
 	
 	window.Remote = Backbone.View.extend({
 		initialize: function () {
@@ -695,34 +752,21 @@ $(function(){
 		}
 		
 	});
-	
-	window.MainView = Backbone.View.extend({
-		el: 'body',
-		
-		initialize: function () {
-			
-		},
-		
-		initializeTopBar: function () {
-			this.roomInfoView = new RoomInfoView(({roomName: 'Placeholder'}));
-			this.shareBarView = new ShareBarView();
-		},
-			
-		initializeChat: function (chatCollection) {
-			this.chatView = new ChatView({chatCollection: chatCollection});
-		},
-		
-		initializeSidebar: function (search, playlist) {
-			this.sidebar = new SideBar({searchModel: search, playList: playlist});
-		}
-		
-		
-	});
-	
 
 	/* INITIALIZATION */
 	
+	
+	window.playerLoaded =false;
 	window.SurfStreamApp = new SurfStream({socket: socket_init});
+	//HACK
+	$("#people-area").append("<button id='djbutton' style='position:absolute; margin-left: 359px; margin-top: 260px; width: 300px; height: 40px;' >Become DJ</button>");
+	$("#djbutton").bind("click", function() {if (this.innerHTML != "Step Down") { socket_init.emit('dj:join'); this.innerHTML = "Step Down";} else { socket_init.emit('dj:quit'); this.innerHTML = "Become DJ";}});
+	//ENDHACK
 	console.log("started app");
 	
 });
+
+function onYouTubePlayerReady(playerId) {
+    window.YTPlayer = document.getElementById('YouTubePlayer');
+    ytplayer.addEventListener('onStateChange', 'onytplayerStateChange');
+}
