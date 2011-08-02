@@ -11,21 +11,11 @@ function setupRoutes(app) {
 	});
 	
 	app.get('/', function(req, res){
-	  if( req.isAuthenticated() ) {
-	    res.redirect('/index');
-	  }
-	  else {
-	    res.render('login', {locals: { title: "surfstream.tv"}});
-	  }
+		res.render('skeleton', {locals: { title: "surfstream.tv"}});
 	});
 	
 	app.get('/index', function(req, res) {
-		if (req.isAuthenticated()) {
-			console.log("received request, calling 'onUserConnect' for "+req.getAuthDetails().user.name);
-			res.render('index', { locals: { data: JSON.stringify(req.getAuthDetails()), title: "surfstream.tv"}});
-		} else {
-			res.redirect('/');
-		}
+		res.render('skeleton', { locals: { title: "surfstream.tv"}});
 	});
     
     app.get('/chat', function(req, res){
@@ -38,6 +28,26 @@ function setupRoutes(app) {
 
 		app.get('/history', function(req, res){
 	    res.render('history', { locals: {title: "surfstream.tv"}});
+    });
+
+		app.get('/sidebar', function(req, res){
+	    res.render('sidebar', { locals: {title: "surfstream.tv"}});
+    });
+
+		app.get('/myplaylist', function(req, res){
+	    res.render('myplaylist', { locals: {title: "surfstream.tv"}});
+    });
+
+		app.get('/playlistcell', function(req, res){
+	    res.render('playlistcell', { locals: {title: "surfstream.tv"}});
+    });
+
+		app.get('/roominfo', function(req, res){
+	    res.render('roominfo', { locals: {title: "surfstream.tv"}});
+    });
+
+		app.get('/share', function(req, res){
+	    res.render('share', { locals: {title: "surfstream.tv"}});
     });
 }
 
