@@ -1741,7 +1741,7 @@ $(function() {
 				$("#nowPlayingFull").fadeIn(300);
 				$("#fullscreenIcon").fadeIn(300);
 				
-				window.mmTimeoutID = setTimeout(function() {$("#nowPlayingFull").fadeOut(300); $("#fullscreenIcon").fadeOut(300);}, 2000)
+				window.mmTimeoutID = setTimeout(function() {$("#nowPlayingFull").fadeOut(300); $("#fullscreenIcon").fadeOut(300);}, 100000)
 			});
 		} else {
 			SurfStreamApp.fullscreen = false;
@@ -2617,7 +2617,7 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 
 function updateTime() {
 	if(window.YTPlayer){
-		$("#countdownFull").html("Time: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+		$("#countdownFull").html(ss_formatSeconds(window.YTPlayer.getCurrentTime()) + "/" + ss_formatSeconds(window.YTPlayer.getDuration()));
 		if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
 		 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
 		 $("#time-elapsed-bar").css({"width": 635*(window.YTPlayer.getCurrentTime()/window.YTPlayer.getDuration()) + "px"});
