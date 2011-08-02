@@ -226,18 +226,19 @@ div.historyContainer .history .videoHistory {
 .videoListCellContainer .cellInfo .cellButtons .remove {
   border: none;
   cursor: point;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   display: block;
-  background: url("http://i.imgur.com/pS23M.png");
+  margin-right: 1px;
+  background: url("http://i.imgur.com/00MDL.png");
 }
 .videoListCellContainer .cellInfo .cellButtons .toTheTop {
   border: none;
   cursor: points;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   display: block;
-  background: url("http://i.imgur.com/pS23M.png");
+  background: url("http://i.imgur.com/CEiZf.png");
 }
 #outer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -336,12 +337,13 @@ div.historyContainer .history .videoHistory {
   height: 60px;
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist {
+  vertical-align: middle;
   border: none;
   cursor: point;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   display: block;
-  background: url("http://i.imgur.com/pS23M.png");
+  background: url("http://i.imgur.com/FLxQf.png");
 }
 #room-container {
   width: 660px;
