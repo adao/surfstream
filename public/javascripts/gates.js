@@ -196,6 +196,7 @@ $(function(){
 		/* Outgoing Socket Events*/
 		
 		sendMsg: function(data) {
+			data.name = window.SurfStreamApp.get("user").get("user").name;
 			this.socket.emit("message",data);
 		}
 	});
@@ -610,7 +611,7 @@ $(function(){
 		sendMessage : function (event) {
 			var userMessage = this.$('input[name=message]').val();
 			this.$('input[name=message]').val('');
-			SocketManager.sendMsg({name: "Elliot", text:  userMessage });
+			SocketManager.sendMsg({name: null, text:  userMessage });
 			return false;
 		},
 		
