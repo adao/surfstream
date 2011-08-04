@@ -36,17 +36,6 @@
 		addValListeners: function(socket) {
 			var val = this;
 			
-			socket.on('val:suggestVideoToVal', function(data) {
-				if(!val.takeSuggest) return;
-				
-				var thisUser = val.room.users.get(socket.id);
-				if(!val.userSuggest.containsVideo(data.video)) {
-					val.userSuggest.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-					//val.userSuggest.get("videos").get(data.video).set({ 'suggestedBy': thisUser.get('name')});
-					ss_modelWithAttribute(val.userSuggest.get("videos"), "videoId", data.video).set({'suggestedBy': thisUser.get('name')});
-				}
-			});
-			
 			socket.on('val:turnOffDJ', function() {
 				val.isDJ = false;
 				if(val.room.currVideo.get('dj')) {	//VAL is the current DJ
@@ -61,21 +50,6 @@
 					val.playVideo();
 				}
 			});
-			
-			socket.on('val:turnOnSuggest', function() {
-				val.takeSuggest = true;
-			});
-			
-			socket.on('val:turnOffSuggest', function() {
-				val.takeSuggest = false;
-			});
-		},
-		
-		hasVideos: function() {
-			// if((this.userSuggest.getSize() > 0) || (this.autoPlaylist.getSize() > 0))
-			// 	return true;
-			// return false;
-			return true;
 		},
 		
 		playVideo: function() {
@@ -89,6 +63,7 @@
 			
 			var val = this;
 			rc.lpop(key, function(err, reply) {
+				if(val.room.currVideo) return;
 				if(err) {
 					console.log('['+roomName+'][VAL] playVideo() | rc.lpop : ERROR! '+err);
 					val.fetchYouTubeVideo();
@@ -128,8 +103,7 @@
 			var videoId = recentVideo.get('videoId');
 			
 			var roomName = this.room.get('name');
-			console.log('['+roomName+'][VAL] fetchYouTubeVideo(): basing recommendation off of video '+recentVideo.get('title')+", the "+randInt
-				+ "/"+lookBackNum+" most recently played video");
+			console.log('['+roomName+'][VAL] fetchYouTubeVideo(): basing recommendation off of video '+recentVideo.get('title')+", the "+randInt + "/"+lookBackNum+" most recently played video");
 			
 			var options = { 
 				host: 'gdata.youtube.com',
@@ -256,7 +230,6 @@
 				redisClient.rpush('room:'+this.room.get("name")+':history', JSON.stringify(videoFinished));
 				this.room.history.add(videoFinished);
 				this.room.clearVideo();
-				//TODO: make a call to VAL to use this video to generate more recommendations
 			}
 		
 			//logic for setting up the next video
@@ -276,7 +249,7 @@
 				return;
 			}
 			
-			if(this.VAL.isDJ && this.VAL.hasVideos() && this.room.djs.isValsTurn()) {	
+			if(this.VAL.isDJ && this.room.djs.isValsTurn()) {	
 				this.VAL.playVideo();										//since that DJ will always be the last one
 			} else {	//play a video from a human
 				var currDJInfo = this.room.djs.nextDJ(); 	
