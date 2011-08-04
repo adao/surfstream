@@ -147,6 +147,12 @@ div.historyContainer
 	.viewBar
 		width: 300px
 		height: 25px
+		button
+			background-color: #ececec
+			background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+			background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+			color: black
+			font-weight: 600
 		.playlist
 			text-align: center
 			width: 150px
@@ -158,7 +164,10 @@ div.historyContainer
 			height: 25px
 			float: right
 		.active
+			color: white
 			background-color: #A8F3F7
+			background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8))
+			background: -moz-linear-gradient(top, #80d5f7 , #60ccf8)
 	.videoView
 		width: 300px
 		height: 400px
@@ -303,13 +312,17 @@ div.historyContainer
 			width: 30px
 			height: 60px
 			.addToPlaylist
-				vertical-align: middle
+				background-color: transparent
+				margin-left: -5px
+				margin-top: 15px
 				border: none
 				cursor: point
 				width: 30px
 				height: 30px
 				display: block
-				background: url('http://i.imgur.com/FLxQf.png')
+				background: url('http://i.imgur.com/1RPWB.png')
+			.addToPlaylist:hover
+				background: url('http://i.imgur.com/kZdk9.png')
 				
 //room
 #room-container
@@ -413,5 +426,3 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .videoView
 	height: 400px
 	width: 300px
-	overflow-y: scroll
-	overflow-x: hidden
