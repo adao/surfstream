@@ -65,6 +65,7 @@ function sendRoomState(socket) {
 }
 
 io.sockets.on('connection', function(socket) {
+	
 	socket.on('user:sendFBData', function(fbUser) {
 		console.log("Saving to redis...user id: "+fbUser.user.id);
 		console.log('socket id: '+socket.id);
@@ -116,8 +117,12 @@ function addDJListeners(socket) {
 		console.log('user '+currRoom.users.get(socket.id).get('userId')+' requesting to be DJ');
 		
 		var djs = currRoom.djs;
-		console.log('is this user already a dj? '+!djs.get(socket.id));
-		if(djs.length < 4 && !djs.get(socket.id)) {
+		console.log('is this user already a dj? '+djs.get(socket.id));
+		
+		//in order to be a dj, the user has to have vids in his playlist, has to not be a dj, and
+		//the dj list can't be full
+		console.log('user playlist has length: '+currRoom.users.get(socket.id).playlist.getSize() )
+		if(djs.length < 4 && currRoom.users.get(socket.id).playlist.getSize() > 0 && !djs.get(socket.id)) {
 			console.log('user '+currRoom.users.get(socket.id).get('userId')+' is now a DJ');
 			
 			//backbone way
@@ -129,7 +134,6 @@ function addDJListeners(socket) {
 			announceDJs(); 
 			
 			if(currRoom.djs.length == 1) { //this user is the only dj
-				//currDJIndex = 0;			//note: eventually we'll want to replace this with a full DJ model
 				currRoom.djs.nextDJ();
 				playVideoFromPlaylist(socket.id);
 			}
@@ -296,6 +300,11 @@ function announceMeter() {
 function removeFromDJ(socketId) {
 	currRoom.djs.removeDJ(socketId);
 	announceDJs();
+	if(currRoom.djs.currDJ == null) {
+		console.log('the DJ removed was the current one, going to the next DJ');
+		clearTimeout(currRoom.currVideo.get('timeoutId'));
+		onVideoEnd();
+	}		
 }
 
 function announceDJs() {
@@ -309,7 +318,7 @@ function initializeAndSendPlaylist(socket) {
 		if(err) {
 			console.log("Error in getting user"+userId+"'s playlist!");
 		} else {
-			var currPlaylist = new m.PlaylistModel();
+			var currPlaylist = new m.Playlist();
 			console.log('getting playlist for user '+userId+', reply: '+reply);
 			if(reply != 'undefined' && reply != null) {
 				console.log('...serializing playlist');
