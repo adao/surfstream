@@ -12,8 +12,6 @@ var http = require('http'),
 	redis = require('redis'),
 	redisClient = redis.createClient();
 
-// require('tamejs').register();
-// require('server.tjs');
 require('jade');
 	
 /* Custom Modules */
@@ -21,14 +19,12 @@ var facebook = require('./facebook'),
 	models = require('./public/models/models');
 	m = require('./models/models');
 
-
 io.configure(function () {
 	io.set('log level', 2); 
 })
 
 
 // Configuration
-
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -59,7 +55,6 @@ var nodeChatModel = new models.NodeChatModel();
 var currRoom = new m.Room();
 
 function sendDJInfo(socket) {
-	//socket.emit('dj:announceDJs', djList);
 	io.sockets.emit('dj:announceDJs', currRoom.djs.xport());
 }
 
@@ -67,27 +62,21 @@ function sendRoomState(socket) {
 	announceClients();
 	initializeAndSendPlaylist(socket);
 	sendDJInfo(socket);
-	//sendRoomHistory(socket);
 }
 
 io.sockets.on('connection', function(socket) {
+	
 	socket.on('user:sendFBData', function(fbUser) {
 		console.log("Saving to redis...user id: "+fbUser.user.id);
 		console.log('socket id: '+socket.id);
 		//TODO: need to check and see if redis already has the id
 		redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
 		
-		console.log('about to push onto clients the user id '+fbUser.user.id);
-//		clients.push(fbUser.user.id);	
-//	socketToUser[socket.id] = fbUser.user.id;
-		
-		//Backbone`
 		var name = fbUser.user.name;
 		var currUser = new m.User({name: name, socketId: socket.id, userId: fbUser.user.id});
 		console.log('creating a new User object, with name: '+currUser.get('name'));
 		currRoom.users.add(currUser);
 		
-		//await {
 		redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
 			if(err) {
 				console.log("Error in getting "+fbUser.user.name+" 's points!");
@@ -99,9 +88,7 @@ io.sockets.on('connection', function(socket) {
 			}
 			sendRoomState(socket);
 		});
-			
-		//}
-		
+
 		addListeners(socket);
 	});
 
@@ -110,29 +97,32 @@ io.sockets.on('connection', function(socket) {
 		var timeDiff = (timeIn.getTime() - currRoom.currVideo.get('timeStart')) / 1000; //time difference in seconds
 		console.log('Sending current video to socket');
 		socket.emit('video:sendInfo', { video: currRoom.currVideo.get('videoId'), time: Math.ceil(timeDiff) });
-	}
-	
-	//taken from chat tutorial
-	//socket.emit('chat:initial', { event: 'initial', data: nodeChatModel.xport() });
+	}	
 });
 
 function addListeners(socket) {
 	socket.on('disconnect', function() { 
 		removeSocketFromRoom(socket);
 	});
-		// 
-		// socket.on('addVideoToQueue', function(data) {
-		// 	var userId = socketToUser[socket.id];
-		// 	console.log("user "+ userId +" wants to add video: "+data.video);
-		// 	//redisClient.rpush("user:"+userId+":queue", data.video, function(err,res) { sendFullPlaylist(socket, userId)});
-		// });
-		// 
+	//taken from the chat tutorial
+	socket.on('message', function(msg) { chatMessage(socket, msg) });
+	addDJListeners(socket);
+	addPlaylistListeners(socket);
+	addMeterListeners(socket);
+	addSocialListeners(socket);
+}
+
+function addDJListeners(socket) {
 	socket.on('dj:join', function() {
 		console.log('user '+currRoom.users.get(socket.id).get('userId')+' requesting to be DJ');
 		
 		var djs = currRoom.djs;
-		console.log('is this user already a dj? '+!djs.get(socket.id));
-		if(djs.length < 4 && !djs.get(socket.id)) {
+		console.log('is this user already a dj? '+djs.get(socket.id));
+		
+		//in order to be a dj, the user has to have vids in his playlist, has to not be a dj, and
+		//the dj list can't be full
+		console.log('user playlist has length: '+currRoom.users.get(socket.id).playlist.getSize() )
+		if(djs.length < 4 && currRoom.users.get(socket.id).playlist.getSize() > 0 && !djs.get(socket.id)) {
 			console.log('user '+currRoom.users.get(socket.id).get('userId')+' is now a DJ');
 			
 			//backbone way
@@ -144,7 +134,6 @@ function addListeners(socket) {
 			announceDJs(); 
 			
 			if(currRoom.djs.length == 1) { //this user is the only dj
-				//currDJIndex = 0;			//note: eventually we'll want to replace this with a full DJ model
 				currRoom.djs.nextDJ();
 				playVideoFromPlaylist(socket.id);
 			}
@@ -156,12 +145,6 @@ function addListeners(socket) {
 		removeFromDJ(socket.id) 
 	});
 	
-	//taken from the chat tutorial
-	socket.on('message', function(msg) { chatMessage(socket, msg) });
-	
-	addPlaylistListeners(socket);
-	addMeterListeners(socket);
-	addSocialListeners(socket);
 }
 
 function addSocialListeners(socket) {
@@ -218,7 +201,7 @@ function addPlaylistListeners(socket) {
 	socket.on('playlist:delete', function(data) {
 		console.log('Received request to delete video '+data.video+' from the playlist for user '+ 
 							currRoom.users.get(socket.id).get('userId'));
-		
+		currRoom.users.get(socket.id).playlist.deleteVideo(data.video);
 	});
 }
 
@@ -240,7 +223,6 @@ function getVideoDurationAndPlay(videoId) {
 	  res.setEncoding('utf8');
 		var videoData = '';
 	  res.on('data', function (chunk) {
-			//console.log(chunk);
 	    videoData += chunk;
 	  });
 		res.on('end', function() {
@@ -294,7 +276,6 @@ function announceVideo(videoId, videoDuration) {
 }
 
 function playVideoFromPlaylist(socketId) {
-//	var videoToPlay = socketToPlaylist[socketId].playFirstVideo();
 	var videoToPlay = currRoom.users.get(socketId).playlist.playFirstVideo();
 	
 	if(!videoToPlay) {
@@ -302,7 +283,7 @@ function playVideoFromPlaylist(socketId) {
 		return;
 	}
 	console.log("(playVideoFromPlaylist) Video to play has id: "+videoToPlay.get('videoId'));
-	//currRoom.currVideo = videoToPlay;
+
 	currRoom.currVideo = new m.Video({ videoId: videoToPlay.get('videoId')});
 	currRoom.currVideo.set({ socketIdOfDj: socketId});
 	currRoom.meter.reset();
@@ -317,11 +298,13 @@ function announceMeter() {
 }
 
 function removeFromDJ(socketId) {
-//	var index = djList.indexOf(socketId);
-//	if(index != -1) djList.splice(index,1);
-	
 	currRoom.djs.removeDJ(socketId);
 	announceDJs();
+	if(currRoom.djs.currDJ == null) {
+		console.log('the DJ removed was the current one, going to the next DJ');
+		clearTimeout(currRoom.currVideo.get('timeoutId'));
+		onVideoEnd();
+	}		
 }
 
 function announceDJs() {
@@ -335,7 +318,7 @@ function initializeAndSendPlaylist(socket) {
 		if(err) {
 			console.log("Error in getting user"+userId+"'s playlist!");
 		} else {
-			var currPlaylist = new m.PlaylistModel();
+			var currPlaylist = new m.Playlist();
 			console.log('getting playlist for user '+userId+', reply: '+reply);
 			if(reply != 'undefined' && reply != null) {
 				console.log('...serializing playlist');
@@ -355,28 +338,20 @@ function clientDisconnect(userId) {
 }
 
 function removeSocketFromRoom(socket) {
-	//clientDisconnect(socketToUser[socket.id]);
 	removeFromDJ(socket.id);	
 	
 	var userId = currRoom.users.get(socket.id).get('userId');
-	// var index = clients.indexOf(userId);
-	// 	if(index != -1) clients.splice(index,1);
-	
-//	delete socketToUser[socket.id];
-	
+
 	//Backbone way
 	var userToRemove = currRoom.users.get(socket.id);
 	redisClient.set('user:'+userId+':points', userToRemove.get('points'));	//save points for user
-	//currRoom.users.remove(socket.id);
 	currRoom.remove(socket.id);
 	console.log('there are now '+currRoom.users.length+ ' users in the room, and dj count: '+currRoom.djs.length);
 	
 	//save playlist for user
-//	var userPlaylist = socketToPlaylist[socket.id].xport();
 	var userPlaylist = userToRemove.playlist.xport();
 	console.log('Saving playlist for user '+userId+': '+userPlaylist);
 	redisClient.set('user:'+userId+':playlist', userPlaylist);
-//	delete socketToPlaylist[socket.id];
 }
 
 function announceClients() {
@@ -384,11 +359,11 @@ function announceClients() {
 	console.log("'announceClients' fired to all sockets, client count: "+allUsers.length);
 	io.sockets.emit('users:announce', allUsers);
 }
+
 //chat tutorial stuff
 function chatMessage(socket, msg){
 	var chat = new models.ChatEntry({name: msg.name, text: msg.text, fbid: msg.id});
 	
-
 	redisClient.incr('next.chatentry.id', function(err, newId) {
 		chat.set({id: newId});
 		nodeChatModel.chats.add(chat);

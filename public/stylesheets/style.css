@@ -202,7 +202,6 @@ div.historyContainer .history .videoHistory {
 .videoListCellContainer {
   width: 285px;
   height: 60px;
-  border: 1px solid #000;
 }
 .videoListCellContainer .thumbContainer {
   float: left;
@@ -224,7 +223,7 @@ div.historyContainer .history .videoHistory {
   width: 150px;
   height: 17px;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 12px;
 }
 .videoListCellContainer .cellInfo .cellButtons {
   float: right;
@@ -232,21 +231,40 @@ div.historyContainer .history .videoHistory {
   height: 60px;
 }
 .videoListCellContainer .cellInfo .cellButtons .remove {
+  margin-left: -3px;
   border: none;
   cursor: point;
   width: 30px;
   height: 30px;
   display: block;
   margin-right: 1px;
-  background: url("http://i.imgur.com/00MDL.png");
+  background: url("http://i.imgur.com/qfJg2.png") 50% 50% no-repeat;
+}
+.videoListCellContainer .cellInfo .cellButtons .remove:hover {
+  margin-left: -3px;
+  border: none;
+  cursor: point;
+  width: 30px;
+  height: 30px;
+  display: block;
+  margin-right: 1px;
+  background: url("http://i.imgur.com/d4eLo.png") 50% 50% no-repeat;
 }
 .videoListCellContainer .cellInfo .cellButtons .toTheTop {
   border: none;
   cursor: points;
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   display: block;
-  background: url("http://i.imgur.com/CEiZf.png");
+  background: url("http://imgur.com/PMfjr.png") 50% 50% no-repeat;
+}
+.videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
+  border: none;
+  cursor: points;
+  width: 25px;
+  height: 25px;
+  display: block;
+  background: url("http://i.imgur.com/BoVIS.png") 50% 50% no-repeat;
 }
 #outer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -335,10 +353,12 @@ div.historyContainer .history .videoHistory {
   height: 60px;
 }
 .searchCellContainer .cellInfo .videoInfo .title {
+  margin-top: 5px;
+  margin-left: 5px;
   width: 150px;
   height: 17px;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 12px;
 }
 .searchCellContainer .cellInfo .cellButtons {
   float: right;
@@ -357,6 +377,7 @@ div.historyContainer .history .videoHistory {
   background: url("http://i.imgur.com/1RPWB.png");
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist:hover {
+  background-color: #000;
   background: url("http://i.imgur.com/kZdk9.png");
 }
 #room-container {
@@ -482,4 +503,97 @@ button.search.active {
 .videoView {
   height: 400px;
   width: 300px;
+}
+#remote {
+  padding-top: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  background-color: #323131;
+  background: -webkit-gradient(linear, left top, left bottom, from(#323131), to(#161616));
+  float: right;
+  margin-top: 150px;
+  height: 150px;
+  width: 100px;
+  background-color: #fff;
+}
+#remote-left {
+  vertical-align: top;
+  display: inline-block;
+  width: 50px;
+  height: 60px;
+  text-align: center;
+}
+#remote-right {
+  vertical-align: top;
+  display: inline-block;
+  width: 50px;
+  height: 60px;
+  text-align: center;
+}
+#remote-bottom {
+  margin-top: 18px;
+  display: block;
+  width: 100px;
+  height: 90px;
+  text-align: center;
+}
+.buttonContainer {
+  margin: 3px;
+  display: inline-block;
+  border: none;
+  background-color: #818181;
+  background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a));
+  border: none;
+  height: 30px;
+  width: 30px;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+.bottombuttonContainer {
+  margin: 3px;
+  border: none;
+  background-color: #818181;
+  background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a));
+  border: none;
+  height: 30px;
+  width: 30px;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+button#up-vote {
+  border: none;
+  height: 30px;
+  width: 30px;
+  background-color: transparent;
+  background: url("http://i.imgur.com/FY6PW.png") 50% 50% no-repeat;
+}
+button#down-vote {
+  border: none;
+  height: 30px;
+  width: 30px;
+  background-color: transparent;
+  background: url("http://i.imgur.com/947FE.png") 50% 50% no-repeat;
+}
+button#vol-up {
+  border: none;
+  height: 30px;
+  width: 30px;
+  background-color: transparent;
+  background: url("http://i.imgur.com/pI9fe.png") 50% 50% no-repeat;
+}
+button#vol-down {
+  border: none;
+  height: 30px;
+  width: 30px;
+  background-color: transparent;
+  background: url("http://i.imgur.com/4bUJ1.png") 50% 50% no-repeat;
+}
+button#mute {
+  border: none;
+  height: 30px;
+  width: 30px;
+  background: url("http://i.imgur.com/euzaw.png") 50% 50% no-repeat;
 }
