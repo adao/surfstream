@@ -162,8 +162,6 @@ div.historyContainer
 	.videoView
 		width: 300px
 		height: 400px
-		overflow-y: scroll
-		overflow-x: hidden
 
 
 //myplaylist
@@ -259,10 +257,12 @@ div.historyContainer
 			
 //videosearch
 //myplaylist
-#searchContainer
-	height: 400px
-	width: 300px
-	border: 1px solid black
+#search-view
+	#searchContainer
+		overflow-y: scroll
+		overflow-x: hidden
+		height: 360px
+		width: 300px
 	#searchBar
 		.inputBox
 			background-image: url('http://i.imgur.com/SWiIL.png')
@@ -368,9 +368,12 @@ div.historyContainer
 			height: 30px
 			width: 75px
 			#copy-button
+				color: black
 				margin-top: 2px
-				background-color: gray
-				text-indent: 7px
+				background-color: #ececec
+				background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+				background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+				text-indent: 9px
 				border-radius: 5px
 				-webkit-border-radius: 5px
 				-moz-border-radius: 5px
@@ -407,3 +410,8 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	font-size: 12px
 	color: gray
 	
+.videoView
+	height: 400px
+	width: 300px
+	overflow-y: scroll
+	overflow-x: hidden

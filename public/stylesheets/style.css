@@ -183,8 +183,6 @@ div.historyContainer .history .videoHistory {
 .sidebarContainer .videoView {
   width: 300px;
   height: 400px;
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 .playlistContainer {
   height: 400px;
@@ -287,17 +285,18 @@ div.historyContainer .history .videoHistory {
   width: 300px;
   background-color: #808080;
 }
-#searchContainer {
-  height: 400px;
+#search-view #searchContainer {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 360px;
   width: 300px;
-  border: 1px solid #000;
 }
-#searchContainer #searchBar .inputBox {
+#search-view #searchBar .inputBox {
   background-image: url("http://i.imgur.com/SWiIL.png");
   height: 40px;
   text-indent: 30px;
 }
-#searchContainer #searchBar .inputBox input {
+#search-view #searchBar .inputBox input {
   margin-top: 12px;
   width: 240px;
   height: 14px;
@@ -419,9 +418,12 @@ div.historyContainer .history .videoHistory {
 }
 #share #copy #copy-button-container #copy-button,
 #shareBar #copy #copy-button-container #copy-button {
+  color: #000;
   margin-top: 2px;
-  background-color: #808080;
-  text-indent: 7px;
+  background-color: #ececec;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
+  background: -moz-linear-gradient(top, #ececec, #dbdbdb);
+  text-indent: 9px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -461,4 +463,10 @@ button.search.active {
   weight: bold;
   font-size: 12px;
   color: #808080;
+}
+.videoView {
+  height: 400px;
+  width: 300px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
