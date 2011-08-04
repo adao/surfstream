@@ -263,7 +263,17 @@ function onVideoEnd() {	//add the video the room history
 		currRoom.history.add(videoFinished);
 		currRoom.clearVideo();
 	}
-	playNextVideo();
+	
+	if(currRoom.djs.length == 0) {
+		endVideo();
+	} else {
+		playNextVideo();
+	}
+}
+
+//this is a hack
+function endVideo() {
+	io.sockets.emit('video:sendInfo', { video: null, time: 0});
 }
 
 function announceVideo(videoId, videoDuration) {
