@@ -104,8 +104,10 @@
 		xport: function() {
 			var videoExport = [];
 			this.videos.each(function(video) {
+				console.log('video to push: '+JSON.stringify(video));
 				videoExport.push(video.xport());
 			});
+			console.log('video playlist will be saved as: '+JSON.stringify(videoExport));
 		},
 		
 		mport: function(rawVideoData) {
@@ -216,6 +218,7 @@
 			var list = new Array();
 			this.each(function(user) {
 				var u = {};
+				u.id = user.get('userId');
 				u.points = user.get('points');
 				u.name = user.get('name');
 				u.avatar = user.get('avatar');

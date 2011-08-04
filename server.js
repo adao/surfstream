@@ -253,7 +253,7 @@ function playNextVideo() {
 }
 
 function onVideoEnd() {	//add the video the room history
-	if(currRoom.currVideo != null) {
+	if(currRoom.currVideo = null) {
 		var videoFinished = new m.Video({ 
 			videoId: currRoom.currVideo.get('videoId'), 
 			up: currRoom.meter.up, 
@@ -328,7 +328,7 @@ function initializeAndSendPlaylist(socket) {
 				currRoom.users.get(socket.id).setPlaylist(currPlaylist);
 				socket.emit("playlist:refresh", reply);
 			} else {
-				socket.emit("playlist:refresh")
+				socket.emit("playlist:refresh");
 			}
 		}
 	});
@@ -346,8 +346,10 @@ function removeSocketFromRoom(socket) {
 	
 	//save playlist for user
 	var userPlaylist = userToRemove.playlist.xport();
-	console.log('Saving playlist for user '+userId+': '+userPlaylist);
-	redisClient.set('user:'+userId+':playlist', userPlaylist);
+	console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
+	redisClient.set('user:'+userId+':playlist', JSON.stringify(userPlaylist), function() {
+		console.log('...save was successful');
+	});
 	
 	removeFromDJ(socket.id);	
 }
