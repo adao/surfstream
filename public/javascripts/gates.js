@@ -26,13 +26,20 @@ $(function(){
 		updateDisplayedUsers : function (userJSONArray) {
 			var hash, userCollection = this.get("users");
 			
+			
+				
+			hash = {};
 			for (var user in userJSONArray) {
 				if (!userCollection.get(userJSONArray[user].id)) {
 					userCollection.add(userJSONArray[user]);
-				} else {
-					userCollection.remove(userJSONArray[user]);
-				}
-			}	
+				} 
+				hash[userJSONArray[user].id] = true;
+			}
+			
+			userCollection.forEach(function(userModel) {
+				if (!hash[userModel.get('id')]) userModel.collection.remove(userModel);
+			});
+			
 		}
 		
 		
@@ -158,9 +165,6 @@ $(function(){
 				Theatre.tipsyChat(msg.data.attrs.text, msg.data.attrs.fbid);				
 			});
 			
-			socket.on('playlist:initial', function(response) {
-				app.get("user").set({playList: 'response'});
-			});
 			
 			socket.on('users:announce', function(userJSONArray) {
 				//userJSONArray is an array of users, with .userId = fbid#, .name = full name, .avatar = TBD,
@@ -171,7 +175,23 @@ $(function(){
 			
 			socket.on('dj:announceDJs', function(djArray) {
 				for (dj in djArray) {
-					$("[id="+djArray[dj].name+"]").style("border-style", "solid").style("border-color","#98bf21");
+					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
+				}
+			});
+			
+			//.upvoteset maps userids who up to true, .down, .up totals
+			socket.on("meter:announce", function(meterStats) {
+				for (fbid in meterStats.upvoteSet){
+					if (meterStats.upvoteSet[fbid] == true) {
+						//app.get("roomModel").get("users").get(fbid).
+						//BEGIN HACK
+						if ($("#" + fbid).css("border-color") != "yellow") {
+							$("#" + fbid).css("border-width", $("#" + fbid).css("border-width") + 20 + "px");
+							$("#" + fbid).css("border-color","#98bf21");
+							$("#" + fbid).css("border-style","solid");
+						}
+						//ENDHACK
+					}
 				}
 			});
 			
@@ -204,7 +224,24 @@ $(function(){
 		
 		addVideoToPlaylist : function(video) {
 			this.socket.emit('playlist:addVideo', {video: video});			
-		}
+		},
+		
+		voteUp : function() {
+			SocketManager.socket.emit('meter:upvote');
+		},
+		
+		voteDown : function() {
+			SocketManager.socket.emit('meter:downvote');
+		},
+		
+		toTopOfPlaylist : function(vid_id) {
+			this.socket.emit("playlist:moveVideoToTop", {video: vid_id});
+		},
+		
+		deleteFromPlaylist : function(vid_id) {
+			this.socket.emit("playlist:delete", {video: vid_id})
+		}		
+	
 	});
 	
 	window.SurfStream = Backbone.Model.extend({
@@ -253,7 +290,7 @@ $(function(){
 			for (video in videos){
 				this.get("user").get("playList").add({title: videos[video].video});
 			}
-		}
+		},
 	});
 	
 	/*FOR ANTHONY: MAKE SURE ON PAGE <div id="fb_user_init">userID</div>*/
@@ -375,6 +412,7 @@ $(function(){
 		
 	});
 
+	/*******SIDEBAR********/
 	
 	window.SideBar = Backbone.View.extend({
 		el: '#sidebar',
@@ -419,6 +457,8 @@ $(function(){
 		
 		
 	});
+	
+	/*******SEARCHVIEW********/
 	
 	window.SearchView = Backbone.View.extend({
 		
@@ -576,13 +616,14 @@ $(function(){
 		removeFromPlaylist : function(event) {
 			//SocketManager.removeVideoFromPlaylist(event.data.videoID);
 			event.data.videoModel.destroy();
+			SocketManager.deleteFromPlaylist(event.data.videoModel.get("vid_id"));
 		},
 		
 		toTheTop : function(event) {
 			var clone;
 			//SocketManager.toTheTop(event.data.videoID);
 			$(this).parent().parent().parent().parent().insertBefore($("#video-list-container div:first"));
-			
+			SocketManager.toTopOfPlaylist(event.data.videoModel.get("vid_id"));
 			/*clone = $("#vid_"+event.data.videoModel.attributes.vid_id).clone(true, true);
 			$("#vid_"+event.data.videoModel.attributes.vid_id).remove();
 			$("#video-list .videoListContainer").prepend(clone);*/
@@ -670,6 +711,9 @@ $(function(){
 		
 		initialize: function () {
 			$("#dj").bind("click", this.toggleDJStatus); 	
+			$("#up-vote").bind("click", SocketManager.voteUp);
+			$("#down-vote").bind("click", SocketManager.voteDown);
+			
 			this.options.users.bind("add", this.placeUser, this);
 			this.options.users.bind("remove", this.removeUser, this);		
 			this.chats = [];

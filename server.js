@@ -351,6 +351,7 @@ function removeSocketFromRoom(socket) {
 		console.log('...save was successful');
 	});
 	
+	announceClients();
 	removeFromDJ(socket.id);	
 }
 
