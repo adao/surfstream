@@ -231,21 +231,40 @@ div.historyContainer .history .videoHistory {
   height: 60px;
 }
 .videoListCellContainer .cellInfo .cellButtons .remove {
+  margin-left: -3px;
   border: none;
   cursor: point;
   width: 30px;
   height: 30px;
   display: block;
   margin-right: 1px;
-  background: url("http://i.imgur.com/00MDL.png");
+  background: url("http://i.imgur.com/JlYah.png") 50% 50% no-repeat;
+}
+.videoListCellContainer .cellInfo .cellButtons .remove:hover {
+  margin-left: -3px;
+  border: none;
+  cursor: point;
+  width: 30px;
+  height: 30px;
+  display: block;
+  margin-right: 1px;
+  background: url("http://i.imgur.com/cfW6q.png") 50% 50% no-repeat;
 }
 .videoListCellContainer .cellInfo .cellButtons .toTheTop {
   border: none;
   cursor: points;
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   display: block;
-  background: url("http://i.imgur.com/CEiZf.png");
+  background: url("http://imgur.com/PMfjr.png") 50% 50% no-repeat;
+}
+.videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
+  border: none;
+  cursor: points;
+  width: 25px;
+  height: 25px;
+  display: block;
+  background: url("http://i.imgur.com/BoVIS.png") 50% 50% no-repeat;
 }
 #outer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
