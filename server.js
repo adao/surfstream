@@ -201,7 +201,7 @@ function addPlaylistListeners(socket) {
 	socket.on('playlist:delete', function(data) {
 		console.log('Received request to delete video '+data.video+' from the playlist for user '+ 
 							currRoom.users.get(socket.id).get('userId'));
-		
+		currRoom.users.get(socket.id).playlist.delete(data.video);
 	});
 }
 

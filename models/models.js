@@ -204,7 +204,7 @@
 			if(this.currDJIndex >= djIndex) {
 				this.currDJIndex = this.currDJIndex - 1;
 			}
-			if(this.currDJ.get('socketId') == socketId) {
+			if(this.currDJ != null && this.currDJ.get('socketId') == socketId) {
 				this.currDJ = null;
 			} 
 			this.remove(socketId);	
