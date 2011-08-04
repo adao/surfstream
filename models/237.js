@@ -91,6 +91,7 @@
 		fetchYouTubeVideo: function() {
 			if(this.room.history.length == 0) return;
 			
+			//choose video to base it on
 			var lookBackNum = 3;
 			if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
 			var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
@@ -482,6 +483,34 @@
 	models.VideoCollection = Backbone.Collection.extend({
 		model: models.Video,
 	});
+	
+	models.History = Backbone.Model.extend({
+		initialize: function() {
+			this.videos = new models.VideoCollection();
+		},
+		
+		getGoodVideo: function() {
+ 			var len = this.videos.length;
+			var videoArray = [];
+			
+			for(var i=0; i < lookBackNum && i < len; i++) {
+				var currVideo = this.videos.at(len - (i+1));
+				if(currVideo.get('percent') >= 50)
+					videoArray.push(currVideo);
+			}
+			
+			if(videoArray.length >= 1) {
+				var randInt = Math.floor(Math.random()*videoArray.length);	//0 <= x < videoArray.length
+				return videoArray[randInt];
+			} else {
+				var lookBackNum = 3;
+				if (this.videos.length < lookBackNum) lookBackNum = this.videos.length;
+				var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
+				var recentVideo = this.videos.at(this.room.history.length - randInt);
+				return recentVideo;
+			}
+		}
+	});
 
 	/*************************/
 	/*        Playlist       */
@@ -833,7 +862,7 @@
 	/*      DJCollection    */
 	/*************************/
 	
-	var MAX_DJS = 4;
+	var MAX_DJS = 3;
 	
 	models.DJCollection = Backbone.Collection.extend({
 		model: models.User,
