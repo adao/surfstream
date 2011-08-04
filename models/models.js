@@ -158,7 +158,7 @@
 		
 		xport: function() {
 			return { 
-				userId: this.get('userId'), 
+				id: this.get('userId'), 
 				name: this.get('name'), 
 				avatar: this.get('avatar'), 
 				points: this.get('points'),

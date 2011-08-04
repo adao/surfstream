@@ -386,13 +386,13 @@ function announceClients() {
 }
 //chat tutorial stuff
 function chatMessage(socket, msg){
-	var chat = new models.ChatEntry({name: msg.name, text: msg.text});
+	var chat = new models.ChatEntry({name: msg.name, text: msg.text, fbid: msg.id});
 	
 
 	redisClient.incr('next.chatentry.id', function(err, newId) {
 		chat.set({id: newId});
 		nodeChatModel.chats.add(chat);
-		console.log('(' + socket.id + ') ' + chat.get('id') + ' ' + chat.get('name') + ': ' + chat.get('text'));
+		console.log('(' + socket.id + ') ' + chat.get('fbid') + ' ' + chat.get('name') + ': ' + chat.get('text'));
 
 		redisClient.rpush('chatentries', chat.xport(), redis.print);
 		redisClient.bgsave();
