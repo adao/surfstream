@@ -203,7 +203,7 @@ function addPlaylistListeners(socket) {
 							currRoom.users.get(socket.id).get('userId'));
 		currRoom.users.get(socket.id).playlist.deleteVideo(data.video);
 	});
-}
+} 
 
 function getVideoDurationAndPlay(videoId) {
 	if(!videoId) {
@@ -302,7 +302,8 @@ function removeFromDJ(socketId) {
 	announceDJs();
 	if(currRoom.djs.currDJ == null) {
 		console.log('the DJ removed was the current one, going to the next DJ');
-		clearTimeout(currRoom.currVideo.get('timeoutId'));
+		if(currRoom.currVideo != null)
+			clearTimeout(currRoom.currVideo.get('timeoutId'));
 		onVideoEnd();
 	}		
 }

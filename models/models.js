@@ -117,8 +117,8 @@
 		
 	});
 	
-	var X_MAX = 610;
-	var Y_MAX = 250;
+	var X_MAX = 510;
+	var Y_MAX = 95;
 	
 	models.User = Backbone.Model.extend({
 		defaults: {
