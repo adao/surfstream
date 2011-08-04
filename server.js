@@ -253,15 +253,16 @@ function playNextVideo() {
 }
 
 function onVideoEnd() {	//add the video the room history
-	var videoFinished = new m.Video({ 
-		videoId: currRoom.currVideo.get('videoId'), 
-		up: currRoom.meter.up, 
-		down: currRoom.meter.down 
-	});
-	redisClient.rpush('room:history', JSON.stringify(videoFinished));
-	currRoom.history.add(videoFinished);
-	currRoom.clearVideo();
-	
+	if(currRoom.currVideo != null) {
+		var videoFinished = new m.Video({ 
+			videoId: currRoom.currVideo.get('videoId'), 
+			up: currRoom.meter.up, 
+			down: currRoom.meter.down 
+		});
+		redisClient.rpush('room:history', JSON.stringify(videoFinished));
+		currRoom.history.add(videoFinished);
+		currRoom.clearVideo();
+	}
 	playNextVideo();
 }
 
@@ -333,14 +334,8 @@ function initializeAndSendPlaylist(socket) {
 	});
 }
 
-function clientDisconnect(userId) {
-	console.log("userId "+userId+" is disconnecting");
-	announceClients();
-}
 
 function removeSocketFromRoom(socket) {
-	removeFromDJ(socket.id);	
-	
 	var userId = currRoom.users.get(socket.id).get('userId');
 
 	//Backbone way
@@ -353,6 +348,8 @@ function removeSocketFromRoom(socket) {
 	var userPlaylist = userToRemove.playlist.xport();
 	console.log('Saving playlist for user '+userId+': '+userPlaylist);
 	redisClient.set('user:'+userId+':playlist', userPlaylist);
+	
+	removeFromDJ(socket.id);	
 }
 
 function announceClients() {
