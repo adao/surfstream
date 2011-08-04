@@ -23,22 +23,24 @@ window.fbAsyncInit = function() {
 			document.getElementById('frontdoor').style.display = 'none';
 			document.getElementById('loadingScreen').style.display = 'none';
 			document.getElementById('outer').style.display = 'block';
-		} else if (response.session) {
+/*		} else if (response.session) {
 			FB.logout(function(response){});
 			document.getElementById('loadingScreen').style.display = 'none';
-			document.getElementById('frontdoor').style.display = 'inline-block';
+			document.getElementById('frontdoor').style.display = 'inline-block';*/
 		} else {
 			// yeah right
 			document.getElementById('loadingScreen').style.display = 'none';
 			document.getElementById('frontdoor').style.display = 'inline-block';
+			FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
 		}
 	}
 		
 	// run once with current status and whenever the status changes
-	FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
-	FB.Event.subscribe('auth.statusChange', proceed_to_site);
-  document.getElementById('loadingScreen').style.display = 'none';
-	document.getElementById('frontdoor').style.display = 'inline-block';
+	FB.getLoginStatus(proceed_to_site);
+	//FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
+	//FB.Event.subscribe('auth.statusChange', proceed_to_site);
+  //document.getElementById('loadingScreen').style.display = 'none';
+	//document.getElementById('frontdoor').style.display = 'inline-block';
 };
 
 (function() {
