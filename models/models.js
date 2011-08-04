@@ -56,6 +56,8 @@
 		},
 
 		addVideoId: function(id) {
+			if(this.videos.get(id) >= 0)
+				return false;
 			var vid = new models.Video();
 			vid.id = id;
 			vid.set({ videoId: id});
