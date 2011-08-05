@@ -192,7 +192,7 @@ function addMeterListeners(socket) {
 function addPlaylistListeners(socket) {
 	socket.on('playlist:addVideo', function(data) {
 		console.log('Received request to add video '+data.video+' to user '+currRoom.users.get(socket.id).get('userId'));
-		currRoom.users.get(socket.id).playlist.addVideoId(data.video);
+		currRoom.users.get(socket.id).playlist.addVideoId(data.video, data.thumb, data.title);
 	}); 
 	
 	socket.on('playlist:moveVideoToTop', function(data) {

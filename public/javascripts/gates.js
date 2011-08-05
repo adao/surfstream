@@ -65,7 +65,7 @@ $(function(){
 		    var entry = entries[i];
 		    var videoResult = {
 		      title: entry.title.$t,
-		      image_src: entry.media$group.media$thumbnail[0].url,
+		      thumb: entry.media$group.media$thumbnail[0].url,
 		      videoUrl: entry.id.$t
 		    };
 					buildup.push(videoResult);			
@@ -229,8 +229,8 @@ $(function(){
 			this.socket.emit('dj:quit');
 		},
 		
-		addVideoToPlaylist : function(video) {
-			this.socket.emit('playlist:addVideo', {video: video});			
+		addVideoToPlaylist : function(video, thumb, title) {
+			this.socket.emit('playlist:addVideo', {video: video, thumb: thumb, title: title });			
 		},
 		
 		voteUp : function() {
@@ -295,7 +295,7 @@ $(function(){
 		
 		setVideos : function(videos) {
 			for (video in videos){
-				this.get("user").get("playList").add({title: videos[video].video});
+				this.get("user").get("playList").add({title: videos[video].title, thumb: videos[video].thumb, vid_id: videos[video].videoId});
 			}
 		},
 	});
@@ -526,14 +526,14 @@ $(function(){
     },
 		
 		initialize: function () {
-			$("#searchContainer").append(this.render({thumb: this.options.video.get("image_src"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}).el);
+			$("#searchContainer").append(this.render({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}).el);
 		},
 		
 		addToPlaylist: function (){
 			var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
 			this.options.video.set({vid_id: videoID})
 			this.options.playlist.add(this.options.video);
-			SocketManager.addVideoToPlaylist(videoID);
+			SocketManager.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"));
 		},
 		
 		render: function(searchResult) {
@@ -636,7 +636,7 @@ $(function(){
 		
 		render: function() {
 			$(this.el).html(this.videoCellTemplate({title: this.model.get('title'), vid_id: this.model.get("vid_id")}));
-			this.$(".thumbContainer").attr("src", this.model.get("image_src"));
+			this.$(".thumbContainer").attr("src", this.model.get("thumb"));
 			return this;
 		},
 		

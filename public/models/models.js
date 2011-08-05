@@ -30,10 +30,10 @@
 			this.videos = new models.VideoCollection();
 		},
 
-		addVideoId: function(id) {
+		addVideoId: function(id, thumb, title) {
 			var vid = new models.Video();
 			vid.id = id;
-			vid.set({ videoId: id});
+			vid.set({ videoId: id, thumb: thumb, title: title});
 			this.videos.add(vid);
 		},
 		
