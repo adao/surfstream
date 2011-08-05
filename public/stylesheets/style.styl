@@ -149,6 +149,12 @@ div.historyContainer
 	.viewBar
 		width: 300px
 		height: 25px
+		button
+			background-color: #ececec
+			background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+			background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+			color: black
+			font-weight: 600
 		.playlist
 			text-align: center
 			width: 150px
@@ -160,12 +166,13 @@ div.historyContainer
 			height: 25px
 			float: right
 		.active
+			color: white
 			background-color: #A8F3F7
+			background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8))
+			background: -moz-linear-gradient(top, #80d5f7 , #60ccf8)
 	.videoView
 		width: 300px
 		height: 400px
-		overflow-y: scroll
-		overflow-x: hidden
 
 
 //myplaylist
@@ -178,7 +185,6 @@ div.historyContainer
 .videoListCellContainer
 	width: 285px
 	height: 60px
-	border: 1px solid black
 	.thumbContainer
 		float: left
 		width: 75px
@@ -196,26 +202,43 @@ div.historyContainer
 				width: 150px
 				height: 17px
 				font-weight: bold
-				font-size: 15px
+				font-size: 12px
 		.cellButtons
 			float: right
 			width: 30px
 			height: 60px
 			.remove
+				margin-left: -3px
 				border: none
 				cursor: point
 				width: 30px
 				height: 30px
 				display: block
 				margin-right: 1px
-				background: url('http://i.imgur.com/00MDL.png')
-			.toTheTop
+				background: url('http://i.imgur.com/qfJg2.png') 50% 50% no-repeat
+			.remove:hover
+				margin-left: -3px
 				border: none
-				cursor: points
+				cursor: point
 				width: 30px
 				height: 30px
 				display: block
-				background: url('http://i.imgur.com/CEiZf.png')
+				margin-right: 1px
+				background: url('http://i.imgur.com/d4eLo.png') 50% 50% no-repeat
+			.toTheTop
+				border: none
+				cursor: points
+				width: 25px
+				height: 25px
+				display: block
+				background: url('http://imgur.com/PMfjr.png') 50% 50% no-repeat
+			.toTheTop:hover
+				border: none
+				cursor: points
+				width: 25px
+				height: 25px
+				display: block
+				background: url('http://i.imgur.com/BoVIS.png') 50% 50% no-repeat
 				
 //skeleton
 #outer
@@ -261,10 +284,12 @@ div.historyContainer
 			
 //videosearch
 //myplaylist
-#searchContainer
-	height: 400px
-	width: 300px
-	border: 1px solid black
+#search-view
+	#searchContainer
+		overflow-y: scroll
+		overflow-x: hidden
+		height: 360px
+		width: 300px
 	#searchBar
 		.inputBox
 			background-image: url('http://i.imgur.com/SWiIL.png')
@@ -296,22 +321,29 @@ div.historyContainer
 			width: 180px
 			height: 60px
 			.title
+				margin-top: 5px
+				margin-left: 5px
 				width: 150px
 				height: 17px
 				font-weight: bold
-				font-size: 15px
+				font-size: 12px
 		.cellButtons
 			float: right
 			width: 30px
 			height: 60px
 			.addToPlaylist
-				vertical-align: middle
+				background-color: transparent
+				margin-left: -5px
+				margin-top: 15px
 				border: none
 				cursor: point
 				width: 30px
 				height: 30px
 				display: block
-				background: url('http://i.imgur.com/FLxQf.png')
+				background: url('http://i.imgur.com/1RPWB.png')
+			.addToPlaylist:hover
+				background-color: black
+				background: url('http://i.imgur.com/kZdk9.png')
 				
 //room
 #room-container
@@ -370,9 +402,12 @@ div.historyContainer
 			height: 30px
 			width: 75px
 			#copy-button
+				color: black
 				margin-top: 2px
-				background-color: gray
-				text-indent: 7px
+				background-color: #ececec
+				background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+				background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+				text-indent: 9px
 				border-radius: 5px
 				-webkit-border-radius: 5px
 				-moz-border-radius: 5px
@@ -409,3 +444,96 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	font-size: 12px
 	color: gray
 	
+.videoView
+	height: 400px
+	width: 300px
+	
+#remote
+	padding-top: 5px
+	border-radius: 5px
+	-webkit-border-radius: 5px
+	-moz-border-radius: 5px
+	background-color: #323131
+	background: -webkit-gradient(linear, left top, left bottom, from(#323131), to(#161616))
+	float: right
+	margin-top: 150px
+	height: 150px
+	width: 100px
+	background-color: white
+
+#remote-left
+	vertical-align: top
+	display: inline-block
+	width: 50px
+	height: 60px
+	text-align: center
+#remote-right
+	vertical-align: top
+	display: inline-block
+	width: 50px
+	height: 60px
+	text-align: center
+#remote-bottom
+	margin-top: 18px
+	display: block
+	width: 100px
+	height: 90px
+	text-align: center
+.buttonContainer
+	margin: 3px
+	display: inline-block
+	border: none
+	background-color: #818181
+	background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a))
+	border: none
+	height: 30px
+	width: 30px
+	border-radius: 2px
+	-webkit-border-radius: 2px
+	-moz-border-radius: 2px
+
+.bottombuttonContainer
+	margin: 3px
+	border: none
+	background-color: #818181
+	background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a))
+	border: none
+	height: 30px
+	width: 30px
+	border-radius: 2px
+	-webkit-border-radius: 2px
+	-moz-border-radius: 2px
+
+button#up-vote
+	border: none
+	height: 30px
+	width: 30px
+	background-color: transparent
+	background: url('http://i.imgur.com/FY6PW.png') 50% 50% no-repeat
+
+button#down-vote
+	border: none
+	height: 30px
+	width: 30px
+	background-color: transparent
+	background: url('http://i.imgur.com/947FE.png') 50% 50% no-repeat
+	
+button#vol-up
+	border: none
+	height: 30px
+	width: 30px
+	background-color: transparent
+	background: url('http://i.imgur.com/pI9fe.png') 50% 50% no-repeat
+
+button#vol-down
+	border: none
+	height: 30px
+	width: 30px
+	background-color: transparent
+	background: url('http://i.imgur.com/4bUJ1.png') 50% 50% no-repeat
+
+button#mute
+	border: none
+	height: 30px
+	width: 30px
+	background: url('http://i.imgur.com/euzaw.png') 50% 50% no-repeat

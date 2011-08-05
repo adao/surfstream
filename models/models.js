@@ -48,18 +48,24 @@
 		model: models.Video
 	});
 
-	//usage: var myPlaylist = new PlaylistModel();
+	//usage: var myPlaylist = new Playlist();
 	//			 myPlaylist.addVideoId(i2V_ZT-nyOs);
-	models.PlaylistModel = Backbone.Model.extend({
+	models.Playlist = Backbone.Model.extend({
 		initialize: function() {
 			this.videos = new models.VideoCollection();
 		},
 
 		addVideoId: function(id) {
+			if(this.videos.get(id) >= 0)
+				return false;
 			var vid = new models.Video();
 			vid.id = id;
 			vid.set({ videoId: id});
 			this.videos.add(vid);
+		},
+		
+		getSize: function() {
+			return this.videos.length;
 		},
 		
 		// moveVideo: function(videoId, indexToMove) {
@@ -98,8 +104,10 @@
 		xport: function() {
 			var videoExport = [];
 			this.videos.each(function(video) {
+				console.log('video to push: '+JSON.stringify(video));
 				videoExport.push(video.xport());
 			});
+			console.log('video playlist will be saved as: '+JSON.stringify(videoExport));
 		},
 		
 		mport: function(rawVideoData) {
@@ -111,8 +119,8 @@
 		
 	});
 	
-	var X_MAX = 610;
-	var Y_MAX = 250;
+	var X_MAX = 510;
+	var Y_MAX = 95;
 	
 	models.User = Backbone.Model.extend({
 		defaults: {
@@ -127,7 +135,7 @@
 		
 		initialize: function() {
 			this.id = this.get('socketId');	
-			this.playlist = new models.PlaylistModel();
+			this.playlist = new models.Playlist();
 			this.randLoc();
 		},
 		
@@ -158,7 +166,7 @@
 		
 		xport: function() {
 			return { 
-				userId: this.get('userId'), 
+				id: this.get('userId'), 
 				name: this.get('name'), 
 				avatar: this.get('avatar'), 
 				points: this.get('points'),
@@ -199,20 +207,18 @@
 			var djIndex = this.indexOf(socketId);
 			if(this.currDJIndex >= djIndex) {
 				this.currDJIndex = this.currDJIndex - 1;
+			}
+			if(this.currDJ != null && this.currDJ.get('socketId') == socketId) {
+				this.currDJ = null;
 			} 
 			this.remove(socketId);	
-			
-			// if(this.currDJ.get('userId') == user.get('userId')) {
-			// 			this.nextDJ();
-			// 		} else {
-			// 			this.currDJIndex = this.currDJIndex - 1;
-			// 		}
 		},
 		
 		xport: function() {
 			var list = new Array();
 			this.each(function(user) {
 				var u = {};
+				u.id = user.get('userId');
 				u.points = user.get('points');
 				u.name = user.get('name');
 				u.avatar = user.get('avatar');

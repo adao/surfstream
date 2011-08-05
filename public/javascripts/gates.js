@@ -22,15 +22,26 @@ $(function(){
 		initialize: function () {
 			this.users = [];
 		},
-		
-		addUser : function(user) {
-			this.users.push(user.userId);
-			$("#people-area").append("<img id='" + user.name + "' src=http://graph.facebook.com/"+ user.userId + "/picture style='position:absolute; margin-left:" + user.x + "px; margin-top:" + user.y + "px;' >");
-		},
-		
-		removeUser: function(userModel) {
-			//this.get("users").remove(userModel);
+
+		updateDisplayedUsers : function (userJSONArray) {
+			var hash, userCollection = this.get("users");
+			
+			
+				
+			hash = {};
+			for (var user in userJSONArray) {
+				if (!userCollection.get(userJSONArray[user].id)) {
+					userCollection.add(userJSONArray[user]);
+				} 
+				hash[userJSONArray[user].id] = true;
+			}
+			
+			userCollection.forEach(function(userModel) {
+				if (!hash[userModel.get('id')]) userModel.collection.remove(userModel);
+			});
+			
 		}
+		
 		
 	});
 	
@@ -150,33 +161,37 @@ $(function(){
 			});
 			
 			socket.on('message', function(msg) {
-				app.get("roomModel").get("chatCollection").add({user: msg.data.attrs.name, message: msg.data.attrs.text});				
+				app.get("roomModel").get("chatCollection").add({user: msg.data.attrs.name, message: msg.data.attrs.text});
+				Theatre.tipsyChat(msg.data.attrs.text, msg.data.attrs.fbid);				
 			});
 			
-			socket.on('playlist:initial', function(response) {
-				app.get("user").set({playList: 'response'});
-			});
 			
 			socket.on('users:announce', function(userJSONArray) {
 				//userJSONArray is an array of users, with .userId = fbid#, .name = full name, .avatar = TBD,
 				// .points = TBA, .x = top coord for room-conatiner, .y = leftmost coord for room-container
-				var hash;
-				if(!this.userhash) {
-					this.userhash = {};
-				}
-				hash = this.userhash;
-				for (var user in userJSONArray) {
-					if (!app.curRoomHasUser(userJSONArray[user])) {
-						app.addUserToCurRoom(userJSONArray[user]);
-					}
-					hash[user.userId] = true;
-				}	
+				app.get("roomModel").updateDisplayedUsers(userJSONArray);
 			});
 			
 			
 			socket.on('dj:announceDJs', function(djArray) {
 				for (dj in djArray) {
-					$("[id="+djArray[dj].name+"]").style("border-style", "solid").style("border-color","#98bf21");
+					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
+				}
+			});
+			
+			//.upvoteset maps userids who up to true, .down, .up totals
+			socket.on("meter:announce", function(meterStats) {
+				for (fbid in meterStats.upvoteSet){
+					if (meterStats.upvoteSet[fbid] == true) {
+						//app.get("roomModel").get("users").get(fbid).
+						//BEGIN HACK
+						if ($("#" + fbid).css("border-color") != "yellow") {
+							$("#" + fbid).css("border-width", $("#" + fbid).css("border-width") + 20 + "px");
+							$("#" + fbid).css("border-color","#98bf21");
+							$("#" + fbid).css("border-style","solid");
+						}
+						//ENDHACK
+					}
 				}
 			});
 			
@@ -197,7 +212,36 @@ $(function(){
 		
 		sendMsg: function(data) {
 			this.socket.emit("message",data);
-		}
+		},
+		
+		becomeDJ : function() {
+			this.socket.emit('dj:join');
+		},	
+		
+		stepDownFromDJ : function() {
+			this.socket.emit('dj:quit');
+		},
+		
+		addVideoToPlaylist : function(video) {
+			this.socket.emit('playlist:addVideo', {video: video});			
+		},
+		
+		voteUp : function() {
+			SocketManager.socket.emit('meter:upvote');
+		},
+		
+		voteDown : function() {
+			SocketManager.socket.emit('meter:downvote');
+		},
+		
+		toTopOfPlaylist : function(vid_id) {
+			this.socket.emit("playlist:moveVideoToTop", {video: vid_id});
+		},
+		
+		deleteFromPlaylist : function(vid_id) {
+			this.socket.emit("playlist:delete", {video: vid_id})
+		}		
+	
 	});
 	
 	window.SurfStream = Backbone.Model.extend({
@@ -227,9 +271,9 @@ $(function(){
 			//Give the chat view a reference to the room's chat collection
 			this.get("mainUI").initializeTopBar();
 			//initializeShareBar (this.get(sharing))
-			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"));
+			this.get("mainUI").initializeChat(this.get("roomModel").get("chatCollection"), this.get("user"));
 			this.get("mainUI").initializeSidebar(this.get("search"), this.get("user").get("playList"));
-			this.get("mainUI").initializePlayer(this.get("roomModel").get("player"));
+			this.get("mainUI").initializePlayer(this.get("roomModel").get("player"), this.get("roomModel").get("users"));
 			
 			
 			//this.setVideos([{video: "THIS"}, {video: "WORKS"}]);
@@ -240,23 +284,13 @@ $(function(){
 							
 		},
 		
-		curRoomHasUser : function(user) {
-			if (_.indexOf(this.get("roomModel").users, user) == -1) {
-				return false;
-			} else {
-				return true;
-			}
-		},
 		
-		addUserToCurRoom : function(user){
-			this.get("roomModel").addUser(user);
-		},
 		
 		setVideos : function(videos) {
 			for (video in videos){
 				this.get("user").get("playList").add({title: videos[video].video});
 			}
-		}
+		},
 	});
 	
 	/*FOR ANTHONY: MAKE SURE ON PAGE <div id="fb_user_init">userID</div>*/
@@ -362,22 +396,23 @@ $(function(){
 			this.shareBarView = new ShareBarView();
 		},
 			
-		initializeChat: function (chatCollection) {
-			this.chatView = new ChatView({chatCollection: chatCollection});
+		initializeChat: function (chatCollection, user) {
+			this.chatView = new ChatView({chatCollection: chatCollection, user: user});
 		},
 		
 		initializeSidebar: function (search, playlist) {
 			this.sidebar = new SideBar({searchModel: search, playList: playlist});
 		},
 		
-		initializePlayer : function (player) {
+		initializePlayer : function (player, users) {
 			this.player = new Player({player: player});
-			this.floor = new Theatre;			
+			this.floor = new Theatre({users: users});			
 		}
 		
 		
 	});
 
+	/*******SIDEBAR********/
 	
 	window.SideBar = Backbone.View.extend({
 		el: '#sidebar',
@@ -394,6 +429,7 @@ $(function(){
 			this.currentTab = "search";
 			this.search = new SearchView({searchModel: this.options.searchModel, playList: this.options.playList});
 			this.playlist = new VideoListView({playList: this.options.playList})
+			this.playlist.hide();
 		},
 		
 		render: function() {
@@ -421,6 +457,8 @@ $(function(){
 		
 		
 	});
+	
+	/*******SEARCHVIEW********/
 	
 	window.SearchView = Backbone.View.extend({
 		
@@ -483,14 +521,14 @@ $(function(){
     },
 		
 		initialize: function () {
-			$("#searchContainer").append(this.render({thumb: this.options.video.get("image_src"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl")}).el);
+			$("#searchContainer").append(this.render({thumb: this.options.video.get("image_src"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}).el);
 		},
 		
 		addToPlaylist: function (){
+			var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
+			this.options.video.set({vid_id: videoID})
 			this.options.playlist.add(this.options.video);
-			//HACK			
-			window.SurfStreamApp.attributes.socket.emit('playlist:addVideo', {video: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")});
-			//ENDHACK
+			SocketManager.addVideoToPlaylist(videoID);
 		},
 		
 		render: function(searchResult) {
@@ -555,8 +593,6 @@ $(function(){
 		
 		addVideo: function (videoModel) {
 			var videoCellView = new VideoCellView({model: videoModel});
-			$("#video-list .videoListContainer").append(videoCellView.el);
-			console.log("yea");
 		}
 	});
 	
@@ -565,26 +601,43 @@ $(function(){
 				
 		
 		initialize: function () {
+			var buttonRemove, buttonToTop, videoID;
 			//Hack because of nested view bindings part 2 (events get eaten by Sidebar)
 			this.render();
-			var buttonRemove = this.$(".remove")
-			buttonRemove.bind("click", {videocell: this },this.removeFromPlaylist);
+			$("#video-list .videoListContainer").append(this.el);
+			videoID = this.options.model.get("vid_id");
+			buttonRemove = $("#remove_video_" + videoID );
+			buttonRemove.bind("click", {videoid: videoID, videoModel: this.model  },this.removeFromPlaylist);
+			buttonToTop = $("#send_to_top_" + videoID);
+			buttonToTop.bind("click", {videoid: videoID, videoModel: this.model },this.toTheTop);
+			this.model.bind("remove", this.removeFromList, this) 
 		},
 		
-		removeFromPlaylist : function() {
-			alert("fuck")
-			
+		removeFromPlaylist : function(event) {
+			//SocketManager.removeVideoFromPlaylist(event.data.videoID);
+			event.data.videoModel.destroy();
+			SocketManager.deleteFromPlaylist(event.data.videoModel.get("vid_id"));
 		},
 		
-		toTheTop : function() {
-			alert("fuck33")
-			
+		toTheTop : function(event) {
+			var clone;
+			//SocketManager.toTheTop(event.data.videoID);
+			$(this).parent().parent().parent().parent().insertBefore($("#video-list-container div:first"));
+			SocketManager.toTopOfPlaylist(event.data.videoModel.get("vid_id"));
+			/*clone = $("#vid_"+event.data.videoModel.attributes.vid_id).clone(true, true);
+			$("#vid_"+event.data.videoModel.attributes.vid_id).remove();
+			$("#video-list .videoListContainer").prepend(clone);*/
 		},
 		
 		render: function() {
 			$(this.el).html(this.videoCellTemplate({title: this.model.get('title'), vid_id: this.model.get("vid_id")}));
 			this.$(".thumbContainer").attr("src", this.model.get("image_src"));
 			return this;
+		},
+		
+		removeFromList : function (model, collection) {
+			//hack because backbone sucks
+			$("#vid_"+model.attributes.vid_id).remove();
 		}
 	});
 	
@@ -610,7 +663,7 @@ $(function(){
 		sendMessage : function (event) {
 			var userMessage = this.$('input[name=message]').val();
 			this.$('input[name=message]').val('');
-			SocketManager.sendMsg({name: "Elliot", text:  userMessage });
+			SocketManager.sendMsg({name: this.options.user.get("user").name, text:  userMessage, id: this.options.user.get("user").id });
 			return false;
 		},
 		
@@ -649,6 +702,58 @@ $(function(){
 		initialize: function () {
 			$(this.el).html(this.roomInfoTemplate({roomName: this.options.roomName}));
 		}
+	});
+	
+	//The Avatar + Seating Area
+	window.Theatre = Backbone.View.extend({
+		
+		el: '#room-container',
+		
+		initialize: function () {
+			$("#dj").bind("click", this.toggleDJStatus); 	
+			$("#up-vote").bind("click", SocketManager.voteUp);
+			$("#down-vote").bind("click", SocketManager.voteDown);
+			
+			this.options.users.bind("add", this.placeUser, this);
+			this.options.users.bind("remove", this.removeUser, this);		
+			this.chats = [];
+		},
+
+		
+		toggleDJStatus : function () {
+			if (this.innerHTML != "Step Down") { 
+				SocketManager.becomeDJ();
+				this.innerHTML = "Step Down";
+			} else { 
+				SocketManager.stepDownFromDJ();
+			  this.innerHTML = "Become DJ";
+			}
+		},
+		
+		placeUser : function(user) {
+			this.$("#people-area").append("<img id='" + user.id + "' src=http://graph.facebook.com/"+ user.id + "/picture style='position:absolute; margin-left:" + user.get("x") + "px; margin-top:" + user.get("y") + "px;' >");
+			this.$("#" + user.id).tipsy({gravity: 'sw', fade: 'true', delayOut: 3000, trigger: 'manual', title: function() { return this.getAttribute('latest_txt') }});
+		},
+		
+		removeUser: function(user) {
+			this.$("#" + user.id).remove();
+		}
+		
+		
+	},{ /* Class properties */
+	
+		tipsyChat : function(text, fbid) {
+			var userPic = $("#" + fbid);
+			userPic.attr('latest_txt', text);
+			userPic.tipsy("show");
+			setTimeout(function(){userPic.tipsy("hide")}, 3000);
+		},
+		
+		hideTipsy : function(userElem) {
+			alert(this.chats)
+			
+		}
+	
 	});
 	
 	window.ShareBarView = Backbone.View.extend({
@@ -716,23 +821,7 @@ $(function(){
 			window.open("mailto:friend@domainname.com?subject=Come%20to%20SurfStream.tv%20sometime!&body=God%20this%20shit%20is%20" + 
 				"awesome!%2C%20here's%20a%20link%0A%0A" + window.location, '_parent');
 		}
-	});
-	
-	//The Avatar + Seating Area
-	window.Theatre = Backbone.View.extend({
-		initialize: function () {
-			
-		}
-		
-	});
-	
-	
-	window.Remote = Backbone.View.extend({
-		initialize: function () {
-			
-		}
-		
-	});
+	});	
 	
 	window.Meter = Backbone.View.extend({
 		initialize: function () {
@@ -765,12 +854,8 @@ $(function(){
 	/* INITIALIZATION */
 	
 	
-	window.playerLoaded =false;
+	window.playerLoaded = false;
 	window.SurfStreamApp = new SurfStream({socket: socket_init});
-	//HACK
-	$("#people-area").append("<button id='djbutton' style='position:absolute; margin-left: 359px; margin-top: 260px; width: 300px; height: 40px;' >Become DJ</button>");
-	$("#djbutton").bind("click", function() {if (this.innerHTML != "Step Down") { socket_init.emit('dj:join'); this.innerHTML = "Step Down";} else { socket_init.emit('dj:quit'); this.innerHTML = "Become DJ";}});
-	//ENDHACK
 	console.log("started app");
 	
 });
