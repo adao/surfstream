@@ -124,7 +124,7 @@
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
 				//console.log('importing video to playlist: '+video.videoId);
-				this.videos.add(new models.Video({ videoId: video.videoId }));
+				this.videos.add(new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title, id: video.id }));
 			}
 		}
 		
