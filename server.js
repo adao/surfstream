@@ -13,7 +13,7 @@ var http = require('http'),
 	redisClient = redis.createClient();
 
 require('jade');
-	
+
 /* Custom Modules */
 var facebook = require('./facebook'),
 	models = require('./public/models/models');
@@ -144,6 +144,8 @@ function addDJListeners(socket) {
 		console.log("Quit dj event called for socket" + socket.id);
 		removeFromDJ(socket.id) 
 	});
+	
+	socket.on("video:skip", function () { skipVideo();})
 	
 }
 
@@ -323,6 +325,11 @@ function removeFromDJ(socketId) {
 		}
 		onVideoEnd();
 	}		
+}
+
+function skipVideo() {
+	clearTimeout(currRoom.currVideo.get('timeoutId'));
+	onVideoEnd();
 }
 
 function announceDJs() {

@@ -1,3 +1,6 @@
+div#loadingScreen {
+  background-color: color;
+}
 div#frontdoor {
   display: none;
 }
@@ -413,7 +416,7 @@ div.historyContainer .history .videoHistory {
   float: right;
   width: 500px;
   height: 40px;
-  color: #fff;
+  color: #000;
 }
 #share #social,
 #shareBar #social {
@@ -440,8 +443,10 @@ div.historyContainer .history .videoHistory {
 }
 #share #copy #link input,
 #shareBar #copy #link input {
+  margin-top: 3px;
+  border: 1px solid #777;
   vertical-align: top;
-  height: 22px;
+  height: 18px;
   margin-left: 10px;
   width: 60px;
   margin-right: 15px;
