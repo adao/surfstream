@@ -156,6 +156,13 @@ $(function(){
 				}
 			});
 			
+			socket.on('video:stop', function() {
+				if(!window.playerLoaded) return;
+				console.log('video ending!');
+				window.YTPlayer.stopVideo();
+				window.YTPlayer.clearVideo();
+			});
+			
 			socket.on('playlist:refresh', function(videoArray) {
 				app.setVideos(videoArray);
 			});

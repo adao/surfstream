@@ -158,7 +158,7 @@ function addMeterListeners(socket) {
 		if(!currRoom.currVideo) return;
 		
 		var currUser = currRoom.users.get(socket.id);
-		console.log('voting user: '+currUser.get('userId'));
+		console.log('voting user: '+currUser.get('name'));
 		if(currUser.get('userId') == currRoom.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 
 		console.log('Received upvote request for current video from user '+currUser.get('name'));
@@ -174,6 +174,7 @@ function addMeterListeners(socket) {
 		if(!currRoom.currVideo) return;
 		
 		var currUser = currRoom.users.get(socket.id);
+		console.log('downvoting user: '+currUser.get('name'));
 		if(currUser.get('userId') == currRoom.djs.currDJ.get('userId')) return;
 		
 		console.log('Received upvote request for current video from user '+currUser.get('name'));
@@ -193,9 +194,10 @@ function addPlaylistListeners(socket) {
 	}); 
 	
 	socket.on('playlist:moveVideoToTop', function(data) {
-		console.log('Received request to move video '+data.video+' to index '+data.indexToMove+' for user ' + 	
+		console.log('Received request to move video '+data.video+ ' for user ' + 	
 			currRoom.users.get(socket.id).get('userId'));
 		currRoom.users.get(socket.id).playlist.moveToTop(data.video);
+		console.log('playlist is now: '+JSON.stringify(currRoom.users.get(socket.id).playlist.xport()));
 	});
 	
 	socket.on('playlist:delete', function(data) {
@@ -253,7 +255,7 @@ function playNextVideo() {
 }
 
 function onVideoEnd() {	//add the video the room history
-	if(currRoom.currVideo = null) {
+	if(currRoom.currVideo != null) {
 		var videoFinished = new m.Video({ 
 			videoId: currRoom.currVideo.get('videoId'), 
 			up: currRoom.meter.up, 
@@ -273,15 +275,18 @@ function onVideoEnd() {	//add the video the room history
 
 //this is a hack
 function endVideo() {
-	io.sockets.emit('video:sendInfo', { video: null, time: 0});
+	console.log('ending the current video!');
+	io.sockets.emit('video:stop');
 }
 
 function announceVideo(videoId, videoDuration) {
-	currRoom.currVideo.set({ 
-		duration: videoDuration, 
-		timeStart: (new Date()).getTime(),
-		timeoutId: setTimeout(function() { onVideoEnd() }, videoDuration*1000)
-	});
+	if(currRoom.currVideo != null) {
+		currRoom.currVideo.set({ 
+			duration: videoDuration, 
+			timeStart: (new Date()).getTime(),
+			timeoutId: setTimeout(function() { onVideoEnd() }, videoDuration*1000)
+		});
+	}
 	
 	io.sockets.emit('video:sendInfo', { video: videoId, time: 0 });
 }
@@ -313,8 +318,9 @@ function removeFromDJ(socketId) {
 	announceDJs();
 	if(currRoom.djs.currDJ == null) {
 		console.log('the DJ removed was the current one, going to the next DJ');
-		if(currRoom.currVideo != null)
+		if(currRoom.currVideo != null) {
 			clearTimeout(currRoom.currVideo.get('timeoutId'));
+		}
 		onVideoEnd();
 	}		
 }
@@ -334,9 +340,10 @@ function initializeAndSendPlaylist(socket) {
 			console.log('getting playlist for user '+userId+', reply: '+reply);
 			if(reply != 'undefined' && reply != null) {
 				console.log('...serializing playlist');
-				currPlaylist.mport(reply);
+				var playlist = JSON.parse(reply);	
+				currPlaylist.mport(playlist);
 				currRoom.users.get(socket.id).setPlaylist(currPlaylist);
-				socket.emit("playlist:refresh", reply);
+				socket.emit("playlist:refresh", playlist);
 			} else {
 				socket.emit("playlist:refresh");
 			}
@@ -357,10 +364,9 @@ function removeSocketFromRoom(socket) {
 	//save playlist for user
 	var userPlaylist = userToRemove.playlist.xport();
 	console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
-	redisClient.set('user:'+userId+':playlist', JSON.stringify(userPlaylist), function() {
+	redisClient.set('user:'+userId+':playlist', userPlaylist, function() {
 		console.log('...save was successful');
 	});
-	
 	announceClients();
 	removeFromDJ(socket.id);	
 }
