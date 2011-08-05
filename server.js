@@ -253,7 +253,8 @@ function playNextVideo() {
 
 function onVideoEnd() {	//add the video to the room history
 	if(currRoom.currVideo != null) {
-		currRoom.djs.currDJ.playlist.moveToBottom(currRoom.currVideo.get('videoId'));	
+		if(currRoom.djs.currDJ != null)
+			currRoom.djs.currDJ.playlist.moveToBottom(currRoom.currVideo.get('videoId'));	
 		
 		var videoFinished = new m.Video({ 
 			videoId: currRoom.currVideo.get('videoId'), 
