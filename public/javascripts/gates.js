@@ -39,7 +39,7 @@ $(function(){
 		executeSearch : function(searchQuery) {
 			this.set({searchTerm: searchQuery});
 			$.ajax({
-				url:"http://gdata.youtube.com/feeds/api/videos?max-results=10&alt=json&q=" + searchQuery,
+				url:"http://gdata.youtube.com/feeds/api/videos?max-results=10&format=5&alt=json&q=" + searchQuery,
 			  success: $.proxy(this.processResults, this)
 			});
 		},
