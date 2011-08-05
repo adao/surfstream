@@ -116,6 +116,13 @@ $(function(){
 		
 	});
 	
+	window.PlaylistModel = Backbone.Model.extend({
+		initialize: function () {
+			
+		}
+		
+	});
+	
 	socket_init = io.connect();
 	
 	window.SocketManager = Backbone.Model.extend({
@@ -276,7 +283,7 @@ $(function(){
 													}),
 								search: new SearchModel({resultsList: new VideoList})
 							});
-			this.set({user: new UserModel({is_main_user: true, playList: new VideoList, socket_manager: this.get("socket_manager")})})
+			this.set({user: new UserModel({is_main_user: true, playList: new PlayList, socket_manager: this.get("socket_manager")})})
 								
 			this.get('user').getUserData(this.get('user'));
 			//Give the chat view a reference to the room's chat collection
@@ -341,7 +348,14 @@ $(function(){
 		
 	});
 	
-
+	window.PlayList = Backbone.Collection.extend({
+		model: PlaylistModel,
+		
+		initialize: function () {
+			
+		}
+		
+	});
 
 	
 
@@ -516,9 +530,6 @@ $(function(){
 		updateResults : function (model, collection) {
 				new SearchCell({video: model, playlist: this.options.playList})						
 		}
-		
-		
-		
 	});
 	
 	window.SearchCell = Backbone.View.extend({
@@ -535,8 +546,9 @@ $(function(){
 		
 		addToPlaylist: function (){
 			var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
-			this.options.video.set({vid_id: videoID})
-			this.options.playlist.add(this.options.video);
+			this.options.video.set({vid_id: videoID});
+			var playlistModel = new PlaylistModel(this.options.video.attributes);
+			this.options.playlist.add(playlistModel);
 			SocketManager.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"));
 		},
 		
@@ -584,8 +596,6 @@ $(function(){
 			this.render();
 		},
 		
-		
-		
 		hide : function() {
 			$("#video-list").hide();
 		},
@@ -602,6 +612,7 @@ $(function(){
 		
 		addVideo: function (videoModel) {
 			var videoCellView = new VideoCellView({model: videoModel});
+			videoCellView.initializeView();
 		}
 	});
 	
@@ -609,17 +620,17 @@ $(function(){
 		videoCellTemplate: _.template($('#video-list-cell-template').html()),
 				
 		
-		initialize: function () {
+		initializeView: function () {
 			var buttonRemove, buttonToTop, videoID;
 			//Hack because of nested view bindings part 2 (events get eaten by Sidebar)
 			this.render();
 			$("#video-list .videoListContainer").append(this.el);
 			videoID = this.options.model.get("vid_id");
 			buttonRemove = $("#remove_video_" + videoID );
-			buttonRemove.bind("click", {videoid: videoID, videoModel: this.model  },this.removeFromPlaylist);
+			buttonRemove.bind("click", {videoid: videoID, videoModel: this.model },this.removeFromPlaylist);
 			buttonToTop = $("#send_to_top_" + videoID);
-			buttonToTop.bind("click", {videoid: videoID, videoModel: this.model },this.toTheTop);
-			this.model.bind("remove", this.removeFromList, this) 
+			buttonToTop.bind("click", {videoid: videoID, videoModel: this.model , context: this}, this.toTheTop);
+			this.model.bind("remove", this.removeFromList, this); 
 		},
 		
 		removeFromPlaylist : function(event) {
@@ -629,13 +640,22 @@ $(function(){
 		},
 		
 		toTheTop : function(event) {
-			var clone;
-			//SocketManager.toTheTop(event.data.videoID);
-			$(this).parent().parent().parent().parent().insertBefore($("#video-list-container div:first"));
+			var copyPlaylistModel = new PlaylistModel(event.data.videoModel.attributes);
+			var collectionReference = event.data.videoModel.collection;
+			event.data.videoModel.destroy();
+			collectionReference.add(copyPlaylistModel, {at: 0, silent: true});
 			SocketManager.toTopOfPlaylist(event.data.videoModel.get("vid_id"));
-			/*clone = $("#vid_"+event.data.videoModel.attributes.vid_id).clone(true, true);
-			$("#vid_"+event.data.videoModel.attributes.vid_id).remove();
-			$("#video-list .videoListContainer").prepend(clone);*/
+			var videoCellView = new VideoCellView({model: copyPlaylistModel});
+//			videoCellView.initializeView();
+			var buttonRemove, buttonToTop, videoID;
+			videoCellView.render();
+			$("#video-list .videoListContainer").prepend(videoCellView.el);
+			videoID = copyPlaylistModel.get("vid_id");
+			buttonRemove = $("#remove_video_" + videoID);
+			buttonRemove.bind("click", {videoid: videoID, videoModel: copyPlaylistModel  },event.data.context.removeFromPlaylist);
+			buttonToTop = $("#send_to_top_" + videoID);
+			buttonToTop.bind("click", {videoid: videoID, videoModel: copyPlaylistModel, context: event.data.context }, event.data.context.toTheTop);
+			copyPlaylistModel.bind("remove", event.data.context.removeFromList, event.data.context);
 		},
 		
 		render: function() {
