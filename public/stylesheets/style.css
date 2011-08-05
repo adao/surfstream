@@ -296,6 +296,13 @@ div.historyContainer .history .videoHistory {
   vertical-align: middle;
 }
 #outer #actionBar #roomInfo #room-name {
+  width: 300px;
+  display: inline-block;
+  color: #000;
+}
+#outer #actionBar #roomInfo #video-name {
+  margin-top: 3px;
+  display: inline-block;
   color: #000;
 }
 #outer #coolshit {
@@ -557,7 +564,8 @@ button.search.active {
   -moz-border-radius: 2px;
 }
 .bottombuttonContainer {
-  margin: 3px;
+  margin-top: 5px;
+  margin-left: 35px;
   border: none;
   background-color: #818181;
   background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a));
