@@ -334,9 +334,10 @@ function initializeAndSendPlaylist(socket) {
 			console.log('getting playlist for user '+userId+', reply: '+reply);
 			if(reply != 'undefined' && reply != null) {
 				console.log('...serializing playlist');
-				currPlaylist.mport(reply);
+				var playlist = JSON.parse(reply);	
+				currPlaylist.mport(playlist);
 				currRoom.users.get(socket.id).setPlaylist(currPlaylist);
-				socket.emit("playlist:refresh", reply);
+				socket.emit("playlist:refresh", playlist);
 			} else {
 				socket.emit("playlist:refresh");
 			}
@@ -357,10 +358,10 @@ function removeSocketFromRoom(socket) {
 	//save playlist for user
 	var userPlaylist = userToRemove.playlist.xport();
 	console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
-	redisClient.set('user:'+userId+':playlist', JSON.stringify(userPlaylist), function() {
+	redisClient.set('user:'+userId+':playlist', userPlaylist, function() {
 		console.log('...save was successful');
 	});
-	
+	announceClients();
 	removeFromDJ(socket.id);	
 }
 

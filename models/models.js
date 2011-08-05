@@ -40,7 +40,7 @@
 		},
 		
 		xport: function() {
-			return { videoId: this.videoId };
+			return { videoId: this.get('videoId') };
 		}
 	});
 	
@@ -108,12 +108,14 @@
 				videoExport.push(video.xport());
 			});
 			console.log('video playlist will be saved as: '+JSON.stringify(videoExport));
+			return JSON.stringify(videoExport);
 		},
 		
 		mport: function(rawVideoData) {
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
-				this.videos.add({ videoId: video.videoId });
+				console.log('importing video to playlist: '+video.videoId);
+				this.videos.add(new models.Video({ videoId: video.videoId }));
 			}
 		}
 		
