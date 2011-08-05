@@ -92,7 +92,7 @@ io.sockets.on('connection', function(socket) {
 		var timeIn = new Date();
 		var timeDiff = (timeIn.getTime() - currRoom.currVideo.get('timeStart')) / 1000; //time difference in seconds
 		console.log('Sending current video to socket');
-		socket.emit('video:sendInfo', { video: currRoom.currVideo.get('videoId'), time: Math.ceil(timeDiff) });
+		socket.emit('video:sendInfo', { video: currRoom.currVideo.get('videoId'), title: currRoom.currVideo.get('title'), time: Math.ceil(timeDiff) });
 	}	
 });
 
@@ -229,7 +229,7 @@ function getVideoDurationAndPlay(videoId) {
 			videoData = JSON.parse(videoData);
 			var videoDuration = videoData['entry']['media$group']['yt$duration']['seconds'];
 			console.log("Video length: "+videoDuration+" seconds");
-			announceVideo(videoId, videoDuration);
+			announceVideo(videoId, videoDuration, videoData['entry']['title']['$t']);
 		})
 	});
 		
@@ -280,7 +280,7 @@ function endVideo() {
 	io.sockets.emit('video:stop');
 }
 
-function announceVideo(videoId, videoDuration) {
+function announceVideo(videoId, videoDuration, videoTitle) {
 	if(currRoom.currVideo != null) {
 		currRoom.currVideo.set({ 
 			duration: videoDuration, 
@@ -289,7 +289,7 @@ function announceVideo(videoId, videoDuration) {
 		});
 	}
 	
-	io.sockets.emit('video:sendInfo', { video: videoId, time: 0 });
+	io.sockets.emit('video:sendInfo', { video: videoId, time: 0, title: videoTitle });
 }
 
 function playVideoFromPlaylist(socketId) {
