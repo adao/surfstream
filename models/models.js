@@ -24,7 +24,7 @@
 		
 		remove: function(socketId) {
 			this.users.remove(socketId);
-			this.djs.remove(socketId);
+			this.djs.removeDJ(socketId);
 		}
 	});
 
@@ -85,6 +85,16 @@
 			return false;
 		},
 		
+		moveToBottom: function(videoId) {
+			var video = this.videos.get(videoId);
+			if(video) {
+				this.videos.remove(video);
+				this.videos.add(video, { at: this.videos.length });
+				return true;
+			}
+			return false;
+		},
+		
 		//returns the first Video, and moves the Video
 		//to the end of the playlist 
 		playFirstVideo: function() {
@@ -104,17 +114,16 @@
 		xport: function() {
 			var videoExport = [];
 			this.videos.each(function(video) {
-				console.log('video to push: '+JSON.stringify(video));
 				videoExport.push(video.xport());
 			});
-			console.log('video playlist will be saved as: '+JSON.stringify(videoExport));
+			//console.log('video playlist will be saved as: '+JSON.stringify(videoExport));
 			return JSON.stringify(videoExport);
 		},
 		
 		mport: function(rawVideoData) {
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
-				console.log('importing video to playlist: '+video.videoId);
+				//console.log('importing video to playlist: '+video.videoId);
 				this.videos.add(new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title, id: video.id }));
 			}
 		}
