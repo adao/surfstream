@@ -355,7 +355,6 @@ function initializeAndSendPlaylist(socket) {
 function removeSocketFromRoom(socket) {
 	var userId = currRoom.users.get(socket.id).get('userId');
 
-	//Backbone way
 	var userToRemove = currRoom.users.get(socket.id);
 	redisClient.set('user:'+userId+':points', userToRemove.get('points'));	//save points for user
 	currRoom.remove(socket.id);

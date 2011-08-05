@@ -24,7 +24,7 @@
 		
 		remove: function(socketId) {
 			this.users.remove(socketId);
-			this.djs.remove(socketId);
+			this.djs.removeDJ(socketId);
 		}
 	});
 
