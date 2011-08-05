@@ -76,7 +76,7 @@
 		// 		}
 		// 	},
 		moveToTop: function(videoId) {
-			var video = this.get(videoId);
+			var video = this.videos.get(videoId);
 			if(video) {
 				this.videos.remove(video);
 				this.videos.add(video, { at: 0 });

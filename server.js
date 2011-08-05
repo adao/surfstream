@@ -158,7 +158,7 @@ function addMeterListeners(socket) {
 		if(!currRoom.currVideo) return;
 		
 		var currUser = currRoom.users.get(socket.id);
-		console.log('voting user: '+currUser.get('userId'));
+		console.log('voting user: '+currUser.get('name'));
 		if(currUser.get('userId') == currRoom.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 
 		console.log('Received upvote request for current video from user '+currUser.get('name'));
@@ -174,6 +174,7 @@ function addMeterListeners(socket) {
 		if(!currRoom.currVideo) return;
 		
 		var currUser = currRoom.users.get(socket.id);
+		console.log('downvoting user: '+currUser.get('name'));
 		if(currUser.get('userId') == currRoom.djs.currDJ.get('userId')) return;
 		
 		console.log('Received upvote request for current video from user '+currUser.get('name'));
@@ -193,9 +194,10 @@ function addPlaylistListeners(socket) {
 	}); 
 	
 	socket.on('playlist:moveVideoToTop', function(data) {
-		console.log('Received request to move video '+data.video+' to index '+data.indexToMove+' for user ' + 	
+		console.log('Received request to move video '+data.video+ ' for user ' + 	
 			currRoom.users.get(socket.id).get('userId'));
 		currRoom.users.get(socket.id).playlist.moveToTop(data.video);
+		console.log('playlist is now: '+JSON.stringify(currRoom.users.get(socket.id).playlist.xport()));
 	});
 	
 	socket.on('playlist:delete', function(data) {
