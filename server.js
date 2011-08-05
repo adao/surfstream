@@ -67,16 +67,12 @@ function sendRoomState(socket) {
 io.sockets.on('connection', function(socket) {
 	
 	socket.on('user:sendFBData', function(fbUser) {
-		console.log("Saving to redis...user id: "+fbUser.user.id);
-		console.log('socket id: '+socket.id);
 		//TODO: need to check and see if redis already has the id
 		redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
 		
 		var name = fbUser.user.name;
 		var currUser = new m.User({name: name, socketId: socket.id, userId: fbUser.user.id});
-		console.log('creating a new User object, with name: '+currUser.get('name'));
-		currRoom.users.add(currUser);
-		
+		currRoom.users.add(currUser);	
 		redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
 			if(err) {
 				console.log("Error in getting "+fbUser.user.name+" 's points!");
@@ -117,7 +113,6 @@ function addDJListeners(socket) {
 		console.log('user '+currRoom.users.get(socket.id).get('userId')+' requesting to be DJ');
 		
 		var djs = currRoom.djs;
-		console.log('is this user already a dj? '+djs.get(socket.id));
 		
 		//in order to be a dj, the user has to have vids in his playlist, has to not be a dj, and
 		//the dj list can't be full
@@ -145,7 +140,7 @@ function addDJListeners(socket) {
 		removeFromDJ(socket.id) 
 	});
 	
-	socket.on("video:skip", function () { skipVideo();})
+	socket.on("video:skip", function () { skipVideo() });
 	
 }
 
@@ -193,6 +188,7 @@ function addPlaylistListeners(socket) {
 	socket.on('playlist:addVideo', function(data) {
 		console.log('Received request to add video '+data.video+' to user '+currRoom.users.get(socket.id).get('userId'));
 		currRoom.users.get(socket.id).playlist.addVideoId(data.video);
+		console.log('playlist is now: '+JSON.stringify(currRoom.users.get(socket.id).playlist.xport()));
 	}); 
 	
 	socket.on('playlist:moveVideoToTop', function(data) {
@@ -256,8 +252,10 @@ function playNextVideo() {
 	playVideoFromPlaylist(currRoom.djs.currDJ.get('socketId'));
 }
 
-function onVideoEnd() {	//add the video the room history
+function onVideoEnd() {	//add the video to the room history
 	if(currRoom.currVideo != null) {
+		currRoom.djs.currDJ.playlist.moveToBottom(currRoom.currVideo.get('videoId'));	
+		
 		var videoFinished = new m.Video({ 
 			videoId: currRoom.currVideo.get('videoId'), 
 			up: currRoom.meter.up, 
@@ -267,6 +265,7 @@ function onVideoEnd() {	//add the video the room history
 		currRoom.history.add(videoFinished);
 		currRoom.clearVideo();
 	}
+	
 	
 	if(currRoom.djs.length == 0) {
 		endVideo();
@@ -294,7 +293,10 @@ function announceVideo(videoId, videoDuration) {
 }
 
 function playVideoFromPlaylist(socketId) {
+	
+	console.log('(playVideoFromPlaylist) Playlist before playing: '+currRoom.users.get(socketId).playlist.xport());
 	var videoToPlay = currRoom.users.get(socketId).playlist.playFirstVideo();
+	console.log('(playVideoFromPlaylist) Playlist after playing: '+currRoom.users.get(socketId).playlist.xport());
 	
 	if(!videoToPlay) {
 		console.log('Request to play video from playlist, but playlist has no videos!');
@@ -329,6 +331,7 @@ function removeFromDJ(socketId) {
 
 function skipVideo() {
 	clearTimeout(currRoom.currVideo.get('timeoutId'));
+	console.log('playlist of dj after skipping: '+currRoom.djs.currDJ.playlist.xport());
 	onVideoEnd();
 }
 
