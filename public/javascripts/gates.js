@@ -608,6 +608,7 @@ $(function(){
 		
 		addVideo: function (videoModel) {
 			var videoCellView = new VideoCellView({model: videoModel});
+			videoCellView.initializeView();
 		}
 	});
 	
@@ -615,17 +616,17 @@ $(function(){
 		videoCellTemplate: _.template($('#video-list-cell-template').html()),
 				
 		
-		initialize: function () {
+		initializeView: function () {
 			var buttonRemove, buttonToTop, videoID;
 			//Hack because of nested view bindings part 2 (events get eaten by Sidebar)
 			this.render();
-			$("#video-list .videoListContainer").prepend(this.el);
+			$("#video-list .videoListContainer").append(this.el);
 			videoID = this.options.model.get("vid_id");
 			buttonRemove = $("#remove_video_" + videoID );
-			buttonRemove.bind("click", {videoid: videoID, videoModel: this.model  },this.removeFromPlaylist);
+			buttonRemove.bind("click", {videoid: videoID, videoModel: this.model },this.removeFromPlaylist);
 			buttonToTop = $("#send_to_top_" + videoID);
-			buttonToTop.bind("click", {videoid: videoID, videoModel: this.model }, this.toTheTop);
-			this.model.bind("remove", this.removeFromList, this) 
+			buttonToTop.bind("click", {videoid: videoID, videoModel: this.model , context: this}, this.toTheTop);
+			this.model.bind("remove", this.removeFromList, this); 
 		},
 		
 		removeFromPlaylist : function(event) {
@@ -638,9 +639,19 @@ $(function(){
 			var copyPlaylistModel = new PlaylistModel(event.data.videoModel.attributes);
 			var collectionReference = event.data.videoModel.collection;
 			event.data.videoModel.destroy();
-			collectionReference.add(copyPlaylistModel);
-			//$(this).parent().parent().parent().parent().insertBefore($("#video-list-container div:first"));
+			collectionReference.add(copyPlaylistModel, {at: 0, silent: true});
 			SocketManager.toTopOfPlaylist(event.data.videoModel.get("vid_id"));
+			var videoCellView = new VideoCellView({model: copyPlaylistModel});
+//			videoCellView.initializeView();
+			var buttonRemove, buttonToTop, videoID;
+			videoCellView.render();
+			$("#video-list .videoListContainer").prepend(videoCellView.el);
+			videoID = copyPlaylistModel.get("vid_id");
+			buttonRemove = $("#remove_video_" + videoID);
+			buttonRemove.bind("click", {videoid: videoID, videoModel: copyPlaylistModel  },event.data.context.removeFromPlaylist);
+			buttonToTop = $("#send_to_top_" + videoID);
+			buttonToTop.bind("click", {videoid: videoID, videoModel: copyPlaylistModel, context: event.data.context }, event.data.context.toTheTop);
+			copyPlaylistModel.bind("remove", event.data.context.removeFromList, event.data.context);
 		},
 		
 		render: function() {
