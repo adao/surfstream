@@ -145,6 +145,8 @@ function addDJListeners(socket) {
 		removeFromDJ(socket.id) 
 	});
 	
+	socket.on("video:skip", function () { skipVideo();})
+	
 }
 
 function addSocialListeners(socket) {
@@ -323,6 +325,11 @@ function removeFromDJ(socketId) {
 		}
 		onVideoEnd();
 	}		
+}
+
+function skipVideo() {
+	clearTimeout(currRoom.currVideo.get('timeoutId'));
+	onVideoEnd();
 }
 
 function announceDJs() {

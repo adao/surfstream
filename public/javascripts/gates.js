@@ -732,9 +732,12 @@ $(function(){
 			if (this.innerHTML != "Step Down") { 
 				SocketManager.becomeDJ();
 				this.innerHTML = "Step Down";
+				$("#people-area").append("<button id='skip'> Skip Video </button>");
+	 			$("#skip").bind("click", skipVideo);
 			} else { 
 				SocketManager.stepDownFromDJ();
 			  this.innerHTML = "Become DJ";
+				$("#skip").remove();
 			}
 		},
 		
@@ -903,10 +906,14 @@ function mute(event) {
 }
     
 function onytplayerStateChange(newState) {
-	$('#state').html("Player state: "+newState);
+/*	$('#state').html("Player state: "+newState);
 	if(newState == 0 && currVideo.isLeader) { 
 		console.log("Video finished, broadcasting back to server");
 		socket.emit('videoFinished');
 		currVideo = {};
-	}
+	} */
+}
+
+function skipVideo() {
+	socket_init.emit("video:skip");
 }
