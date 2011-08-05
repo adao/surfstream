@@ -296,6 +296,13 @@ div.historyContainer .history .videoHistory {
   vertical-align: middle;
 }
 #outer #actionBar #roomInfo #room-name {
+  width: 300px;
+  display: inline-block;
+  color: #000;
+}
+#outer #actionBar #roomInfo #video-name {
+  margin-top: 3px;
+  display: inline-block;
   color: #000;
 }
 #outer #coolshit {
@@ -557,7 +564,8 @@ button.search.active {
   -moz-border-radius: 2px;
 }
 .bottombuttonContainer {
-  margin: 3px;
+  margin-top: 5px;
+  margin-left: 35px;
   border: none;
   background-color: #818181;
   background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a));
@@ -569,35 +577,41 @@ button.search.active {
   -moz-border-radius: 2px;
 }
 button#up-vote {
-  border: none;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
   height: 30px;
   width: 30px;
-  background-color: transparent;
   background: url("http://i.imgur.com/FY6PW.png") 50% 50% no-repeat;
 }
 button#down-vote {
-  border: none;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
   height: 30px;
   width: 30px;
-  background-color: transparent;
   background: url("http://i.imgur.com/947FE.png") 50% 50% no-repeat;
 }
 button#vol-up {
-  border: none;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
   height: 30px;
   width: 30px;
-  background-color: transparent;
   background: url("http://i.imgur.com/pI9fe.png") 50% 50% no-repeat;
 }
 button#vol-down {
-  border: none;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
   height: 30px;
   width: 30px;
-  background-color: transparent;
   background: url("http://i.imgur.com/4bUJ1.png") 50% 50% no-repeat;
 }
 button#mute {
-  border: none;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
   height: 30px;
   width: 30px;
   background: url("http://i.imgur.com/euzaw.png") 50% 50% no-repeat;
