@@ -1,0 +1,52 @@
+!!! 5
+html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.facebook.com/2008/fbml")
+	head
+		title surfstream.tv
+	script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
+	script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
+	script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
+	script(type="text/javascript", src="/javascripts/ZeroClipboard.js")
+	script(type="text/javascript", src="/javascripts/jQueryExtension.js")
+	script(type="text/javascript", src="/javascripts/jquery.tipsy.js")
+	script(type="text/javascript", src="/socket.io/socket.io.js")
+	link(rel='stylesheet', href='/stylesheets/style.css')
+	link(rel='stylesheet', href='/stylesheets/login.css')
+	link(rel='stylesheet', href='/stylesheets/tipsy.css')
+	body
+		#loadingScreen
+		#frontdoor
+			#logo
+				#surf surf
+				|stream
+			#instructions
+				h1 Watch Videos Together
+				h4 If you have a Facebook friend already on surfstream, you're in!  Just sign in below:
+				#fb-root
+				script(type="text/javascript", src="/javascripts/facebookInitOne.js")
+				button#fb-auth Login with Facebook
+			br
+			p No friends on surfstream yet? No problem! Login and invite one over and you both get in!
+
+		#outer
+			#header 
+				img(src="/images/room/logo_small.png")
+			#actionBar
+				#roomInfo
+				#shareBar
+			#coolshit
+				#funroom
+				#right-side
+					#sidebar
+					#chat
+			include chat
+			include chatcell
+			include sidebar
+			include roominfo
+			include share
+			include videolist
+			include videolistcell
+			include playlist
+			include playlistcell
+			include searchbar
+			include searchcell
+			include room

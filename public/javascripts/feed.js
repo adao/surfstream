@@ -7,6 +7,13 @@ function configureDJButtons() {
 	$('#quitDJ').hide();
 }
 
+function sendClientInfo(socket) {
+	//eventually will need to replace this hack by getting the FB info directly from facebook
+	me = JSON.parse($('#fbData').text());
+	socket.emit('user:sendFBData', me);
+	$('#fbData').remove();
+}
+
 $(document).ready(function () {
   $('#fbData').hide();
 	$clientCounter = $("#client_count")
@@ -17,20 +24,29 @@ $(document).ready(function () {
  	var videoLoaded = false;
  	
 	socket = io.connect();
+	sendClientInfo(socket);
+	 
 	window.app = NodeChatController.init(socket);
-	socket.emit('getUserData', JSON.parse($('#fbData').text()));
-	$('#fbData').remove();
+	window.playlist = PlaylistController.init(socket, $('#playlist'));
 	
-	socket.on('clientInfo', function(info) {
-		console.log("Received client info: "+JSON.stringify(info));
-		me = info;
-	});
-	
-	socket.on('djInfo', function(data) {
+	socket.on('dj:announceDJs', function(data) {
+		me['socketId'] = socket.socket.sessionid;
+		console.log("socket id: "+me['socketId']);
+		
 		console.log("Received dj info: "+JSON.stringify(data));
 		djInfo = data;
 		$('#djCount').html(djInfo.length);
-		var index = djInfo.indexOf(me['socketId']);
+		var index;
+		
+		var count = 0;
+		_.each(djInfo, function(dj) {
+			console.log('dj: '+dj.name);
+			if(dj.name == me.user.name) {
+				index = count;
+			};
+			count = count + 1;
+		});
+		
 		
 		if(index >= 0) {	//client is dj
 			index += 1;
@@ -42,8 +58,7 @@ $(document).ready(function () {
 		}
 	});
 	
-	socket.on('videoInfo', function(data) {
-		
+	socket.on('video:sendInfo', function(data) {
 		console.log("Socket received video info");
 		currVideo.video = data.video;
 		currVideo.timeStart = data.time;
@@ -59,22 +74,21 @@ $(document).ready(function () {
 		}
 	}); 
 	
-	socket.on('clientUpdate', function(numClients) {
-		console.log("client has been updated: "+numClients);
-		//$clientCounter.html(numClients);
+	socket.on('users:announce', function(users) {
+		console.log('received users:announce event, user count: '+users.length);
+		
+		for(var i = 0; i < users.length; i=i+1) {
+			var user = users[i];
+			console.log('received user name: '+user.name)
+			console.log('received user points: '+user.points);
+		}
 	});
 	
-	socket.on('refreshPlaylist', function(data) {
-		console.log("Refreshing playlist..."+data);
-		data = String(data);
-		videos = data.split(',');
-		if(videos.length > 0) {
-			var playlistHtml = '<ul>';
-			for(var v in videos)
-				playlistHtml += '<li>'+videos[v]+'</li>';
-			playlistHtml += '</li>';
-			$("#playlist").html(playlistHtml);
-		}
+	socket.on('meter:announce', function(data) {
+		console.log('Received meter announce...');
+		console.log('Upvote ids: '+data.up);
+		console.log('Downvote ids: '+data.down);
+		$('#meter').html('Up: '+data.up+' | Down: '+data.down);
 	})
 });
 
@@ -97,7 +111,7 @@ function onytplayerStateChange(newState) {
 function addVideo() {
 	console.log("adding video to queue");
 	var videoToAdd = $('#videoEntry').val();
-	socket.emit('addVideoToQueue', { video: videoToAdd });
+	window.playlist.addVideo(videoToAdd);
 }
 
 function searchYouTube() {
@@ -107,26 +121,17 @@ function searchYouTube() {
   $.get("http://gdata.youtube.com/feeds/api/videos?max-results=5&alt=json&q=" + query, showMyVideos); 
 }
 
-function getRelatedVideos() {
-  
-}
-
 function showMyVideos(data) {
   var feed = data.feed;
   var entries = feed.entry || [];
   var html = ['<ul class="videos">'];
   var template = $('.videoResultTemplate');
   var $list = $('#videoList');
+	$list.empty();
   for (var i = 0; i < entries.length; i++) {
     var entry = entries[i];
     var $item = template.clone().removeClass('videoResultTemplate');
-    console.log("in for statement3");
-    /*var videoResult = new VideoResult({
-      root: $item,
-      title: entry.title.$t,
-      image_src: entry.media$group.media$thumbnail[0].url,
-      videoUrl: entry.id.$t
-    })*/
+   
     $item.find('#videoTitle').text(entry.title.$t);
     $item.find('#videoThumbnail').attr({
       src: entry.media$group.media$thumbnail[0].url,
@@ -136,9 +141,7 @@ function showMyVideos(data) {
     $item.find('#addToPlaylist').bind('click', function (event) {
       console.log(this.innerHTML);
     });
-    console.log("in for statement4");
     $list.append($item);
-    console.log("in for statement5");
   }
 }
 
@@ -146,7 +149,9 @@ function becomeDJ() {
 	console.log("user "+me.user.id+ " aka "+me.user.name+ " wants to become a DJ");
 	if(djInfo.length < 4) {
 		console.log("requesting that user becomes a dj");
-		socket.emit('becomeDJ');
+		socket.emit('dj:join');
+		$('#beDJ').hide();
+		$('#quitDJ').show()
 	}
 }
 
@@ -154,5 +159,15 @@ function quitDJ() {
 	if(djInfo.indexOf(me.socketId) < 0) return;
 	configureDJButtons();
 	console.log('Quitting DJ');
-	socket.emit('quitDJ');
+	socket.emit('dj:quit');
+}
+
+function upvote() {
+	console.log('trying to upvote');
+	socket.emit('meter:upvote');
+}
+
+function downvote() {
+	console.log('trying to downvote');
+	socket.emit('meter:downvote');
 }

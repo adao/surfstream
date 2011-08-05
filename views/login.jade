@@ -1,0 +1,20 @@
+!!! 5
+html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.facebook.com/2008/fbml")
+	head
+		link(rel='stylesheet', href="/stylesheets/login.css")
+		title surfstream.tv
+		
+		
+	body
+		#frontdoor
+			#logo 
+				#surf surf
+				|stream
+			#instructions
+				h1 Watch Videos Together
+				h4 If you have a Facebook friend already on surfstream, you're in!  Just sign in below:
+				#fb-root
+				script(type="text/javascript", src="/javascripts/facebookInitOne.js")
+				button#fb-auth Login with Facebook
+			br
+			p No friends on surfstream yet? No problem! Login and invite one over and you both get in!

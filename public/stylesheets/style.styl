@@ -1,5 +1,539 @@
-body
-  padding 50px
-  font 14px "Lucida Grande", Helvetica, Arial, sans-serif
-a
-  color #00B7FF
+div#loadingScreen
+	background-color: color
+div#frontdoor
+	display: none
+div#outer
+	display: none
+
+//Chat Box
+div.chatContainer
+	background-color: black
+	width: 300px
+	height: 275px
+	max-width: 300px
+	max-height: 275px
+	display: block
+	div.chatHeader
+		width: 300px
+		height: 30px
+		background-color: gray
+		img.chatIcon
+			display: inline-block
+			margin-top: 5px
+			margin-left: 5px
+		div.chatTitle
+			text-indent: 10px
+			vertical-align: top
+			display: inline-block
+			font-family: Helvetica, Arial, "Lucida Grande", sans-serif
+			font-weight: 500
+			color: white
+			height: 18px
+			width: 36px
+	#messages
+		height: 215px
+		overflow-y: scroll
+		overflow-x: hidden
+	form.inputBox
+		background-image: url('http://i.imgur.com/SWiIL.png')
+		height: 40px
+		text-indent: 30px
+		input
+			margin-top: 12px
+			width: 240px
+			height: 14px
+			border: 0
+			outline: 0
+			background: transparent
+
+
+//Chat Cell
+div.messageContainer
+	padding-left: 4px
+	padding-right: 4px
+	padding-top: 2px
+	padding-bottom: 2px
+	min-height: 20px
+	height: auto
+	overflow-x: hidden
+	overflow-y: visible;
+	width: 285px
+	border: 1px solid black
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	font-size: 14px
+	span
+		padding-top: 2px
+		padding-bottom: 2px
+		margin-right: 3px
+		font-weight: bold
+		display: inline-block
+		color: white
+	div
+		padding-top: 2px
+		padding-bottom: 2px
+		display: inline
+		color: white
+
+//History Container
+div.historyContainer
+	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	font-size: 14px
+	height: 350px
+	width: 300px
+	overflow-x: hidden
+	overflow-y: hidden
+	background-color: #FFA
+	border: 1px solid black
+	.roomInfo
+		display: block
+		height: 25px
+		width: 300px
+		vertical-align: middle
+		margin-left: 3px
+		.createdBy
+			font-weight: bold
+			span.historyUser
+				font-weight: 300
+	.roomDescription
+		margin-left: 3px
+		margin-right: 3px
+		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+		display: block
+		height: 35px
+		font-size: 12px
+	.history
+		height: 290px
+		width: 300px
+		background-color: white
+		.historyTitle
+			height: 18px
+			margin-left: 3px
+		.videoHistory
+			height: 272px
+			background-color: gray
+			overflow-x: hidden
+			overflow-y: scroll
+			
+//history cell			
+.videoLog
+	width: 285px
+	height: 95px
+	.thumbContainer
+		float: left
+		width: 75px
+		height: 75px
+	.videoInfo
+		float: right
+		width: 197px
+		height: 75px
+		.title
+			width: 185px
+			height: 17px
+			font-weight: bold
+			font-size: 15px
+		.details
+			height: 33px
+			font-size: 12px
+			width: 185px
+			.time
+				height: 14px
+			.score
+				height: 14px
+
+//sidebar
+.sidebarContainer
+	background-color: white
+	display: block
+	width: 300px
+	height: 425px
+	.viewBar
+		width: 300px
+		height: 25px
+		button
+			background-color: #ececec
+			background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+			background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+			color: black
+			font-weight: 600
+		.playlist
+			text-align: center
+			width: 150px
+			height: 25px
+			float: left
+		.search
+			text-align: center
+			width: 150px
+			height: 25px
+			float: right
+		.active
+			color: white
+			background-color: #A8F3F7
+			background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8))
+			background: -moz-linear-gradient(top, #80d5f7 , #60ccf8)
+	.videoView
+		width: 300px
+		height: 400px
+
+
+//myplaylist
+.playlistContainer
+	height: 400px
+	width: 300px
+	border: 1px solid black
+
+//playlist cell
+.videoListCellContainer
+	width: 285px
+	height: 60px
+	.thumbContainer
+		float: left
+		width: 75px
+		height: 60px
+	.cellInfo
+		float: right
+		width: 210px
+		height: 60px
+		border-bottom: 2px solid #ECECEC
+		.videoInfo
+			float: left
+			width: 180px
+			height: 60px
+			.title
+				width: 150px
+				height: 17px
+				font-weight: bold
+				font-size: 12px
+		.cellButtons
+			float: right
+			width: 30px
+			height: 60px
+			.remove
+				margin-left: -3px
+				border: none
+				cursor: point
+				width: 30px
+				height: 30px
+				display: block
+				margin-right: 1px
+				background: url('http://i.imgur.com/qfJg2.png') 50% 50% no-repeat
+			.remove:hover
+				margin-left: -3px
+				border: none
+				cursor: point
+				width: 30px
+				height: 30px
+				display: block
+				margin-right: 1px
+				background: url('http://i.imgur.com/d4eLo.png') 50% 50% no-repeat
+			.toTheTop
+				border: none
+				cursor: points
+				width: 25px
+				height: 25px
+				display: block
+				background: url('http://imgur.com/PMfjr.png') 50% 50% no-repeat
+			.toTheTop:hover
+				border: none
+				cursor: points
+				width: 25px
+				height: 25px
+				display: block
+				background: url('http://i.imgur.com/BoVIS.png') 50% 50% no-repeat
+				
+//skeleton
+#outer
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	weight: bold
+	font-size: 25px
+	margin: auto
+	height: 800px
+	width: 960px
+	background-color: black
+	#header
+		height: 60px
+		width: 960px
+		background-color: black
+		display: block
+	#actionBar
+		height: 40px
+		width: 960px
+		display: block
+		background-color: black
+		background-image: url('/images/room/actionbar.png')
+		#roomInfo
+			height: 40px
+			vertical-align: middle
+			#room-name
+				color: black
+				
+	#coolshit
+		height: 700px
+		width: 960px
+		background-color: gray
+		display: block
+		#funroom
+			float: left
+			height: 700px
+			width: 660px
+			background-color: black
+		#right-side
+			float: right
+			height: 700px
+			width: 300px
+			background-color: gray
+			
+//videosearch
+//myplaylist
+#search-view
+	#searchContainer
+		overflow-y: scroll
+		overflow-x: hidden
+		height: 360px
+		width: 300px
+	#searchBar
+		.inputBox
+			background-image: url('http://i.imgur.com/SWiIL.png')
+			height: 40px
+			text-indent: 30px
+			input
+				margin-top: 12px
+				width: 240px
+				height: 14px
+				border: 0
+				outline: 0
+				background: transparent
+				
+//search results cell
+.searchCellContainer
+	width: 285px
+	height: 60px
+	border-bottom: 2px solid #ECECEC
+	.thumbContainer
+		float: left
+		width: 75px
+		height: 60px
+	.cellInfo
+		float: right
+		width: 210px
+		height: 60px
+		.videoInfo
+			float: left
+			width: 180px
+			height: 60px
+			.title
+				margin-top: 5px
+				margin-left: 5px
+				width: 150px
+				height: 17px
+				font-weight: bold
+				font-size: 12px
+		.cellButtons
+			float: right
+			width: 30px
+			height: 60px
+			.addToPlaylist
+				background-color: transparent
+				margin-left: -5px
+				margin-top: 15px
+				border: none
+				cursor: point
+				width: 30px
+				height: 30px
+				display: block
+				background: url('http://i.imgur.com/1RPWB.png')
+			.addToPlaylist:hover
+				background-color: black
+				background: url('http://i.imgur.com/kZdk9.png')
+				
+//room
+#room-container
+	width: 660px
+	height: 700px
+	border: 1px solid black
+	#video-container
+		display: block
+		width: 660px
+		height: 400px
+		background-color: red
+	#people-area
+		display: block
+		width: 660px
+		height: 300px
+		background-color: blue
+	
+//room info
+#room-name, #roomInfo
+	float: left
+	width: 460px
+	height: 40px
+	text-indent: 10px
+	#room-name
+		margin-top: 3px
+	
+//share
+#share, #shareBar
+	float: right
+	width: 500px
+	height: 40px
+	color: white
+	#social
+		margin-top: 3px
+		float: left
+		width: 250px
+		height: 40px
+		#share-text
+			width: 50px
+			margin-right: 10px
+	#copy
+		margin-top: 3px
+		float: right
+		width: 250px
+		height: 40px
+		#link
+			display: inline-block
+			input
+				vertical-align: top
+				height: 22px
+				margin-left: 10px
+				width: 60px
+				margin-right: 15px
+		#copy-button-container
+			display: inline-block
+			height: 30px
+			width: 75px
+			#copy-button
+				color: black
+				margin-top: 2px
+				background-color: #ececec
+				background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+				background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+				text-indent: 9px
+				border-radius: 5px
+				-webkit-border-radius: 5px
+				-moz-border-radius: 5px
+				
+#shareFB
+	vertical-align: middle
+	margin-right: 4px
+	cursor: pointer
+	border: none
+	height: 31px
+	width: 31px
+	background: url('http://i.imgur.com/1OB6R.png')
+#shareTwit
+	vertical-align: middle
+	margin-right: 4px
+	cursor: pointer
+	border: none
+	height: 31px
+	width: 31px
+	background: url('http://i.imgur.com/pmbBg.png')
+#shareEmail
+	vertical-align: middle
+	margin-right: 4px
+	cursor: pointer
+	border: none
+	height: 31px
+	width: 31px
+	background: url('http://i.imgur.com/mz8Sc.png')
+
+
+button.playlist, button.playlist.active, button.search, button.search.active
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	weight: bold
+	font-size: 12px
+	color: gray
+	
+.videoView
+	height: 400px
+	width: 300px
+	
+#remote
+	padding-top: 5px
+	border-radius: 5px
+	-webkit-border-radius: 5px
+	-moz-border-radius: 5px
+	background-color: #323131
+	background: -webkit-gradient(linear, left top, left bottom, from(#323131), to(#161616))
+	float: right
+	margin-top: 150px
+	height: 150px
+	width: 100px
+	background-color: white
+
+#remote-left
+	vertical-align: top
+	display: inline-block
+	width: 50px
+	height: 60px
+	text-align: center
+#remote-right
+	vertical-align: top
+	display: inline-block
+	width: 50px
+	height: 60px
+	text-align: center
+#remote-bottom
+	margin-top: 18px
+	display: block
+	width: 100px
+	height: 90px
+	text-align: center
+.buttonContainer
+	margin: 3px
+	display: inline-block
+	border: none
+	background-color: #818181
+	background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a))
+	border: none
+	height: 30px
+	width: 30px
+	border-radius: 2px
+	-webkit-border-radius: 2px
+	-moz-border-radius: 2px
+
+.bottombuttonContainer
+	margin: 3px
+	border: none
+	background-color: #818181
+	background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a))
+	border: none
+	height: 30px
+	width: 30px
+	border-radius: 2px
+	-webkit-border-radius: 2px
+	-moz-border-radius: 2px
+
+button#up-vote
+	border: none
+	height: 30px
+	width: 30px
+	background-color: transparent
+	background: url('http://i.imgur.com/FY6PW.png') 50% 50% no-repeat
+
+button#down-vote
+	border: none
+	height: 30px
+	width: 30px
+	background-color: transparent
+	background: url('http://i.imgur.com/947FE.png') 50% 50% no-repeat
+	
+button#vol-up
+	border: none
+	height: 30px
+	width: 30px
+	background-color: transparent
+	background: url('http://i.imgur.com/pI9fe.png') 50% 50% no-repeat
+
+button#vol-down
+	border: none
+	height: 30px
+	width: 30px
+	background-color: transparent
+	background: url('http://i.imgur.com/4bUJ1.png') 50% 50% no-repeat
+
+button#mute
+	border: none
+	height: 30px
+	width: 30px
+	background: url('http://i.imgur.com/euzaw.png') 50% 50% no-repeat
