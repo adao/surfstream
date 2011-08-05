@@ -40,7 +40,7 @@
 		},
 		
 		xport: function() {
-			return { videoId: this.get('videoId') };
+			return { videoId: this.get('videoId'), thumb: this.get("thumb"), title : this.get("title"), id: this.id };
 		}
 	});
 	
@@ -55,12 +55,12 @@
 			this.videos = new models.VideoCollection();
 		},
 
-		addVideoId: function(id) {
+		addVideoId: function(id, thumb, title) {
 			if(this.videos.get(id) >= 0)
 				return false;
 			var vid = new models.Video();
 			vid.id = id;
-			vid.set({ videoId: id});
+			vid.set({ videoId: id, thumb: thumb, title: title});
 			this.videos.add(vid);
 		},
 		
@@ -115,7 +115,7 @@
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
 				console.log('importing video to playlist: '+video.videoId);
-				this.videos.add(new models.Video({ videoId: video.videoId }));
+				this.videos.add(new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title, id: video.id }));
 			}
 		}
 		
