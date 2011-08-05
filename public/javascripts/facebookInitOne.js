@@ -18,12 +18,12 @@ window.fbAsyncInit = function() {
 				//console.log(data);
 				console.log(textStatus);
 			});
-			document.getElementById('frontdoor').style.display = 'none';
+			document.getElementById('loadingScreen').style.display = 'none';
 			document.getElementById('outer').style.display = 'block';
 		} else if (response.session) {
 			FB.logout(function(response){});
+			document.getElementById('loadingScreen').style.display = 'none';
 			document.getElementById('frontdoor').style.display = 'inline-block';
-			document.getElementById('outer').style.display = 'none';
 		} else {
 			// yeah right
 		}
@@ -32,9 +32,6 @@ window.fbAsyncInit = function() {
 	// run once with current status and whenever the status changes
 
 	FB.Event.subscribe('auth.statusChange', proceed_to_site);
-	
-	document.getElementById('frontdoor').style.display = 'inline-block';
-	document.getElementById('outer').style.display = 'none';
 };
 (function() {
 	var e = document.createElement('script'); e.async = true;

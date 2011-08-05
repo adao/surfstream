@@ -13,7 +13,7 @@ $(function(){
 	
 	window.PlayerModel = Backbone.Model.extend({
 		initialize: function () {
-			
+			this.volume = 70;
 		}
 	});
 	
@@ -50,7 +50,7 @@ $(function(){
 		executeSearch : function(searchQuery) {
 			this.set({searchTerm: searchQuery});
 			$.ajax({
-				url:"http://gdata.youtube.com/feeds/api/videos?max-results=10&alt=json&q=" + searchQuery,
+				url:"http://gdata.youtube.com/feeds/api/videos?max-results=10&format=5&alt=json&q=" + searchQuery,
 			  success: $.proxy(this.processResults, this)
 			});
 		},
@@ -154,6 +154,13 @@ $(function(){
 				} else {
 					window.YTPlayer.loadVideoById(video.video, video.time)		
 				}
+			});
+			
+			socket.on('video:stop', function() {
+				if(!window.playerLoaded) return;
+				console.log('video ending!');
+				window.YTPlayer.stopVideo();
+				window.YTPlayer.clearVideo();
 			});
 			
 			socket.on('playlist:refresh', function(videoArray) {
@@ -292,8 +299,6 @@ $(function(){
 			}
 		},
 	});
-	
-	/*FOR ANTHONY: MAKE SURE ON PAGE <div id="fb_user_init">userID</div>*/
 	
 	/************************/
 	/**COLLECTIONS (LISTS)**/
@@ -713,6 +718,9 @@ $(function(){
 			$("#dj").bind("click", this.toggleDJStatus); 	
 			$("#up-vote").bind("click", SocketManager.voteUp);
 			$("#down-vote").bind("click", SocketManager.voteDown);
+			$("#vol-up").bind("click", {offset: 10}, setVideoVolume);
+			$("#vol-down").bind("click", {offset: -10}, setVideoVolume);
+			$("#mute").bind("click", {button: $("#mute")}, mute);
 			
 			this.options.users.bind("add", this.placeUser, this);
 			this.options.users.bind("remove", this.removeUser, this);		
@@ -880,6 +888,23 @@ function setToTime() {
 		window.YTPlayer.seekTo(window.secs);
 }
 
+function setVideoVolume(event) {
+	var volume = window.YTPlayer.getVolume();
+	if (volume + event.data.offset >= 0 && volume + event.data.offset <= 100) {
+		window.YTPlayer.setVolume(volume + event.data.offset);
+	}
+}
+
+function mute(event) {
+	if (window.YTPlayer.isMuted()) {
+		window.YTPlayer.unMute();
+		event.data.button.css("background", 'url("http://i.imgur.com/euzaw.png") 50% 50% no-repeat');
+	} else {
+		window.YTPlayer.mute();		
+		event.data.button.css("background", 'url("http://i.imgur.com/c77ZF.png") 50% 50% no-repeat');
+	}
+}
+    
 function onytplayerStateChange(newState) {
 /*	$('#state').html("Player state: "+newState);
 	if(newState == 0 && currVideo.isLeader) { 

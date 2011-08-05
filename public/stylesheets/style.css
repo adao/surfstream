@@ -1,3 +1,6 @@
+div#loadingScreen {
+  background-color: color;
+}
 div#frontdoor {
   display: none;
 }

@@ -100,6 +100,7 @@ function onYouTubePlayerReady(playerId) {
 
 function onytplayerStateChange(newState) {
 	$('#state').html("Player state: "+newState);
+	console.log("New STATE! Is " + newState);
 	if(newState == 0 && currVideo.isLeader) { 
 		console.log("Video finished, broadcasting back to server");
 		socket.emit('videoFinished');

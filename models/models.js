@@ -40,7 +40,7 @@
 		},
 		
 		xport: function() {
-			return { videoId: this.videoId };
+			return { videoId: this.get('videoId') };
 		}
 	});
 	
@@ -76,7 +76,7 @@
 		// 		}
 		// 	},
 		moveToTop: function(videoId) {
-			var video = this.get(videoId);
+			var video = this.videos.get(videoId);
 			if(video) {
 				this.videos.remove(video);
 				this.videos.add(video, { at: 0 });
@@ -108,12 +108,14 @@
 				videoExport.push(video.xport());
 			});
 			console.log('video playlist will be saved as: '+JSON.stringify(videoExport));
+			return JSON.stringify(videoExport);
 		},
 		
 		mport: function(rawVideoData) {
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
-				this.videos.add({ videoId: video.videoId });
+				console.log('importing video to playlist: '+video.videoId);
+				this.videos.add(new models.Video({ videoId: video.videoId }));
 			}
 		}
 		
@@ -204,8 +206,11 @@
 		},
 		
 		removeDJ: function(socketId) {
-			var djIndex = this.indexOf(socketId);
-			if(this.currDJIndex >= djIndex) {
+			var djIndex = this.indexOf(this.get(socketId));
+			
+			if(djIndex < 0) return;
+			
+			if(this.currDJIndex >= djIndex && this.currDJIndex > 0) {
 				this.currDJIndex = this.currDJIndex - 1;
 			}
 			if(this.currDJ != null && this.currDJ.get('socketId') == socketId) {
