@@ -168,7 +168,7 @@
 		
 		xport: function() {
 			return { 
-				userid: this.get('userId'), 
+				id: this.get('userId'), 
 				name: this.get('name'), 
 				avatar: this.get('avatar'), 
 				points: this.get('points'),
@@ -206,8 +206,11 @@
 		},
 		
 		removeDJ: function(socketId) {
-			var djIndex = this.indexOf(socketId);
-			if(this.currDJIndex >= djIndex) {
+			var djIndex = this.indexOf(this.get(socketId));
+			
+			if(djIndex < 0) return;
+			
+			if(this.currDJIndex >= djIndex && this.currDJIndex > 0) {
 				this.currDJIndex = this.currDJIndex - 1;
 			}
 			if(this.currDJ != null && this.currDJ.get('socketId') == socketId) {
