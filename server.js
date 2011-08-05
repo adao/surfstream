@@ -280,11 +280,13 @@ function endVideo() {
 }
 
 function announceVideo(videoId, videoDuration) {
-	currRoom.currVideo.set({ 
-		duration: videoDuration, 
-		timeStart: (new Date()).getTime(),
-		timeoutId: setTimeout(function() { onVideoEnd() }, videoDuration*1000)
-	});
+	if(currRoom.currVideo != null) {
+		currRoom.currVideo.set({ 
+			duration: videoDuration, 
+			timeStart: (new Date()).getTime(),
+			timeoutId: setTimeout(function() { onVideoEnd() }, videoDuration*1000)
+		});
+	}
 	
 	io.sockets.emit('video:sendInfo', { video: videoId, time: 0 });
 }
