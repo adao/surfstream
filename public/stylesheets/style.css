@@ -8,7 +8,6 @@ div#outer {
   display: none;
 }
 div.chatContainer {
-  background-color: whit;
   width: 300px;
   height: 310px;
   max-width: 300px;
@@ -36,19 +35,18 @@ div.chatContainer div.chatHeader div.chatTitle {
   width: 36px;
 }
 div.chatContainer #messages {
-  border: none;
   background-color: #fff;
+  border: none;
+  color: #000;
   height: 225px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
 div.chatContainer #messages .messageContainer {
-  background-color: #fff;
   color: #000;
 }
 div.chatContainer #messages .messageContainer:nth-child(odd) {
-  background-color: #666;
-  color: #000;
+  background-color: #eee;
 }
 div.chatContainer form.inputBox {
   background-image: url("http://i.imgur.com/SWiIL.png");
@@ -82,13 +80,11 @@ div.messageContainer span {
   margin-right: 3px;
   font-weight: bold;
   display: inline-block;
-  color: #fff;
 }
 div.messageContainer div {
   padding-top: 2px;
   padding-bottom: 2px;
   display: inline;
-  color: #fff;
 }
 div.historyContainer {
   font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -507,12 +503,16 @@ div.historyContainer .history .videoHistory {
 }
 #share #copy #copy-button-container #copy-button,
 #shareBar #copy #copy-button-container #copy-button {
+  font-size: 24px;
+  height: 25px;
+  width: 80px;
+  display: inline-block;
+  vertical-align: bottom;
   color: #000;
   margin-top: 2px;
   background-color: #ececec;
   background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
   background: -moz-linear-gradient(top, #ececec, #dbdbdb);
-  text-indent: 9px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
