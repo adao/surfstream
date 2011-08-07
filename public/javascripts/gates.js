@@ -57,7 +57,7 @@ $(function(){
 		
 		processResults: function(data) {
 			var feed, entries, resultsCollection, buildup;
-			feed = data.feed;
+			feed = data.feed ? data.feed : jQuery.parseJSON(data.feed);
 		  entries = feed.entry || [];
 			resultsCollection = this.get("resultsList");
 			buildup = [];
