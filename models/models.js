@@ -56,7 +56,7 @@
 		},
 
 		addVideoId: function(id, thumb, title) {
-			if(this.videos.get(id) >= 0)
+			if(this.videos.get(id))
 				return false;
 			var vid = new models.Video();
 			vid.id = id;
