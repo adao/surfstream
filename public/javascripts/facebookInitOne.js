@@ -33,11 +33,9 @@ window.fbAsyncInit = function() {
 	}
 		
 	// run once with current status and whenever the status changes
-
-	if(!FB.Event.subscribe('auth.statusChange', proceed_to_site)) {
-	    document.getElementById('loadingScreen').style.display = 'none';
-		document.getElementById('frontdoor').style.display = 'inline-block';
-	}
+    FB.getLoginStatus(proceed_to_site);
+    document.getElementById('loadingScreen').style.display = 'none';
+	document.getElementById('frontdoor').style.display = 'inline-block';
 };
 (function() {
 	var e = document.createElement('script'); e.async = true;
