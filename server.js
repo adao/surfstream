@@ -330,9 +330,11 @@ function removeFromDJ(socketId) {
 }
 
 function skipVideo() {
-	clearTimeout(currRoom.currVideo.get('timeoutId'));
-	console.log('playlist of dj after skipping: '+currRoom.djs.currDJ.playlist.xport());
-	onVideoEnd();
+	if(currRoom.currVideo != null) {
+		clearTimeout(currRoom.currVideo.get('timeoutId'));
+		console.log('playlist of dj after skipping: '+currRoom.djs.currDJ.playlist.xport());
+		onVideoEnd();
+	}
 }
 
 function announceDJs() {
