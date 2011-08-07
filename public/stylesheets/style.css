@@ -17,6 +17,7 @@ div.chatContainer {
 div.chatContainer div.chatHeader {
   width: 300px;
   height: 30px;
+  background-image: url("/images/room/actionbar.png");
   background-color: #808080;
 }
 div.chatContainer div.chatHeader img.chatIcon {
@@ -483,29 +484,31 @@ div.historyContainer .history .videoHistory {
 }
 #share #copy #link,
 #shareBar #copy #link {
+  vertical-align: top;
   display: inline-block;
 }
 #share #copy #link input,
 #shareBar #copy #link input {
-  margin-top: 3px;
+  margin-top: 4px;
   border: 1px solid #777;
   vertical-align: top;
   height: 18px;
-  margin-left: 10px;
+  margin-left: 2px;
   width: 60px;
-  margin-right: 15px;
+  margin-right: 10px;
 }
 #share #copy #copy-button-container,
 #shareBar #copy #copy-button-container {
   display: inline-block;
   height: 30px;
-  width: 75px;
+  width: 50px;
 }
 #share #copy #copy-button-container #copy-button,
 #shareBar #copy #copy-button-container #copy-button {
-  font-size: 24px;
+  text-indent: 2px;
+  font-size: 20px;
   height: 25px;
-  width: 80px;
+  width: 50px;
   display: inline-block;
   vertical-align: bottom;
   color: #000;
