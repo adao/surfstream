@@ -31,9 +31,17 @@ div.chatContainer
 			height: 18px
 			width: 36px
 	#messages
+		border: none
+		background-color: white
 		height: 215px
 		overflow-y: scroll
 		overflow-x: hidden
+		.messageContainer
+			background-color: white
+			color: black
+		.messageContainer:nth-child(odd)
+			background-color: #666
+			color: black
 	form.inputBox
 		background-image: url('http://i.imgur.com/SWiIL.png')
 		height: 40px
@@ -58,7 +66,6 @@ div.messageContainer
 	overflow-x: hidden
 	overflow-y: visible;
 	width: 285px
-	border: 1px solid black
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	font-size: 14px
 	span
@@ -552,3 +559,90 @@ button#mute
 	height: 30px
 	width: 30px
 	background: url('http://i.imgur.com/euzaw.png') 50% 50% no-repeat
+
+
+#room-modal
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	overflow-y: none
+	overflow-x: none
+	width: 600px
+	height: 360px
+	border: 1px solid black
+	#searchbar
+		background: url('http://i.imgur.com/4QNd7.png') 50% 50% no-repeat
+		display: block
+		height: 50px
+		background-color: #666
+		form.roomSearch
+			display: inline-block
+			width: 560px
+			height: 40px
+			text-indent: 45px
+			color: #666
+			input
+				color: white
+				font-size: 16px
+				margin-top: 12px
+				width: 240px
+				height: 25px
+				border: 0
+				outline: 0
+				background: transparent
+		#clearSearch			
+			padding-bottom: 8px
+			vertical-align: bottom
+			background: url('http://i.imgur.com/cOliI.png') 50% 50% no-repeat
+			height: 25px
+			width: 26px
+			background-color: transparent
+			display: inline-block
+	#rooms
+		width: 600px
+		height: 310px
+		overflow-y: scroll
+		overflow-x: hidden
+		table#roomsTable
+			width: 590px
+			border-collapse: collapse
+			tr.table-header
+				background-color: black
+				color: white
+				height: 30px
+				th.viewers-hd
+					width: 50px
+					padding: 6px
+					border-right: 1px solid #666;
+				th.room-name-hd
+					border-right: 1px solid #666;
+				th.room-friends-hd
+					border-right: 1px solid #666;
+			tr.room-row
+				height: 60px
+				td
+					border-right: 1px solid #666
+					.num-viewers
+						font-weight: bold
+						padding-top: 4px
+						font-size: 25px
+						text-align: center
+						height: 35px
+						display: block
+					.num-djs
+						font-weight: bold
+						font-size: 14px
+						text-align: center
+						height: 25px
+						display: block
+					.room-name-container
+						.listed-room-name
+							text-indent: 8px
+							font-size: 16px
+							font-weight: bold
+							display: block
+							margin-bottom: 4px
+						.listed-video-name
+							text-indent: 8px
+							font-size: 12px
+							dispaly: block
+			tr.room-row:nth-child(odd)
+				background-color: #EDEDED

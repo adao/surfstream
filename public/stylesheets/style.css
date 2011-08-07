@@ -36,9 +36,19 @@ div.chatContainer div.chatHeader div.chatTitle {
   width: 36px;
 }
 div.chatContainer #messages {
+  border: none;
+  background-color: #fff;
   height: 215px;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+div.chatContainer #messages .messageContainer {
+  background-color: #fff;
+  color: #000;
+}
+div.chatContainer #messages .messageContainer:nth-child(odd) {
+  background-color: #666;
+  color: #000;
 }
 div.chatContainer form.inputBox {
   background-image: url("http://i.imgur.com/SWiIL.png");
@@ -63,7 +73,6 @@ div.messageContainer {
   overflow-x: hidden;
   overflow-y: visible;
   width: 285px;
-  border: 1px solid #000;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 14px;
 }
@@ -615,4 +624,106 @@ button#mute {
   height: 30px;
   width: 30px;
   background: url("http://i.imgur.com/euzaw.png") 50% 50% no-repeat;
+}
+#room-modal {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  overflow-y: none;
+  overflow-x: none;
+  width: 600px;
+  height: 360px;
+  border: 1px solid #000;
+}
+#room-modal #searchbar {
+  background: url("http://i.imgur.com/4QNd7.png") 50% 50% no-repeat;
+  display: block;
+  height: 50px;
+  background-color: #666;
+}
+#room-modal #searchbar form.roomSearch {
+  display: inline-block;
+  width: 560px;
+  height: 40px;
+  text-indent: 45px;
+  color: #666;
+}
+#room-modal #searchbar form.roomSearch input {
+  color: #fff;
+  font-size: 16px;
+  margin-top: 12px;
+  width: 240px;
+  height: 25px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+#room-modal #searchbar #clearSearch {
+  padding-bottom: 8px;
+  vertical-align: bottom;
+  background: url("http://i.imgur.com/cOliI.png") 50% 50% no-repeat;
+  height: 25px;
+  width: 26px;
+  background-color: transparent;
+  display: inline-block;
+}
+#room-modal #rooms {
+  width: 600px;
+  height: 310px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#room-modal #rooms table#roomsTable {
+  width: 590px;
+  border-collapse: collapse;
+}
+#room-modal #rooms table#roomsTable tr.table-header {
+  background-color: #000;
+  color: #fff;
+  height: 30px;
+}
+#room-modal #rooms table#roomsTable tr.table-header th.viewers-hd {
+  width: 50px;
+  padding: 6px;
+  border-right: 1px solid #666;
+}
+#room-modal #rooms table#roomsTable tr.table-header th.room-name-hd {
+  border-right: 1px solid #666;
+}
+#room-modal #rooms table#roomsTable tr.table-header th.room-friends-hd {
+  border-right: 1px solid #666;
+}
+#room-modal #rooms table#roomsTable tr.room-row {
+  height: 60px;
+}
+#room-modal #rooms table#roomsTable tr.room-row td {
+  border-right: 1px solid #666;
+}
+#room-modal #rooms table#roomsTable tr.room-row td .num-viewers {
+  font-weight: bold;
+  padding-top: 4px;
+  font-size: 25px;
+  text-align: center;
+  height: 35px;
+  display: block;
+}
+#room-modal #rooms table#roomsTable tr.room-row td .num-djs {
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  height: 25px;
+  display: block;
+}
+#room-modal #rooms table#roomsTable tr.room-row td .room-name-container .listed-room-name {
+  text-indent: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+}
+#room-modal #rooms table#roomsTable tr.room-row td .room-name-container .listed-video-name {
+  text-indent: 8px;
+  font-size: 12px;
+  dispaly: block;
+}
+#room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
+  background-color: #ededed;
 }
