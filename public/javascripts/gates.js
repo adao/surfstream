@@ -677,7 +677,13 @@ $(function(){
 	
 		initialize: function () {
 			this.render();
-			this.options.chatCollection.bind("add", this.makeNewChatMsg);
+			this.options.chatCollection.bind("add", this.makeNewChatMsg, this);
+			this.chatContainer = new AutoScroll({
+				bottomThreshold: 215,
+				scrollContainerId: 'messages'
+			});
+			
+			console.log(this.chatContainer);
 		},
 		
 		render: function() {
@@ -686,8 +692,8 @@ $(function(){
 		},
 		
 		events: {
-        "submit .inputBox" : "sendMessage"
-    },
+			"submit .inputBox" : "sendMessage"
+		},
 
 		sendMessage : function (event) {
 			var userMessage = this.$('input[name=message]').val();
@@ -698,6 +704,7 @@ $(function(){
 		
 		makeNewChatMsg: function (chat) {
 			new ChatCell({user: chat.get("user"), msg: chat.get("message")});
+			this.chatContainer.activeScroll();
 		}
 	});
 	
@@ -714,7 +721,6 @@ $(function(){
 			$(this.el).html(this.chatCellTemplate({user: this.options.user, msg: this.options.msg }));
 			return this;
 		}
-		
 	});
 	
 	window.TopBarView = Backbone.View.extend({
@@ -885,9 +891,6 @@ $(function(){
 		}
 		
 	});
-
-	/* INITIALIZATION */
-	
 	
 	window.playerLoaded = false;
 	window.SurfStreamApp = new SurfStream({socket: socket_init});
