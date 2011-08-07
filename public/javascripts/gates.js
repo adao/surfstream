@@ -443,9 +443,9 @@ $(function(){
 		sidebarTemplate: _.template($('#sidebar-template').html()),
 		
 		events: {
-        "click .search" : "activateSearch",
-				"click .playlist" : "activatePlaylist"
-    },
+        	"click .search" : "activateSearch",
+			"click .playlist" : "activatePlaylist"
+    	},
 
 		initialize: function () {
 			this.render();
@@ -491,6 +491,7 @@ $(function(){
 		
 		initialize: function () {
 			this.render();
+			//this.previewView = new PreviewPlayer();
 			//Hack because of nested view bindings (events get eaten by Sidebar)
 			var input = $("#searchBar .inputBox")
 			input.bind("submit", {searchview: this },this.searchVideos);
@@ -579,6 +580,29 @@ $(function(){
 				var atts = { id: "YouTubePlayer"};
 				swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer",
 			                       "video-container", "640", "390", "8", null, null, params, atts);
+			}
+		}			
+		
+		
+		
+	});
+	
+	window.PreviewPlayer = Backbone.View.extend({
+		
+		el: "#previewContainer",
+		
+		previewTemplate: _.template($('#search-preview-template').html()),
+		
+		initialize: function () {
+			$(this.el).html(this.previewTemplate());
+			if(false) {
+				//WUT LOL
+				//ytplayer.loadVideoById(currVideo.video, currVideo.time);
+			} else {
+				var params = { allowScriptAccess: "always", allowFullScreen: 'false' };
+				var atts = { id: "YouTubePlayerTwo"};
+				swfobject.embedSWF("http://www.youtube.com/v/u1zgFlCw8Aw?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
+			                       "preview-player", "284", "173", "8", null, null, params, atts);
 			}
 		}			
 		
