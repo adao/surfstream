@@ -424,9 +424,7 @@ div.historyContainer .history .videoHistory {
   vertical-align: bottom;
   color: #000;
   margin-top: 2px;
-  background-color: #ececec;
-  background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
-  background: -moz-linear-gradient(top, #ececec, #dbdbdb);
+  background-image: url("/images/room/actionbar.png");
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -438,9 +436,7 @@ div.historyContainer .history .videoHistory {
   vertical-align: bottom;
   color: #000;
   margin-top: 2px;
-  background-color: #ececec;
-  background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
-  background: -moz-linear-gradient(top, #ececec, #dbdbdb);
+  background-image: url("/images/room/actionbar.png");
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
