@@ -246,7 +246,7 @@ div.historyContainer .history .videoHistory {
   height: 30px;
   display: block;
   margin-right: 1px;
-  background: url("http://i.imgur.com/qfJg2.png") 50% 50% no-repeat;
+  background: url("/images/room/remove.png") 50% 50% no-repeat;
 }
 .videoListCellContainer .cellInfo .cellButtons .remove:hover {
   margin-left: -3px;
@@ -256,7 +256,7 @@ div.historyContainer .history .videoHistory {
   height: 30px;
   display: block;
   margin-right: 1px;
-  background: url("http://i.imgur.com/d4eLo.png") 50% 50% no-repeat;
+  background: url("remove_hover.png") 50% 50% no-repeat;
 }
 .videoListCellContainer .cellInfo .cellButtons .toTheTop {
   border: none;
@@ -264,7 +264,7 @@ div.historyContainer .history .videoHistory {
   width: 25px;
   height: 25px;
   display: block;
-  background: url("http://imgur.com/PMfjr.png") 50% 50% no-repeat;
+  background: url("/images/room/to_the_top.png") 50% 50% no-repeat;
 }
 .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
   border: none;
@@ -272,7 +272,7 @@ div.historyContainer .history .videoHistory {
   width: 25px;
   height: 25px;
   display: block;
-  background: url("http://i.imgur.com/BoVIS.png") 50% 50% no-repeat;
+  background: url("/images/room/to_the_top_hover.png") 50% 50% no-repeat;
 }
 #outer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -389,11 +389,11 @@ div.historyContainer .history .videoHistory {
   width: 30px;
   height: 30px;
   display: block;
-  background: url("http://i.imgur.com/1RPWB.png");
+  background: url("/images/room/add_small.png");
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist:hover {
   background-color: #000;
-  background: url("http://i.imgur.com/kZdk9.png");
+  background: url("/images/room/add_small_hover.png");
 }
 #room-container {
   width: 660px;
