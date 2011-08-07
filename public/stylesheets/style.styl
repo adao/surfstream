@@ -7,11 +7,11 @@ div#outer
 
 //Chat Box
 div.chatContainer
-	background-color: black
+	background-color: whit
 	width: 300px
-	height: 275px
+	height: 310px
 	max-width: 300px
-	max-height: 275px
+	max-height: 310px
 	display: block
 	div.chatHeader
 		width: 300px
@@ -33,7 +33,7 @@ div.chatContainer
 	#messages
 		border: none
 		background-color: white
-		height: 215px
+		height: 225px
 		overflow-y: scroll
 		overflow-x: hidden
 		.messageContainer
@@ -89,7 +89,6 @@ div.historyContainer
 	width: 300px
 	overflow-x: hidden
 	overflow-y: hidden
-	background-color: #FFA
 	border: 1px solid black
 	.roomInfo
 		display: block
@@ -362,17 +361,47 @@ div.historyContainer
 #room-container
 	width: 660px
 	height: 700px
-	border: 1px solid black
 	#video-container
 		display: block
 		width: 660px
 		height: 400px
 		background-color: red
 	#people-area
+		background: url('http://i.imgur.com/WBRt9.png')
 		display: block
 		width: 660px
 		height: 300px
-		background-color: blue
+		#buttoncontainer
+			position: absolute
+			top: 800px
+			height: 25px
+			width: 160px
+			button#history-button
+				height: 25px
+				width: 80px
+				display: inline-block
+				vertical-align: bottom
+				color: black
+				margin-top: 2px
+				background-color: #ececec
+				background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+				background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+				border-radius: 5px
+				-webkit-border-radius: 5px
+				-moz-border-radius: 5px
+			button#dj
+				height: 25px
+				width: 80px
+				display: inline-blocks
+				vertical-align: bottom
+				color: black
+				margin-top: 2px
+				background-color: #ececec
+				background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+				background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+				border-radius: 5px
+				-webkit-border-radius: 5px
+				-moz-border-radius: 5px
 	
 //room info
 #room-name, #roomInfo
@@ -471,7 +500,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	background-color: #323131
 	background: -webkit-gradient(linear, left top, left bottom, from(#323131), to(#161616))
 	float: right
-	margin-top: 150px
+	margin-top: 145px
 	height: 150px
 	width: 100px
 	background-color: white

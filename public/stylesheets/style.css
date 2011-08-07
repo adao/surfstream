@@ -8,11 +8,11 @@ div#outer {
   display: none;
 }
 div.chatContainer {
-  background-color: #000;
+  background-color: whit;
   width: 300px;
-  height: 275px;
+  height: 310px;
   max-width: 300px;
-  max-height: 275px;
+  max-height: 310px;
   display: block;
 }
 div.chatContainer div.chatHeader {
@@ -38,7 +38,7 @@ div.chatContainer div.chatHeader div.chatTitle {
 div.chatContainer #messages {
   border: none;
   background-color: #fff;
-  height: 215px;
+  height: 225px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -97,7 +97,6 @@ div.historyContainer {
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
-  background-color: #ffa;
   border: 1px solid #000;
 }
 div.historyContainer .roomInfo {
@@ -402,7 +401,6 @@ div.historyContainer .history .videoHistory {
 #room-container {
   width: 660px;
   height: 700px;
-  border: 1px solid #000;
 }
 #room-container #video-container {
   display: block;
@@ -411,10 +409,44 @@ div.historyContainer .history .videoHistory {
   background-color: #f00;
 }
 #room-container #people-area {
+  background: url("http://i.imgur.com/WBRt9.png");
   display: block;
   width: 660px;
   height: 300px;
-  background-color: #00f;
+}
+#room-container #people-area #buttoncontainer {
+  position: absolute;
+  top: 800px;
+  height: 25px;
+  width: 160px;
+}
+#room-container #people-area #buttoncontainer button#history-button {
+  height: 25px;
+  width: 80px;
+  display: inline-block;
+  vertical-align: bottom;
+  color: #000;
+  margin-top: 2px;
+  background-color: #ececec;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
+  background: -moz-linear-gradient(top, #ececec, #dbdbdb);
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+}
+#room-container #people-area #buttoncontainer button#dj {
+  height: 25px;
+  width: 80px;
+  display: inline-blocks;
+  vertical-align: bottom;
+  color: #000;
+  margin-top: 2px;
+  background-color: #ececec;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
+  background: -moz-linear-gradient(top, #ececec, #dbdbdb);
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
 }
 #room-name,
 #roomInfo {
@@ -533,7 +565,7 @@ button.search.active {
   background-color: #323131;
   background: -webkit-gradient(linear, left top, left bottom, from(#323131), to(#161616));
   float: right;
-  margin-top: 150px;
+  margin-top: 145px;
   height: 150px;
   width: 100px;
   background-color: #fff;
