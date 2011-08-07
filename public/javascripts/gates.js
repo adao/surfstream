@@ -125,6 +125,8 @@ $(function(){
 	
 	socket_init = io.connect();
 	
+	/*******SOCKETMANAGER -- ALL SOCKET EVENTS HAPPEN HERE********/
+	
 	window.SocketManager = Backbone.Model.extend({
 		initialize: function () {
 			var socket, app;
@@ -164,6 +166,16 @@ $(function(){
 				}
 				//HACK
 				$("#room-name").html(video.title)
+				app.get("roomModel").get("users").forEach(function(userModel) {
+					var user =  $("#" + userModel.get("id"));
+					if (user.attr("isDJ") != "1") {
+						user.css("border-width", "0px");
+					} else {
+						user.css("border-width", "2px");
+						user.css("border-color", "yellow");
+					}
+					
+				})
 				//ENDHACK
 			});
 			
@@ -192,9 +204,21 @@ $(function(){
 			
 			
 			socket.on('dj:announceDJs', function(djArray) {
+				app.get("roomModel").get("users").forEach(function(userModel) {
+					var user =  $("#" + userModel.get("id"));
+					user.attr("isDJ", "0")
+				})
 				for (dj in djArray) {
-					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
+					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow").css("border-width", "2px");
+					$("#"+ djArray[dj].id).attr("isDJ", "1")
 				}
+				app.get("roomModel").get("users").forEach(function(userModel) {
+				var user =  $("#" + userModel.get("id"));
+				if (user.attr("isDJ") != "1" && user.css("border-right-color") == "rgb(255, 255, 0)") {
+					user.css("border-width", "0px");
+				}
+					
+				})
 			});
 			
 			//.upvoteset maps userids who up to true, .down, .up totals
@@ -261,6 +285,8 @@ $(function(){
 		}		
 	
 	});
+	
+	/*******SURFSTREAM - WHERE IT ALL STARTS ********/
 	
 	window.SurfStream = Backbone.Model.extend({
 		defaults: {
@@ -532,6 +558,8 @@ $(function(){
 		}
 	});
 	
+		/*******SEARCHCELL********/
+	
 	window.SearchCell = Backbone.View.extend({
 		
 		searchCellTemplate: _.template($('#searchCell-template').html()),
@@ -560,6 +588,9 @@ $(function(){
 		
 	});
 	
+	
+	/*******PLAYER********/
+	
 	//The Actual Video Player Presentation
 	window.Player = Backbone.View.extend({
 		
@@ -585,6 +616,9 @@ $(function(){
 		
 		
 	});
+	
+	/*******VIDEOLISTVIEW*******/
+	
 	
 	window.VideoListView = Backbone.View.extend({
 		id: 'video-list',
@@ -615,6 +649,8 @@ $(function(){
 			videoCellView.initializeView();
 		}
 	});
+	
+	/*******VIDEOCELLVIEW********/
 	
 	window.VideoCellView = Backbone.View.extend({
 		videoCellTemplate: _.template($('#video-list-cell-template').html()),
@@ -670,6 +706,8 @@ $(function(){
 		}
 	});
 	
+	/*******CHATVIEW********/
+	
 	window.ChatView = Backbone.View.extend({
 		el: '#chat',
 		
@@ -708,6 +746,8 @@ $(function(){
 		}
 	});
 	
+	/*******CHATCELL********/
+	
 	window.ChatCell = Backbone.View.extend({
 		
 		chatCellTemplate: _.template($('#chatcell-template').html()),
@@ -729,6 +769,8 @@ $(function(){
 		}
 	});
 	
+	/*******ROOMINFOVIEW********/
+	
 	window.RoomInfoView = Backbone.View.extend({
 		el: '#roomInfo',
 		
@@ -738,6 +780,8 @@ $(function(){
 			$(this.el).html(this.roomInfoTemplate({roomName: this.options.roomName}));
 		}
 	});
+	
+	/*******THEATRE********/
 	
 	//The Avatar + Seating Area
 	window.Theatre = Backbone.View.extend({
@@ -791,6 +835,8 @@ $(function(){
 		}
 	
 	});
+	
+	/*******SHAREBARVIEW********/
 	
 	window.ShareBarView = Backbone.View.extend({
 		el: '#shareBar',
