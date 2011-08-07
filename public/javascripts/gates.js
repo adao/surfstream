@@ -125,8 +125,6 @@ $(function(){
 	
 	socket_init = io.connect();
 	
-	/*******SOCKETMANAGER -- ALL SOCKET EVENTS HAPPEN HERE********/
-	
 	window.SocketManager = Backbone.Model.extend({
 		initialize: function () {
 			var socket, app;
@@ -166,16 +164,6 @@ $(function(){
 				}
 				//HACK
 				$("#room-name").html(video.title)
-				app.get("roomModel").get("users").forEach(function(userModel) {
-					var user =  $("#" + userModel.get("id"));
-					if (user.attr("isDJ") != "1") {
-						user.css("border-width", "0px");
-					} else {
-						user.css("border-width", "2px");
-						user.css("border-color", "yellow");
-					}
-					
-				})
 				//ENDHACK
 			});
 			
@@ -204,21 +192,9 @@ $(function(){
 			
 			
 			socket.on('dj:announceDJs', function(djArray) {
-				app.get("roomModel").get("users").forEach(function(userModel) {
-					var user =  $("#" + userModel.get("id"));
-					user.attr("isDJ", "0")
-				})
 				for (dj in djArray) {
-					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow").css("border-width", "2px");
-					$("#"+ djArray[dj].id).attr("isDJ", "1")
+					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
 				}
-				app.get("roomModel").get("users").forEach(function(userModel) {
-				var user =  $("#" + userModel.get("id"));
-				if (user.attr("isDJ") != "1" && user.css("border-right-color") == "rgb(255, 255, 0)") {
-					user.css("border-width", "0px");
-				}
-					
-				})
 			});
 			
 			//.upvoteset maps userids who up to true, .down, .up totals
@@ -285,8 +261,6 @@ $(function(){
 		}		
 	
 	});
-	
-	/*******SURFSTREAM - WHERE IT ALL STARTS ********/
 	
 	window.SurfStream = Backbone.Model.extend({
 		defaults: {
@@ -517,6 +491,7 @@ $(function(){
 		
 		initialize: function () {
 			this.render();
+			this.previewView = new PreviewPlayer();
 			//Hack because of nested view bindings (events get eaten by Sidebar)
 			var input = $("#searchBar .inputBox")
 			input.bind("submit", {searchview: this },this.searchVideos);
@@ -541,7 +516,8 @@ $(function(){
 		searchVideos : function(event) {
 			event.preventDefault();
 			var query = $($('input[name=search]')[0]).val();
-			$("#search-view").html($(event.data.searchview.el.innerHTML));
+			$("#searchContainer").html();
+			//$("#searchContainer").html($(event.data.searchview.el.innerHTML));
 			event.data.searchview.options.searchModel.executeSearch(query);			
 			event.data.searchview.updateSearchQuery(query);
 			var input = $("#searchBar .inputBox")
@@ -558,15 +534,14 @@ $(function(){
 		}
 	});
 	
-		/*******SEARCHCELL********/
-	
 	window.SearchCell = Backbone.View.extend({
 		
 		searchCellTemplate: _.template($('#searchCell-template').html()),
 		
 		events: {
-				"click .addToPlaylist" : "addToPlaylist"
-    },
+			"click .addToPlaylist" : "addToPlaylist",
+			"click .previewVideo" : "previewVideo"
+    	},
 		
 		initialize: function () {
 			$("#searchContainer").append(this.render({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}).el);
@@ -580,6 +555,27 @@ $(function(){
 			SocketManager.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"));
 		},
 		
+		previewVideo: function() {
+			var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
+			if(!window.YTPlayerTwo) {
+		    	window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
+				window.playerTwoLoaded = true;
+				window.videoIdTwo = videoID;
+				$('#preview-container').css('display', 'block');
+				//$('#preview-container').slideDown("slow");
+				//$("#searchContainer").css("height", 187);
+				$("#preview-container").animate({
+					width: 284,
+					height: 195
+				}, "slow");
+				$("#searchContainer").animate({
+					height: 165
+				}, "slow");
+			} else {
+				window.YTPlayerTwo.loadVideoById(videoID);
+			}
+		},
+		
 		render: function(searchResult) {
 			$(this.el).html(this.searchCellTemplate(searchResult));
 			this.$(".thumbContainer").attr("src", searchResult.thumb);
@@ -587,9 +583,6 @@ $(function(){
 		}
 		
 	});
-	
-	
-	/*******PLAYER********/
 	
 	//The Actual Video Player Presentation
 	window.Player = Backbone.View.extend({
@@ -623,6 +616,10 @@ $(function(){
 		
 		previewTemplate: _.template($('#search-preview-template').html()),
 		
+		events: {
+			"click #close-preview-player" : "hidePreviewPlayer",
+    	},
+		
 		initialize: function () {
 			$(this.el).html(this.previewTemplate());
 			if(false) {
@@ -631,13 +628,24 @@ $(function(){
 			} else {
 				var params = { allowScriptAccess: "always", allowFullScreen: 'false' };
 				var atts = { id: "YouTubePlayerTwo"};
-				swfobject.embedSWF("http://www.youtube.com/v/u1zgFlCw8Aw?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
+				swfobject.embedSWF("http://www.youtube.com/v/ylLzyHk54Z0?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
 			                       "preview-player", "284", "173", "8", null, null, params, atts);
 			}
-		}			
+		},
 		
-		
-		
+		hidePreviewPlayer: function() {
+			window.YTPlayerTwo = null;
+			$("#preview-container").animate({
+				height: 0,
+				width: 0
+			}, "slow", null, function() {
+				$("#preview-container").css('display', 'none');
+			});
+			$("#searchContainer").animate({
+				height: 360
+			}, "slow");
+			
+		}
 	});
 	
 	window.VideoListView = Backbone.View.extend({
@@ -669,8 +677,6 @@ $(function(){
 			videoCellView.initializeView();
 		}
 	});
-	
-	/*******VIDEOCELLVIEW********/
 	
 	window.VideoCellView = Backbone.View.extend({
 		videoCellTemplate: _.template($('#video-list-cell-template').html()),
@@ -726,8 +732,6 @@ $(function(){
 		}
 	});
 	
-	/*******CHATVIEW********/
-	
 	window.ChatView = Backbone.View.extend({
 		el: '#chat',
 		
@@ -766,8 +770,6 @@ $(function(){
 		}
 	});
 	
-	/*******CHATCELL********/
-	
 	window.ChatCell = Backbone.View.extend({
 		
 		chatCellTemplate: _.template($('#chatcell-template').html()),
@@ -789,8 +791,6 @@ $(function(){
 		}
 	});
 	
-	/*******ROOMINFOVIEW********/
-	
 	window.RoomInfoView = Backbone.View.extend({
 		el: '#roomInfo',
 		
@@ -800,8 +800,6 @@ $(function(){
 			$(this.el).html(this.roomInfoTemplate({roomName: this.options.roomName}));
 		}
 	});
-	
-	/*******THEATRE********/
 	
 	//The Avatar + Seating Area
 	window.Theatre = Backbone.View.extend({
@@ -855,8 +853,6 @@ $(function(){
 		}
 	
 	});
-	
-	/*******SHAREBARVIEW********/
 	
 	window.ShareBarView = Backbone.View.extend({
 		el: '#shareBar',
@@ -960,6 +956,10 @@ $(function(){
 });
 
 function onYouTubePlayerReady(playerId) {
+	if (playerId == "YouTubePlayerTwo") {
+		window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
+	}
+	
 	if(!window.YTPlayer) {
     window.YTPlayer = document.getElementById('YouTubePlayer');
     window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');

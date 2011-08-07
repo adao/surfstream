@@ -33,7 +33,7 @@ window.fbAsyncInit = function() {
 	}
 		
 	// run once with current status and whenever the status changes
-    FB.getLoginStatus(proceed_to_site);
+	FB.Event.subscribe('auth.statusChange', proceed_to_site);
     document.getElementById('loadingScreen').style.display = 'none';
 	document.getElementById('frontdoor').style.display = 'inline-block';
 };
