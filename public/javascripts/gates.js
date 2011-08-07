@@ -158,9 +158,13 @@ $(function(){
 					window.secs = video.time;
 					window.video = video.video;
 					playerLoaded = true;
+					
 				} else {
 					window.YTPlayer.loadVideoById(video.video, video.time)		
 				}
+				//HACK
+				$("#room-name").html(video.title)
+				//ENDHACK
 			});
 			
 			socket.on('video:stop', function() {
