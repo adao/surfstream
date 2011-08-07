@@ -2,9 +2,9 @@
 html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.facebook.com/2008/fbml")
 	head
 		title surfstream.tv
-	script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
-	script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
-	script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
+	script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js")
+	script(type="text/javascript", src="/javascripts/underscore.js")
+	script(type="text/javascript", src="/javascripts/backbone.js")
 	script(type="text/javascript", src="/javascripts/ZeroClipboard.js")
 	script(type="text/javascript", src="/javascripts/jQueryExtension.js")
 	script(type="text/javascript", src="/javascripts/jquery.tipsy.js")
@@ -50,3 +50,8 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 			include searchbar
 			include searchcell
 			include room
+		script
+			document.write('<scr' + 'ipt src="' + document.location.protocol + '//fby.s3.amazonaws.com/fby.js"></scr' + 'ipt>');
+		script
+			FBY.showTab({id: '988', position: 'left', color: '#00999E'});
+			

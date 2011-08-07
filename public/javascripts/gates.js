@@ -156,7 +156,7 @@ $(function(){
 					swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=YouTubePlayer",
 				                       "video-container", "640", "390", "8", null, null, params, atts);
 					window.secs = video.time;
-					window.video = video.video;
+					window.video_ID = video.video;
 					playerLoaded = true;
 					
 				} else {
@@ -782,11 +782,6 @@ $(function(){
 			userPic.attr('latest_txt', text);
 			userPic.tipsy("show");
 			setTimeout(function(){userPic.tipsy("hide")}, 3000);
-		},
-		
-		hideTipsy : function(userElem) {
-			alert(this.chats)
-			
 		}
 	
 	});
@@ -900,8 +895,8 @@ function onYouTubePlayerReady(playerId) {
     window.YTPlayer = document.getElementById('YouTubePlayer');
     window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
 		window.playerLoaded = true;
-		if(window.video) {
-			window.YTPlayer.loadVideoById(window.video, window.secs);
+		if(window.video_ID) {
+			window.YTPlayer.loadVideoById(window.video_ID, window.secs);
 		}
 	}
 }
