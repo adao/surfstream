@@ -306,7 +306,7 @@ $(function(){
 		
 		setVideos : function(videos) {
 			for (video in videos){
-				this.get("user").get("playList").add({title: videos[video].title, thumb: videos[video].thumb, vid_id: videos[video].videoId});
+				this.get("user").get("playList").add({title: videos[video].title, thumb: videos[video].thumb, vid_id: videos[video].id});
 			}
 		},
 	});
