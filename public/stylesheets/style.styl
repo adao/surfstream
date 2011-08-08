@@ -1,3 +1,6 @@
+div #preview-container
+	display: none
+	height: 195
 div#loadingScreen
 	background-color: color
 div#frontdoor
@@ -298,6 +301,7 @@ div.historyContainer
 		width: 300px
 	#searchBar
 		.inputBox
+			width: 300px
 			background-image: url('/images/room/search.png')
 			height: 36px
 			text-indent: 30px
@@ -365,6 +369,13 @@ div.historyContainer
 			.addToPlaylist:hover
 				background-color: black
 				background: url('/images/room/add_small_hover.png')
+			button.previewVideo
+				background: transparent
+				margin-left: -22px
+				margin-bottom: 2px
+				border: none
+			button.previewVideo:hover
+					color: #42E841
 .searchCellContainer:nth-child(odd)
 	background-color: #EEE
 //room
@@ -377,7 +388,7 @@ div.historyContainer
 		height: 400px
 		background-color: red
 	#people-area
-		background: url('http://i.imgur.com/WBRt9.png')
+		background: url('/images/room/modern-room.png')
 		display: block
 		width: 660px
 		height: 270px
@@ -503,8 +514,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .videoView
 	height: 370px
 	width: 300px
-	overflow-x: hidden
+	overflow-x: hidden 
+	overflow-y: hidden
 	background-color: #E7E7E7
+
+.tipsy-inner
+	z-index: 666
 	
 #remote
 	padding-top: 5px
@@ -713,10 +728,33 @@ button#mute
 #video-div
 	width: 660px
 	height: 420px
-	background-image: url('/images/room/curtain.png')
+	background-image: url('/images/room/modern-room-one-px.png')
 	z-index: 1
 
 #YouTubePlayer
 	padding-left: 8px
 	position: absolute
 	top: 80px
+                    
+#video-list
+	height: 370px
+	max-height: 370px
+	overflow-y: scroll
+	overflow-x: hidden
+
+#YouTubePlayerTwo
+	margin-top: 0px
+	margin-left: -1px
+	
+#preview-container
+	border: 1px solid gray
+	height: 202px                     
+#close-preview-player 
+	float: right
+	background: transparent
+	button.hidePlayer
+		background: transparent
+		border: none
+		color: gray
+	button.hidePlayer:hover
+		color: black
