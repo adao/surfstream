@@ -57,7 +57,7 @@ $(function(){
 		
 		processResults: function(data) {
 			var feed, entries, resultsCollection, buildup;
-			feed = data.feed;
+			feed = data.feed ? data.feed : jQuery.parseJSON(data).feed;
 		  entries = feed.entry || [];
 			resultsCollection = this.get("resultsList");
 			buildup = [];
@@ -125,6 +125,8 @@ $(function(){
 	
 	socket_init = io.connect();
 	
+	/*******SOCKETMANAGER -- ALL SOCKET EVENTS HAPPEN HERE********/
+	
 	window.SocketManager = Backbone.Model.extend({
 		initialize: function () {
 			var socket, app;
@@ -156,7 +158,7 @@ $(function(){
 					swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=YouTubePlayer",
 				                       "video-container", "640", "390", "8", null, null, params, atts);
 					window.secs = video.time;
-					window.video = video.video;
+					window.video_ID = video.video;
 					playerLoaded = true;
 					
 				} else {
@@ -164,6 +166,16 @@ $(function(){
 				}
 				//HACK
 				$("#room-name").html(video.title)
+				app.get("roomModel").get("users").forEach(function(userModel) {
+					var user =  $("#" + userModel.get("id"));
+					if (user.attr("isDJ") != "1") {
+						user.css("border-width", "0px");
+					} else {
+						user.css("border-width", "2px");
+						user.css("border-color", "yellow");
+					}
+					
+				})
 				//ENDHACK
 			});
 			
@@ -192,9 +204,21 @@ $(function(){
 			
 			
 			socket.on('dj:announceDJs', function(djArray) {
+				app.get("roomModel").get("users").forEach(function(userModel) {
+					var user =  $("#" + userModel.get("id"));
+					user.attr("isDJ", "0")
+				})
 				for (dj in djArray) {
-					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
+					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow").css("border-width", "2px");
+					$("#"+ djArray[dj].id).attr("isDJ", "1")
 				}
+				app.get("roomModel").get("users").forEach(function(userModel) {
+				var user =  $("#" + userModel.get("id"));
+				if (user.attr("isDJ") != "1" && user.css("border-right-color") == "rgb(255, 255, 0)") {
+					user.css("border-width", "0px");
+				}
+					
+				})
 			});
 			
 			//.upvoteset maps userids who up to true, .down, .up totals
@@ -261,6 +285,8 @@ $(function(){
 		}		
 	
 	});
+	
+	/*******SURFSTREAM - WHERE IT ALL STARTS ********/
 	
 	window.SurfStream = Backbone.Model.extend({
 		defaults: {
@@ -443,9 +469,9 @@ $(function(){
 		sidebarTemplate: _.template($('#sidebar-template').html()),
 		
 		events: {
-        "click .search" : "activateSearch",
-				"click .playlist" : "activatePlaylist"
-    },
+        	"click .search" : "activateSearch",
+			"click .playlist" : "activatePlaylist"
+    	},
 
 		initialize: function () {
 			this.render();
@@ -532,6 +558,8 @@ $(function(){
 		}
 	});
 	
+		/*******SEARCHCELL********/
+	
 	window.SearchCell = Backbone.View.extend({
 		
 		searchCellTemplate: _.template($('#searchCell-template').html()),
@@ -560,6 +588,9 @@ $(function(){
 		
 	});
 	
+	
+	/*******PLAYER********/
+	
 	//The Actual Video Player Presentation
 	window.Player = Backbone.View.extend({
 		
@@ -579,6 +610,29 @@ $(function(){
 				var atts = { id: "YouTubePlayer"};
 				swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer",
 			                       "video-container", "640", "390", "8", null, null, params, atts);
+			}
+		}			
+		
+		
+		
+	});
+	
+	window.PreviewPlayer = Backbone.View.extend({
+		
+		el: "#previewContainer",
+		
+		previewTemplate: _.template($('#search-preview-template').html()),
+		
+		initialize: function () {
+			$(this.el).html(this.previewTemplate());
+			if(false) {
+				//WUT LOL
+				//ytplayer.loadVideoById(currVideo.video, currVideo.time);
+			} else {
+				var params = { allowScriptAccess: "always", allowFullScreen: 'false' };
+				var atts = { id: "YouTubePlayerTwo"};
+				swfobject.embedSWF("http://www.youtube.com/v/u1zgFlCw8Aw?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
+			                       "preview-player", "284", "173", "8", null, null, params, atts);
 			}
 		}			
 		
@@ -615,6 +669,8 @@ $(function(){
 			videoCellView.initializeView();
 		}
 	});
+	
+	/*******VIDEOCELLVIEW********/
 	
 	window.VideoCellView = Backbone.View.extend({
 		videoCellTemplate: _.template($('#video-list-cell-template').html()),
@@ -670,6 +726,8 @@ $(function(){
 		}
 	});
 	
+	/*******CHATVIEW********/
+	
 	window.ChatView = Backbone.View.extend({
 		el: '#chat',
 		
@@ -677,7 +735,13 @@ $(function(){
 	
 		initialize: function () {
 			this.render();
-			this.options.chatCollection.bind("add", this.makeNewChatMsg);
+			this.options.chatCollection.bind("add", this.makeNewChatMsg, this);
+			this.chatContainer = new AutoScroll({
+				bottomThreshold: 215,
+				scrollContainerId: 'messages'
+			});
+			
+			console.log(this.chatContainer);
 		},
 		
 		render: function() {
@@ -686,8 +750,8 @@ $(function(){
 		},
 		
 		events: {
-        "submit .inputBox" : "sendMessage"
-    },
+			"submit .inputBox" : "sendMessage"
+		},
 
 		sendMessage : function (event) {
 			var userMessage = this.$('input[name=message]').val();
@@ -698,8 +762,11 @@ $(function(){
 		
 		makeNewChatMsg: function (chat) {
 			new ChatCell({user: chat.get("user"), msg: chat.get("message")});
+			this.chatContainer.activeScroll();
 		}
 	});
+	
+	/*******CHATCELL********/
 	
 	window.ChatCell = Backbone.View.extend({
 		
@@ -714,7 +781,6 @@ $(function(){
 			$(this.el).html(this.chatCellTemplate({user: this.options.user, msg: this.options.msg }));
 			return this;
 		}
-		
 	});
 	
 	window.TopBarView = Backbone.View.extend({
@@ -722,6 +788,8 @@ $(function(){
 			
 		}
 	});
+	
+	/*******ROOMINFOVIEW********/
 	
 	window.RoomInfoView = Backbone.View.extend({
 		el: '#roomInfo',
@@ -732,6 +800,8 @@ $(function(){
 			$(this.el).html(this.roomInfoTemplate({roomName: this.options.roomName}));
 		}
 	});
+	
+	/*******THEATRE********/
 	
 	//The Avatar + Seating Area
 	window.Theatre = Backbone.View.extend({
@@ -782,14 +852,11 @@ $(function(){
 			userPic.attr('latest_txt', text);
 			userPic.tipsy("show");
 			setTimeout(function(){userPic.tipsy("hide")}, 3000);
-		},
-		
-		hideTipsy : function(userElem) {
-			alert(this.chats)
-			
 		}
 	
 	});
+	
+	/*******SHAREBARVIEW********/
 	
 	window.ShareBarView = Backbone.View.extend({
 		el: '#shareBar',
@@ -885,9 +952,6 @@ $(function(){
 		}
 		
 	});
-
-	/* INITIALIZATION */
-	
 	
 	window.playerLoaded = false;
 	window.SurfStreamApp = new SurfStream({socket: socket_init});
@@ -900,8 +964,8 @@ function onYouTubePlayerReady(playerId) {
     window.YTPlayer = document.getElementById('YouTubePlayer');
     window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
 		window.playerLoaded = true;
-		if(window.video) {
-			window.YTPlayer.loadVideoById(window.video, window.secs);
+		if(window.video_ID) {
+			window.YTPlayer.loadVideoById(window.video_ID, window.secs);
 		}
 	}
 }

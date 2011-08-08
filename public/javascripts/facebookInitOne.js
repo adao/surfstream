@@ -18,6 +18,7 @@ window.fbAsyncInit = function() {
 				//console.log(data);
 				console.log(textStatus);
 			});
+			document.getElementById('frontdoor').style.display = 'none';
 			document.getElementById('loadingScreen').style.display = 'none';
 			document.getElementById('outer').style.display = 'block';
 		} else if (response.session) {
@@ -26,12 +27,15 @@ window.fbAsyncInit = function() {
 			document.getElementById('frontdoor').style.display = 'inline-block';
 		} else {
 			// yeah right
+			document.getElementById('loadingScreen').style.display = 'none';
+			document.getElementById('frontdoor').style.display = 'inline-block';
 		}
 	}
 		
 	// run once with current status and whenever the status changes
-
-	FB.Event.subscribe('auth.statusChange', proceed_to_site);
+    FB.getLoginStatus(proceed_to_site);
+    document.getElementById('loadingScreen').style.display = 'none';
+	document.getElementById('frontdoor').style.display = 'inline-block';
 };
 (function() {
 	var e = document.createElement('script'); e.async = true;

@@ -49,6 +49,10 @@ function setupRoutes(app) {
 		app.get('/share', function(req, res){
 	    res.render('share', { locals: {title: "surfstream.tv"}});
     });
+
+		app.get('/roomlist', function(req, res){
+	    res.render('roomlist', { locals: {title: "surfstream.tv"}});
+    });
 }
 
 exports.setupRoutes = setupRoutes;
