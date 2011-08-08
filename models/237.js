@@ -484,6 +484,28 @@
 		model: models.Video,
 	});
 
+
+	models.PlaylistCollection = Backbone.Collection.extend({
+		model: models.Playlist,	//playlists indexed by name
+		
+		// addPlaylist: function(name) {
+		// 	if(this.get(name)) return false;
+		// 	var playlist = new models.Playlist({ name: name });
+		// 	playlist.id = name;
+		// 	this.add(playlist);
+		// 	return true;
+		// },
+		// 
+		// removePlaylist: function(name) {
+		// 	var playlist = this.get(name);
+		// 	if(!playlist) return false;
+		// 	this.remove(playlist);
+		// 	return true;
+		// },
+		
+		
+	})
+
 	/*************************/
 	/*        Playlist       */
 	/*************************/
@@ -800,7 +822,7 @@
 				//in order to be a dj, the user has to have vids in his playlist, has to not be a dj, and
 				//the dj list can't be full
 				if(djs.length < 4 && users.get(socket.id).playlist.getSize() > 0 && !djs.get(socket.id)) {
-					console.log('['+roomName+'][socket] [dj:join] -- success! '+ users.get(socket.id).get('name')+' is now a DJ');
+					console.log('\t\t\t\t...success! '+ users.get(socket.id).get('name')+' is now a DJ');
 					var currUser = users.get(socket.id);
 					var numDJs = djs.length;
 					djs.addDJ(currUser, numDJs);
@@ -954,11 +976,14 @@
 		
 		addListeners: function(socket) {
 			var meter = this;
+			var roomName = this.room.get('name');
 			socket.on('meter:upvote', function() {
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
-				console.log('voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
+				
+				if(currUser) console.log('['+roomName+'][socket] [meter:upvote]  voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
+				
 				
 				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 
@@ -975,6 +1000,7 @@
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
+				if(currUser) console.log('['+roomName+'][socket] [meter:upvote]  voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
 				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
 
 				var success = meter.room.meter.addDownvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
