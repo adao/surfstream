@@ -9,9 +9,9 @@ div#outer {
 }
 div.chatContainer {
   width: 300px;
-  height: 310px;
+  height: 296px;
   max-width: 300px;
-  max-height: 310px;
+  max-height: 290px;
   display: block;
 }
 div.chatContainer div.chatHeader {
@@ -36,26 +36,21 @@ div.chatContainer div.chatHeader div.chatTitle {
   width: 36px;
 }
 div.chatContainer #messages {
-  background-color: #fff;
+  background-color: #e7e7e7;
   border: none;
   color: #000;
-  height: 225px;
+  height: 230px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
-div.chatContainer #messages .messageContainer {
-  color: #000;
-}
-div.chatContainer #messages .messageContainer:nth-child(odd) {
-  background-color: #eee;
-}
 div.chatContainer form.inputBox {
-  background-image: url("http://i.imgur.com/SWiIL.png");
-  height: 40px;
+  background-image: url("/images/room/search.png");
+  height: 36px;
   text-indent: 30px;
+  font-size: 14px;
 }
 div.chatContainer form.inputBox input {
-  margin-top: 12px;
+  margin-top: 10px;
   width: 240px;
   height: 14px;
   border: 0;
@@ -71,9 +66,11 @@ div.messageContainer {
   height: auto;
   overflow-x: hidden;
   overflow-y: visible;
-  width: 285px;
+  width: 274px;
+  max-width: 274px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 14px;
+  color: #000;
 }
 div.messageContainer span {
   padding-top: 2px;
@@ -86,6 +83,9 @@ div.messageContainer div {
   padding-top: 2px;
   padding-bottom: 2px;
   display: inline;
+}
+div.messageContainer:nth-child(odd) {
+  background-color: #fff;
 }
 div.historyContainer {
   font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -167,7 +167,7 @@ div.historyContainer .history .videoHistory {
   background-color: #fff;
   display: block;
   width: 300px;
-  height: 425px;
+  height: 395px;
 }
 .sidebarContainer .viewBar {
   width: 300px;
@@ -197,10 +197,6 @@ div.historyContainer .history .videoHistory {
   background-color: #a8f3f7;
   background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8));
   background: -moz-linear-gradient(top, #80d5f7, #60ccf8);
-}
-.sidebarContainer .videoView {
-  width: 300px;
-  height: 400px;
 }
 .playlistContainer {
   height: 400px;
@@ -311,41 +307,58 @@ div.historyContainer .history .videoHistory {
   color: #000;
 }
 #outer #coolshit {
-  height: 700px;
+  height: 690px;
   width: 960px;
   background-color: #808080;
   display: block;
 }
 #outer #coolshit #funroom {
   float: left;
-  height: 700px;
+  height: 690px;
   width: 660px;
   background-color: #000;
 }
 #outer #coolshit #right-side {
   float: right;
-  height: 700px;
+  height: 690px;
   width: 300px;
   background-color: #808080;
 }
 #search-view #searchContainer {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 360px;
+  height: 330px;
   width: 300px;
 }
 #search-view #searchBar .inputBox {
-  background-image: url("http://i.imgur.com/SWiIL.png");
-  height: 40px;
+  background-image: url("/images/room/search.png");
+  height: 36px;
   text-indent: 30px;
+  font-size: 14px;
 }
 #search-view #searchBar .inputBox input {
-  margin-top: 12px;
-  width: 240px;
+  vertical-align: top;
+  display: inline-block;
+  margin-top: 10px;
+  width: 226px;
   height: 14px;
   border: 0;
   outline: 0;
   background: transparent;
+}
+#search-view #searchBar .inputBox #clear-search-container {
+  height: 34px;
+  width: 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+#search-view #searchBar .inputBox #clear-search-container #clearsearch {
+  margin-top: 9px;
+  vertical-align: center;
+  align: middle;
+  width: 17px;
+  height: 17px;
+  background: url("/images/room/clearsearch.png") 50% 50% no-repeat;
 }
 .searchCellContainer {
   width: 285px;
@@ -395,6 +408,9 @@ div.historyContainer .history .videoHistory {
   background-color: #000;
   background: url("/images/room/add_small_hover.png");
 }
+.searchCellContainer:nth-child(odd) {
+  background-color: #eee;
+}
 #room-container {
   width: 660px;
   height: 700px;
@@ -409,11 +425,11 @@ div.historyContainer .history .videoHistory {
   background: url("http://i.imgur.com/WBRt9.png");
   display: block;
   width: 660px;
-  height: 300px;
+  height: 270px;
 }
 #room-container #people-area #buttoncontainer {
   position: absolute;
-  top: 800px;
+  top: 730px;
   height: 25px;
   width: 160px;
 }
@@ -424,9 +440,7 @@ div.historyContainer .history .videoHistory {
   vertical-align: bottom;
   color: #000;
   margin-top: 2px;
-  background-color: #ececec;
-  background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
-  background: -moz-linear-gradient(top, #ececec, #dbdbdb);
+  background-image: url("/images/room/actionbar.png");
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -438,9 +452,7 @@ div.historyContainer .history .videoHistory {
   vertical-align: bottom;
   color: #000;
   margin-top: 2px;
-  background-color: #ececec;
-  background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
-  background: -moz-linear-gradient(top, #ececec, #dbdbdb);
+  background-image: url("/images/room/actionbar.png");
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -557,8 +569,10 @@ button.search.active {
   color: #808080;
 }
 .videoView {
-  height: 400px;
+  height: 370px;
   width: 300px;
+  overflow-x: hidden;
+  background-color: #e7e7e7;
 }
 #remote {
   padding-top: 5px;
@@ -568,7 +582,7 @@ button.search.active {
   background-color: #323131;
   background: -webkit-gradient(linear, left top, left bottom, from(#323131), to(#161616));
   float: right;
-  margin-top: 145px;
+  margin-top: 114px;
   height: 150px;
   width: 100px;
   background-color: #fff;
@@ -603,9 +617,9 @@ button.search.active {
   border: none;
   height: 30px;
   width: 30px;
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
 }
 .bottombuttonContainer {
   margin-top: 5px;
@@ -616,46 +630,67 @@ button.search.active {
   border: none;
   height: 30px;
   width: 30px;
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+}
+.bottombuttonContainerwide {
+  margin-top: 5px;
+  margin-left: 20px;
+  border: none;
+  background-color: #818181;
+  background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a));
+  border: none;
+  height: 30px;
+  width: 60px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+}
+.bottombuttonContainerwide #rooms {
+  height: 30px;
+  width: 60px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  background: transparent;
 }
 button#up-vote {
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
   height: 30px;
   width: 30px;
   background: url("http://i.imgur.com/FY6PW.png") 50% 50% no-repeat;
 }
 button#down-vote {
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
   height: 30px;
   width: 30px;
   background: url("http://i.imgur.com/947FE.png") 50% 50% no-repeat;
 }
 button#vol-up {
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
   height: 30px;
   width: 30px;
   background: url("http://i.imgur.com/pI9fe.png") 50% 50% no-repeat;
 }
 button#vol-down {
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
   height: 30px;
   width: 30px;
   background: url("http://i.imgur.com/4bUJ1.png") 50% 50% no-repeat;
 }
 button#mute {
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
   height: 30px;
   width: 30px;
   background: url("http://i.imgur.com/euzaw.png") 50% 50% no-repeat;
@@ -761,4 +796,15 @@ button#mute {
 }
 #room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #ededed;
+}
+#video-div {
+  width: 660px;
+  height: 420px;
+  background-image: url("/images/room/curtain.png");
+  z-index: 1;
+}
+#YouTubePlayer {
+  padding-left: 8px;
+  position: absolute;
+  top: 80px;
 }
