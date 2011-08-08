@@ -1,3 +1,11 @@
+div#preview-container {
+  display: none;
+  height: 195;
+  width: 274;
+}
+div#previewContainer {
+  z-index: 10000;
+}
 div#loadingScreen {
   background-color: color;
 }
