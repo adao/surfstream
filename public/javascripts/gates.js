@@ -569,7 +569,7 @@ $(function(){
 				// $("#searchContainer").animate({
 				// 					height: 165
 				// 				}, "slow");
-				$("#searchContainer").css('height', 165);
+				$("#searchContainer").css('height', 133);
 			} else {
 				window.YTPlayerTwo.loadVideoById(videoID);
 			}
@@ -628,7 +628,7 @@ $(function(){
 				var params = { allowScriptAccess: "always", allowFullScreen: 'false' };
 				var atts = { id: "YouTubePlayerTwo"};
 				swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
-			                       "preview-player", "284", "173", "8", null, null, params, atts);
+			                       "preview-player", "299", "183", "8", null, null, params, atts);
 			}
 		},
 		
