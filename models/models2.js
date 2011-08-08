@@ -342,8 +342,8 @@
 		mport: function(rawVideoData) {
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
-				console.log('importing video to playlist: '+video.videoId);
-				var videoToAdd = new models.VideoI({ videoId: video.videoId, thumb: video.thumb, title: video.title });
+				console.log('importing video to playlist: '+video.videoId+' with title: '+video.title);
+				var videoToAdd = new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title });
 				videoToAdd.id = video.videoId;
 				this.videos.add(videoToAdd);
 			}
