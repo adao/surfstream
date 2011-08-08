@@ -331,6 +331,7 @@ div.historyContainer .history .videoHistory {
   width: 300px;
 }
 #search-view #searchBar .inputBox {
+  width: 300px;
   background-image: url("/images/room/search.png");
   height: 36px;
   text-indent: 30px;
@@ -572,7 +573,11 @@ button.search.active {
   height: 370px;
   width: 300px;
   overflow-x: hidden;
+  overflow-y: hidden;
   background-color: #e7e7e7;
+}
+.tipsy-inner {
+  z-index: 666;
 }
 #remote {
   padding-top: 5px;
@@ -807,4 +812,10 @@ button#mute {
   padding-left: 8px;
   position: absolute;
   top: 80px;
+}
+#video-list {
+  height: 370px;
+  max-height: 370px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
