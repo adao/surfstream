@@ -524,10 +524,13 @@ $(function(){
 				new SearchCell({video: model, playlist: this.options.playList})						
 		}
 	});
+
 	
 	window.SearchCell = Backbone.View.extend({
 		
 		searchCellTemplate: _.template($('#searchCell-template').html()),
+		
+		className: "searchCellContainer",
 		
 		events: {
 			"click .addToPlaylist" : "addToPlaylist",
@@ -535,7 +538,8 @@ $(function(){
     	},
 		
 		initialize: function () {
-			$("#searchContainer").append(this.render({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}).el);
+			$("#searchContainer").append(this.render().el);
+			//$(this.el).find(".thumbContainer").attr("src", searchResult.thumb);
 		},
 		
 		addToPlaylist: function (){
@@ -572,8 +576,8 @@ $(function(){
 		},
 		
 		render: function(searchResult) {
-			$(this.el).html(this.searchCellTemplate(searchResult));
-			this.$(".thumbContainer").attr("src", searchResult.thumb);
+			$(this.el).html(this.searchCellTemplate({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}));
+			$(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
 			return this;
 		}
 		

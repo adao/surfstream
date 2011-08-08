@@ -1,3 +1,7 @@
+div #preview-container {
+  display: none;
+  height: 195;
+}
 div#loadingScreen {
   background-color: color;
 }
