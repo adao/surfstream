@@ -201,6 +201,7 @@
 
 		removeSocket: function(socket) {
 			if(!this.room || !this.room.users || this.room.users == undefined) return;
+			if(!this.room.users.get(socket.id)) return;
 			
 			var userId = this.room.users.get(socket.id).get('userId');
 			var userToRemove = this.room.users.get(socket.id);
