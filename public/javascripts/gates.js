@@ -162,6 +162,8 @@ $(function(){
 				} else {
 					window.YTPlayer.loadVideoById(video.video, video.time);
 				}
+				new ChatCell({user: "SurfStream.tv", msg: "Now playing " + video.title});
+				window.SurfStreamApp.get("mainUI").chatView.chatContainer.activeScroll();
 				//HACK
 				$("#room-name").html(video.title)
 				//ENDHACK
@@ -767,6 +769,10 @@ $(function(){
 		
 		makeNewChatMsg: function (chat) {
 			new ChatCell({user: chat.get("user"), msg: chat.get("message")});
+			this.chatContainer.activeScroll();
+		}
+	}, {
+		scrollToBottom: function() {
 			this.chatContainer.activeScroll();
 		}
 	});
