@@ -88,9 +88,13 @@ $(function(){
 		}, 
 	
 		initialize: function () {
-			this.set({user: 'me'});
 			if (this.get("is_main_user")) {
-				FB.api('/me', this.setUserData);
+				FB.api('/me', function(info) {
+					console.log(info);
+					console.log('fuck');
+					this.set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
+					this.get("socket_manager").makeFirstContact({user: info});
+				}.bind(this));
 				FB.api('/me/friends', function(response) {
 					console.log(response);
 				});
@@ -101,11 +105,6 @@ $(function(){
 			if (this.get("fbUserInfo")){
 				return this.get("fbUserInfo");
 			}
-		},
-		
-		setUserData: function(info) {
-			window.SurfStreamApp.get('user').set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
-			window.SurfStreamApp.get('user').get("socket_manager").makeFirstContact({user: info});
 		}
 		
 	});
@@ -125,6 +124,8 @@ $(function(){
 	});
 	
 	socket_init = io.connect();
+	
+	/*******SOCKETMANAGER -- ALL SOCKET EVENTS HAPPEN HERE********/
 	
 	window.SocketManager = Backbone.Model.extend({
 		initialize: function () {
@@ -161,12 +162,20 @@ $(function(){
 					playerLoaded = true;
 					
 				} else {
-					window.YTPlayer.loadVideoById(video.video, video.time);
-					new ChatCell({user: "SurfStream.tv", msg: "Now playing " + video.title});
-					window.SurfStreamApp.get("mainUI").chatView.chatContainer.activeScroll();
+					window.YTPlayer.loadVideoById(video.video, video.time);		
 				}
 				//HACK
 				$("#room-name").html(video.title)
+				app.get("roomModel").get("users").forEach(function(userModel) {
+					var user =  $("#" + userModel.get("id"));
+					if (user.attr("isDJ") != "1") {
+						user.css("border-width", "0px");
+					} else {
+						user.css("border-width", "2px");
+						user.css("border-color", "yellow");
+					}
+					
+				})
 				//ENDHACK
 			});
 			
@@ -195,15 +204,27 @@ $(function(){
 			
 			
 			socket.on('dj:announceDJs', function(djArray) {
-				for (dj in djArray) {
-					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
+				app.get("roomModel").get("users").forEach(function(userModel) {
+					var user =  $("#" + userModel.get("id"));
+					user.attr("isDJ", "0")
+				})
+				for (var dj in djArray) {
+					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow").css("border-width", "2px");
+					$("#"+ djArray[dj].id).attr("isDJ", "1")
 				}
+				app.get("roomModel").get("users").forEach(function(userModel) {
+				var user =  $("#" + userModel.get("id"));
+				if (user.attr("isDJ") != "1" && user.css("border-right-color") == "rgb(255, 255, 0)") {
+					user.css("border-width", "0px");
+				}
+					
+				})
 			});
 			
 			//.upvoteset maps userids who up to true, .down, .up totals
 			socket.on("meter:announce", function(meterStats) {
-				for (fbid in meterStats.upvoteSet){
-					if (meterStats.upvoteSet[fbid] == true) {
+				for (var fbid in meterStats.upvoteSet){
+					if (meterStats.upvoteSet[fbid] === true) {
 						//app.get("roomModel").get("users").get(fbid).
 						//BEGIN HACK
 						if ($("#" + fbid).css("border-color") != "yellow") {
@@ -265,9 +286,11 @@ $(function(){
 	
 	});
 	
+	/*******SURFSTREAM - WHERE IT ALL STARTS ********/
+	
 	window.SurfStream = Backbone.Model.extend({
 		defaults: {
-			sharing: new SharingModel			
+			sharing: new SharingModel()			
 		},
 		
 		initialize: function () {
@@ -276,17 +299,17 @@ $(function(){
 			
 			
 			this.set({roomModel: new RoomModel({
-														player: new PlayerModel,
-														chatCollection: new ChatList,
-														video: new VideoModel,
-														users: new RoomUsersList
+														player: new PlayerModel(),
+														chatCollection: new ChatList(),
+														video: new VideoModel(),
+														users: new RoomUsersList()
 													}),
 								socket_manager: new SocketManager({
 														socket: this.get("socket"), app: this
 													}),
-								search: new SearchModel({resultsList: new VideoList})
+								search: new SearchModel({resultsList: new VideoList()})
 							});
-			this.set({user: new UserModel({is_main_user: true, playList: new PlayList, socket_manager: this.get("socket_manager")})})
+			this.set({user: new UserModel({is_main_user: true, playList: new PlayList(), socket_manager: this.get("socket_manager")})})
 								
 			this.get('user').getUserData(this.get('user'));
 			//Give the chat view a reference to the room's chat collection
@@ -308,10 +331,10 @@ $(function(){
 		
 		
 		setVideos : function(videos) {
-			for (video in videos){
-				this.get("user").get("playList").add({title: videos[video].title, thumb: videos[video].thumb, vid_id: videos[video].id});
+			for (var video in videos){
+				this.get("user").get("playList").add({title: videos[video].title, thumb: videos[video].thumb, vid_id: videos[video].videoId});
 			}
-		},
+		}
 	});
 	
 	/************************/
@@ -446,9 +469,9 @@ $(function(){
 		sidebarTemplate: _.template($('#sidebar-template').html()),
 		
 		events: {
-        	"click .search" : "activateSearch",
+			"click .search" : "activateSearch",
 			"click .playlist" : "activatePlaylist"
-    	},
+    },
 
 		initialize: function () {
 			this.render();
@@ -494,11 +517,11 @@ $(function(){
 		
 		initialize: function () {
 			this.render();
-			this.previewView = new PreviewPlayer();
 			//Hack because of nested view bindings (events get eaten by Sidebar)
 			var input = $("#searchBar .inputBox")
 			input.bind("submit", {searchview: this },this.searchVideos);
-			this.options.searchModel.get("resultsList").bind("add", this.updateResults, this);	
+			this.options.searchModel.bind("change:searchQuery", this.updateSearchQuery);
+			this.options.searchModel.get("resultsList").bind("add", this.updateResults, this);
 		},
 		
 		
@@ -518,31 +541,35 @@ $(function(){
 		searchVideos : function(event) {
 			event.preventDefault();
 			var query = $($('input[name=search]')[0]).val();
-			$("#searchContainer").empty();
-			event.data.searchview.options.searchModel.executeSearch(query);
+			$("#search-view").html($(event.data.searchview.el.innerHTML));
+			event.data.searchview.options.searchModel.executeSearch(query);			
+			event.data.searchview.updateSearchQuery(query);
+			var input = $("#searchBar .inputBox")
+			input.bind("submit", {searchview: event.data.searchview },event.data.searchview.searchVideos);
 			return false;
+		},
+		
+		updateSearchQuery : function(query) {
+			$($('input[name=search]')[0]).val(query);			
 		},
 		
 		updateResults : function (model, collection) {
 				new SearchCell({video: model, playlist: this.options.playList})						
 		}
 	});
-
+	
+		/*******SEARCHCELL********/
 	
 	window.SearchCell = Backbone.View.extend({
 		
 		searchCellTemplate: _.template($('#searchCell-template').html()),
 		
-		className: "searchCellContainer",
-		
 		events: {
-			"click .addToPlaylist" : "addToPlaylist",
-			"click .previewVideo" : "previewVideo"
-    	},
+				"click .addToPlaylist" : "addToPlaylist"
+    },
 		
 		initialize: function () {
-			$("#searchContainer").append(this.render().el);
-			//$(this.el).find(".thumbContainer").attr("src", searchResult.thumb);
+			$("#searchContainer").append(this.render({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}).el);
 		},
 		
 		addToPlaylist: function (){
@@ -553,38 +580,16 @@ $(function(){
 			SocketManager.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"));
 		},
 		
-		previewVideo: function() {
-			var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
-			if(!window.playerTwoLoaded) {
-				if (!window.YTPlayerTwo) {
-					window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
-				}
-				window.playerTwoLoaded = true;
-				window.videoIdTwo = videoID;
-				$("#preview-container").css('display', 'block');
-				//$('#preview-container').slideDown("slow");
-				//$("#searchContainer").css("height", 187);
-				// $("#preview-container").animate({
-				// 					height: 195
-				// 				}, "slow", null, function() {
-				// 					window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
-				// 				});
-				// $("#searchContainer").animate({
-				// 					height: 165
-				// 				}, "slow");
-				$("#searchContainer").css('height', 133);
-			} else {
-				window.YTPlayerTwo.loadVideoById(videoID);
-			}
-		},
-		
 		render: function(searchResult) {
-			$(this.el).html(this.searchCellTemplate({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}));
-			$(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
+			$(this.el).html(this.searchCellTemplate(searchResult));
+			this.$(".thumbContainer").attr("src", searchResult.thumb);
 			return this;
 		}
 		
 	});
+	
+	
+	/*******PLAYER********/
 	
 	//The Actual Video Player Presentation
 	window.Player = Backbone.View.extend({
@@ -618,10 +623,6 @@ $(function(){
 		
 		previewTemplate: _.template($('#search-preview-template').html()),
 		
-		events: {
-			"click #close-preview-player" : "hidePreviewPlayer",
-    	},
-		
 		initialize: function () {
 			$(this.el).html(this.previewTemplate());
 			if(false) {
@@ -630,26 +631,13 @@ $(function(){
 			} else {
 				var params = { allowScriptAccess: "always", allowFullScreen: 'false' };
 				var atts = { id: "YouTubePlayerTwo"};
-				swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
-			                       "preview-player", "299", "183", "8", null, null, params, atts);
+				swfobject.embedSWF("http://www.youtube.com/v/u1zgFlCw8Aw?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
+			                       "preview-player", "284", "173", "8", null, null, params, atts);
 			}
-		},
+		}			
 		
-		hidePreviewPlayer: function() {
-			window.playerTwoLoaded = false;
-			// $("#preview-container").animate({
-			// 	height: 0,
-			// 	width: 0
-			// }, "slow", null, function() {
-			// 	$("#preview-container").css('display', 'none');
-			// });
-			$("#preview-container").css('display', 'none');
-			$("#searchContainer").css('height', 360);
-			// $("#searchContainer").animate({
-			// 	height: 360
-			// }, "slow");
-			
-		}
+		
+		
 	});
 	
 	window.VideoListView = Backbone.View.extend({
@@ -681,6 +669,8 @@ $(function(){
 			videoCellView.initializeView();
 		}
 	});
+	
+	/*******VIDEOCELLVIEW********/
 	
 	window.VideoCellView = Backbone.View.extend({
 		videoCellTemplate: _.template($('#video-list-cell-template').html()),
@@ -736,6 +726,8 @@ $(function(){
 		}
 	});
 	
+	/*******CHATVIEW********/
+	
 	window.ChatView = Backbone.View.extend({
 		el: '#chat',
 		
@@ -772,11 +764,9 @@ $(function(){
 			new ChatCell({user: chat.get("user"), msg: chat.get("message")});
 			this.chatContainer.activeScroll();
 		}
-	}, {
-		scrollToBottom: function() {
-			this.chatContainer.activeScroll();
-		}
 	});
+	
+	/*******CHATCELL********/
 	
 	window.ChatCell = Backbone.View.extend({
 		
@@ -799,6 +789,8 @@ $(function(){
 		}
 	});
 	
+	/*******ROOMINFOVIEW********/
+	
 	window.RoomInfoView = Backbone.View.extend({
 		el: '#roomInfo',
 		
@@ -809,13 +801,15 @@ $(function(){
 		}
 	});
 	
+	/*******THEATRE********/
+	
 	//The Avatar + Seating Area
 	window.Theatre = Backbone.View.extend({
 		
 		el: '#room-container',
 		
 		initialize: function () {
-			$("#dj").bind("click", this.toggleDJStatus); 	
+			$("#dj").bind("click", this.toggleDJStatus);
 			$("#up-vote").bind("click", SocketManager.voteUp);
 			$("#down-vote").bind("click", SocketManager.voteDown);
 			$("#vol-up").bind("click", {offset: 10}, setVideoVolume);
@@ -833,7 +827,7 @@ $(function(){
 				SocketManager.becomeDJ();
 				this.innerHTML = "Step Down";
 				$("#people-area").append("<button id='skip'> Skip Video </button>");
-	 			$("#skip").bind("click", skipVideo);
+				$("#skip").bind("click", skipVideo);
 			} else { 
 				SocketManager.stepDownFromDJ();
 			  this.innerHTML = "Become DJ";
@@ -861,6 +855,8 @@ $(function(){
 		}
 	
 	});
+	
+	/*******SHAREBARVIEW********/
 	
 	window.ShareBarView = Backbone.View.extend({
 		el: '#shareBar',
@@ -895,7 +891,7 @@ $(function(){
 					url: 'www.youtube.com',
 					caption: 'Join your friends and watch videos online!',
 					description: 'SurfStream.tv lets you explore new video content on the web. Very similar to turntable.fm'// ,
-					// 					picture: '/images/logo.png'
+					//picture: '/images/logo.png'
 				},
 				function(response) {
 					if (response && response.post_id) {
@@ -911,12 +907,12 @@ $(function(){
 			var width  = 575,
 			  height = 400,
 			  left = ($(window).width()  - width)  / 2,
-       	top = ($(window).height() - height) / 2,
-       	url = "http://twitter.com/share?text=Check%20out%20this%20awesome%20brooooooom!",
-       	opts = 'status=1' +
+				top = ($(window).height() - height) / 2,
+				url = "http://twitter.com/share?text=Watching%20videos%20with%20friends%20on%20SurfStream!",
+				opts = 'status=1' +
 						',width='  + width  +
             ',height=' + height +
-           	',top='    + top    +
+						',top='    + top    +
             ',left='   + left;
 
 			  window.open(url, 'twitter', opts);
@@ -964,10 +960,6 @@ $(function(){
 });
 
 function onYouTubePlayerReady(playerId) {
-	if (playerId == "YouTubePlayerTwo") {
-		window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
-	}
-	
 	if(!window.YTPlayer) {
     window.YTPlayer = document.getElementById('YouTubePlayer');
     window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
