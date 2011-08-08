@@ -413,6 +413,15 @@ div.historyContainer .history .videoHistory {
   background-color: #000;
   background: url("/images/room/add_small_hover.png");
 }
+.searchCellContainer .cellInfo .cellButtons button.previewVideo {
+  background: transparent;
+  margin-left: -22px;
+  margin-bottom: 2px;
+  border: none;
+}
+.searchCellContainer .cellInfo .cellButtons button.previewVideo:hover {
+  color: #42e841;
+}
 .searchCellContainer:nth-child(odd) {
   background-color: #eee;
 }
@@ -427,7 +436,7 @@ div.historyContainer .history .videoHistory {
   background-color: #f00;
 }
 #room-container #people-area {
-  background: url("http://i.imgur.com/WBRt9.png");
+  background: url("/images/room/modern-room.png");
   display: block;
   width: 660px;
   height: 270px;
@@ -809,7 +818,7 @@ button#mute {
 #video-div {
   width: 660px;
   height: 420px;
-  background-image: url("/images/room/curtain.png");
+  background-image: url("/images/room/modern-room-one-px.png");
   z-index: 1;
 }
 #YouTubePlayer {
@@ -822,4 +831,24 @@ button#mute {
   max-height: 370px;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+#YouTubePlayerTwo {
+  margin-top: 0px;
+  margin-left: -1px;
+}
+#preview-container {
+  border: 1px solid #808080;
+  height: 202px;
+}
+#close-preview-player {
+  float: right;
+  background: transparent;
+}
+#close-preview-player button.hidePlayer {
+  background: transparent;
+  border: none;
+  color: #808080;
+}
+#close-preview-player button.hidePlayer:hover {
+  color: #000;
 }

@@ -598,33 +598,34 @@
 		},
 		
 		addListeners: function(socket) {
+			meter = this;
 			socket.on('meter:upvote', function() {
-				if(!this.room.currVideo) return;
+				if(!meter.room.currVideo) return;
 
-				var currUser = this.room.users.get(socket.id);
+				var currUser = meter.room.users.get(socket.id);
 				console.log('voting user: '+currUser.get('name'));
-				if(currUser.get('userId') == this.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
+				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 				
-				var success = this.addUpvote(currUser.get('userId'));	//checks to make sure the user hasn't already voted
+				var success = meter.addUpvote(currUser.get('userId'));	//checks to make sure the user hasn't already voted
 				if(success) {
 					console.log('...success!');
-					this.room.djs.currDJ.addPoint();
+					meter.room.djs.currDJ.addPoint();
 					this.room.sockM.announceMeter();
 				}
 			});
 
 			socket.on('meter:downvote', function() {
-				if(!this.room.currVideo) return;
+				if(!meter.room.currVideo) return;
 
-				var currUser = this.room.users.get(socket.id);
+				var currUser = meter.room.users.get(socket.id);
 				console.log('downvoting user: '+currUser.get('name'));
-				if(currUser.get('userId') == this.room.djs.currDJ.get('userId')) return;
+				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
 
-				var success = this.room.meter.addDownvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
+				var success = meter.room.meter.addDownvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
 				if(success) {
 					console.log('..success!');
-					this.room.users.get(socket.id).subtractPoint();
-					this.room.sockM.announceMeter();
+					meter.room.users.get(socket.id).subtractPoint();
+					meter.room.sockM.announceMeter();
 				}
 			});
 		},
@@ -682,5 +683,4 @@
 			if(this.room) this.room.sockM.announceMeter();
 		}, 
 	});
-
 }) ()
