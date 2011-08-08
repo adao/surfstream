@@ -51,14 +51,16 @@
 					videoData = JSON.parse(videoData);
 					var videoDuration = videoData['entry']['media$group']['yt$duration']['seconds'];
 					console.log('Finished getting info for video '+videoId+', length: '+videoDuration+' sec');
+					var videoTitle = videoData['entry']['title']['$t'];
 					if(room.currVideo != null) {
 						room.currVideo.set({ 
 							duration: videoDuration, 
 							timeStart: (new Date()).getTime(),
-							timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000)
+							timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
+							title: videoTitle
 						});
 					}
-					room.sockM.announceVideo(videoId, videoDuration);
+					room.sockM.announceVideo(videoId, videoDuration, videoTitle);
 				})
 			});
 
@@ -152,15 +154,16 @@
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
-				console.log('Sending current video to socket');
+				console.log('Sending current video to socket, title is : '+this.currVideo.get('title'));
 
-				socket.emit('video:sendInfo', 
-					{  video: this.currVideo.get('videoId'), 
-						time: Math.ceil(timeDiff), 
-						title: currRoom.currVideo.get('title') });
-			}
-			
+				socket.emit('video:sendInfo', {  
+					video: this.currVideo.get('videoId'), 
+					time: Math.ceil(timeDiff), 
+					title: this.currVideo.get('title') 
+				});
+			}	
 		},
+		
 	});
 	
 	models.SocketManager = Backbone.Model.extend({	//this model handles global socket events
@@ -215,8 +218,8 @@
 //		this.room.djs.removeDJ(socket.id);
 		},
 
-		announceVideo: function(videoId) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { video: videoId, time: 0 });
+		announceVideo: function(videoId, duration, title) {
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { video: videoId, time: 0, title: title});
 		},
 		
 		announceClients: function() {
