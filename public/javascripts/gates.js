@@ -160,7 +160,7 @@ $(function(){
 					playerLoaded = true;
 					
 				} else {
-					window.YTPlayer.loadVideoById(video.video, video.time)		
+					window.YTPlayer.loadVideoById(video.video, video.time);
 				}
 				//HACK
 				$("#room-name").html(video.title)
@@ -495,8 +495,7 @@ $(function(){
 			//Hack because of nested view bindings (events get eaten by Sidebar)
 			var input = $("#searchBar .inputBox")
 			input.bind("submit", {searchview: this },this.searchVideos);
-			this.options.searchModel.bind("change:searchQuery", this.updateSearchQuery);
-			this.options.searchModel.get("resultsList").bind("add", this.updateResults, this);
+			this.options.searchModel.get("resultsList").bind("add", this.updateResults, this);	
 		},
 		
 		
@@ -516,17 +515,9 @@ $(function(){
 		searchVideos : function(event) {
 			event.preventDefault();
 			var query = $($('input[name=search]')[0]).val();
-			$("#searchContainer").html();
-			//$("#searchContainer").html($(event.data.searchview.el.innerHTML));
-			event.data.searchview.options.searchModel.executeSearch(query);			
-			event.data.searchview.updateSearchQuery(query);
-			var input = $("#searchBar .inputBox")
-			input.bind("submit", {searchview: event.data.searchview },event.data.searchview.searchVideos);
+			$("#searchContainer").empty();
+			event.data.searchview.options.searchModel.executeSearch(query);
 			return false;
-		},
-		
-		updateSearchQuery : function(query) {
-			$($('input[name=search]')[0]).val(query);			
 		},
 		
 		updateResults : function (model, collection) {
@@ -557,20 +548,24 @@ $(function(){
 		
 		previewVideo: function() {
 			var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
-			if(!window.YTPlayerTwo) {
-		    	window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
+			if(!window.playerTwoLoaded) {
+				if (!window.YTPlayerTwo) {
+					window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
+				}
 				window.playerTwoLoaded = true;
 				window.videoIdTwo = videoID;
-				$('#preview-container').css('display', 'block');
+				$("#preview-container").css('display', 'block');
 				//$('#preview-container').slideDown("slow");
 				//$("#searchContainer").css("height", 187);
-				$("#preview-container").animate({
-					width: 284,
-					height: 195
-				}, "slow");
-				$("#searchContainer").animate({
-					height: 165
-				}, "slow");
+				// $("#preview-container").animate({
+				// 					height: 195
+				// 				}, "slow", null, function() {
+				// 					window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
+				// 				});
+				// $("#searchContainer").animate({
+				// 					height: 165
+				// 				}, "slow");
+				$("#searchContainer").css('height', 165);
 			} else {
 				window.YTPlayerTwo.loadVideoById(videoID);
 			}
@@ -628,22 +623,24 @@ $(function(){
 			} else {
 				var params = { allowScriptAccess: "always", allowFullScreen: 'false' };
 				var atts = { id: "YouTubePlayerTwo"};
-				swfobject.embedSWF("http://www.youtube.com/v/ylLzyHk54Z0?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
+				swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
 			                       "preview-player", "284", "173", "8", null, null, params, atts);
 			}
 		},
 		
 		hidePreviewPlayer: function() {
-			window.YTPlayerTwo = null;
-			$("#preview-container").animate({
-				height: 0,
-				width: 0
-			}, "slow", null, function() {
-				$("#preview-container").css('display', 'none');
-			});
-			$("#searchContainer").animate({
-				height: 360
-			}, "slow");
+			window.playerTwoLoaded = false;
+			// $("#preview-container").animate({
+			// 	height: 0,
+			// 	width: 0
+			// }, "slow", null, function() {
+			// 	$("#preview-container").css('display', 'none');
+			// });
+			$("#preview-container").css('display', 'none');
+			$("#searchContainer").css('height', 360);
+			// $("#searchContainer").animate({
+			// 	height: 360
+			// }, "slow");
 			
 		}
 	});
