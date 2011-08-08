@@ -88,13 +88,9 @@ $(function(){
 		}, 
 	
 		initialize: function () {
+			this.set({user: 'me'});
 			if (this.get("is_main_user")) {
-				FB.api('/me', function(info) {
-					console.log(info);
-					console.log('fuck');
-					this.set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
-					this.get("socket_manager").makeFirstContact({user: info});
-				}.bind(this));
+				FB.api('/me', this.setUserData);
 				FB.api('/me/friends', function(response) {
 					console.log(response);
 				});
@@ -105,6 +101,11 @@ $(function(){
 			if (this.get("fbUserInfo")){
 				return this.get("fbUserInfo");
 			}
+		},
+		
+		setUserData: function(info) {
+			window.SurfStreamApp.get('user').set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
+			window.SurfStreamApp.get('user').get("socket_manager").makeFirstContact({user: info});
 		}
 		
 	});
@@ -161,6 +162,8 @@ $(function(){
 					
 				} else {
 					window.YTPlayer.loadVideoById(video.video, video.time);
+					new ChatCell({user: "SurfStream.tv", msg: "Now playing " + video.title});
+					window.SurfStreamApp.get("mainUI").chatView.chatContainer.activeScroll();
 				}
 				//HACK
 				$("#room-name").html(video.title)
@@ -524,10 +527,13 @@ $(function(){
 				new SearchCell({video: model, playlist: this.options.playList})						
 		}
 	});
+
 	
 	window.SearchCell = Backbone.View.extend({
 		
 		searchCellTemplate: _.template($('#searchCell-template').html()),
+		
+		className: "searchCellContainer",
 		
 		events: {
 			"click .addToPlaylist" : "addToPlaylist",
@@ -535,7 +541,8 @@ $(function(){
     	},
 		
 		initialize: function () {
-			$("#searchContainer").append(this.render({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}).el);
+			$("#searchContainer").append(this.render().el);
+			//$(this.el).find(".thumbContainer").attr("src", searchResult.thumb);
 		},
 		
 		addToPlaylist: function (){
@@ -572,8 +579,8 @@ $(function(){
 		},
 		
 		render: function(searchResult) {
-			$(this.el).html(this.searchCellTemplate(searchResult));
-			this.$(".thumbContainer").attr("src", searchResult.thumb);
+			$(this.el).html(this.searchCellTemplate({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}));
+			$(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
 			return this;
 		}
 		
@@ -763,6 +770,10 @@ $(function(){
 		
 		makeNewChatMsg: function (chat) {
 			new ChatCell({user: chat.get("user"), msg: chat.get("message")});
+			this.chatContainer.activeScroll();
+		}
+	}, {
+		scrollToBottom: function() {
 			this.chatContainer.activeScroll();
 		}
 	});

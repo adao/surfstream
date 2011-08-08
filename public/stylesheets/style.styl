@@ -1,3 +1,6 @@
+div #preview-container
+	display: none
+	height: 195
 div#loadingScreen
 	background-color: color
 div#frontdoor
@@ -298,6 +301,7 @@ div.historyContainer
 		width: 300px
 	#searchBar
 		.inputBox
+			width: 300px
 			background-image: url('/images/room/search.png')
 			height: 36px
 			text-indent: 30px
@@ -503,8 +507,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .videoView
 	height: 370px
 	width: 300px
-	overflow-x: hidden
+	overflow-x: hidden 
+	overflow-y: hidden
 	background-color: #E7E7E7
+
+.tipsy-inner
+	z-index: 666
 	
 #remote
 	padding-top: 5px
@@ -720,3 +728,9 @@ button#mute
 	padding-left: 8px
 	position: absolute
 	top: 80px
+                    
+#video-list
+	height: 370px
+	max-height: 370px
+	overflow-y: scroll
+	overflow-x: hidden
