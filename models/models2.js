@@ -258,7 +258,7 @@
 		},
 		
 		xport: function() {
-			return { videoId: this.get('videoId'), thumb: this.get('thumb'), title: this.get('title') };
+			return { videoId: this.get('videoId'), id: this.get('videoId'), thumb: this.get('thumb'), title: this.get('title') };
 		}		
 	});
 	
