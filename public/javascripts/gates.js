@@ -88,13 +88,9 @@ $(function(){
 		}, 
 	
 		initialize: function () {
+			this.set({user: 'me'});
 			if (this.get("is_main_user")) {
-				FB.api('/me', function(info) {
-					console.log(info);
-					console.log('fuck');
-					this.set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
-					this.get("socket_manager").makeFirstContact({user: info});
-				}.bind(this));
+				FB.api('/me', this.setUserData);
 				FB.api('/me/friends', function(response) {
 					console.log(response);
 				});
@@ -105,6 +101,11 @@ $(function(){
 			if (this.get("fbUserInfo")){
 				return this.get("fbUserInfo");
 			}
+		},
+		
+		setUserData: function(info) {
+			window.SurfStreamApp.get('user').set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
+			window.SurfStreamApp.get('user').get("socket_manager").makeFirstContact({user: info});
 		}
 		
 	});
@@ -161,6 +162,8 @@ $(function(){
 					
 				} else {
 					window.YTPlayer.loadVideoById(video.video, video.time);
+					new ChatCell({user: "SurfStream.tv", msg: "Now playing " + video.title});
+					window.SurfStreamApp.get("mainUI").chatView.chatContainer.activeScroll();
 				}
 				//HACK
 				$("#room-name").html(video.title)
@@ -767,6 +770,10 @@ $(function(){
 		
 		makeNewChatMsg: function (chat) {
 			new ChatCell({user: chat.get("user"), msg: chat.get("message")});
+			this.chatContainer.activeScroll();
+		}
+	}, {
+		scrollToBottom: function() {
 			this.chatContainer.activeScroll();
 		}
 	});
