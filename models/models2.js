@@ -3,8 +3,11 @@
   Backbone = require('backbone');
 	models = exports;
 	var redisClient = require('redis').createClient(),
-		http = require('http');
+	http = require('http');
 	
+	/*************************/
+	/*      VideoManager     */
+	/*************************/
 	models.VideoManager = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
@@ -107,6 +110,9 @@
 		}
 	});
 	
+	/*************************/
+	/*          Room         */
+	/*************************/
 	
 	models.Room = Backbone.Model.extend({
 		
@@ -127,7 +133,9 @@
 			this.djs = new models.DJCollection();
 			this.djs.setRoom(this);
 			
-			this.meter = new models.Meter(this);
+			this.meter = new models.Meter();
+			this.meter.setRoom(this);
+			
 			this.currVideo = null;
 			this.history = new models.VideoCollection();
 			this.sockM = new models.SocketManager(this);
@@ -158,7 +166,19 @@
 			}	
 		},
 		
+		//will need to be room-specific soon, just ripped from existing solution for now.
+		addChatListener : function(socket) {
+				var room = this;
+				socket.on('message', function(msg) { 
+					room.sockM.announceChat(socket, msg) 
+				});
+		}
+		
 	});
+	
+	/*************************/
+	/*     SocketManager     */
+	/*************************/
 	
 	models.SocketManager = Backbone.Model.extend({	//this model handles global socket events
 		
@@ -176,6 +196,7 @@
 			});
 			
 			if(this.room) {
+				this.room.addChatListener(socket);
 				this.room.users.addConnectListener(socket);
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
@@ -185,7 +206,7 @@
 		
 		sendRoomState: function() {
 			this.announceClients();
-			this.announceDJs;
+			this.announceDJs();
 			this.announceMeter();
 		},
 
@@ -234,9 +255,17 @@
 		
 		announceStopVideo: function() {
 			io.sockets.in(this.room.get('name')).emit('video:stop');
+		},
+		
+		announceChat : function(socket, msg) {
+			io.sockets.in(this.room.get('name')).emit('message', {event: 'chat', data: msg});
 		}
 	});
 
+	/*************************/
+	/*          Video        */
+	/*************************/
+	
 	models.Video = Backbone.Model.extend({
 		defaults: {
 			'videoId': null,
@@ -255,9 +284,17 @@
 		}		
 	});
 	
+	/*************************/
+	/*    VideoCollection    */
+	/*************************/
+	
 	models.VideoCollection = Backbone.Collection.extend({
 		model: models.Video
 	});
+
+	/*************************/
+	/*        Playlist       */
+	/*************************/
 
 	models.Playlist = Backbone.Model.extend({
 		initialize: function() {
@@ -332,9 +369,14 @@
 		
 	});
 	
+	
+	/*************************/
+	/*         User          */
+	/*************************/
+	
 	var X_MAX = 510;
 	var Y_MAX = 95;
-	
+
 	models.User = Backbone.Model.extend({
 		defaults: {
 			'avatar': null,
@@ -389,7 +431,18 @@
 		}
 	});
 
+	
+	/*************************/
+	/*       RoomUsers       */
+	/*************************/
+	
 	models.RoomUsers = Backbone.Model.extend({})
+
+
+	
+	/*************************/
+	/*      UserCollection   */
+	/*************************/
 
 
 	models.UserCollection = Backbone.Collection.extend({
@@ -447,26 +500,32 @@
 		
 		
 		addPlaylistListeners: function(socket) {
-			var userCollection = this;
+			
+			var userCollect = this;
 			socket.on('playlist:addVideo', function(data) {
-				console.log('Received request to add video '+data.video+' to user '+userCollection.get(socket.id).get('userId'));
-				if(userCollection.get(socket.id).playlist.get(data.video)) return;
-				userCollection.get(socket.id).playlist.addVideo(data.video, data.thumb, data.title);
+				var thisUser = userCollect.get(socket.id);
+				console.log('Received request to add video '+data.video+' to user '+thisUser.get('userId'));
+				if(thisUser.playlist.videos.get(data.video)) return;
+				thisUser.playlist.addVideo(data.video, data.thumb, data.title);
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
-				if(userCollection.get(socket.id).playlist.get(data.video)) {
-					userCollection.get(socket.id).playlist.moveToTop(data.video);
+				console.log('received request to move video to top');
+				var thisUser = userCollect.get(socket.id);
+				
+				if(thisUser.playlist.videos.get(data.video)) {
+					thisUser.playlist.moveToTop(data.video);
 				}
-				console.log('playlist is now: '+JSON.stringify(userCollection.get(socket.id).playlist.xport()));
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
 
 			socket.on('playlist:delete', function(data) {
-				console.log('Received request to delete video '+data.video+' from the playlist for user '+ 
-									userCollection.get(socket.id).get('userId'));
-				if(userCollection.get(socket.id).playlist.get(data.video)) {
-					userCollection.get(socket.id).playlist.deleteVideo(data.video);
+				var thisUser = userCollect.get(socket.id);
+
+				if(thisUser.playlist.get(data.video)) {
+					thisUser.playlist.deleteVideo(data.video);
 				}
+				console.log('Received request to delete video '+data.video+' from the playlist for '+ thisUser.get('name'));
 			});
 		},
 		
@@ -478,6 +537,11 @@
 			return array;
 		}
 	});
+	
+	
+	/*************************/
+	/*      DJCollection    */
+	/*************************/
 	
 	var MAX_DJS = 4;
 	
@@ -587,9 +651,14 @@
 		}
 	});
 	
+	
+	/*************************/
+	/*         Meter         */
+	/*************************/
+	
 	models.Meter = Backbone.Model.extend({
-		initialize: function(room) {
-			this.room = room;
+		initialize: function() {
+			//this.room = room;
 			this.upvoteSet = {};
 			this.downvoteSet = {};
 			this.up = 0;
@@ -597,20 +666,24 @@
 			this.percentage = 0;
 		},
 		
+		setRoom: function(room) {
+			this.room = room;
+		},
+		
 		addListeners: function(socket) {
-			meter = this;
+			var meter = this;
 			socket.on('meter:upvote', function() {
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
-				console.log('voting user: '+currUser.get('name'));
+				console.log('voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
 				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
-				
+
 				var success = meter.addUpvote(currUser.get('userId'));	//checks to make sure the user hasn't already voted
 				if(success) {
 					console.log('...success!');
 					meter.room.djs.currDJ.addPoint();
-					this.room.sockM.announceMeter();
+					meter.room.sockM.announceMeter();
 				}
 			});
 
@@ -683,4 +756,5 @@
 			if(this.room) this.room.sockM.announceMeter();
 		}, 
 	});
+	
 }) ()
