@@ -37,12 +37,12 @@ $(function(){
 					
 				} else {
 					window.YTPlayer.loadVideoById(video.video, video.time);
-					new ChatCellView({username: "SurfStream.tv", msg: "Now playing " + video.title});
+					new ChatCellView({username: "surfstream.tv", msg: "Now playing " + video.title});
 					window.SurfStreamApp.get("mainView").chatView.chatContainer.activeScroll();
 				}
 				//HACK
 				$("#room-name").html(video.title)
-				app.get("roomModel").get("users").forEach(function(userModel) {
+				app.get("roomModel").get("userCollection").forEach(function(userModel) {
 					var user =  $("#" + userModel.get("id"));
 					if (user.attr("isDJ") != "1") {
 						user.css("border-width", "0px");
@@ -67,8 +67,8 @@ $(function(){
 			});
 			
 			socket.on('message', function(msg) {
-				app.get("roomModel").get("chatCollection").add({user: msg.data.name, message: msg.data.text});
-				Theatre.tipsyChat(msg.data.text, msg.data.id);				
+				app.get("roomModel").get("chatCollection").add({username: msg.data.name, msg: msg.data.text});
+				TheatreView.tipsyChat(msg.data.text, msg.data.id);				
 			});
 			
 			
@@ -80,7 +80,7 @@ $(function(){
 			
 			
 			socket.on('djs:announce', function(djArray) {
-				app.get("roomModel").get("users").forEach(function(userModel) {
+				app.get("roomModel").get("userCollection").forEach(function(userModel) {
 					var user =  $("#" + userModel.get("id"));
 					user.attr("isDJ", "0")
 				})
@@ -88,7 +88,7 @@ $(function(){
 					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow").css("border-width", "2px");
 					$("#"+ djArray[dj].id).attr("isDJ", "1")
 				}
-				app.get("roomModel").get("users").forEach(function(userModel) {
+				app.get("roomModel").get("userCollection").forEach(function(userModel) {
 				var user =  $("#" + userModel.get("id"));
 				if (user.attr("isDJ") != "1" && user.css("border-right-color") == "rgb(255, 255, 0)") {
 					user.css("border-width", "0px");
