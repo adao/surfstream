@@ -69,7 +69,7 @@ $(function(){
 			});
 			
 			
-			socket.on('dj:announceDJs', function(djArray) {
+			socket.on('djs:announce', function(djArray) {
 				for (dj in djArray) {
 					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
 				}
