@@ -3,8 +3,11 @@
   Backbone = require('backbone');
 	models = exports;
 	var redisClient = require('redis').createClient(),
-		http = require('http');
+	http = require('http');
 	
+	/*************************/
+	/*      VideoManager     */
+	/*************************/
 	models.VideoManager = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
@@ -107,6 +110,9 @@
 		}
 	});
 	
+	/*************************/
+	/*          Room         */
+	/*************************/
 	
 	models.Room = Backbone.Model.extend({
 		
@@ -159,6 +165,10 @@
 		},
 		
 	});
+	
+	/*************************/
+	/*     SocketManager     */
+	/*************************/
 	
 	models.SocketManager = Backbone.Model.extend({	//this model handles global socket events
 		
@@ -237,6 +247,10 @@
 		}
 	});
 
+	/*************************/
+	/*          Video        */
+	/*************************/
+	
 	models.Video = Backbone.Model.extend({
 		defaults: {
 			'videoId': null,
@@ -255,9 +269,17 @@
 		}		
 	});
 	
+	/*************************/
+	/*    VideoCollection    */
+	/*************************/
+	
 	models.VideoCollection = Backbone.Collection.extend({
 		model: models.Video
 	});
+
+	/*************************/
+	/*        Playlist       */
+	/*************************/
 
 	models.Playlist = Backbone.Model.extend({
 		initialize: function() {
@@ -332,9 +354,14 @@
 		
 	});
 	
+	
+	/*************************/
+	/*         User          */
+	/*************************/
+	
 	var X_MAX = 510;
 	var Y_MAX = 95;
-	
+
 	models.User = Backbone.Model.extend({
 		defaults: {
 			'avatar': null,
@@ -389,7 +416,18 @@
 		}
 	});
 
+	
+	/*************************/
+	/*       RoomUsers       */
+	/*************************/
+	
 	models.RoomUsers = Backbone.Model.extend({})
+
+
+	
+	/*************************/
+	/*      UserCollection   */
+	/*************************/
 
 
 	models.UserCollection = Backbone.Collection.extend({
@@ -478,6 +516,11 @@
 			return array;
 		}
 	});
+	
+	
+	/*************************/
+	/*      DJCollection    */
+	/*************************/
 	
 	var MAX_DJS = 4;
 	
@@ -587,6 +630,11 @@
 		}
 	});
 	
+	
+	/*************************/
+	/*         Meter         */
+	/*************************/
+	
 	models.Meter = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
@@ -683,4 +731,5 @@
 			if(this.room) this.room.sockM.announceMeter();
 		}, 
 	});
+	
 }) ()
