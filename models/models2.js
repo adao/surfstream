@@ -206,7 +206,7 @@
 		
 		sendRoomState: function() {
 			this.announceClients();
-			this.announceDJs;
+			this.announceDJs();
 			this.announceMeter();
 		},
 
