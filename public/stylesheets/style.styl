@@ -118,7 +118,7 @@ body
 						float: right
 					.active
 						color: white
-						background-color: #34C8FF
+						background-color: #34b7fe
 					// background-color: #A8F3F7
 					// background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8))
 					// background: -moz-linear-gradient(top, #80d5f7 , #60ccf8)   
@@ -182,7 +182,7 @@ div.chatContainer
 			margin-top: 4px
 			margin-left: 5px
 		div.chatTitle
-			margin-top: 7px
+			margin-top: 6px
 			font-size: 16px
 			font-weight: bold
 			text-indent: 10px
@@ -595,7 +595,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	width: 600px
 	height: 404px
 	background-color: black
-	z-index: 500
+	z-index: 10000
 	#searchbar
 		background-color: gray
 		display: block
@@ -629,7 +629,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			height: 25px
 			width: 26px
 			background-color: transparent
-	#rooms
+	#roomsWrapper
 		background-color: #313131
 		width: 600px
 		height: 310px
@@ -690,6 +690,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			background-color: #E7E7E7
 			text-indent: 3px
 		#CreateRoomName, #CreateRoom
+			vertical-align: top
 			padding-top: 0px
 			height: 28px
 			border-radius: 6px
@@ -698,13 +699,13 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			border: none 
 		#CreateRoom
 			margin-left: 6px
-			width: 110px
+			width: 120px
 			font-size: 14px
 			font-weight: bold
 			color: white
 			background-color: #34C8FF
 			margin-right: -46px
-		button.hideRoomsList
+		button#hideRoomsList
 			height: 40px
 			font-size: 14px
 			margin-top: 10px
@@ -827,22 +828,21 @@ div#top-video-name
 	margin-top: 0px
 	margin-left: -1px
 
-.ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all
-	background-color: #E7E7E7
-	position: absolute
-	top: 96px!important
-	margin-left: -100px
-	width: 250px!important
-	max-height: 238px!important
-	font-size: 14px
+.ui-autocomplete
 	list-style-type: none
-	li
+	width: 250px
+	background-color: #E7E7E7
+	li.ui-menu-item
 		margin-left: -40px
+		width: 290px
+	li .ui-corner-all
+		display: block
+		width: 100%
 		padding: 3px
-	li:hover
+	li .ui-state-hover
 		background-color: #3C6EC7
 		color: white
-		
+		width: 100%
 	
 #preview-container
 	border: 1px solid gray
@@ -912,3 +912,19 @@ div#top-video-name
 	margin-top: 164px
 	margin-left: 98px
 	position: absolute
+
+#modalBG
+	background: #000
+	position: fixed
+	left: 0
+	top: 0
+	width: 100%
+	height: 100%
+	opacity: .80
+	z-index: 9999
+	
+#become-dj-txt
+	position: absolute
+	font-size: 12px
+	margin-top: -28px
+	margin-left: 5px

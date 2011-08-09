@@ -4,7 +4,7 @@
 			form.roomSearch
 				input(type="text", placeholder="Search Rooms",name="search", AUTOCOMPLETE="OFF")
 			#clearSearch
-		#rooms
+		#roomsWrapper
 			table#roomsTable
 				tr.table-header
 					th.viewers-hd Viewers
@@ -13,4 +13,5 @@
 		#create-room
 			input(type="text", placeholder="Room Name", AUTOCOMPLETE="OFF")#CreateRoomName Room Name 
 			button#CreateRoom Create Room
-			button.hideRoomsList close
+			button#hideRoomsList close
+	#modalBG
