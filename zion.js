@@ -64,7 +64,7 @@ function chatMessage(socket, msg){
 		console.log('(' + socket.id + ') ' + chat.get('fbid') + ' ' + chat.get('name') + ': ' + chat.get('text'));
 
 		redisClient.rpush('chatentries', chat.xport(), redis.print);
-		redisClient.bgsave();
+		redisClient.bgsave(function() { });
 				
 		io.sockets.emit('message', { event: 'chat', data: JSON.parse(chat.xport()) }); 
 	}); 

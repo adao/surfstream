@@ -37,15 +37,16 @@ div#outer {
   height: 40px;
   vertical-align: middle;
 }
-#outer #actionBar #roomInfo #room-name {
-  width: 300px;
+#outer #actionBar #roomInfo #room-name,
+#outer #actionBar #roomInfo video-name {
   display: inline-block;
   color: #000;
 }
+#outer #actionBar #roomInfo #room-name {
+  width: 300px;
+}
 #outer #actionBar #roomInfo #video-name {
   margin-top: 3px;
-  display: inline-block;
-  color: #000;
 }
 #outer #coolshit {
   height: 690px;
