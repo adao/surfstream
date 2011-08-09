@@ -88,13 +88,9 @@ $(function(){
 		}, 
 	
 		initialize: function () {
+			this.set({user: 'me'});
 			if (this.get("is_main_user")) {
-				FB.api('/me', function(info) {
-					console.log(info);
-					console.log('fuck');
-					this.set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
-					this.get("socket_manager").makeFirstContact({user: info});
-				}.bind(this));
+				FB.api('/me', this.setUserData);
 				FB.api('/me/friends', function(response) {
 					console.log(response);
 				});
@@ -105,6 +101,11 @@ $(function(){
 			if (this.get("fbUserInfo")){
 				return this.get("fbUserInfo");
 			}
+		},
+		
+		setUserData: function(info) {
+			window.SurfStreamApp.get('user').set({user: info, avatar_image: 'https://graph.facebook.com/' + info.id + '/picture'});
+			window.SurfStreamApp.get('user').get("socket_manager").makeFirstContact({user: info});
 		}
 		
 	});
@@ -162,7 +163,9 @@ $(function(){
 					playerLoaded = true;
 					
 				} else {
-					window.YTPlayer.loadVideoById(video.video, video.time);		
+					window.YTPlayer.loadVideoById(video.video, video.time);
+					new ChatCell({user: "SurfStream.tv", msg: "Now playing " + video.title});
+					window.SurfStreamApp.get("mainUI").chatView.chatContainer.activeScroll();
 				}
 				//HACK
 				$("#room-name").html(video.title)
@@ -191,8 +194,8 @@ $(function(){
 			});
 			
 			socket.on('message', function(msg) {
-				app.get("roomModel").get("chatCollection").add({user: msg.data.attrs.name, message: msg.data.attrs.text});
-				Theatre.tipsyChat(msg.data.attrs.text, msg.data.attrs.fbid);				
+				app.get("roomModel").get("chatCollection").add({user: msg.data.name, message: msg.data.text});
+				Theatre.tipsyChat(msg.data.text, msg.data.id);				
 			});
 			
 			
@@ -203,7 +206,7 @@ $(function(){
 			});
 			
 			
-			socket.on('dj:announceDJs', function(djArray) {
+			socket.on('djs:announce', function(djArray) {
 				app.get("roomModel").get("users").forEach(function(userModel) {
 					var user =  $("#" + userModel.get("id"));
 					user.attr("isDJ", "0")
@@ -471,7 +474,7 @@ $(function(){
 		events: {
 			"click .search" : "activateSearch",
 			"click .playlist" : "activatePlaylist"
-    },
+    	},
 
 		initialize: function () {
 			this.render();
@@ -517,11 +520,11 @@ $(function(){
 		
 		initialize: function () {
 			this.render();
+			this.previewView = new PreviewPlayer();
 			//Hack because of nested view bindings (events get eaten by Sidebar)
 			var input = $("#searchBar .inputBox")
 			input.bind("submit", {searchview: this },this.searchVideos);
-			this.options.searchModel.bind("change:searchQuery", this.updateSearchQuery);
-			this.options.searchModel.get("resultsList").bind("add", this.updateResults, this);
+			this.options.searchModel.get("resultsList").bind("add", this.updateResults, this);	
 		},
 		
 		
@@ -541,16 +544,9 @@ $(function(){
 		searchVideos : function(event) {
 			event.preventDefault();
 			var query = $($('input[name=search]')[0]).val();
-			$("#search-view").html($(event.data.searchview.el.innerHTML));
-			event.data.searchview.options.searchModel.executeSearch(query);			
-			event.data.searchview.updateSearchQuery(query);
-			var input = $("#searchBar .inputBox")
-			input.bind("submit", {searchview: event.data.searchview },event.data.searchview.searchVideos);
+			$("#searchContainer").empty();
+			event.data.searchview.options.searchModel.executeSearch(query);
 			return false;
-		},
-		
-		updateSearchQuery : function(query) {
-			$($('input[name=search]')[0]).val(query);			
 		},
 		
 		updateResults : function (model, collection) {
@@ -564,12 +560,16 @@ $(function(){
 		
 		searchCellTemplate: _.template($('#searchCell-template').html()),
 		
+		className: "searchCellContainer",
+		
 		events: {
-				"click .addToPlaylist" : "addToPlaylist"
-    },
+			"click .addToPlaylist" : "addToPlaylist",
+			"click .previewVideo" : "previewVideo"
+    	},
 		
 		initialize: function () {
-			$("#searchContainer").append(this.render({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}).el);
+			$("#searchContainer").append(this.render().el);
+			//$(this.el).find(".thumbContainer").attr("src", searchResult.thumb);
 		},
 		
 		addToPlaylist: function (){
@@ -580,9 +580,34 @@ $(function(){
 			SocketManager.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"));
 		},
 		
+		previewVideo: function() {
+			var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
+			if(!window.playerTwoLoaded) {
+				if (!window.YTPlayerTwo) {
+					window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
+				}
+				window.playerTwoLoaded = true;
+				window.videoIdTwo = videoID;
+				$("#preview-container").css('display', 'block');
+				//$('#preview-container').slideDown("slow");
+				//$("#searchContainer").css("height", 187);
+				// $("#preview-container").animate({
+				// 					height: 195
+				// 				}, "slow", null, function() {
+				// 					window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
+				// 				});
+				// $("#searchContainer").animate({
+				// 					height: 165
+				// 				}, "slow");
+				$("#searchContainer").css('height', 133);
+			} else {
+				window.YTPlayerTwo.loadVideoById(videoID);
+			}
+		},
+		
 		render: function(searchResult) {
-			$(this.el).html(this.searchCellTemplate(searchResult));
-			this.$(".thumbContainer").attr("src", searchResult.thumb);
+			$(this.el).html(this.searchCellTemplate({thumb: this.options.video.get("thumb"), title: this.options.video.get("title"), vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")}));
+			$(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
 			return this;
 		}
 		
@@ -623,6 +648,10 @@ $(function(){
 		
 		previewTemplate: _.template($('#search-preview-template').html()),
 		
+		events: {
+			"click #close-preview-player" : "hidePreviewPlayer",
+    	},
+		
 		initialize: function () {
 			$(this.el).html(this.previewTemplate());
 			if(false) {
@@ -631,13 +660,26 @@ $(function(){
 			} else {
 				var params = { allowScriptAccess: "always", allowFullScreen: 'false' };
 				var atts = { id: "YouTubePlayerTwo"};
-				swfobject.embedSWF("http://www.youtube.com/v/u1zgFlCw8Aw?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
-			                       "preview-player", "284", "173", "8", null, null, params, atts);
+				swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
+			                       "preview-player", "299", "183", "8", null, null, params, atts);
 			}
-		}			
+		},			
 		
-		
-		
+		hidePreviewPlayer: function() {
+			window.playerTwoLoaded = false;
+			// $("#preview-container").animate({
+			// 	height: 0,
+			// 	width: 0
+			// }, "slow", null, function() {
+			// 	$("#preview-container").css('display', 'none');
+			// });
+			$("#preview-container").css('display', 'none');
+			$("#searchContainer").css('height', 360);
+			// $("#searchContainer").animate({
+			// 	height: 360
+			// }, "slow");
+			
+		}
 	});
 	
 	window.VideoListView = Backbone.View.extend({
@@ -762,6 +804,10 @@ $(function(){
 		
 		makeNewChatMsg: function (chat) {
 			new ChatCell({user: chat.get("user"), msg: chat.get("message")});
+			this.chatContainer.activeScroll();
+		}
+	}, {
+		scrollToBottom: function() {
 			this.chatContainer.activeScroll();
 		}
 	});
@@ -912,7 +958,7 @@ $(function(){
 				opts = 'status=1' +
 						',width='  + width  +
             ',height=' + height +
-						',top='    + top    +
+           	',top='    + top    +
             ',left='   + left;
 
 			  window.open(url, 'twitter', opts);
@@ -960,6 +1006,10 @@ $(function(){
 });
 
 function onYouTubePlayerReady(playerId) {
+	if (playerId == "YouTubePlayerTwo") {
+		window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
+	}
+	
 	if(!window.YTPlayer) {
     window.YTPlayer = document.getElementById('YouTubePlayer');
     window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');

@@ -166,7 +166,10 @@
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
 		addChatListener : function(socket) {
-				socket.on('message', function(msg) { this.sockM.announceChat(socket, msg) });
+				var room = this;
+				socket.on('message', function(msg) { 
+					room.sockM.announceChat(socket, msg) 
+				});
 		}
 		
 	});
