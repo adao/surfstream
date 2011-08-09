@@ -127,7 +127,9 @@
 			this.djs = new models.DJCollection();
 			this.djs.setRoom(this);
 			
-			this.meter = new models.Meter(this);
+			this.meter = new models.Meter();
+			this.meter.setRoom(this);
+			
 			this.currVideo = null;
 			this.history = new models.VideoCollection();
 			this.sockM = new models.SocketManager(this);
@@ -447,26 +449,32 @@
 		
 		
 		addPlaylistListeners: function(socket) {
-			var userCollection = this;
+			
+			var userCollect = this;
 			socket.on('playlist:addVideo', function(data) {
-				console.log('Received request to add video '+data.video+' to user '+userCollection.get(socket.id).get('userId'));
-				if(userCollection.get(socket.id).playlist.get(data.video)) return;
-				userCollection.get(socket.id).playlist.addVideo(data.video, data.thumb, data.title);
+				var thisUser = userCollect.get(socket.id);
+				console.log('Received request to add video '+data.video+' to user '+thisUser.get('userId'));
+				if(thisUser.playlist.videos.get(data.video)) return;
+				thisUser.playlist.addVideo(data.video, data.thumb, data.title);
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
-				if(userCollection.get(socket.id).playlist.get(data.video)) {
-					userCollection.get(socket.id).playlist.moveToTop(data.video);
+				console.log('received request to move video to top');
+				var thisUser = userCollect.get(socket.id);
+				
+				if(thisUser.playlist.videos.get(data.video)) {
+					thisUser.playlist.moveToTop(data.video);
 				}
-				console.log('playlist is now: '+JSON.stringify(userCollection.get(socket.id).playlist.xport()));
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
 
 			socket.on('playlist:delete', function(data) {
-				console.log('Received request to delete video '+data.video+' from the playlist for user '+ 
-									userCollection.get(socket.id).get('userId'));
-				if(userCollection.get(socket.id).playlist.get(data.video)) {
-					userCollection.get(socket.id).playlist.deleteVideo(data.video);
+				var thisUser = userCollect.get(socket.id);
+
+				if(thisUser.playlist.get(data.video)) {
+					thisUser.playlist.deleteVideo(data.video);
 				}
+				console.log('Received request to delete video '+data.video+' from the playlist for '+ thisUser.get('name'));
 			});
 		},
 		
@@ -588,8 +596,8 @@
 	});
 	
 	models.Meter = Backbone.Model.extend({
-		initialize: function(room) {
-			this.room = room;
+		initialize: function() {
+			//this.room = room;
 			this.upvoteSet = {};
 			this.downvoteSet = {};
 			this.up = 0;
@@ -597,20 +605,24 @@
 			this.percentage = 0;
 		},
 		
+		setRoom: function(room) {
+			this.room = room;
+		},
+		
 		addListeners: function(socket) {
-			meter = this;
+			var meter = this;
 			socket.on('meter:upvote', function() {
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
-				console.log('voting user: '+currUser.get('name'));
+				console.log('voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
 				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
-				
+
 				var success = meter.addUpvote(currUser.get('userId'));	//checks to make sure the user hasn't already voted
 				if(success) {
 					console.log('...success!');
 					meter.room.djs.currDJ.addPoint();
-					this.room.sockM.announceMeter();
+					meter.room.sockM.announceMeter();
 				}
 			});
 
