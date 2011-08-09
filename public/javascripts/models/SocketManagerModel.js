@@ -1,5 +1,5 @@
 $(function(){
-	socket_init = io.connect();
+	
 	
 	window.SocketManagerModel = Backbone.Model.extend({
 		initialize: function () {
@@ -140,18 +140,3 @@ $(function(){
 	
 	});
 });
-
-function onYouTubePlayerReady(playerId) {
-	if (playerId == "YouTubePlayerTwo") {
-		window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
-	}
-	
-	if(!window.YTPlayer) {
-    window.YTPlayer = document.getElementById('YouTubePlayer');
-    window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
-		window.playerLoaded = true;
-		if(window.video_ID) {
-			window.YTPlayer.loadVideoById(window.video_ID, window.secs);
-		}
-	}
-}

@@ -5,5 +5,4 @@ $(function(){
 		
 		ZeroClipboard.setMoviePath('/swf/ZeroClipboard.swf');
 		
-		socket_init = io.connect();
 });

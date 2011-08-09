@@ -1,11 +1,4 @@
 $(function(){
-	console.log("IN GATES");
-	_.templateSettings = {
-	  interpolate : /\{\{(.+?)\}\}/g
-	};
-	
-	ZeroClipboard.setMoviePath('/swf/ZeroClipboard.swf');
-
 	socket_init = io.connect();
 	
 	window.SocketManagerModel = Backbone.Model.extend({
@@ -145,58 +138,7 @@ $(function(){
 			this.socket.emit("playlist:delete", {video: vid_id})
 		}		
 	
-	});
-	
-	window.SurfStreamModel = Backbone.Model.extend({
-		defaults: {
-			sharing: new ShareModel			
-		},
-		
-		initialize: function () {
-			
-			this.set({mainView: new MainView()})
-			
-			this.set({
-				roomModel: new RoomModel({
-					playerModel: new VideoPlayerModel,
-					chatCollection: new ChatCollection,
-					userCollection: new UserCollection
-				}),
-				socketManagerModel: new SocketManagerModel({
-					socket: this.get("socket"), 
-					app: this
-				}),
-				searchBarModel: new SearchBarModel({
-					searchResultsCollection: new SearchResultsCollection
-				})
-			});
-			this.set({userModel: new UserModel({is_main_user: true, playlistCollection: new PlaylistCollection, socketManagerModel: this.get("socketManagerModel")})})
-								
-			this.get('userModel').getUserData(this.get('userModel'));
-			//Give the chat view a reference to the room's chat collection
-			this.get("mainView").initializeTopBarView();
-			//initializeShareBar (this.get(sharing))
-			this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));
-			this.get("mainView").initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
-			this.get("mainView").initializePlayerView(this.get("roomModel").get("playerModel"), this.get("roomModel").get("userCollection"));
-			
-			
-			//this.setVideos([{video: "THIS"}, {video: "WORKS"}]);
-			//this.addUserToCurRoom({userId: "ebabchick", x: 20, y:60})
-			//Make sure everything gets initialized first before we start the view magic
-			//This can change to render some thing before we init the models and then
-			//finish here later				
-							
-		},
-		
-		
-		
-		setPlaylist : function(videos) {
-			for (var index in videos){
-				this.get("userModel").get("playlistCollection").add({title: videos[index].title, thumb: videos[index].thumb, vid_id: videos[index].id});
-			}
-		},
-	});		
+	});	
 	
 	window.playerLoaded = false;
 	window.SurfStreamApp = new SurfStreamModel({socket: socket_init});
@@ -204,53 +146,3 @@ $(function(){
 	
 });
 
-function onYouTubePlayerReady(playerId) {
-	if (playerId == "YouTubePlayerTwo") {
-		window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
-	}
-	
-	if(!window.YTPlayer) {
-    window.YTPlayer = document.getElementById('YouTubePlayer');
-    window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
-		window.playerLoaded = true;
-		if(window.video_ID) {
-			window.YTPlayer.loadVideoById(window.video_ID, window.secs);
-		}
-	}
-}
-
-function setToTime() {
-		window.YTPlayer = document.getElementById('YouTubePlayer');
-		window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
-		window.YTPlayer.seekTo(window.secs);
-}
-
-function setVideoVolume(event) {
-	var volume = window.YTPlayer.getVolume();
-	if (volume + event.data.offset >= 0 && volume + event.data.offset <= 100) {
-		window.YTPlayer.setVolume(volume + event.data.offset);
-	}
-}
-
-function mute(event) {
-	if (window.YTPlayer.isMuted()) {
-		window.YTPlayer.unMute();
-		event.data.button.css("background", 'url("http://i.imgur.com/euzaw.png") 50% 50% no-repeat');
-	} else {
-		window.YTPlayer.mute();		
-		event.data.button.css("background", 'url("http://i.imgur.com/c77ZF.png") 50% 50% no-repeat');
-	}
-}
-    
-function onytplayerStateChange(newState) {
-/*	$('#state').html("Player state: "+newState);
-	if(newState == 0 && currVideo.isLeader) { 
-		console.log("Video finished, broadcasting back to server");
-		socket.emit('videoFinished');
-		currVideo = {};
-	} */
-}
-
-function skipVideo() {
-	socket_init.emit("video:skip");
-}
