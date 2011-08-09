@@ -1,5 +1,5 @@
 $(function(){
-	socket_init = io.connect();
+	
 	
 	window.SocketManagerModel = Backbone.Model.extend({
 		initialize: function () {
@@ -37,21 +37,11 @@ $(function(){
 					
 				} else {
 					window.YTPlayer.loadVideoById(video.video, video.time);
-					new ChatCellView({username: "surfstream.tv", msg: "Now playing " + video.title});
+					new ChatCellView({username: "SurfStream.tv", msg: "Now playing " + video.title});
 					window.SurfStreamApp.get("mainView").chatView.chatContainer.activeScroll();
 				}
 				//HACK
 				$("#room-name").html(video.title)
-				app.get("roomModel").get("userCollection").forEach(function(userModel) {
-					var user =  $("#" + userModel.get("id"));
-					if (user.attr("isDJ") != "1") {
-						user.css("border-width", "0px");
-					} else {
-						user.css("border-width", "2px");
-						user.css("border-color", "yellow");
-					}
-					
-				})
 				//ENDHACK
 			});
 			
@@ -67,8 +57,8 @@ $(function(){
 			});
 			
 			socket.on('message', function(msg) {
-				app.get("roomModel").get("chatCollection").add({username: msg.data.name, msg: msg.data.text});
-				TheatreView.tipsyChat(msg.data.text, msg.data.id);				
+				window.SurfStreamApp.get("roomModel").get("chatCollection").add({username: msg.data.attrs.name, msg: msg.data.attrs.text});
+				TheatreView.tipsyChat(msg.data.attrs.text, msg.data.attrs.fbid);				
 			});
 			
 			
@@ -79,28 +69,16 @@ $(function(){
 			});
 			
 			
-			socket.on('djs:announce', function(djArray) {
-				app.get("roomModel").get("userCollection").forEach(function(userModel) {
-					var user =  $("#" + userModel.get("id"));
-					user.attr("isDJ", "0")
-				})
-				for (var dj in djArray) {
-					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow").css("border-width", "2px");
-					$("#"+ djArray[dj].id).attr("isDJ", "1")
+			socket.on('dj:announceDJs', function(djArray) {
+				for (dj in djArray) {
+					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
 				}
-				app.get("roomModel").get("userCollection").forEach(function(userModel) {
-				var user =  $("#" + userModel.get("id"));
-				if (user.attr("isDJ") != "1" && user.css("border-right-color") == "rgb(255, 255, 0)") {
-					user.css("border-width", "0px");
-				}
-					
-				})
 			});
 			
 			//.upvoteset maps userids who up to true, .down, .up totals
 			socket.on("meter:announce", function(meterStats) {
-				for (var fbid in meterStats.upvoteSet){
-					if (meterStats.upvoteSet[fbid] === true) {
+				for (fbid in meterStats.upvoteSet){
+					if (meterStats.upvoteSet[fbid] == true) {
 						//app.get("roomModel").get("users").get(fbid).
 						//BEGIN HACK
 						if ($("#" + fbid).css("border-color") != "yellow") {
@@ -160,11 +138,5 @@ $(function(){
 			this.socket.emit("playlist:delete", {video: vid_id})
 		}		
 	
-	});	
-	
-	window.playerLoaded = false;
-	window.SurfStreamApp = new SurfStreamModel({socket: socket_init});
-	console.log("started app");
-	
+	});
 });
-
