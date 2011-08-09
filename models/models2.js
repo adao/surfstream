@@ -164,6 +164,11 @@
 			}	
 		},
 		
+		//will need to be room-specific soon, just ripped from existing solution for now.
+		addChatListener : function(socket) {
+				socket.on('message', function(msg) { this.sockM.announceChat(socket, msg) });
+		}
+		
 	});
 	
 	/*************************/
@@ -186,6 +191,7 @@
 			});
 			
 			if(this.room) {
+				this.room.addChatListener(socket);
 				this.room.users.addConnectListener(socket);
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
@@ -244,6 +250,10 @@
 		
 		announceStopVideo: function() {
 			io.sockets.in(this.room.get('name')).emit('video:stop');
+		},
+		
+		announceChat : function(socket, msg) {
+			io.sockets.in(this.room.get('name')).emit('message', {event: 'chat', data: msg});
 		}
 	});
 
