@@ -118,8 +118,8 @@ $(function(){
 			this.socket.emit('dj:quit');
 		},
 		
-		addVideoToPlaylist : function(video, thumb, title) {
-			this.socket.emit('playlist:addVideo', {video: video, thumb: thumb, title: title });			
+		addVideoToPlaylist : function(video, thumb, title, duration, author) {
+			this.socket.emit('playlist:addVideo', {video: video, thumb: thumb, title: title, duration: duration, author: author});
 		},
 		
 		voteUp : function() {

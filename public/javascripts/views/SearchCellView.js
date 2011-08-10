@@ -18,8 +18,9 @@ $(function(){
 			var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
 			this.options.video.set({vid_id: videoID});
 			var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
+			console.log(this.options.video.attributes);
 			this.options.playlistCollection.add(playlistItemModel);
-			SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"));
+			SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author"));
 		},
 		
 		previewVideo: function() {
