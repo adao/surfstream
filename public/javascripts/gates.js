@@ -126,6 +126,8 @@ $(function(){
 	
 	socket_init = io.connect();
 	
+	/*******SOCKETMANAGER -- ALL SOCKET EVENTS HAPPEN HERE********/
+	
 	window.SocketManager = Backbone.Model.extend({
 		initialize: function () {
 			var socket, app;
@@ -167,6 +169,16 @@ $(function(){
 				}
 				//HACK
 				$("#room-name").html(video.title)
+				app.get("roomModel").get("users").forEach(function(userModel) {
+					var user =  $("#" + userModel.get("id"));
+					if (user.attr("isDJ") != "1") {
+						user.css("border-width", "0px");
+					} else {
+						user.css("border-width", "2px");
+						user.css("border-color", "yellow");
+					}
+					
+				})
 				//ENDHACK
 			});
 			
@@ -182,8 +194,8 @@ $(function(){
 			});
 			
 			socket.on('message', function(msg) {
-				app.get("roomModel").get("chatCollection").add({user: msg.data.attrs.name, message: msg.data.attrs.text});
-				Theatre.tipsyChat(msg.data.attrs.text, msg.data.attrs.fbid);				
+				app.get("roomModel").get("chatCollection").add({user: msg.data.name, message: msg.data.text});
+				Theatre.tipsyChat(msg.data.text, msg.data.id);				
 			});
 			
 			
@@ -194,16 +206,28 @@ $(function(){
 			});
 			
 			
-			socket.on('dj:announceDJs', function(djArray) {
-				for (dj in djArray) {
-					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow");
+			socket.on('djs:announce', function(djArray) {
+				app.get("roomModel").get("users").forEach(function(userModel) {
+					var user =  $("#" + userModel.get("id"));
+					user.attr("isDJ", "0")
+				})
+				for (var dj in djArray) {
+					$("#"+ djArray[dj].id).css("border-style", "solid").css("border-color","yellow").css("border-width", "2px");
+					$("#"+ djArray[dj].id).attr("isDJ", "1")
 				}
+				app.get("roomModel").get("users").forEach(function(userModel) {
+				var user =  $("#" + userModel.get("id"));
+				if (user.attr("isDJ") != "1" && user.css("border-right-color") == "rgb(255, 255, 0)") {
+					user.css("border-width", "0px");
+				}
+					
+				})
 			});
 			
 			//.upvoteset maps userids who up to true, .down, .up totals
 			socket.on("meter:announce", function(meterStats) {
-				for (fbid in meterStats.upvoteSet){
-					if (meterStats.upvoteSet[fbid] == true) {
+				for (var fbid in meterStats.upvoteSet){
+					if (meterStats.upvoteSet[fbid] === true) {
 						//app.get("roomModel").get("users").get(fbid).
 						//BEGIN HACK
 						if ($("#" + fbid).css("border-color") != "yellow") {
@@ -265,9 +289,11 @@ $(function(){
 	
 	});
 	
+	/*******SURFSTREAM - WHERE IT ALL STARTS ********/
+	
 	window.SurfStream = Backbone.Model.extend({
 		defaults: {
-			sharing: new SharingModel			
+			sharing: new SharingModel()			
 		},
 		
 		initialize: function () {
@@ -276,17 +302,17 @@ $(function(){
 			
 			
 			this.set({roomModel: new RoomModel({
-														player: new PlayerModel,
-														chatCollection: new ChatList,
-														video: new VideoModel,
-														users: new RoomUsersList
+														player: new PlayerModel(),
+														chatCollection: new ChatList(),
+														video: new VideoModel(),
+														users: new RoomUsersList()
 													}),
 								socket_manager: new SocketManager({
 														socket: this.get("socket"), app: this
 													}),
-								search: new SearchModel({resultsList: new VideoList})
+								search: new SearchModel({resultsList: new VideoList()})
 							});
-			this.set({user: new UserModel({is_main_user: true, playList: new PlayList, socket_manager: this.get("socket_manager")})})
+			this.set({user: new UserModel({is_main_user: true, playList: new PlayList(), socket_manager: this.get("socket_manager")})})
 								
 			this.get('user').getUserData(this.get('user'));
 			//Give the chat view a reference to the room's chat collection
@@ -308,10 +334,10 @@ $(function(){
 		
 		
 		setVideos : function(videos) {
-			for (video in videos){
-				this.get("user").get("playList").add({title: videos[video].title, thumb: videos[video].thumb, vid_id: videos[video].id});
+			for (var video in videos){
+				this.get("user").get("playList").add({title: videos[video].title, thumb: videos[video].thumb, vid_id: videos[video].videoId});
 			}
-		},
+		}
 	});
 	
 	/************************/
@@ -446,7 +472,7 @@ $(function(){
 		sidebarTemplate: _.template($('#sidebar-template').html()),
 		
 		events: {
-        	"click .search" : "activateSearch",
+			"click .search" : "activateSearch",
 			"click .playlist" : "activatePlaylist"
     	},
 
@@ -527,7 +553,8 @@ $(function(){
 				new SearchCell({video: model, playlist: this.options.playList})						
 		}
 	});
-
+	
+		/*******SEARCHCELL********/
 	
 	window.SearchCell = Backbone.View.extend({
 		
@@ -586,6 +613,9 @@ $(function(){
 		
 	});
 	
+	
+	/*******PLAYER********/
+	
 	//The Actual Video Player Presentation
 	window.Player = Backbone.View.extend({
 		
@@ -633,7 +663,7 @@ $(function(){
 				swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo",
 			                       "preview-player", "299", "183", "8", null, null, params, atts);
 			}
-		},
+		},			
 		
 		hidePreviewPlayer: function() {
 			window.playerTwoLoaded = false;
@@ -681,6 +711,8 @@ $(function(){
 			videoCellView.initializeView();
 		}
 	});
+	
+	/*******VIDEOCELLVIEW********/
 	
 	window.VideoCellView = Backbone.View.extend({
 		videoCellTemplate: _.template($('#video-list-cell-template').html()),
@@ -736,6 +768,8 @@ $(function(){
 		}
 	});
 	
+	/*******CHATVIEW********/
+	
 	window.ChatView = Backbone.View.extend({
 		el: '#chat',
 		
@@ -778,6 +812,8 @@ $(function(){
 		}
 	});
 	
+	/*******CHATCELL********/
+	
 	window.ChatCell = Backbone.View.extend({
 		
 		chatCellTemplate: _.template($('#chatcell-template').html()),
@@ -799,6 +835,8 @@ $(function(){
 		}
 	});
 	
+	/*******ROOMINFOVIEW********/
+	
 	window.RoomInfoView = Backbone.View.extend({
 		el: '#roomInfo',
 		
@@ -809,13 +847,15 @@ $(function(){
 		}
 	});
 	
+	/*******THEATRE********/
+	
 	//The Avatar + Seating Area
 	window.Theatre = Backbone.View.extend({
 		
 		el: '#room-container',
 		
 		initialize: function () {
-			$("#dj").bind("click", this.toggleDJStatus); 	
+			$("#dj").bind("click", this.toggleDJStatus);
 			$("#up-vote").bind("click", SocketManager.voteUp);
 			$("#down-vote").bind("click", SocketManager.voteDown);
 			$("#vol-up").bind("click", {offset: 10}, setVideoVolume);
@@ -833,7 +873,7 @@ $(function(){
 				SocketManager.becomeDJ();
 				this.innerHTML = "Step Down";
 				$("#people-area").append("<button id='skip'> Skip Video </button>");
-	 			$("#skip").bind("click", skipVideo);
+				$("#skip").bind("click", skipVideo);
 			} else { 
 				SocketManager.stepDownFromDJ();
 			  this.innerHTML = "Become DJ";
@@ -861,6 +901,8 @@ $(function(){
 		}
 	
 	});
+	
+	/*******SHAREBARVIEW********/
 	
 	window.ShareBarView = Backbone.View.extend({
 		el: '#shareBar',
@@ -895,7 +937,7 @@ $(function(){
 					url: 'www.youtube.com',
 					caption: 'Join your friends and watch videos online!',
 					description: 'SurfStream.tv lets you explore new video content on the web. Very similar to turntable.fm'// ,
-					// 					picture: '/images/logo.png'
+					//picture: '/images/logo.png'
 				},
 				function(response) {
 					if (response && response.post_id) {
@@ -911,9 +953,9 @@ $(function(){
 			var width  = 575,
 			  height = 400,
 			  left = ($(window).width()  - width)  / 2,
-       	top = ($(window).height() - height) / 2,
-       	url = "http://twitter.com/share?text=Check%20out%20this%20awesome%20brooooooom!",
-       	opts = 'status=1' +
+				top = ($(window).height() - height) / 2,
+				url = "http://twitter.com/share?text=Watching%20videos%20with%20friends%20on%20SurfStream!",
+				opts = 'status=1' +
 						',width='  + width  +
             ',height=' + height +
            	',top='    + top    +

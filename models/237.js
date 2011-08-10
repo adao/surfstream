@@ -3,8 +3,11 @@
   Backbone = require('backbone');
 	models = exports;
 	var redisClient = require('redis').createClient(),
-		http = require('http');
+	http = require('http');
 	
+	/*************************/
+	/*      VideoManager     */
+	/*************************/
 	models.VideoManager = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
@@ -107,6 +110,9 @@
 		}
 	});
 	
+	/*************************/
+	/*          Room         */
+	/*************************/
 	
 	models.Room = Backbone.Model.extend({
 		
@@ -160,7 +166,19 @@
 			}	
 		},
 		
+		//will need to be room-specific soon, just ripped from existing solution for now.
+		addChatListener : function(socket) {
+				var room = this;
+				socket.on('message', function(msg) { 
+					room.sockM.announceChat(socket, msg) 
+				});
+		}
+		
 	});
+	
+	/*************************/
+	/*     SocketManager     */
+	/*************************/
 	
 	models.SocketManager = Backbone.Model.extend({	//this model handles global socket events
 		
@@ -178,6 +196,7 @@
 			});
 			
 			if(this.room) {
+				this.room.addChatListener(socket);
 				this.room.users.addConnectListener(socket);
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
@@ -187,7 +206,7 @@
 		
 		sendRoomState: function() {
 			this.announceClients();
-			this.announceDJs;
+			this.announceDJs();
 			this.announceMeter();
 		},
 
@@ -236,9 +255,17 @@
 		
 		announceStopVideo: function() {
 			io.sockets.in(this.room.get('name')).emit('video:stop');
+		},
+		
+		announceChat : function(socket, msg) {
+			io.sockets.in(this.room.get('name')).emit('message', {event: 'chat', data: msg});
 		}
 	});
 
+	/*************************/
+	/*          Video        */
+	/*************************/
+	
 	models.Video = Backbone.Model.extend({
 		defaults: {
 			'videoId': null,
@@ -257,9 +284,17 @@
 		}		
 	});
 	
+	/*************************/
+	/*    VideoCollection    */
+	/*************************/
+	
 	models.VideoCollection = Backbone.Collection.extend({
 		model: models.Video
 	});
+
+	/*************************/
+	/*        Playlist       */
+	/*************************/
 
 	models.Playlist = Backbone.Model.extend({
 		initialize: function() {
@@ -334,9 +369,14 @@
 		
 	});
 	
+	
+	/*************************/
+	/*         User          */
+	/*************************/
+	
 	var X_MAX = 510;
 	var Y_MAX = 95;
-	
+
 	models.User = Backbone.Model.extend({
 		defaults: {
 			'avatar': null,
@@ -391,7 +431,18 @@
 		}
 	});
 
+	
+	/*************************/
+	/*       RoomUsers       */
+	/*************************/
+	
 	models.RoomUsers = Backbone.Model.extend({})
+
+
+	
+	/*************************/
+	/*      UserCollection   */
+	/*************************/
 
 
 	models.UserCollection = Backbone.Collection.extend({
@@ -486,6 +537,11 @@
 			return array;
 		}
 	});
+	
+	
+	/*************************/
+	/*      DJCollection    */
+	/*************************/
 	
 	var MAX_DJS = 4;
 	
@@ -595,6 +651,11 @@
 		}
 	});
 	
+	
+	/*************************/
+	/*         Meter         */
+	/*************************/
+	
 	models.Meter = Backbone.Model.extend({
 		initialize: function() {
 			//this.room = room;
@@ -695,4 +756,5 @@
 			if(this.room) this.room.sockM.announceMeter();
 		}, 
 	});
+	
 }) ()
