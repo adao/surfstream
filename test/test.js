@@ -1,10 +1,7 @@
-var assert = require('assert'),
-io = require('socket.io').listen(app),
-redis = require('redis'),
-redisClient = redis.createClient(),
-m = require('../models/models2');
+var assert = require('assert')
 
+//THESE DONT WORK BUT ARE AN EXAMPLE OF A TEST
 exports['testRun1'] = function(){
 	  var currRoom = new m.Room();
-    
+    currRoom.connectSocket();
 };
