@@ -1,4 +1,2 @@
 /node_modules
-/public/images/room/.DS_Store
-/public/images/.DS_Store
-.DS_Store
+*/.DS_Store
