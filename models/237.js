@@ -180,7 +180,8 @@
 	/*     SocketManager     */
 	/*************************/
 	
-	models.SocketManager = Backbone.Model.extend({	//this model handles global socket events
+	models.SocketManager = Backbone.Model.extend({
+		//this model handles global socket events
 		
 		initialize: function(room) {
 			this.room = room;
@@ -301,12 +302,12 @@
 			this.videos = new models.VideoCollection();
 		},
 
-		addVideo: function(id, thumb, title) {
+		addVideo: function(id, thumb, title, duration) {
 			if(this.videos.get(id) >= 0)
 				return false;
 			var vid = new models.Video();
 			vid.id = id;
-			vid.set({ videoId: id, thumb: thumb, title: title});
+			vid.set({ videoId: id, thumb: thumb, title: title, duration: duration});
 			this.videos.add(vid);
 		},
 		
@@ -361,7 +362,7 @@
 		mport: function(rawVideoData) {
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
-				var videoToAdd = new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title });
+				var videoToAdd = new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title, duration: duration });
 				videoToAdd.id = video.videoId;
 				this.videos.add(videoToAdd);
 			}
@@ -506,7 +507,7 @@
 				var thisUser = userCollect.get(socket.id);
 				console.log('Received request to add video '+data.video+' to user '+thisUser.get('userId'));
 				if(thisUser.playlist.videos.get(data.video)) return;
-				thisUser.playlist.addVideo(data.video, data.thumb, data.title);
+				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration);
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {

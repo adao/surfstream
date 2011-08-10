@@ -15,7 +15,7 @@ require('jade');
 	
 /* Custom Modules */
 var facebook = require('./facebook'),
-	m = require('./models/models2');
+	m = require('./models/237');
 
 io.configure(function () {
 	io.set('log level', 2); 
