@@ -256,7 +256,7 @@ div.historyContainer .history .videoHistory {
   height: 30px;
   display: block;
   margin-right: 1px;
-  background: url("remove_hover.png") 50% 50% no-repeat;
+  background: url("/images/room/remove_hover.png") 50% 50% no-repeat;
 }
 .videoListCellContainer .cellInfo .cellButtons .toTheTop {
   border: none;
