@@ -137,7 +137,8 @@ $(function() {
     roomModel: new RoomModel({
      playerModel: new VideoPlayerModel,
      chatCollection: new ChatCollection,
-     userCollection: new UserCollection
+     userCollection: new UserCollection,
+		 roomListCollection: new RoomlistCollection
     }),
     socketManagerModel: new SocketManagerModel({
      socket: this.get("socket"),
@@ -181,6 +182,8 @@ $(function() {
   },
  });
 
+ window.RoomlistCellModel = Backbone.Model.extend({});
+ 
  window.ChatCollection = Backbone.Collection.extend({
   model: ChatMessageModel,
 
@@ -210,6 +213,11 @@ $(function() {
   }
 
  });
+
+ window.RoomlistCollection = Backbone.Collection.extend({
+	model: RoomlistCellModel,
+
+});
 
  window.UserCollection = Backbone.Collection.extend({
   model: UserModel,
@@ -593,6 +601,56 @@ $(function() {
   }
  });
 
+ window.RoomListView = Backbone.View.extend({
+		
+		el: "#roomsList",
+		
+		roomListTemplate: _.template($('#roomlist-template').html()),
+
+		initialize: function () {
+			this.options.roomlistCollection.bind("reset", this.addRooms);
+			this.render();
+			this.hide();
+		},
+		
+		hide : function() {
+			$("#room-modal").hide();
+		},
+	
+		show : function() {
+			$("#room-modal").show();
+		},
+	
+		render: function() {
+			$(this.el).html(this.roomListTemplate());
+			return this;
+		},
+	
+		addRooms: function (roomListCollection) {
+			this.render();
+			roomListCollection.each(function(roomListCellModel) { new RoomListCellView({roomListCellModel: roomListCellModel}) });
+			this.show();
+		}
+  });
+	
+ window.RoomListCellView = Backbone.View.extend({
+		
+		roomListCellTemplate: _.template($('#roomlistCell-template').html()),
+
+		initialize: function () {
+			$(".table-header").after(this.render().el);																					
+		},
+	
+		render: function() {
+			var roomListCellModel = this.options.roomListCellModel; 
+			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.numUsers, currentVideoName: roomListCellModel.curVidTitle,
+				roomname: roomListCellModel.rID, numDJs: roomListCellModel.numDJs, friends: roomListCellModel.fbids}));
+			return this;
+		}
+		
+		
+	});
+
  window.ChatCellView = Backbone.View.extend({
 
   chatCellTemplate: _.template($('#chatcell-template').html()),
@@ -689,6 +747,7 @@ $(function() {
 
  });
 
+	
  window.ShareBarView = Backbone.View.extend({
   el: '#shareBar',
 
@@ -752,7 +811,8 @@ $(function() {
   el: 'body',
 
   initialize: function() {
-
+		$("#ListRooms").bind("click", SocketManager.loadRoomsInfo);
+		this.roomModal = new RoomListView();		
   },
 
   initializeTopBarView: function() {
@@ -903,7 +963,9 @@ $(function() {
     }
    });
 
-  },
+	socket.on("rooms:announce", function(roomsData) {
+			app.get("roomModel").get("roomListCollection").reset(roomsData);
+	});
 
   /* Initialize first contact */
   makeFirstContact: function(user) {
@@ -917,19 +979,19 @@ $(function() {
   /* Outgoing Socket Events*/
 
   sendMsg: function(data) {
-   this.socket.emit("message", data);
+   SocketManagerModel.socket.emit("message", data);
   },
 
   becomeDJ: function() {
-   this.socket.emit('dj:join');
+   SocketManagerModel.socket.emit('dj:join');
   },
 
   stepDownFromDJ: function() {
-   this.socket.emit('dj:quit');
+   SocketManagerModel.socket.emit('dj:quit');
   },
 
   addVideoToPlaylist: function(video, thumb, title) {
-   this.socket.emit('playlist:addVideo', {
+   SocketManagerModel.socket.emit('playlist:addVideo', {
     video: video,
     thumb: thumb,
     title: title
@@ -945,16 +1007,24 @@ $(function() {
   },
 
   toTopOfPlaylist: function(vid_id) {
-   this.socket.emit("playlist:moveVideoToTop", {
+   SocketManagerModel.socket.emit("playlist:moveVideoToTop", {
     video: vid_id
    });
   },
 
   deleteFromPlaylist: function(vid_id) {
-   this.socket.emit("playlist:delete", {
+   SocketManagerModel.socket.emit("playlist:delete", {
     video: vid_id
    })
-  }
+  },
+
+	loadRoomsInfo: function() {
+		SocketManagerModel.socket.emit('rooms:load');
+	},
+	
+	joinRoom: function(rID) {
+		SocketManagerModel.socket.emit('room:join', {rID:rID});
+	}
 
  });
 

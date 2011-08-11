@@ -31,24 +31,26 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		#outer
 			#header 
 				img(src="/images/room/logo_small.png")
+				button#ListRooms(style="float: right;")
 			#coolshit
 				#funroom
 				#right-side
 					#sidebar
 					#chat
-			include chat
-			include chatcell
-			include sidebar
-			include roominfo
-			include share
-			include videolist
-			include videolistcell
-			include playlist
-			include playlistcell
-			include searchbar
-			include searchcell
-			include room
-			include searchpreview
+		#roomsList(style="display:none")
+		include chat
+		include chatcell
+		include sidebar
+		include roominfo
+		include share
+		include videolist
+		include videolistcell
+		include playlist
+		include playlistcell
+		include searchbar
+		include searchcell
+		include room
+		include searchpreview
 		script
 			var is_ssl = ("https:" == document.location.protocol);
 			var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
