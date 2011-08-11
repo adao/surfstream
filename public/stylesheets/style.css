@@ -429,6 +429,7 @@ div.historyContainer .roomDescription {
   font-size: 12px;
 }
 div.historyContainer .history {
+  position: absolute;
   height: 250px;
   width: 300px;
   background-color: #fff;
@@ -544,6 +545,7 @@ div.historyContainer .history .videoHistory {
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist-added {
   background: url("/images/room/checkbox.png") 50% 50% no-repeat;
+  cursor: default;
 }
 .searchCellContainer .cellInfo .cellButtons button.previewVideo {
   font-size: 9px;
@@ -682,7 +684,10 @@ button.search.active {
   height: 10px;
   width: 30px;
   background: url("/images/room/pullup.png") 50% 50% no-repeat;
-  margin-bottom: 3px;
+  position: absolute;
+  margin-top: 2px;
+  margin-left: 38px;
+  cursor: n-resize;
 }
 #remote-container #remote {
   height: 245px !important;
@@ -693,6 +698,7 @@ button.search.active {
   width: 114px;
   height: 70px;
   display: block;
+  cursor: n-resize;
 }
 #remote-container #remote .side-button-container {
   margin-top: 10px;
@@ -705,16 +711,29 @@ button.search.active {
 }
 #remote-container #remote #vol-buttons {
   float: left;
-  padding-left: 12px;
+  margin-left: 12px;
 }
 #remote-container #remote #vote-buttons {
   float: right;
-  padding-right: 12px;
+  margin-right: 12px;
 }
 #remote-container #remote .remote-bottom {
   display: block;
-  width: 114px;
-  height: 145px;
+  width: 100px;
+  height: 90px;
+  text-align: center;
+}
+#remote-container #remote .remote-top.up {
+  cursor: s-resize;
+}
+#remote-container #remote.up {
+  cursor: s-resize;
+}
+#remote-container button#remote-pullup:hover {
+  background-color: #34b7fe;
+}
+#remote-container button#remote-pullup.up {
+  cursor: s-resize;
 }
 #vol-up,
 #vol-down {
@@ -737,6 +756,7 @@ button.search.active {
   border-radius: 20px;
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
+  cursor: pointer;
 }
 #up-vote,
 #down-vote,
@@ -755,6 +775,7 @@ button.search.active {
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
   color: #e5e5e5;
+  cursor: pointer;
 }
 .buttonContainer {
   margin: 3px;
@@ -1025,10 +1046,10 @@ background-color: green,
 }
 #video-list .videoListCellContainer .thumbContainer {
   float: left;
-  width: 58px;
-  height: 46px;
-  margin-left: 7px;
-  margin-top: 7px;
+  width: 63px;
+  height: 50px;
+  margin-top: 5px;
+  margin-left: 5px;
 }
 #video-list .videoListCellContainer .cellInfo {
   float: right;
@@ -1091,8 +1112,10 @@ background-color: green,
   margin-left: -1px;
 }
 .ui-autocomplete {
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   list-style-type: none;
   width: 250px;
+  margin-top: 10px;
   background-color: #e7e7e7;
 }
 .ui-autocomplete li.ui-menu-item {
@@ -1187,7 +1210,7 @@ background-color: green,
 }
 #tvglowimg {
   margin-top: 164px;
-  margin-left: 98px;
+  margin-left: 120px;
   position: absolute;
 }
 #modalBG {
@@ -1267,6 +1290,12 @@ background-color: green,
   margin-right: 1%;
   left: 50%;
   width: 75%;
+}
+#sofa-remote {
+  left: 170px;
+  top: 140px;
+  z-index: 3;
+  position: absolute;
 }
 a#fdbk_tab {
   z-index: 10;
