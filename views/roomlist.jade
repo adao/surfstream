@@ -1,37 +1,12 @@
-!!! 5
-html(lang="en")
-	head
-		title surfstream.tv
-		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js")
-		script(type="text/javascript", src="http://documentcloud.github.com/underscore/underscore-min.js")
-		script(type="text/javascript", src="http://documentcloud.github.com/backbone/backbone.js")
-		script(type="text/javascript", src="/socket.io/socket.io.js")
-		script(type="text/javascript", src="/javascripts/VideoResult.js")
-		script(type="text/javascript", src="/javascripts/feed.js")
-		script(type="text/javascript", src="/models/models.js")
-		script(type="text/javascript", src="/controllers/controllers.js")
-		script(type="text/javascript", src="/views.js")
-		link(rel='stylesheet', href='/stylesheets/style.css')
-		
-		#room-modal
-			#searchbar
-				form.roomSearch
-					input(type="text", placeholder="Search Rooms",name="search", AUTOCOMPLETE="OFF")
-				#clearSearch
-			#rooms
-				table#roomsTable
-					tr.table-header
-						th.viewers-hd Viewers
-						th.room-name-hd Room Name
-						th.room-friends-hd Friends
-					tr.room-row
-						td.viewers
-							.num-viewers 50
-							.num-djs 4/4 DJs
-						td.room-name
-							.room-name-container
-								.listed-room-name Cute Cats on YouTube
-								.listed-video-name Small Kitten Bites Dog
-						td.room-friends 1, cell 3
-
-	
+#roomlist-template(style="display:none;")
+	#room-modal
+		#searchbar
+			form.roomSearch
+				input(type="text", placeholder="Search Rooms",name="search", AUTOCOMPLETE="OFF")
+			#clearSearch
+		#rooms
+			table#roomsTable
+				tr.table-header
+					th.viewers-hd Viewers
+					th.room-name-hd Room Name
+					th.room-friends-hd Friends
