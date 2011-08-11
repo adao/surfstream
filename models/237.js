@@ -468,25 +468,26 @@
 			});
 		},
 		
+		logPlaylist: function(thisUser) {
+			console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+		},
 		
-		addPlaylistListeners: function(socket) {
-			
+		addPlaylistListeners: function(socket) {			
 			var userCollect = this;
 			socket.on('playlist:addVideo', function(data) {
 				var thisUser = userCollect.get(socket.id);
-				console.log('Received request to add video '+data.video+' to user '+thisUser.get('userId')+ ' dur: '+data.duration + ' author: '+JSON.stringify(data.author));
 				if(thisUser.playlist.videos.get(data.video)) return;
 				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
+				this.logPlaylist(thisUser);		//debugging
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
-				console.log('received request to move video to top');
 				var thisUser = userCollect.get(socket.id);
 				
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.moveToTop(data.video);
 				}
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+				this.logPlaylist(thisUser); 	//debugging
 			});
 
 			socket.on('playlist:delete', function(data) {
@@ -495,7 +496,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.deleteVideo(data.video);
 				}
-				console.log('Received request to delete video '+data.video+' from the playlist for '+ thisUser.get('name'));
+				this.logPlaylist(thisUser); 	//debugging
 			});
 		},
 		
