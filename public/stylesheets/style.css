@@ -21,7 +21,7 @@ div#outer {
   background-color: #000;
 }
 #outer #header {
-  height: 60px;
+  height: 40px;
   width: 960px;
   background-color: #000;
   display: block;
@@ -37,15 +37,16 @@ div#outer {
   height: 40px;
   vertical-align: middle;
 }
-#outer #actionBar #roomInfo #room-name {
-  width: 300px;
+#outer #actionBar #roomInfo #room-name,
+#outer #actionBar #roomInfo video-name {
   display: inline-block;
   color: #000;
 }
+#outer #actionBar #roomInfo #room-name {
+  width: 300px;
+}
 #outer #actionBar #roomInfo #video-name {
   margin-top: 3px;
-  display: inline-block;
-  color: #000;
 }
 #outer #coolshit {
   height: 690px;
@@ -515,8 +516,7 @@ button.search.active {
   width: 100px;
   background-color: #fff;
 }
-#remote #remote-left,
-#remote #remote-right {
+#remote .side_button_container {
   vertical-align: top;
   display: inline-block;
   width: 50px;
@@ -690,13 +690,51 @@ button.search.active {
 #video-div {
   width: 660px;
   height: 420px;
-  background-image: url("/images/room/modern-room-one-px.png");
+  background: url("/images/room/tv.png") 50% 50% no-repeat;
   z-index: 1;
 }
 #YouTubePlayer {
   padding-left: 8px;
   position: absolute;
-  top: 80px;
+  top: 54px;
+}
+#top-video-cell {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 12px;
+  height: 200px;
+  width: 285px;
+  border: 1px solid #000;
+}
+#top-video-cell #top-video-preview {
+  float: left;
+  margin-left: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  height: 73px;
+  width: 120px;
+  background: #000;
+  display: inline-block;
+}
+#top-video-cell #top-video-info {
+  float: right;
+  background-color: #ffa;
+  margin: 6px 6px 6px 0px;
+  display: inline-block;
+  height: 73px;
+  width: 147px;
+}
+div#top-video-name,
+font-size: 16px,
+background-color: green,
+#top-video-uploader {
+  background-color: #00f;
+}
+#top-video-time {
+  display: inline-block;
+  background-color: #008000;
+}
+#top-video-views {
+  background-color: #000;
 }
 #video-list {
   height: 370px;
