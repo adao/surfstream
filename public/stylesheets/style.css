@@ -372,8 +372,13 @@ div.historyContainer .history .videoHistory {
   height: 25px;
   width: 160px;
 }
+<<<<<<< HEAD
 #room-container #people-area .bottom-user-controls button#history-button,
 #room-container #people-area .bottom-user-controls button#dj {
+=======
+#room-container #people-area #buttoncontainer button#history-button,
+#room-container #people-area #buttoncontainer button#dj {
+>>>>>>> aaabf996dca954406ec04c4de6fac8e86891b676
   height: 25px;
   width: 80px;
   display: inline-block;
@@ -384,10 +389,17 @@ div.historyContainer .history .videoHistory {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
 }
+<<<<<<< HEAD
 #room-container #people-area .bottom-user-controls button#history-button {
   background-image: url("/images/room/actionbar.png");
 }
 #room-container #people-area .bottom-user-controls button#dj {
+=======
+#room-container #people-area #buttoncontainer button#history-button {
+  background-image: url("/images/room/actionbar.png");
+}
+#room-container #people-area #buttoncontainer button#dj {
+>>>>>>> aaabf996dca954406ec04c4de6fac8e86891b676
   background-image: url("/images/room/actionbar.png");
 }
 #room-name,
@@ -516,14 +528,22 @@ button.search.active {
   width: 100px;
   background-color: #fff;
 }
+<<<<<<< HEAD
 #remote .side-button-container {
+=======
+#remote .side_button_container {
+>>>>>>> aaabf996dca954406ec04c4de6fac8e86891b676
   vertical-align: top;
   display: inline-block;
   width: 50px;
   height: 60px;
   text-align: center;
 }
+<<<<<<< HEAD
 #remote .remote-bottom {
+=======
+#remote #remote-bottom {
+>>>>>>> aaabf996dca954406ec04c4de6fac8e86891b676
   margin-top: 18px;
   display: block;
   width: 100px;
