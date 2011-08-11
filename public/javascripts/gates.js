@@ -216,9 +216,9 @@ $(function() {
  });
 
  window.RoomlistCollection = Backbone.Collection.extend({
-	model: RoomlistCellModel,
+	model: RoomlistCellModel
 
-});
+ });
 
  window.UserCollection = Backbone.Collection.extend({
   model: UserModel,
@@ -643,7 +643,8 @@ $(function() {
 		roomListCellTemplate: _.template($('#roomlistCell-template #celltemplate-table .room-row').html()),
 
 		initialize: function () {
-			$($(".table-header")[0]).after(this.render().el);																					
+			$($(".table-header")[0]).after(this.render().el);
+			$(this.el).bind("click", this.clickJoinRoom);																					
 		},
 	
 		render: function() {
@@ -651,6 +652,10 @@ $(function() {
 			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: roomListCellModel.get("curVidTitle"),
 				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("fbids")}));
 			return this;
+		},
+		
+	  clickJoinRoom: function(el) {
+			SocketManagerModel.joinRoom($(this).find(".listed-room-name").html(), false) ;
 		}
 		
 		
@@ -853,7 +858,10 @@ $(function() {
 		//HACK
 			$("#ListRooms").bind("click", SocketManagerModel.loadRoomsInfo);		
 			this.roomModal = new RoomListView({roomlistCollection: roomListCollection});	
-			$("#CreateRoom").bind("click", function() { SocketManagerModel.joinRoom("My New Room", true) });	
+			$("#CreateRoom").bind("click", function() { 
+				SocketManagerModel.joinRoom($("CreateRoomName").val(), true) 
+			});
+			$("#CreateRoomName").bind("submit", function() { return false });
 		//ENDHACK
 	}
 
@@ -979,7 +987,7 @@ $(function() {
 			app.get("roomModel").get("roomListCollection").reset(roomsData);
 	});
 	
- },
+ 	},
 
   /* Initialize first contact */
   makeFirstContact: function(user) {

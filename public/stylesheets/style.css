@@ -595,8 +595,6 @@ button.search.active {
   width: 600px;
   height: 360px;
   border: 1px solid #000;
-  position: absolute;
-  text-align: center;
 }
 #room-modal #searchbar {
   background: url("http://i.imgur.com/4QNd7.png") 50% 50% no-repeat;
@@ -657,6 +655,7 @@ button.search.active {
 #room-modal #rooms table#roomsTable tr.room-row {
   color: #fff;
   height: 60px;
+  cursor: pointer;
 }
 #room-modal #rooms table#roomsTable tr.room-row td {
   border-right: 1px solid #666;
