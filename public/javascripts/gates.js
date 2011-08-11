@@ -376,7 +376,7 @@ $(function() {
    var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
    console.log(this.options.video.attributes);
    this.options.playlistCollection.add(playlistItemModel);
-   SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author"));
+   SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author")["name"]["$t"]);
   },
 
   previewVideo: function() {
@@ -993,11 +993,13 @@ $(function() {
    SocketManagerModel.socket.emit('dj:quit');
   },
 
-  addVideoToPlaylist: function(video, thumb, title) {
+  addVideoToPlaylist: function(video, thumb, title, duration, author) {
    SocketManagerModel.socket.emit('playlist:addVideo', {
     video: video,
     thumb: thumb,
-    title: title
+    title: title,
+		duration: duration,
+		author: author
    });
   },
 
