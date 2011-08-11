@@ -47,11 +47,68 @@ app.configure('production', function(){
 require('./router.js').setupRoutes(app);
 
 //backbone stuff
-var currRoom = new m.Room(io,redisClient);
+//var currRoom = new m.Room(io,redisClient);
 
-io.sockets.on('connection', function(socket) {	
-	currRoom.connectSocket(socket);
+RoomManager = Backbone.Model.extend({
+	initialize: function() {
+		this.roomMap = {};
+	},
+	
+	sendRoomsInfo: function(socket) {
+		var roomsInfo = [];
+		for(var rName in this.roomMap) {
+			if(RoomMap.hasOwnProperty(rName)) {
+				var currRoom = this.roomMap[rName];
+				roomsInfo.push(currRoom.xport())
+			}
+		}
+		socket.emit('rooms:announce', roomsInfo);
+	},
+	
+	createRoom: function(socket, roomId) {
+		this.roomMap[roomId] = new models.Room({ name: roomId });
+		this.roomMap[roomId].connectUser(StagingUsers[socket.id]);
+		redisClient.set('room:'+roomId, this.roomMap[roomId].xport());
+		delete StagingUsers[socket.id];
+	}
 });
+
+var roomManager = new RoomManager();
+var StagingUsers = {};
+
+io.sockets.on('connection', function(socket) {
+	
+	socket.on('user:sendFBData', function(fbUser) {
+		roomManager.sendRoomsInfo(socket);
+		var name = fbUser.user.name;
+		var currUser = new models.User({
+			name: name, 
+			socketId: socket.id, 
+			userId: fbUser.user.id, 
+			socket: socket
+	  });
+		StagingUsers[socket.id] = currUser;
+	
+		if(redisClient) {
+			redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
+		}
+		// redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
+		// 	if(reply) {
+		// 		console.log("Points for "+fbUser.user.name+": "+reply);
+		// 		if(StagingUsers[socket.id]) StagingUsers[socket.id].set({ points: reply});
+		// 	}	
+		// });
+	});
+	
+	socket.on('room:join', function(data) {
+		if(data.create == true) {
+			roomManager.createRoom(socket, data.roomId);
+		} 
+		roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
+	});
+});
+
+
 
 
 
