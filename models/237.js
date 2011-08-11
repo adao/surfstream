@@ -523,7 +523,7 @@
 			socket.on('playlist:delete', function(data) {
 				var thisUser = userCollect.get(socket.id);
 
-				if(thisUser.playlist.get(data.video)) {
+				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.deleteVideo(data.video);
 				}
 				console.log('Received request to delete video '+data.video+' from the playlist for '+ thisUser.get('name'));

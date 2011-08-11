@@ -1,20 +1,18 @@
 $(function(){
-	window.PlaylistView = Backbone.View.extend({
-		id: 'video-list',
-	
-		videoListTemplate: _.template($('#video-list-template').html()),
-	
+	window.RoomListView = Backbone.View.extend({
+		
+		roomListTemplate: _.template($('#roomlist-template').html()),
+
 		initialize: function () {
-			this.options.playlistCollection.bind('add', this.addVideo, this);
-			this.render();
+			$(this.el).html(this.roomListTemplate());
 		},
-	
+		
 		hide : function() {
-			$("#video-list").hide();
+			$("#room-modal").hide();
 		},
 	
 		show : function() {
-			$("#video-list").show();
+			$("#room-modal").show();
 		},
 	
 		render: function() {
@@ -27,5 +25,8 @@ $(function(){
 			var playlistCellView = new PlaylistCellView({playlistItemModel: playlistItemModel});
 			playlistCellView.initializeView();
 		}
+		
+		
+		
 	});
 });
