@@ -757,7 +757,7 @@
 				var thisUser = userCollect.get(socket.id);
 				if(thisUser.playlist.videos.get(data.video)) return;
 				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
@@ -766,7 +766,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.moveToTop(data.video);
 				}
-				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
 
 			socket.on('playlist:delete', function(data) {
@@ -775,7 +775,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.deleteVideo(data.video);
 				}
-				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
 			
 			socket.on('playlist:moveVideo', function(data) {
@@ -784,6 +784,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.moveToIndex(data.video, data.index);
 				}
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			})
 		},
 		
