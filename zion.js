@@ -181,11 +181,14 @@ io.sockets.on('connection', function(socket) {
 	});
 	
 	socket.on('room:join', function(data) {
+		if(data) console.log("\n\n[   zion   ] [socket] [room:join]: data = "+JSON.stringify(data));
+		
 		if(data.create == true) {	
 			if(data.rID == '') {
 				console.log("\n\n[   zion   ] [socket] [room:join]: user tried to create an empty room! returning")
 				return;
 			}
+			console.log("\n\n[   zion   ] [socket] [room:join]: user wants to create room: "+data.rID);
 			roomManager.createRoom(socket, data.rID);
 		} 
 		if(redisClient) {
@@ -193,11 +196,13 @@ io.sockets.on('connection', function(socket) {
 			roomManager.userToRoom[data.id] = data.rID;
 		}
 		if(data.currRoom && roomManager.roomMap[data.currRoom]) {
-				console.log('curr room: '+data.currRoom);
 				var user = roomManager.roomMap[data.currRoom].sockM.removeSocket(socket);
 				if(user) {
 					console.log('user '+user.get('name')+'is already in a room, leaving the room: '+data.currRoom);
-					roomManager.roomMap[data.rID].connectUser(user);
+					if(roomManager.roomMap[data.rID])
+						roomManager.roomMap[data.rID].connectUser(user);
+					else
+						console.log('...there was no such room with name '+data.rID+'! canceling request to join')
 				}
 				return;
 		}
