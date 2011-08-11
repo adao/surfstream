@@ -102,7 +102,7 @@ io.sockets.on('connection', function(socket) {
 	
 	socket.on('room:join', function(data) {
 		if(data.create == true) {
-			roomManager.createRoom(socket, data.roomId);
+			roomManager.createRoom(socket, data.rID);
 		} 
 		roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
 	});
