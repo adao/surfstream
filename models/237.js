@@ -165,7 +165,7 @@
 					title: this.currVideo.get('title') 
 				});
 			}	
-			this.room.sockM.sendRoomState();
+			this.sockM.sendRoomState();
 		},
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
@@ -293,7 +293,13 @@
 		},
 		
 		xport: function() {
-			return { videoId: this.get('videoId'), id: this.get('videoId'), thumb: this.get('thumb'), title: this.get('title') };
+			return { 
+				videoId: this.get('videoId'), 
+				id: this.get('videoId'), 
+				thumb: this.get('thumb'), 
+				title: this.get('title'), 
+				duration: this.get('duration') 
+			};
 		}		
 	});
 	
@@ -519,7 +525,7 @@
 			var userCollect = this;
 			socket.on('playlist:addVideo', function(data) {
 				var thisUser = userCollect.get(socket.id);
-				console.log('Received request to add video '+data.video+' to user '+thisUser.get('userId'));
+				console.log('Received request to add video '+data.video+' to user '+thisUser.get('userId')+ ' dur: '+data.duration);
 				if(thisUser.playlist.videos.get(data.video)) return;
 				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration);
 			}); 
