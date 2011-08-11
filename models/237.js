@@ -19,8 +19,7 @@
 				console.log('Request to play video from playlist, but playlist has no videos!');
 				return;
 			}
-			console.log("(playVideoFromPlaylist) Video to play has id: "+videoToPlay.get('videoId')+' and title: '+videoToPlay.get('title')+ ' and duration: '+videoToPlay.get('duration')+ ' and author: '+videoToPlay.get('author'));
-
+			
 			var videoId = videoToPlay.get('videoId');
 			var videoDuration = videoToPlay.get('duration');
 			var videoTitle = videoToPlay.get('title');
@@ -34,61 +33,8 @@
 				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000)
 			});
 			
-			// 					room.currVideo.set({ 
-			// 						duration: videoDuration, 
-			// 						timeStart: (new Date()).getTime(),
-			// 						timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
-			// 						title: videoTitle
-			// 					});
-			// 				}
 			this.room.meter.reset();
 			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle);
-		},
-		
-		getVideoDurationAndPlay: function(videoId) {
-			if(!videoId) {
-				console.log('Need another video to load! videoId is null or undefined: '+videoId);
-				this.playNextVideo();
-				return;
-			}
-			console.log("Video to play has id: "+videoId);
-			// var options = { 
-			// 			host: 'gdata.youtube.com',
-			// 			port: 80,
-			// 			path: '/feeds/api/videos/'+videoId+'?&alt=json',
-			// 			method: 'GET'
-			// 		};
-			// 
-			// 		var room = this.room;
-			// 		var vm = this;
-			// 		var req = http.request(options, function(res) {
-			// 		  res.setEncoding('utf8');
-			// 			var videoData = '';
-			// 		  res.on('data', function (chunk) {
-			// 		    videoData += chunk;
-			// 		  });
-			// 		
-			// 			res.on('end', function() {
-			// 				videoData = JSON.parse(videoData);
-			// 				var videoDuration = videoData['entry']['media$group']['yt$duration']['seconds'];
-			// 				var videoTitle = videoData['entry']['title']['$t'];
-			// 
-			// 				if(room.currVideo != null) {
-			// 					room.currVideo.set({ 
-			// 						duration: videoDuration, 
-			// 						timeStart: (new Date()).getTime(),
-			// 						timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
-			// 						title: videoTitle
-			// 					});
-			// 				}
-			// 				room.sockM.announceVideo(videoId, videoDuration, videoTitle);
-			// 			});
-			// 		});
-			// 
-			// 		req.on('error', function(e) {
-			// 		  console.log('problem with request: ' + e.message);
-			// 		});
-			// 		req.end();
 		},
 		
 		onVideoEnd: function () {	
