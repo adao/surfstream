@@ -343,7 +343,8 @@
 			return JSON.stringify(videoExport);
 		},
 		
-		mport: function(rawVideoData) {
+		/* rawVideoData : array of video objects */
+		mport: function(rawVideoData) {	
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
 				var videoToAdd = new models.Video({ 
@@ -446,30 +447,6 @@
 		addUser: function(user) {
 			this.add(user);
 			this.initializeAndSendPlaylist(user.get("socket"));
-			// userCollection = this;
-			// socket.on('user:sendFBData', function(fbUser) {
-			// 	console.log('User '+fbUser.user.name+' has sent over info');
-			// 	if(redisClient) {
-			// 		redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
-			// 	}
-			// 	var name = fbUser.user.name;
-			// 	var currUser = new models.User({name: name, socketId: socket.id, userId: fbUser.user.id});
-			// 	userCollection.add(currUser);
-			// 
-			// 	redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
-			// 		if(err) {
-			// 			console.log("Error in getting "+fbUser.user.name+" 's points!");
-			// 			return;
-			// 		}
-			// 		if(reply) {
-			// 			console.log("Points for "+fbUser.user.name+": "+reply);
-			// 			userCollection.get(socket.id).set({ points: reply});
-			// 		}
-			// 	
-			// 		userCollection.room.sockM.sendRoomState();
-			// 		userCollection.initializeAndSendPlaylist(socket);
-			// 	});
-			// })
 		},
 		
 		initializeAndSendPlaylist: function(socket) {
