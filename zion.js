@@ -57,7 +57,7 @@ RoomManager = Backbone.Model.extend({
 	sendRoomsInfo: function(socket) {
 		var roomsInfo = [];
 		for(var rName in this.roomMap) {
-			if(RoomMap.hasOwnProperty(rName)) {
+			if(this.roomMap.hasOwnProperty(rName)) {
 				var currRoom = this.roomMap[rName];
 				roomsInfo.push(currRoom.xport())
 			}
@@ -66,10 +66,10 @@ RoomManager = Backbone.Model.extend({
 	},
 	
 	createRoom: function(socket, roomId) {
-		this.roomMap[roomId] = new models.Room({ name: roomId });
-		this.roomMap[roomId].connectUser(StagingUsers[socket.id]);
+		this.roomMap[roomId] = new models.Room(io, redisClient);
+		this.roomMap[roomId].set({ name: roomId });
 		redisClient.set('room:'+roomId, this.roomMap[roomId].xport());
-		delete StagingUsers[socket.id];
+		//delete StagingUsers[socket.id];
 	}
 });
 
@@ -102,9 +102,10 @@ io.sockets.on('connection', function(socket) {
 	
 	socket.on('room:join', function(data) {
 		if(data.create == true) {
-			roomManager.createRoom(socket, data.roomId);
+			roomManager.createRoom(socket, data.rID);
 		} 
 		roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
+		if(StagingUsers[socket.id]) delete StagingUsers[socket.id];
 	});
 });
 

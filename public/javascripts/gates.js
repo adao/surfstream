@@ -811,8 +811,9 @@ $(function() {
   el: 'body',
 
   initialize: function() {
-		$("#ListRooms").bind("click", SocketManager.loadRoomsInfo);
-		this.roomModal = new RoomListView();		
+		$("#ListRooms").bind("click", SocketManagerModel.loadRoomsInfo);		
+		this.roomModal = new RoomListView({roomlistCollection: new RoomlistCollection()});	
+		$("#CreateRoom").bind("click", function() { SocketManagerModel.joinRoom("My New Room", true) });	
   },
 
   initializeTopBarView: function() {
@@ -966,12 +967,14 @@ $(function() {
 	socket.on("rooms:announce", function(roomsData) {
 			app.get("roomModel").get("roomListCollection").reset(roomsData);
 	});
+	
+ },
 
   /* Initialize first contact */
   makeFirstContact: function(user) {
    var socket = this.get("socket");
    socket.emit('user:sendFBData', user);
-  }
+  },
 
  }, {
   socket: socket_init,
@@ -1022,8 +1025,8 @@ $(function() {
 		SocketManagerModel.socket.emit('rooms:load');
 	},
 	
-	joinRoom: function(rID) {
-		SocketManagerModel.socket.emit('room:join', {rID:rID});
+	joinRoom: function(rID, create) {
+		SocketManagerModel.socket.emit('room:join', !create ? {rID:rID} : {rID:rID, create: true});
 	}
 
  });
