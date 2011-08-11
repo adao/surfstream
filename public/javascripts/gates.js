@@ -377,7 +377,7 @@ $(function() {
    var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
    console.log(this.options.video.attributes);
    this.options.playlistCollection.add(playlistItemModel);
-   SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author"));
+   SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author")["name"]["$t"]);
   },
 
   previewVideo: function() {
@@ -435,7 +435,7 @@ $(function() {
     var atts = {
      id: "YouTubePlayer"
     };
-    swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
+    swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "627", "383", "8", null, null, params, atts);
    }
   }
 
@@ -1004,11 +1004,13 @@ $(function() {
    SocketManagerModel.socket.emit('dj:quit');
   },
 
-  addVideoToPlaylist: function(video, thumb, title) {
+  addVideoToPlaylist: function(video, thumb, title, duration, author) {
    SocketManagerModel.socket.emit('playlist:addVideo', {
     video: video,
     thumb: thumb,
-    title: title
+    title: title,
+		duration: duration,
+		author: author
    });
   },
 

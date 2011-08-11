@@ -19,58 +19,22 @@
 				console.log('Request to play video from playlist, but playlist has no videos!');
 				return;
 			}
-			console.log("(playVideoFromPlaylist) Video to play has id: "+videoToPlay.get('videoId')+' and title: '+videoToPlay.get('title'));
-
-			this.room.currVideo = new models.Video({ videoId: videoToPlay.get('videoId'), title: videoToPlay.get('title')});
-			this.room.meter.reset();
-
-			this.getVideoDurationAndPlay(this.room.currVideo.get('videoId'));
-		},
-		
-		getVideoDurationAndPlay: function(videoId) {
-			if(!videoId) {
-				console.log('Need another video to load! videoId is null or undefined: '+videoId);
-				this.playNextVideo();
-				return;
-			}
-			console.log("Video to play has id: "+videoId);
-			var options = { 
-				host: 'gdata.youtube.com',
-				port: 80,
-				path: '/feeds/api/videos/'+videoId+'?&alt=json',
-				method: 'GET'
-			};
-
-			var room = this.room;
-			var vm = this;
-			var req = http.request(options, function(res) {
-			  res.setEncoding('utf8');
-				var videoData = '';
-			  res.on('data', function (chunk) {
-			    videoData += chunk;
-			  });
 			
-				res.on('end', function() {
-					videoData = JSON.parse(videoData);
-					var videoDuration = videoData['entry']['media$group']['yt$duration']['seconds'];
-					var videoTitle = videoData['entry']['title']['$t'];
-
-					if(room.currVideo != null) {
-						room.currVideo.set({ 
-							duration: videoDuration, 
-							timeStart: (new Date()).getTime(),
-							timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
-							title: videoTitle
-						});
-					}
-					room.sockM.announceVideo(videoId, videoDuration, videoTitle);
-				});
+			var videoId = videoToPlay.get('videoId');
+			var videoDuration = videoToPlay.get('duration');
+			var videoTitle = videoToPlay.get('title');
+			
+			this.room.currVideo = new models.Video({ 
+				videoId: videoId, 
+				title: videoTitle,
+				duration: videoDuration,
+				author: videoToPlay.get('author'),
+				timeStart: (new Date()).getTime(),
+				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000)
 			});
-
-			req.on('error', function(e) {
-			  console.log('problem with request: ' + e.message);
-			});
-			req.end();
+			
+			this.room.meter.reset();
+			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle);
 		},
 		
 		onVideoEnd: function () {	
@@ -294,7 +258,14 @@
 		},
 		
 		xport: function() {
-			return { videoId: this.get('videoId'), id: this.get('videoId'), thumb: this.get('thumb'), title: this.get('title') };
+			return { 
+				videoId: this.get('videoId'), 
+				id: this.get('videoId'), 
+				thumb: this.get('thumb'), 
+				title: this.get('title'), 
+				duration: this.get('duration'),
+				author: this.get('author')
+			};
 		}		
 	});
 	
@@ -315,12 +286,12 @@
 			this.videos = new models.VideoCollection();
 		},
 
-		addVideo: function(id, thumb, title, duration) {
+		addVideo: function(id, thumb, title, duration, author) {
 			if(this.videos.get(id) >= 0)
 				return false;
 			var vid = new models.Video();
 			vid.id = id;
-			vid.set({ videoId: id, thumb: thumb, title: title, duration: duration});
+			vid.set({ videoId: id, thumb: thumb, title: title, duration: duration, author: author});
 			this.videos.add(vid);
 		},
 		
@@ -372,10 +343,17 @@
 			return JSON.stringify(videoExport);
 		},
 		
-		mport: function(rawVideoData) {
+		/* rawVideoData : array of video objects */
+		mport: function(rawVideoData) {	
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
-				var videoToAdd = new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title /*, duration: duration*/ });
+				var videoToAdd = new models.Video({ 
+					videoId: video.videoId, 
+					thumb: video.thumb, 
+					title: video.title, 
+					duration: video.duration, 
+					author: video.author 
+				});
 				videoToAdd.id = video.videoId;
 				this.videos.add(videoToAdd);
 			}
@@ -469,30 +447,6 @@
 		addUser: function(user) {
 			this.add(user);
 			this.initializeAndSendPlaylist(user.get("socket"));
-			// userCollection = this;
-			// socket.on('user:sendFBData', function(fbUser) {
-			// 	console.log('User '+fbUser.user.name+' has sent over info');
-			// 	if(redisClient) {
-			// 		redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
-			// 	}
-			// 	var name = fbUser.user.name;
-			// 	var currUser = new models.User({name: name, socketId: socket.id, userId: fbUser.user.id});
-			// 	userCollection.add(currUser);
-			// 
-			// 	redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
-			// 		if(err) {
-			// 			console.log("Error in getting "+fbUser.user.name+" 's points!");
-			// 			return;
-			// 		}
-			// 		if(reply) {
-			// 			console.log("Points for "+fbUser.user.name+": "+reply);
-			// 			userCollection.get(socket.id).set({ points: reply});
-			// 		}
-			// 	
-			// 		userCollection.room.sockM.sendRoomState();
-			// 		userCollection.initializeAndSendPlaylist(socket);
-			// 	});
-			// })
 		},
 		
 		initializeAndSendPlaylist: function(socket) {
@@ -514,25 +468,26 @@
 			});
 		},
 		
+		logPlaylist: function(thisUser) {
+			console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+		},
 		
-		addPlaylistListeners: function(socket) {
-			
+		addPlaylistListeners: function(socket) {			
 			var userCollect = this;
 			socket.on('playlist:addVideo', function(data) {
 				var thisUser = userCollect.get(socket.id);
-				console.log('Received request to add video '+data.video+' to user '+thisUser.get('userId'));
 				if(thisUser.playlist.videos.get(data.video)) return;
-				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration);
+				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
+				this.logPlaylist(thisUser);		//debugging
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
-				console.log('received request to move video to top');
 				var thisUser = userCollect.get(socket.id);
 				
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.moveToTop(data.video);
 				}
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+				this.logPlaylist(thisUser); 	//debugging
 			});
 
 			socket.on('playlist:delete', function(data) {
@@ -541,7 +496,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.deleteVideo(data.video);
 				}
-				console.log('Received request to delete video '+data.video+' from the playlist for '+ thisUser.get('name'));
+				this.logPlaylist(thisUser); 	//debugging
 			});
 		},
 		
