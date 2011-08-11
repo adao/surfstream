@@ -8,8 +8,118 @@ div#frontdoor
 div#outer
 	display: none
 
+//skeleton
+#outer
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	weight: bold
+	font-size: 25px
+	margin: auto
+	height: 800px
+	width: 960px
+	background-color: black
+	#header
+		height: 40px
+		width: 960px
+		background-color: black
+		display: block
+	#actionBar
+		height: 40px
+		width: 960px
+		display: block
+		background-color: black
+		background-image: url('/images/room/actionbar.png')
+		#roomInfo
+			height: 40px
+			vertical-align: middle
+			#room-name, video-name
+				display: inline-block
+				color: black
+			#room-name
+				width: 300px
+			#video-name
+				margin-top: 3px
+	#coolshit
+		height: 690px
+		width: 960px
+		background-color: gray
+		display: block
+		#funroom
+			float: left
+			height: 690px
+			width: 660px
+			background-color: black
+		#right-side
+			float: right
+			height: 690px
+			width: 300px
+			background-color: gray
+			.sidebarContainer
+				background-color: white
+				display: block
+				width: 300px
+				height: 395px
+				.viewBar
+					height: 25px
+					button
+						background-color: #ececec
+						background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
+						background: -moz-linear-gradient(top, #ececec , #dbdbdb)
+						color: black
+						font-weight: 600
+					.playlist
+						text-align: center
+						width: 150px
+						height: 25px
+						float: left
+					.search
+						text-align: center
+						width: 150px
+						height: 25px
+						float: right
+					.active
+						color: white
+						background-color: #A8F3F7
+						background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8))
+						background: -moz-linear-gradient(top, #80d5f7 , #60ccf8)
+				#search-view
+					#searchContainer
+						overflow-y: scroll
+						overflow-x: hidden
+						height: 330px
+						width: 300px
+					#searchBar
+						.inputBox
+							width: 300px
+							background-image: url('/images/room/search.png')
+							height: 36px
+							text-indent: 30px
+							font-size: 14px
+							input
+								vertical-align: top
+								display: inline-block
+								margin-top: 10px
+								width: 226px
+								height: 14px
+								border: 0
+								outline: 0
+								background: transparent
+							#clear-search-container
+								height: 34px
+								width: 10px
+								display: inline-block
+								vertical-align: middle
+								#clearsearch
+									margin-top: 9px
+									vertical-align: center
+									align: middle
+									width: 17px
+									height: 17px
+									background: url('/images/room/clearsearch.png') 50% 50% no-repeat           
+
+
 //Chat Box
 div.chatContainer
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	width: 300px
 	height: 296px
 	max-width: 300px
@@ -27,8 +137,7 @@ div.chatContainer
 		div.chatTitle
 			text-indent: 10px
 			vertical-align: top
-			display: inline-block
-			font-family: Helvetica, Arial, "Lucida Grande", sans-serif
+			display: inline-block                                         
 			font-weight: 500
 			color: white
 			height: 18px
@@ -40,6 +149,27 @@ div.chatContainer
 		height: 230px
 		overflow-y: scroll
 		overflow-x: hidden
+		div.messageContainer
+			padding: 2px 4px
+			min-height: 20px
+			height: auto
+			overflow-x: hidden
+			overflow-y: visible;
+			width: 274px
+			max-width: 274px
+			font-size: 14px
+			color: black
+			span
+				padding: 2px 0px 2px
+				margin-right: 3px
+				font-weight: bold
+				display: inline-block
+			div
+				padding-top: 2px
+				padding-bottom: 2px
+				display: inline
+		div.messageContainer:nth-child(odd)
+					background-color: white
 	form.inputBox
 		background-image: url('/images/room/search.png')
 		height: 36px
@@ -52,38 +182,10 @@ div.chatContainer
 			border: 0
 			outline: 0
 			background: transparent
-
-
-//Chat Cell
-div.messageContainer
-	padding-left: 4px
-	padding-right: 4px
-	padding-top: 2px
-	padding-bottom: 2px
-	min-height: 20px
-	height: auto
-	overflow-x: hidden
-	overflow-y: visible;
-	width: 274px
-	max-width: 274px
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
-	font-size: 14px
-	color: black
-	span
-		padding-top: 2px
-		padding-bottom: 2px
-		margin-right: 3px
-		font-weight: bold
-		display: inline-block
-	div
-		padding-top: 2px
-		padding-bottom: 2px
-		display: inline
-div.messageContainer:nth-child(odd)
-			background-color: white
+					 
 //History Container
 div.historyContainer
-	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif  
 	font-size: 14px
 	height: 350px
 	width: 300px
@@ -103,7 +205,6 @@ div.historyContainer
 	.roomDescription
 		margin-left: 3px
 		margin-right: 3px
-		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 		display: block
 		height: 35px
 		font-size: 12px
@@ -141,42 +242,8 @@ div.historyContainer
 			height: 33px
 			font-size: 12px
 			width: 185px
-			.time
+			.time, .score
 				height: 14px
-			.score
-				height: 14px
-
-//sidebar
-.sidebarContainer
-	background-color: white
-	display: block
-	width: 300px
-	height: 395px
-	.viewBar
-		width: 300px
-		height: 25px
-		button
-			background-color: #ececec
-			background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
-			background: -moz-linear-gradient(top, #ececec , #dbdbdb)
-			color: black
-			font-weight: 600
-		.playlist
-			text-align: center
-			width: 150px
-			height: 25px
-			float: left
-		.search
-			text-align: center
-			width: 150px
-			height: 25px
-			float: right
-		.active
-			color: white
-			background-color: #A8F3F7
-			background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8))
-			background: -moz-linear-gradient(top, #80d5f7 , #60ccf8)
-
 
 //myplaylist
 .playlistContainer
@@ -184,150 +251,6 @@ div.historyContainer
 	width: 300px
 	border: 1px solid black
 
-//playlist cell
-.videoListCellContainer
-	width: 285px
-	height: 60px
-	.thumbContainer
-		float: left
-		width: 75px
-		height: 60px
-	.cellInfo
-		float: right
-		width: 210px
-		height: 60px
-		border-bottom: 2px solid #ECECEC
-		.videoInfo
-			float: left
-			width: 180px
-			height: 60px
-			.title
-				width: 150px
-				height: 17px
-				font-weight: bold
-				font-size: 12px
-		.cellButtons
-			float: right
-			width: 30px
-			height: 60px
-			.remove
-				margin-left: -3px
-				border: none
-				cursor: point
-				width: 30px
-				height: 30px
-				display: block
-				margin-right: 1px
-				background: url('/images/room/remove.png') 50% 50% no-repeat
-			.remove:hover
-				margin-left: -3px
-				border: none
-				cursor: point
-				width: 30px
-				height: 30px
-				display: block
-				margin-right: 1px
-				background: url('/images/room/remove_hover.png') 50% 50% no-repeat
-			.toTheTop
-				border: none
-				cursor: points
-				width: 25px
-				height: 25px
-				display: block
-				background: url('/images/room/to_the_top.png') 50% 50% no-repeat
-			.toTheTop:hover
-				border: none
-				cursor: points
-				width: 25px
-				height: 25px
-				display: block
-				background: url('/images/room/to_the_top_hover.png') 50% 50% no-repeat
-				
-//skeleton
-#outer
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
-	weight: bold
-	font-size: 25px
-	margin: auto
-	height: 800px
-	width: 960px
-	background-color: black
-	#header
-		height: 60px
-		width: 960px
-		background-color: black
-		display: block
-	#actionBar
-		height: 40px
-		width: 960px
-		display: block
-		background-color: black
-		background-image: url('/images/room/actionbar.png')
-		#roomInfo
-			height: 40px
-			vertical-align: middle
-			#room-name
-				width: 300px
-				display: inline-block
-				color: black
-			#video-name
-				margin-top: 3px
-				display: inline-block
-				color: black
-				
-	#coolshit
-		height: 690px
-		width: 960px
-		background-color: gray
-		display: block
-		#funroom
-			float: left
-			height: 690px
-			width: 660px
-			background-color: black
-		#right-side
-			float: right
-			height: 690px
-			width: 300px
-			background-color: gray
-			
-//videosearch
-//myplaylist
-#search-view
-	#searchContainer
-		overflow-y: scroll
-		overflow-x: hidden
-		height: 330px
-		width: 300px
-	#searchBar
-		.inputBox
-			width: 300px
-			background-image: url('/images/room/search.png')
-			height: 36px
-			text-indent: 30px
-			font-size: 14px
-			input
-				vertical-align: top
-				display: inline-block
-				margin-top: 10px
-				width: 226px
-				height: 14px
-				border: 0
-				outline: 0
-				background: transparent
-			#clear-search-container
-				height: 34px
-				width: 10px
-				display: inline-block
-				vertical-align: middle
-				#clearsearch
-					margin-top: 9px
-					vertical-align: center
-					align: middle
-					width: 17px
-					height: 17px
-					background: url('/images/room/clearsearch.png') 50% 50% no-repeat
-				
 //search results cell
 .searchCellContainer
 	width: 285px
@@ -397,29 +320,20 @@ div.historyContainer
 			top: 730px
 			height: 25px
 			width: 160px
-			button#history-button
+			button#history-button, button#dj 
 				height: 25px
 				width: 80px
 				display: inline-block
 				vertical-align: bottom
 				color: black
 				margin-top: 2px
-				background-image: url('/images/room/actionbar.png')
 				border-radius: 5px
 				-webkit-border-radius: 5px
-				-moz-border-radius: 5px
+				-moz-border-radius: 5px 
+			button#history-button
+				background-image: url('/images/room/actionbar.png') 
 			button#dj
-				height: 25px
-				width: 80px
-				display: inline-blocks
-				vertical-align: bottom
-				color: black
-				margin-top: 2px
 				background-image: url('/images/room/actionbar.png')
-				border-radius: 5px
-				-webkit-border-radius: 5px
-				-moz-border-radius: 5px
-	
 //room info
 #room-name, #roomInfo
 	float: left
@@ -479,29 +393,18 @@ div.historyContainer
 				-webkit-border-radius: 5px
 				-moz-border-radius: 5px
 				
+#shareFB, #shareTwit, #shareEmail 
+	vertical-align: middle
+	margin-right: 4px
+	cursor: pointer
+	border: none
+	height: 31px
+	width: 31px
 #shareFB
-	vertical-align: middle
-	margin-right: 4px
-	cursor: pointer
-	border: none
-	height: 31px
-	width: 31px
-	background: url('http://i.imgur.com/pmbBg.png')
-#shareTwit
-	vertical-align: middle
-	margin-right: 4px
-	cursor: pointer
-	border: none
-	height: 31px
-	width: 31px
 	background: url('http://i.imgur.com/1OB6R.png')
+#shareTwit 
+	background: url('http://i.imgur.com/pmbBg.png')
 #shareEmail
-	vertical-align: middle
-	margin-right: 4px
-	cursor: pointer
-	border: none
-	height: 31px
-	width: 31px
 	background: url('http://i.imgur.com/mz8Sc.png')
 
 
@@ -518,6 +421,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	overflow-y: hidden
 	background-color: #E7E7E7
 
+//chat bubbles
 .tipsy-inner
 	z-index: 666
 	
@@ -533,111 +437,64 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	height: 150px
 	width: 100px
 	background-color: white
+	.side_button_container   
+		vertical-align: top
+		display: inline-block
+		width: 50px
+		height: 60px
+		text-align: center
+	#remote-bottom
+		margin-top: 18px
+		display: block
+		width: 100px
+		height: 90px
+		text-align: center
 
-#remote-left
-	vertical-align: top
-	display: inline-block
-	width: 50px
-	height: 60px
-	text-align: center
-#remote-right
-	vertical-align: top
-	display: inline-block
-	width: 50px
-	height: 60px
-	text-align: center
-#remote-bottom
-	margin-top: 18px
-	display: block
-	width: 100px
-	height: 90px
-	text-align: center
-.buttonContainer
-	margin: 3px
-	display: inline-block
+.buttonContainer, .bottombuttonContainer, .bottombuttonContainerwide  
 	border: none
 	background-color: #818181
 	background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a))
 	border: none
 	height: 30px
-	width: 30px
 	border-radius: 6px
 	-webkit-border-radius: 6px
 	-moz-border-radius: 6px
+	
+.buttonContainer
+	margin: 3px
+	display: inline-block 
+	width: 30px
+	button#up-vote
+		background: url('http://i.imgur.com/FY6PW.png') 50% 50% no-repeat
+	button#down-vote
+		background: url('http://i.imgur.com/947FE.png') 50% 50% no-repeat
+	button#vol-up
+		background: url('http://i.imgur.com/pI9fe.png') 50% 50% no-repeat
+	button#vol-down
+		background: url('http://i.imgur.com/4bUJ1.png') 50% 50% no-repeat
+
+
+#up-vote, #down-vote, #vol-up, #vol-down, #mute, #rooms
+	height: 30px
+	width: 30px
+	border-radius: 6px
+	-webkit-border-radius: 6px
+	-moz-border-radius: 6px 
 
 .bottombuttonContainer
 	margin-top: 5px
 	margin-left: 35px
-	border: none
-	background-color: #818181
-	background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a))
-	border: none
-	height: 30px
 	width: 30px
-	border-radius: 6px
-	-webkit-border-radius: 6px
-	-moz-border-radius: 6px
+	button#mute
+		background: url('http://i.imgur.com/euzaw.png') 50% 50% no-repeat
 
 .bottombuttonContainerwide
 	margin-top: 5px
 	margin-left: 20px
-	border: none
-	background-color: #818181
-	background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a))
-	border: none
-	height: 30px
 	width: 60px
-	border-radius: 6px
-	-webkit-border-radius: 6px
-	-moz-border-radius: 6px
 	#rooms
-		height: 30px
 		width: 60px
-		border-radius: 6px
-		-webkit-border-radius: 6px
-		-moz-border-radius: 6px
 		background: transparent
-
-button#up-vote
-	border-radius: 6px
-	-webkit-border-radius: 6px
-	-moz-border-radius: 6px
-	height: 30px
-	width: 30px
-	background: url('http://i.imgur.com/FY6PW.png') 50% 50% no-repeat
-
-button#down-vote
-	border-radius: 6px
-	-webkit-border-radius: 6px
-	-moz-border-radius: 6px
-	height: 30px
-	width: 30px
-	background: url('http://i.imgur.com/947FE.png') 50% 50% no-repeat
-	
-button#vol-up
-	border-radius: 6px
-	-webkit-border-radius: 6px
-	-moz-border-radius: 6px
-	height: 30px
-	width: 30px
-	background: url('http://i.imgur.com/pI9fe.png') 50% 50% no-repeat
-
-button#vol-down
-	border-radius: 6px
-	-webkit-border-radius: 6px
-	-moz-border-radius: 6px
-	height: 30px
-	width: 30px
-	background: url('http://i.imgur.com/4bUJ1.png') 50% 50% no-repeat
-
-button#mute
-	border-radius: 6px
-	-webkit-border-radius: 6px
-	-moz-border-radius: 6px
-	height: 30px
-	width: 30px
-	background: url('http://i.imgur.com/euzaw.png') 50% 50% no-repeat
-
 
 #room-modal
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
@@ -689,58 +546,128 @@ button#mute
 				th.viewers-hd
 					width: 50px
 					padding: 6px
-					border-right: 1px solid #666;
-				th.room-name-hd
-					border-right: 1px solid #666;
-				th.room-friends-hd
-					border-right: 1px solid #666;
+				th.room-name-hd, th.room-friends-hd, th.viewers-hd
+					border-right: 1px solid #666;    
 			tr.room-row
 				height: 60px
 				td
 					border-right: 1px solid #666
-					.num-viewers
+					.num-viewers, .num-djs
 						font-weight: bold
+						text-align: center
+					.num-viewers
 						padding-top: 4px
 						font-size: 25px
-						text-align: center
 						height: 35px
-						display: block
-					.num-djs
-						font-weight: bold
+					.num-djs           
 						font-size: 14px
-						text-align: center
 						height: 25px
-						display: block
 					.room-name-container
-						.listed-room-name
+						.listed-room-name, .listed-video-name
 							text-indent: 8px
-							font-size: 16px
-							font-weight: bold
 							display: block
 							margin-bottom: 4px
+						.listed-room-name
+							font-size: 16px 
 						.listed-video-name
-							text-indent: 8px
 							font-size: 12px
-							dispaly: block
 			tr.room-row:nth-child(odd)
 				background-color: #EDEDED
 
 #video-div
 	width: 660px
 	height: 420px
-	background-image: url('/images/room/modern-room-one-px.png')
+	background: url('/images/room/tv.png') 50% 50% no-repeat
 	z-index: 1
 
 #YouTubePlayer
 	padding-left: 8px
 	position: absolute
-	top: 80px
+	top: 54px
+	
+#top-video-cell
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	font-size: 12px 
+	height: 200px
+	width: 285px
+	border: 1px solid black
+	#top-video-preview
+		float: left
+		margin-left: 6px
+		margin-top: 6px
+		margin-bottom: 6px
+		height: 73px
+		width: 120px
+		background: black
+		display: inline-block
+	#top-video-info
+		float: right
+		background-color: #ffa
+		margin: 6px 6px 6px 0px
+		display: inline-block
+		height: 73px
+		width: 147px
+div#top-video-name
+ font-size: 16px
+ background-color: green
+#top-video-uploader 
+	background-color: blue
+#top-video-time
+	display: inline-block
+	background-color: green
+#top-video-views
+	background-color: black 
                     
 #video-list
 	height: 370px
 	max-height: 370px
 	overflow-y: scroll
 	overflow-x: hidden
+	.videoListCellContainer
+		width: 285px
+		height: 60px
+		.thumbContainer
+			float: left
+			width: 75px
+			height: 60px
+		.cellInfo
+			float: right
+			width: 210px
+			height: 60px
+			border-bottom: 2px solid #ECECEC
+			.videoInfo
+				float: left
+				width: 180px
+				height: 60px
+				.title
+					width: 150px
+					height: 17px
+					font-weight: bold
+					font-size: 12px
+			.cellButtons
+				width: 30px
+				height: 60px
+				float: right
+				.remove, .remove:hover
+					width: 30px
+					height: 30px
+					margin-left: -3px
+					border: none
+					cursor: point
+					display: block
+					margin-right: 1px
+					background: url('/images/room/remove.png') 50% 50% no-repeat   
+				.remove:hover
+					background: url('/images/room/remove_hover.png') 50% 50% no-repeat
+				.toTheTop, .toTheTop:hover
+					border: none
+					cursor: points
+					width: 25px
+					height: 25px
+					display: block
+					background: url('/images/room/to_the_top.png') 50% 50% no-repeat
+				.toTheTop:hover
+					background: url('/images/room/to_the_top_hover.png') 50% 50% no-repeat
 
 #YouTubePlayerTwo
 	margin-top: 0px
