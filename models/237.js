@@ -150,20 +150,22 @@
 			this.djs.removeDJ(socketId);
 		},
 		
-		connectSocket: function(socket) {
-			this.sockM.addSocket(socket);
+		connectUser: function(user) {
+			this.users.addUser(user);
+			this.sockM.addSocket(user.socket);
 			
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
 				console.log('Sending current video to socket, title is : '+this.currVideo.get('title'));
 
-				socket.emit('video:sendInfo', {  
+				user.socket.emit('video:sendInfo', {  
 					video: this.currVideo.get('videoId'), 
 					time: Math.ceil(timeDiff), 
 					title: this.currVideo.get('title') 
 				});
 			}	
+			this.room.sockM.sendRoomState();
 		},
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
@@ -172,6 +174,16 @@
 				socket.on('message', function(msg) { 
 					room.sockM.announceChat(socket, msg) 
 				});
+		},
+		
+		xport: function() {
+			var roomData = {};
+			roomData.rID = this.get('name');
+			roomData.numDJs = this.djs.length;
+			roomData.numUsers = this.users.length;
+			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
+			
+			return roomData;
 		}
 		
 	});
@@ -180,7 +192,8 @@
 	/*     SocketManager     */
 	/*************************/
 	
-	models.SocketManager = Backbone.Model.extend({	//this model handles global socket events
+	models.SocketManager = Backbone.Model.extend({
+		//this model handles global socket events
 		
 		initialize: function(room) {
 			this.room = room;
@@ -197,7 +210,7 @@
 			
 			if(this.room) {
 				this.room.addChatListener(socket);
-				this.room.users.addConnectListener(socket);
+				//this.room.users.addConnectListener(socket);
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
@@ -301,12 +314,12 @@
 			this.videos = new models.VideoCollection();
 		},
 
-		addVideo: function(id, thumb, title) {
+		addVideo: function(id, thumb, title, duration) {
 			if(this.videos.get(id) >= 0)
 				return false;
 			var vid = new models.Video();
 			vid.id = id;
-			vid.set({ videoId: id, thumb: thumb, title: title});
+			vid.set({ videoId: id, thumb: thumb, title: title, duration: duration});
 			this.videos.add(vid);
 		},
 		
@@ -361,7 +374,7 @@
 		mport: function(rawVideoData) {
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
-				var videoToAdd = new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title });
+				var videoToAdd = new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title, duration: duration });
 				videoToAdd.id = video.videoId;
 				this.videos.add(videoToAdd);
 			}
@@ -452,31 +465,33 @@
 			this.room = room;
 		},
 		
-		addConnectListener: function(socket) {
-			userCollection = this;
-			socket.on('user:sendFBData', function(fbUser) {
-				console.log('User '+fbUser.user.name+' has sent over info');
-				if(redisClient) {
-					redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
-				}
-				var name = fbUser.user.name;
-				var currUser = new models.User({name: name, socketId: socket.id, userId: fbUser.user.id});
-				userCollection.add(currUser);
-
-				redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
-					if(err) {
-						console.log("Error in getting "+fbUser.user.name+" 's points!");
-						return;
-					}
-					if(reply) {
-						console.log("Points for "+fbUser.user.name+": "+reply);
-						userCollection.get(socket.id).set({ points: reply});
-					}
-	
-					userCollection.room.sockM.sendRoomState();
-					userCollection.initializeAndSendPlaylist(socket);
-				});
-			})
+		addUser: function(user) {
+			this.add(user);
+			this.initializeAndSendPlaylist(user.socket);
+			// userCollection = this;
+			// socket.on('user:sendFBData', function(fbUser) {
+			// 	console.log('User '+fbUser.user.name+' has sent over info');
+			// 	if(redisClient) {
+			// 		redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
+			// 	}
+			// 	var name = fbUser.user.name;
+			// 	var currUser = new models.User({name: name, socketId: socket.id, userId: fbUser.user.id});
+			// 	userCollection.add(currUser);
+			// 
+			// 	redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
+			// 		if(err) {
+			// 			console.log("Error in getting "+fbUser.user.name+" 's points!");
+			// 			return;
+			// 		}
+			// 		if(reply) {
+			// 			console.log("Points for "+fbUser.user.name+": "+reply);
+			// 			userCollection.get(socket.id).set({ points: reply});
+			// 		}
+			// 	
+			// 		userCollection.room.sockM.sendRoomState();
+			// 		userCollection.initializeAndSendPlaylist(socket);
+			// 	});
+			// })
 		},
 		
 		initializeAndSendPlaylist: function(socket) {
@@ -506,7 +521,7 @@
 				var thisUser = userCollect.get(socket.id);
 				console.log('Received request to add video '+data.video+' to user '+thisUser.get('userId'));
 				if(thisUser.playlist.videos.get(data.video)) return;
-				thisUser.playlist.addVideo(data.video, data.thumb, data.title);
+				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration);
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {

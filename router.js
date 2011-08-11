@@ -53,6 +53,10 @@ function setupRoutes(app) {
 		app.get('/roomlist', function(req, res){
 	    res.render('roomlist', { locals: {title: "surfstream.tv"}});
     });
+
+		app.get('/topvideocell', function(req, res){
+	    res.render('topvideocell', { locals: {title: "surfstream.tv"}});
+    });
 }
 
 exports.setupRoutes = setupRoutes;

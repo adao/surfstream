@@ -11,6 +11,135 @@ div#frontdoor {
 div#outer {
   display: none;
 }
+<<<<<<< HEAD
+#outer {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  weight: bold;
+  font-size: 25px;
+  margin: auto;
+  height: 800px;
+  width: 960px;
+  background-color: #000;
+}
+#outer #header {
+  height: 40px;
+  width: 960px;
+  background-color: #000;
+  display: block;
+}
+#outer #actionBar {
+  height: 40px;
+  width: 960px;
+  display: block;
+  background-color: #000;
+  background-image: url("/images/room/actionbar.png");
+}
+#outer #actionBar #roomInfo {
+  height: 40px;
+  vertical-align: middle;
+}
+#outer #actionBar #roomInfo #room-name,
+#outer #actionBar #roomInfo video-name {
+  display: inline-block;
+  color: #000;
+}
+#outer #actionBar #roomInfo #room-name {
+  width: 300px;
+}
+#outer #actionBar #roomInfo #video-name {
+  margin-top: 3px;
+}
+#outer #coolshit {
+  height: 690px;
+  width: 960px;
+  background-color: #808080;
+  display: block;
+}
+#outer #coolshit #funroom {
+  float: left;
+  height: 690px;
+  width: 660px;
+  background-color: #000;
+}
+#outer #coolshit #right-side {
+  float: right;
+  height: 690px;
+  width: 300px;
+  background-color: #808080;
+}
+#outer #coolshit #right-side .sidebarContainer {
+  background-color: #fff;
+  display: block;
+  width: 300px;
+  height: 395px;
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar {
+  height: 25px;
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar button {
+  background-color: #ececec;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb));
+  background: -moz-linear-gradient(top, #ececec, #dbdbdb);
+  color: #000;
+  font-weight: 600;
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
+  text-align: center;
+  width: 150px;
+  height: 25px;
+  float: left;
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar .search {
+  text-align: center;
+  width: 150px;
+  height: 25px;
+  float: right;
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar .active {
+  color: #fff;
+  background-color: #a8f3f7;
+  background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8));
+  background: -moz-linear-gradient(top, #80d5f7, #60ccf8);
+}
+#outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 330px;
+  width: 300px;
+}
+#outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
+  width: 300px;
+  background-image: url("/images/room/search.png");
+  height: 36px;
+  text-indent: 30px;
+  font-size: 14px;
+}
+#outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox input {
+  vertical-align: top;
+  display: inline-block;
+  margin-top: 10px;
+  width: 226px;
+  height: 14px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+#outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox #clear-search-container {
+  height: 34px;
+  width: 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+#outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox #clear-search-container #clearsearch {
+  margin-top: 9px;
+  vertical-align: center;
+  align: middle;
+  width: 17px;
+  height: 17px;
+  background: url("/images/room/clearsearch.png") 50% 50% no-repeat;
+}
+=======
+>>>>>>> d97c6ac05cedcc75476ea7a630a4c25de4f39e91
 div.chatContainer {
   width: 300px;
   height: 296px;
@@ -605,7 +734,11 @@ button.search.active {
   width: 100px;
   background-color: #fff;
 }
+<<<<<<< HEAD
+#remote .side_button_container {
+=======
 #remote-left {
+>>>>>>> d97c6ac05cedcc75476ea7a630a4c25de4f39e91
   vertical-align: top;
   display: inline-block;
   width: 50px;
@@ -818,13 +951,51 @@ button#mute {
 #video-div {
   width: 660px;
   height: 420px;
-  background-image: url("/images/room/modern-room-one-px.png");
+  background: url("/images/room/tv.png") 50% 50% no-repeat;
   z-index: 1;
 }
 #YouTubePlayer {
   padding-left: 8px;
   position: absolute;
-  top: 80px;
+  top: 54px;
+}
+#top-video-cell {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 12px;
+  height: 200px;
+  width: 285px;
+  border: 1px solid #000;
+}
+#top-video-cell #top-video-preview {
+  float: left;
+  margin-left: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  height: 73px;
+  width: 120px;
+  background: #000;
+  display: inline-block;
+}
+#top-video-cell #top-video-info {
+  float: right;
+  background-color: #ffa;
+  margin: 6px 6px 6px 0px;
+  display: inline-block;
+  height: 73px;
+  width: 147px;
+}
+div#top-video-name,
+font-size: 16px,
+background-color: green,
+#top-video-uploader {
+  background-color: #00f;
+}
+#top-video-time {
+  display: inline-block;
+  background-color: #008000;
+}
+#top-video-views {
+  background-color: #000;
 }
 #video-list {
   height: 370px;
