@@ -1,4 +1,4 @@
-(function(io) {
+(function() {
 	_ = require('underscore')._;
   Backbone = require('backbone');
 	models = exports;
@@ -152,14 +152,14 @@
 		
 		connectUser: function(user) {
 			this.users.addUser(user);
-			this.sockM.addSocket(user.socket);
+			this.sockM.addSocket(user.get("socket"));
 			
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
 				console.log('Sending current video to socket, title is : '+this.currVideo.get('title'));
 
-				user.socket.emit('video:sendInfo', {  
+				user.get("socket").emit('video:sendInfo', {  
 					video: this.currVideo.get('videoId'), 
 					time: Math.ceil(timeDiff), 
 					title: this.currVideo.get('title') 
@@ -214,6 +214,7 @@
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
+				socket.join(this.room.get("name"));
 			}
 		},
 		
@@ -380,7 +381,7 @@
 		mport: function(rawVideoData) {
 			for(var i= 0; i < rawVideoData.length; i = i+1) {
 				var video = rawVideoData[i];
-				var videoToAdd = new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title, duration: duration });
+				var videoToAdd = new models.Video({ videoId: video.videoId, thumb: video.thumb, title: video.title /*, duration: duration*/ });
 				videoToAdd.id = video.videoId;
 				this.videos.add(videoToAdd);
 			}
@@ -473,7 +474,7 @@
 		
 		addUser: function(user) {
 			this.add(user);
-			this.initializeAndSendPlaylist(user.socket);
+			this.initializeAndSendPlaylist(user.get("socket"));
 			// userCollection = this;
 			// socket.on('user:sendFBData', function(fbUser) {
 			// 	console.log('User '+fbUser.user.name+' has sent over info');
