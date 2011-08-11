@@ -159,6 +159,7 @@ $(function() {
    this.get('userModel').getUserData(this.get('userModel'));
    //Give the chat view a reference to the room's chat collection
    this.get("mainView").initializeTopBarView();
+	 this.get("mainView").initializeRoomListView(this.get("roomModel").get("roomListCollection"));
    //initializeShareBar (this.get(sharing))
    this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));
    this.get("mainView").initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
@@ -608,7 +609,7 @@ $(function() {
 		roomListTemplate: _.template($('#roomlist-template').html()),
 
 		initialize: function () {
-			this.options.roomlistCollection.bind("reset", this.addRooms);
+			this.options.roomlistCollection.bind("reset", this.addRooms, this);
 			this.render();
 			this.hide();
 		},
@@ -631,20 +632,24 @@ $(function() {
 			roomListCollection.each(function(roomListCellModel) { new RoomListCellView({roomListCellModel: roomListCellModel}) });
 			this.show();
 		}
-  });
+ });
 	
  window.RoomListCellView = Backbone.View.extend({
 		
-		roomListCellTemplate: _.template($('#roomlistCell-template').html()),
+		tagName: "tr",
+		
+		className: "room-row",
+		
+		roomListCellTemplate: _.template($('#roomlistCell-template #celltemplate-table .room-row').html()),
 
 		initialize: function () {
-			$(".table-header").after(this.render().el);																					
+			$($(".table-header")[0]).after(this.render().el);																					
 		},
 	
 		render: function() {
 			var roomListCellModel = this.options.roomListCellModel; 
-			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.numUsers, currentVideoName: roomListCellModel.curVidTitle,
-				roomname: roomListCellModel.rID, numDJs: roomListCellModel.numDJs, friends: roomListCellModel.fbids}));
+			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: roomListCellModel.get("curVidTitle"),
+				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("fbids")}));
 			return this;
 		}
 		
@@ -811,9 +816,7 @@ $(function() {
   el: 'body',
 
   initialize: function() {
-		$("#ListRooms").bind("click", SocketManagerModel.loadRoomsInfo);		
-		this.roomModal = new RoomListView({roomlistCollection: new RoomlistCollection()});	
-		$("#CreateRoom").bind("click", function() { SocketManagerModel.joinRoom("My New Room", true) });	
+
   },
 
   initializeTopBarView: function() {
@@ -844,7 +847,15 @@ $(function() {
    this.theatreView = new TheatreView({
     userCollection: userCollection
    });
-  }
+  },
+
+	initializeRoomListView: function(roomListCollection) {
+		//HACK
+			$("#ListRooms").bind("click", SocketManagerModel.loadRoomsInfo);		
+			this.roomModal = new RoomListView({roomlistCollection: roomListCollection});	
+			$("#CreateRoom").bind("click", function() { SocketManagerModel.joinRoom("My New Room", true) });	
+		//ENDHACK
+	}
 
  });
 
