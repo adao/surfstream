@@ -1047,7 +1047,14 @@ $(function() {
 	},
 	
 	joinRoom: function(rID, create) {
-		SocketManagerModel.socket.emit('room:join', !create ? {rID:rID} : {rID:rID, create: true});
+		var payload = {rID: rID};
+		if (create) payload.create = true;
+		if (SurfStreamApp.inRoom) {
+			payload.currRoom = true;
+		} else {
+			SurfStreamApp.inRoom = true;
+		}
+		SocketManagerModel.socket.emit('room:join', payload);
 	}
 
  });
