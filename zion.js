@@ -106,8 +106,9 @@ io.sockets.on('connection', function(socket) {
 		} 
 		
 		if(data.currRoom) {
-				console.log('user '+user.get('name')+'is already in a room, leaving the room: '+data.currRoom);
+				console.log('curr room: '+data.currRoom)
 				var user = roomManager.roomMap[data.currRoom].sockM.removeSocket(socket);
+				console.log('user '+user.get('name')+'is already in a room, leaving the room: '+data.currRoom);
 				roomManager.roomMap[data.currRoom].connectUser(user);
 				return;
 		}
