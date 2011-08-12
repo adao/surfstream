@@ -859,7 +859,7 @@ $(function() {
 			$("#ListRooms").bind("click", SocketManagerModel.loadRoomsInfo);		
 			this.roomModal = new RoomListView({roomlistCollection: roomListCollection});	
 			$("#CreateRoom").bind("click", function() { 
-				SocketManagerModel.joinRoom($("CreateRoomName").val(), true) 
+				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true) 
 			});
 			$("#CreateRoomName").bind("submit", function() { return false });
 		//ENDHACK

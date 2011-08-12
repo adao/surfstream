@@ -105,7 +105,11 @@ io.sockets.on('connection', function(socket) {
 			roomManager.createRoom(socket, data.rID);
 		} 
 		roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
-		if(StagingUsers[socket.id]) delete StagingUsers[socket.id];
+		if(StagingUsers[socket.id]) StagingUsers[socket.id].inRoom = true;
+	});
+	
+	socket.on('rooms:load', function(data) {
+		roomManager.sendRoomsInfo(socket);
 	});
 });
 

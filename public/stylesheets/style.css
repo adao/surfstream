@@ -688,6 +688,7 @@ button.search.active {
 }
 #room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #ededed;
+  color: #000;
 }
 #video-div {
   width: 660px;
