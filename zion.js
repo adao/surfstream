@@ -104,6 +104,9 @@ io.sockets.on('connection', function(socket) {
 		if(data.create == true) {
 			roomManager.createRoom(socket, data.rID);
 		} 
+		if(data.currRoom) {
+			roomManager.roomMap[data.currRoomID].sockM.removeSocket(socket);
+		}
 		roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
 		if(StagingUsers[socket.id]) StagingUsers[socket.id].inRoom = true;
 	});

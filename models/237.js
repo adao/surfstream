@@ -580,7 +580,7 @@
 		removeDJ: function(socketId) {
 			var djIndex = this.indexOf(this.get(socketId));
 			
-			if(djIndex < 0) return;
+			if(djIndex < 0) return false;
 			
 			if(this.currDJIndex >= djIndex && this.currDJIndex > 0) {	
 				this.currDJIndex = this.currDJIndex - 1;
