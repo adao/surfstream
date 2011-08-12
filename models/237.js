@@ -147,7 +147,7 @@
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
 			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
-			
+			console.log("Here's the roomdata: " + roomData.rID);
 			return roomData;
 		}
 		
