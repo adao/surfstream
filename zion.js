@@ -108,7 +108,7 @@ io.sockets.on('connection', function(socket) {
 			roomManager.roomMap[data.currRoomID].sockM.removeSocket(socket);
 		}
 		roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
-		if(StagingUsers[socket.id]) StagingUsers[socket.id].inRoom = true;
+		if(StagingUsers[socket.id]) delete StagingUsers[socket.id];
 	});
 	
 	socket.on('rooms:load', function(data) {
