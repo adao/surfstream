@@ -24,6 +24,7 @@
 			var videoDuration = videoToPlay.get('duration');
 			var videoTitle = videoToPlay.get('title');
 			
+			var vm = this;
 			this.room.currVideo = new models.Video({ 
 				videoId: videoId, 
 				title: videoTitle,
@@ -205,7 +206,6 @@
 				console.log('...save was successful');
 			});
 			this.announceClients();
-//		this.room.djs.removeDJ(socket.id);
 		},
 
 		announceVideo: function(videoId, duration, title) {
@@ -478,7 +478,7 @@
 				var thisUser = userCollect.get(socket.id);
 				if(thisUser.playlist.videos.get(data.video)) return;
 				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-				this.logPlaylist(thisUser);		//debugging
+				userCollect.logPlaylist(thisUser);		//debugging
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
@@ -487,7 +487,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.moveToTop(data.video);
 				}
-				this.logPlaylist(thisUser); 	//debugging
+				userCollect.logPlaylist(thisUser); 	//debugging
 			});
 
 			socket.on('playlist:delete', function(data) {
@@ -496,7 +496,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.deleteVideo(data.video);
 				}
-				this.logPlaylist(thisUser); 	//debugging
+				userCollect.logPlaylist(thisUser); 	//debugging
 			});
 		},
 		
