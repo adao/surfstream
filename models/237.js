@@ -55,11 +55,11 @@
 				this.room.clearVideo();
 			}
 		
-			if(this.room.djs.length == 0) {
+			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
 				this.room.sockM.announceStopVideo();
 			} else {
 				this.playNextVideo();
-			}
+			};
 		},
 		
 		playNextVideo: function() {
@@ -68,7 +68,7 @@
 				return;
 			}
 
-			currDJInfo = this.room.djs.nextDJ(); 
+			var currDJInfo = this.room.djs.nextDJ(); 
 			console.log('Playing next video, dj has index '+currDJInfo.index+' and is user '
 									+ currDJInfo.dj.get('userId')); 
 			this.playVideoFromPlaylist(this.room.djs.currDJ.get('socketId'));
@@ -469,7 +469,7 @@
 		},
 		
 		logPlaylist: function(thisUser) {
-			console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+
 		},
 		
 		addPlaylistListeners: function(socket) {			
@@ -478,7 +478,7 @@
 				var thisUser = userCollect.get(socket.id);
 				if(thisUser.playlist.videos.get(data.video)) return;
 				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-				userCollect.logPlaylist(thisUser);		//debugging
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
@@ -487,7 +487,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.moveToTop(data.video);
 				}
-				userCollect.logPlaylist(thisUser); 	//debugging
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
 
 			socket.on('playlist:delete', function(data) {
@@ -496,7 +496,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.deleteVideo(data.video);
 				}
-				userCollect.logPlaylist(thisUser); 	//debugging
+				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
 		},
 		
@@ -545,7 +545,7 @@
 
 					djs.room.sockM.announceDJs(); 
 
-					if(djs.length == 1) { //this user is the only dj
+					if(djs.length == 1 && djs.getNumVideos()) { //this user is the only dj
 						djs.nextDJ();
 						djs.room.vm.playVideoFromPlaylist(socket.id);
 					}
@@ -616,9 +616,16 @@
 			this.currDJ = this.at(this.currDJIndex);
 			return { dj: this.currDJ, index: this.currDJIndex };
 		},
-		
-		announceDJs: function() {
-			
+	
+		getNumVideos: function() {
+			var numVideos = 0;
+			this.each(function(user) {
+				if(user.playlist) {
+					numVideos += user.playlist.length;
+				}
+			});
+			console.log('total videos for all djs: '+numVideos);
+			return numVideos;
 		}
 	});
 	
