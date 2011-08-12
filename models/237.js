@@ -195,8 +195,8 @@
 			if(!this.room || !this.room.users || this.room.users == undefined) return;
 			if(!this.room.users.get(socket.id)) return;
 			
-			var userId = this.room.users.get(socket.id).get('userId');
 			var userToRemove = this.room.users.get(socket.id);
+			var userId = userToRemove.get('userId');
 			redisClient.set('user:'+userId+':points', userToRemove.get('points'));	//save points for user
 			this.room.removeSocket(socket.id);
 			console.log('there are now '+this.room.users.length+ ' users in the room, and dj count: '+this.room.djs.length);
@@ -208,6 +208,8 @@
 				console.log('...save was successful');
 			});
 			this.announceClients();
+			
+			return userToRemove;
 		},
 
 		announceVideo: function(videoId, duration, title) {

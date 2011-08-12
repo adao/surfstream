@@ -105,7 +105,10 @@ io.sockets.on('connection', function(socket) {
 			roomManager.createRoom(socket, data.rID);
 		} 
 		if(data.currRoom) {
-			roomManager.roomMap[data.currRoomID].sockM.removeSocket(socket);
+				var user = roomManager.roomMap[data.currRoomID].sockM.removeSocket(socket);
+				roomManager.roomMap[data.currRoom].connectUser(user);
+				console.log('user '+user.get('name')+'is already in a room, leaving the room: '+data.currRoom);
+				return;
 		}
 		roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
 		if(StagingUsers[socket.id]) StagingUsers[socket.id].inRoom = true;
