@@ -17,6 +17,7 @@
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
 			if(!videoToPlay) {
 				console.log('Request to play video from playlist, but playlist has no videos!');
+				this.playNextVideo();
 				return;
 			}
 			
@@ -56,6 +57,7 @@
 			}
 		
 			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
+				console.log('DJs: '+this.room.djs.length + ' and total vids: '+this.room.djs.getNumVideos());
 				this.room.sockM.announceStopVideo();
 			} else {
 				this.playNextVideo();
@@ -63,8 +65,8 @@
 		},
 		
 		playNextVideo: function() {
-			if(this.room.djs.length == 0) {
-				console.log("No DJs, stopping");
+			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
+				console.log('DJs: '+this.room.djs.length + ' and total vids: '+this.room.djs.getNumVideos());
 				return;
 			}
 
@@ -545,7 +547,7 @@
 
 					djs.room.sockM.announceDJs(); 
 
-					if(djs.length == 1 && djs.getNumVideos()) { //this user is the only dj
+					if(djs.length == 1) { //this user is the only dj
 						djs.nextDJ();
 						djs.room.vm.playVideoFromPlaylist(socket.id);
 					}
@@ -561,8 +563,8 @@
 				if(djs.room.currVideo) {
 					clearTimeout(djs.room.currVideo.get('timeoutId'));
 					console.log('playlist of dj after skipping: '+djs.currDJ.playlist.xport());
-					djs.room.vm.onVideoEnd();
 				}
+				djs.room.vm.onVideoEnd();
 			});
 		},
 		
@@ -621,10 +623,9 @@
 			var numVideos = 0;
 			this.each(function(user) {
 				if(user.playlist) {
-					numVideos += user.playlist.length;
+					numVideos += user.playlist.getSize();
 				}
 			});
-			console.log('total videos for all djs: '+numVideos);
 			return numVideos;
 		}
 	});
