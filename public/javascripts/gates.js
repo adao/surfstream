@@ -1050,10 +1050,9 @@ $(function() {
 		var payload = {rID: rID};
 		if (create) payload.create = true;
 		if (SurfStreamApp.inRoom) {
-			payload.currRoom = true;
-		} else {
-			SurfStreamApp.inRoom = true;
-		}
+			payload.currRoom = SurfStreamApp.inRoom;
+		}		
+		SurfStreamApp.inRoom = rID;
 		SocketManagerModel.socket.emit('room:join', payload);
 	}
 
