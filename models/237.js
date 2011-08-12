@@ -206,7 +206,6 @@
 				console.log('...save was successful');
 			});
 			this.announceClients();
-//		this.room.djs.removeDJ(socket.id);
 		},
 
 		announceVideo: function(videoId, duration, title) {
