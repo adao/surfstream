@@ -7,7 +7,9 @@ $(function() {
 
  ZeroClipboard.setMoviePath('/swf/ZeroClipboard.swf');
 
- window.ChatMessageModel = Backbone.Model.extend({});
+ window.ChatMessageModel = Backbone.Model.extend({
+	
+ });
 
  window.VideoPlayerModel = Backbone.Model.extend({
   initialize: function() {
@@ -183,7 +185,10 @@ $(function() {
   },
  });
 
- window.RoomlistCellModel = Backbone.Model.extend({});
+ window.RoomlistCellModel = Backbone.Model.extend({
+	
+	
+ });
  
  window.ChatCollection = Backbone.Collection.extend({
   model: ChatMessageModel,
@@ -236,6 +241,34 @@ $(function() {
   initialize: function() {
    this.options.playlistCollection.bind('add', this.addVideo, this);
    this.render();
+	 $("#video-list-container").sortable({
+		update: function(event, ui) {
+			var videoId = $(ui.item).attr('id');
+			var index;
+			var playlistArray = $(this).sortable('toArray');
+			for (var i = 0; i < playlistArray.length; i++) {
+				if (videoId == playlistArray[i])
+					index = i;
+			}
+			var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
+			var playlistItemModel;
+			for (var i = 0; i < playlistCollection.length; i++) {
+				if (playlistCollection.at(i).get("vid_id") == videoId) {
+					playlistItemModel = playlistCollection.at(i);
+					break;
+				}
+			}
+			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
+			playlistCollection.remove(playlistItemModel, {silent: true});
+			playlistCollection.add(copyPlaylistItemModel, {
+		    at: index,
+		    silent: true
+		   });
+		 	SocketManagerModel.toIndexInPlaylist(videoId, index);
+		},
+		containment: "#right-side"
+	 });
+	 $("#video-list-container").disableSelection();
   },
 
   hide: function() {
@@ -254,7 +287,8 @@ $(function() {
 
   addVideo: function(playlistItemModel) {
    var playlistCellView = new PlaylistCellView({
-    playlistItemModel: playlistItemModel
+    playlistItemModel: playlistItemModel,
+		id: playlistItemModel.get("vid_id")
    });
    playlistCellView.initializeView();
   }
@@ -487,6 +521,8 @@ $(function() {
  window.PlaylistCellView = Backbone.View.extend({
   playlistCellTemplate: _.template($('#video-list-cell-template').html()),
 
+	className: "videoListCellContainer",
+
   initializeView: function() {
    var buttonRemove, buttonToTop, videoID;
    //Hack because of nested view bindings part 2 (events get eaten by Sidebar)
@@ -495,32 +531,51 @@ $(function() {
    videoID = this.options.playlistItemModel.get("vid_id");
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
-    videoModel: this.options.playlistItemModel
+    videoModel: this.options.playlistItemModel,
+		playlistCollection: this.options.playlistItemModel.collection,
    }, this.removeFromPlaylist);
    buttonToTop = $("#send_to_top_" + videoID);
    buttonToTop.bind("click", {
     videoModel: this.options.playlistItemModel,
+		playlistCollection: this.options.playlistItemModel.collection,
     context: this
    }, this.toTheTop);
    this.options.playlistItemModel.bind("remove", this.removeFromList, this);
   },
 
   removeFromPlaylist: function(event) {
-   event.data.videoModel.destroy();
+	 $(this).parent().parent().parent().remove();
+	 var collectionReference = event.data.playlistCollection;
+   for (var i = 0; i < collectionReference.length; i++) {
+		if (collectionReference.at(i).get("vid_id") == event.data.videoModel.get("vid_id")) {
+			collectionReference.remove(collectionReference.at(i));
+			break;
+		}
+	 }
    SocketManagerModel.deleteFromPlaylist(event.data.videoModel.get("vid_id"));
   },
 
   toTheTop: function(event) {
    var copyPlaylistItemModel = new PlaylistItemModel(event.data.videoModel.attributes);
-   var collectionReference = event.data.videoModel.collection;
-   event.data.videoModel.destroy();
+   var collectionReference = event.data.playlistCollection;
+	 if (collectionReference.at(0).get("vid_id") == event.data.videoModel.get("vid_id")) {
+		return;
+	 }
+   $(this).parent().parent().parent().remove();
+	 for (var i = 0; i < collectionReference.length; i++) {
+		if (collectionReference.at(i).get("vid_id") == event.data.videoModel.get("vid_id")) {
+			collectionReference.remove(collectionReference.at(i));
+			break;
+		}
+	 }
    collectionReference.add(copyPlaylistItemModel, {
     at: 0,
     silent: true
    });
    SocketManagerModel.toTopOfPlaylist(event.data.videoModel.get("vid_id"));
    var playlistCellView = new PlaylistCellView({
-    playlistItemModel: copyPlaylistItemModel
+    playlistItemModel: copyPlaylistItemModel,
+		id: event.data.videoModel.get("vid_id")
    });
    var buttonRemove, buttonToTop, videoID;
    playlistCellView.render();
@@ -528,11 +583,13 @@ $(function() {
    videoID = copyPlaylistItemModel.get("vid_id");
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
-    videoModel: copyPlaylistItemModel
+    videoModel: copyPlaylistItemModel,
+		playlistCollection: collectionReference
    }, event.data.context.removeFromPlaylist);
    buttonToTop = $("#send_to_top_" + videoID);
    buttonToTop.bind("click", {
     videoModel: copyPlaylistItemModel,
+		playlistCollection: collectionReference,
     context: event.data.context
    }, event.data.context.toTheTop);
    copyPlaylistItemModel.bind("remove", event.data.context.removeFromList, event.data.context);
@@ -594,10 +651,6 @@ $(function() {
     username: chat.get("username"),
     msg: chat.get("msg")
    });
-   this.chatContainer.activeScroll();
-  }
- }, {
-  scrollToBottom: function() {
    this.chatContainer.activeScroll();
   }
  });
@@ -756,7 +809,6 @@ $(function() {
   }
 
  });
-
 	
  window.ShareBarView = Backbone.View.extend({
   el: '#shareBar',
@@ -1041,6 +1093,13 @@ $(function() {
     video: vid_id
    })
   },
+
+	toIndexInPlaylist: function(vid_id, newIndex) {
+		SocketManagerModel.socket.emit("playlist:moveVideo"), {
+			video: vid_id,
+			index: newIndex
+		}
+	},
 
 	loadRoomsInfo: function() {
 		SocketManagerModel.socket.emit('rooms:load');

@@ -1,9 +1,8 @@
 #video-list-cell-template(style="display:none;")
-	.videoListCellContainer(id='vid_{{ vid_id }}')
-		img.thumbContainer
-		.cellInfo
-			.videoInfo
-				.title {{ title }}
-			.cellButtons
-				button.remove(id ='remove_video_{{ vid_id }}') 
-				button.toTheTop(id = 'send_to_top_{{ vid_id }}')
+	img.thumbContainer
+	.cellInfo(id='vid_{{ vid_id }}')
+		.videoInfo
+			.title {{ title }}
+		.cellButtons
+			button.remove(id ='remove_video_{{ vid_id }}') 
+			button.toTheTop(id = 'send_to_top_{{ vid_id }}')
