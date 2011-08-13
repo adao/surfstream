@@ -5,6 +5,11 @@
 	var redisClient = require('redis').createClient(),
 	http = require('http');
 	
+	var permSockEvents = {};
+	permSockEvents['user:sendFBData'] = true;
+	permSockEvents['room:join'] = true;
+	permSockEvents['rooms:load'] = true;
+	
 	/*************************/
 	/*      VideoManager     */
 	/*************************/
@@ -183,6 +188,7 @@
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
+				console.log('socket is joining channel with name: '+this.room.get('name'));
 				socket.join(this.room.get("name"));
 			}
 		},
@@ -197,6 +203,10 @@
 		removeSocket: function(socket) {
 			if(!this.room || !this.room.users || this.room.users == undefined) return;
 			if(!this.room.users.get(socket.id)) return;
+			
+			socket.leave(this.room.get('name'));
+			
+			this.stripListeners(socket);
 			
 			var userToRemove = this.room.users.get(socket.id);
 			var userId = userToRemove.get('userId');
@@ -213,6 +223,16 @@
 			this.announceClients();
 			
 			return userToRemove;
+		},
+		
+		stripListeners: function(socket) {
+			for(var socketEvent in socket._events) {
+				if(socket._events.hasOwnProperty(socketEvent)) {
+					if(!permSockEvents[socketEvent]) {
+						socket.removeAllListeners(socketEvent);
+					}
+				}
+			}
 		},
 
 		announceVideo: function(videoId, duration, title) {
@@ -310,14 +330,21 @@
 			return this.videos.length;
 		},
 		
-		moveToTop: function(videoId) {
+		moveToIndex: function(videoId, indexToMove) {
+			if(indexToMove < 0 || indexToMove >= this.videos.length) //make sure index is legit
+				return false;
+			
 			var video = this.videos.get(videoId);
 			if(video) {
 				this.videos.remove(video);
-				this.videos.add(video, { at: 0 });
+				this.videos.add(video, { at: indexToMove });
 				return true;
 			}
 			return false;
+		},
+		
+		moveToTop: function(videoId) {
+			return this.moveToIndex(videoId, 0);
 		},
 		
 		moveToBottom: function(videoId) {
@@ -479,10 +506,6 @@
 			});
 		},
 		
-		logPlaylist: function(thisUser) {
-
-		},
-		
 		addPlaylistListeners: function(socket) {			
 			var userCollect = this;
 			socket.on('playlist:addVideo', function(data) {
@@ -509,6 +532,14 @@
 				}
 				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
+			
+			socket.on('playlist:moveVideo', function(data) {
+				var thisUser = userCollect.get(socket.id);
+
+				if(thisUser.playlist.videos.get(data.video)) {
+					thisUser.playlist.moveToIndex(data.video, data.index);
+				}
+			})
 		},
 		
 		xport: function() {
