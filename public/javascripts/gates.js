@@ -1,6 +1,6 @@
 $(function() {
+ 
  socket_init = io.connect();
-
  _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
  };
@@ -109,22 +109,15 @@ $(function() {
 
  });
 
- window.SearchResultModel = Backbone.Model.extend({
-  initialize: function() {
+ window.SearchResultModel = Backbone.Model.extend({});
 
-  }
+ window.PlaylistItemModel = Backbone.Model.extend({});
 
- });
-
- window.PlaylistItemModel = Backbone.Model.extend({
-  initialize: function() {
-
-  }
- });
+ window.RoomHistoryItemModel = Backbone.Model.extend({});
 
  window.SurfStreamModel = Backbone.Model.extend({
   defaults: {
-   sharing: new ShareModel
+   sharing: new ShareModel()
   },
 
   initialize: function() {
@@ -135,41 +128,38 @@ $(function() {
 
    this.set({
     roomModel: new RoomModel({
-     playerModel: new VideoPlayerModel,
-     chatCollection: new ChatCollection,
-     userCollection: new UserCollection,
-		 roomListCollection: new RoomlistCollection
+     playerModel: new VideoPlayerModel(),
+     chatCollection: new ChatCollection(),
+     userCollection: new UserCollection(),
+		 roomListCollection: new RoomlistCollection(),
+		 roomHistoryCollection: new RoomHistoryCollection()
     }),
     socketManagerModel: new SocketManagerModel({
      socket: this.get("socket"),
      app: this
     }),
     searchBarModel: new SearchBarModel({
-     searchResultsCollection: new SearchResultsCollection
+     searchResultsCollection: new SearchResultsCollection()
     })
    });
-   this.set({
+   
+   this.get("mainView").initializeTopBarView();
+	 this.get("mainView").initializeRoomListView(this.get("roomModel").get("roomListCollection"));
+   this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));   
+   this.get("mainView").initializePlayerView(this.get("roomModel").get("playerModel"), this.get("roomModel").get("userCollection"));
+	 this.get("mainView").initializeRoomHistoryView(this.get("roomModel").get("roomHistoryCollection"));
+	
+	//initing the user sends the initial socket event
+	 this.set({
     userModel: new UserModel({
      is_main_user: true,
-     playlistCollection: new PlaylistCollection,
+     playlistCollection: new PlaylistCollection(),
      socketManagerModel: this.get("socketManagerModel")
     })
    })
-
+	
+	 this.get("mainView").initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
    this.get('userModel').getUserData(this.get('userModel'));
-   //Give the chat view a reference to the room's chat collection
-   this.get("mainView").initializeTopBarView();
-	 this.get("mainView").initializeRoomListView(this.get("roomModel").get("roomListCollection"));
-   //initializeShareBar (this.get(sharing))
-   this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));
-   this.get("mainView").initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
-   this.get("mainView").initializePlayerView(this.get("roomModel").get("playerModel"), this.get("roomModel").get("userCollection"));
-
-   //this.setVideos([{video: "THIS"}, {video: "WORKS"}]);
-   //this.addUserToCurRoom({userId: "ebabchick", x: 20, y:60})
-   //Make sure everything gets initialized first before we start the view magic
-   //This can change to render some thing before we init the models and then
-   //finish here later				
   },
 
   setPlaylist: function(videos) {
@@ -196,7 +186,9 @@ $(function() {
 
   }
  });
-
+ window.RoomHistoryCollection = Backbone.Collection.extend({
+	model: RoomHistoryItemModel
+ });
  window.SearchResultsCollection = Backbone.Collection.extend({
   model: SearchResultModel,
 
@@ -258,6 +250,55 @@ $(function() {
    });
    playlistCellView.initializeView();
   }
+ });
+
+ window.RoomHistoryView = Backbone.View.extend({
+	className: "historyContainer",
+	
+	roomHistoryViewTemplate: _.template($('#history-template').html()),
+	
+	initialize: function() {
+		this.options.roomHistoryCollection.bind("reset", this.resetRoomHistory, this);
+		this.options.roomHistoryCollection.bind("add", this.addToRoomHistory, this);
+		$($("#history-button")[0]).bind("click", this.toggleVisibility);
+		this.render();
+	},
+	
+	render: function() {
+		$(this.el).html(this.roomHistoryViewTemplate());
+		$($("#people-area")[0]).append(this.el);
+		$($(".historyContainer")[0]).hide();
+		
+	},
+	
+	toggleVisibility: function() {
+		$($(".historyContainer")[0]).toggle();
+	},
+	
+	resetRoomHistory: function() {
+		this.render();
+		this.options.roomHistoryCollection.each(function(roomHistoryItem) {new RoomHistoryItemView({room: roomHistoryItem})});
+	},
+	
+	addToRoomHistory: function(newRoom) {
+		new RoomHistoryItemView({room: newRoom});
+	} 
+ });
+
+ window.RoomHistoryItemView = Backbone.View.extend({
+	className: "videoLog",
+	
+	roomHistoryItemViewTemplate: _.template($('#historyCell-template').html()),
+	
+	initialize: function() {
+		$($(".videoHistory")[0]).append(this.render().el);
+	},
+	
+	render: function() {
+		var historyItem = this.options.room;
+		$(this.el).html(this.roomHistoryItemViewTemplate({title: historyItem.get("title"), length: historyItem.get("length"), percent: historyItem.get("percent")}));
+		return this;
+	}
  });
 
  window.SideBarView = Backbone.View.extend({
@@ -377,7 +418,7 @@ $(function() {
    var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
    console.log(this.options.video.attributes);
    this.options.playlistCollection.add(playlistItemModel);
-   SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author")["name"]["$t"]);
+   SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author").name.$t);
   },
 
   previewVideo: function() {
@@ -392,13 +433,13 @@ $(function() {
     //$('#preview-container').slideDown("slow");
     //$("#searchContainer").css("height", 187);
     // $("#preview-container").animate({
-    // 					height: 195
-    // 				}, "slow", null, function() {
-    // 					window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
-    // 				});
+    //	height: 195
+    // }, "slow", null, function() {
+    // window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
+    //});
     // $("#searchContainer").animate({
-    // 					height: 165
-    // 				}, "slow");
+    //height: 165
+    // }, "slow");
     $("#searchContainer").css('height', 133);
    } else {
     window.YTPlayerTwo.loadVideoById(videoID);
@@ -471,15 +512,15 @@ $(function() {
   hidePreviewPlayer: function() {
    window.playerTwoLoaded = false;
    // $("#preview-container").animate({
-   // 	height: 0,
-   // 	width: 0
+   // height: 0,
+   // width: 0
    // }, "slow", null, function() {
-   // 	$("#preview-container").css('display', 'none');
+   // $("#preview-container").css('display', 'none');
    // });
    $("#preview-container").css('display', 'none');
    $("#searchContainer").css('height', 360);
    // $("#searchContainer").animate({
-   // 	height: 360
+   // height: 360
    // }, "slow");
   }
  });
@@ -659,7 +700,7 @@ $(function() {
 		}
 		
 		
-	});
+ });
 
  window.ChatCellView = Backbone.View.extend({
 
@@ -790,7 +831,7 @@ $(function() {
     url: 'www.youtube.com',
     caption: 'Join your friends and watch videos online!',
     description: 'SurfStream.tv lets you explore new video content on the web. Very similar to turntable.fm' // ,
-    // 					picture: '/images/logo.png'
+    // picture: '/images/logo.png'
    }, function(response) {
     if (response && response.post_id) {
      alert('Post was published.');
@@ -863,6 +904,10 @@ $(function() {
 			});
 			$("#CreateRoomName").bind("submit", function() { return false });
 		//ENDHACK
+	},
+	
+	initializeRoomHistoryView: function(roomHistoryCollection) {
+		this.roomHistoryView = new RoomHistoryView({roomHistoryCollection: roomHistoryCollection});
 	}
 
  });
@@ -987,7 +1032,11 @@ $(function() {
 			app.get("roomModel").get("roomListCollection").reset(roomsData);
 	});
 	
- 	},
+	socket.on("room:history", function(roomHistory) {
+		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
+	});
+	
+ },
 
   /* Initialize first contact */
   makeFirstContact: function(user) {

@@ -50,8 +50,10 @@
 					videoId: this.room.currVideo.get('videoId'), 
 					up: this.room.meter.up, 
 					down: this.room.meter.down,
+					title: this.room.currVideo.get('title'),
+					length: this.room.currVideo.get('duration')
 				});
-				redisClient.rpush('room:history', JSON.stringify(videoFinished));
+				redisClient.rpush('room:history:' + this.room.get("name"), JSON.stringify(videoFinished));
 				this.room.history.add(videoFinished);
 				this.room.clearVideo();
 			}
@@ -189,6 +191,7 @@
 			this.announceClients();
 			this.announceDJs();
 			this.announceMeter();
+			this.announceRoomHistory();
 		},
 
 		removeSocket: function(socket) {
@@ -241,6 +244,10 @@
 		
 		announceChat : function(socket, msg) {
 			io.sockets.in(this.room.get('name')).emit('message', {event: 'chat', data: msg});
+		},
+		
+		announceRoomHistory : function() {
+			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.toJSON());
 		}
 	});
 
@@ -278,7 +285,7 @@
 	/*************************/
 	
 	models.VideoCollection = Backbone.Collection.extend({
-		model: models.Video
+		model: models.Video,
 	});
 
 	/*************************/
