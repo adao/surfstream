@@ -134,7 +134,7 @@
 				console.log('Sending current video to socket, title is : '+this.currVideo.get('title'));
 
 				user.get("socket").emit('video:sendInfo', {  
-					video: this.currVideo.get('videoId'), 
+					id: this.currVideo.get('videoId'), 
 					time: Math.ceil(timeDiff), 
 					title: this.currVideo.get('title') 
 				});
@@ -236,7 +236,7 @@
 		},
 
 		announceVideo: function(videoId, duration, title) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { video: videoId, time: 0, title: title});
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title});
 		},
 		
 		announceClients: function() {

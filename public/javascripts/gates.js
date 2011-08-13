@@ -9,11 +9,7 @@ $(function() {
 
  window.ChatMessageModel = Backbone.Model.extend({});
 
- window.VideoPlayerModel = Backbone.Model.extend({
-  initialize: function() {
-
-  }
- });
+ window.VideoPlayerModel = Backbone.Model.extend({});
 
  window.RoomModel = Backbone.Model.extend({
 
@@ -144,8 +140,7 @@ $(function() {
    });
    
    this.get("mainView").initializeTopBarView();
-	 this.get("mainView").initializeRoomListView(this.get("roomModel").get("roomListCollection"));
-   this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));   
+	 this.get("mainView").initializeRoomListView(this.get("roomModel").get("roomListCollection"));      
    this.get("mainView").initializePlayerView(this.get("roomModel").get("playerModel"), this.get("roomModel").get("userCollection"));
 	 this.get("mainView").initializeRoomHistoryView(this.get("roomModel").get("roomHistoryCollection"));
 	
@@ -159,18 +154,9 @@ $(function() {
    })
 	
 	 this.get("mainView").initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
+	 this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));
    this.get('userModel').getUserData(this.get('userModel'));
-  },
-
-  setPlaylist: function(videos) {
-   for (var index in videos) {
-    this.get("userModel").get("playlistCollection").add({
-     title: videos[index].title,
-     thumb: videos[index].thumb,
-     vid_id: videos[index].id
-    });
-   }
-  },
+  }
  });
 
  window.RoomlistCellModel = Backbone.Model.extend({});
@@ -227,6 +213,7 @@ $(function() {
 
   initialize: function() {
    this.options.playlistCollection.bind('add', this.addVideo, this);
+   this.options.playlistCollection.bind('reset', this.resetPlaylist, this);
    this.render();
   },
 
@@ -249,7 +236,12 @@ $(function() {
     playlistItemModel: playlistItemModel
    });
    playlistCellView.initializeView();
-  }
+  },
+
+	resetPlaylist : function() {
+		$("#video-list .videoListContainer").empty();
+		this.options.playlistCollection.each(function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
+	}
  });
 
  window.RoomHistoryView = Backbone.View.extend({
@@ -291,12 +283,13 @@ $(function() {
 	roomHistoryItemViewTemplate: _.template($('#historyCell-template').html()),
 	
 	initialize: function() {
-		$($(".videoHistory")[0]).append(this.render().el);
+		$($(".videoHistory")[0]).prepend(this.render().el);
 	},
 	
 	render: function() {
 		var historyItem = this.options.room;
-		$(this.el).html(this.roomHistoryItemViewTemplate({title: historyItem.get("title"), length: historyItem.get("length"), percent: historyItem.get("percent")}));
+		$(this.el).html(this.roomHistoryItemViewTemplate({title: historyItem.get("title"), length: ss_formatSeconds(historyItem.get("length")), percent: historyItem.get("percent")}));
+		this.$(".thumbContainer").attr("src", ss_idToImg(historyItem.get("videoId")));
 		return this;
 	}
  });
@@ -413,7 +406,7 @@ $(function() {
   addToPlaylist: function() {
    var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
    this.options.video.set({
-    vid_id: videoID
+    videoId: videoID
    });
    var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
    console.log(this.options.video.attributes);
@@ -533,7 +526,7 @@ $(function() {
    //Hack because of nested view bindings part 2 (events get eaten by Sidebar)
    this.render();
    $("#video-list .videoListContainer").append(this.el);
-   videoID = this.options.playlistItemModel.get("vid_id");
+   videoID = this.options.playlistItemModel.get("videoId");
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
     videoModel: this.options.playlistItemModel
@@ -548,7 +541,7 @@ $(function() {
 
   removeFromPlaylist: function(event) {
    event.data.videoModel.destroy();
-   SocketManagerModel.deleteFromPlaylist(event.data.videoModel.get("vid_id"));
+   SocketManagerModel.deleteFromPlaylist(event.data.videoModel.get("videoId"));
   },
 
   toTheTop: function(event) {
@@ -559,14 +552,14 @@ $(function() {
     at: 0,
     silent: true
    });
-   SocketManagerModel.toTopOfPlaylist(event.data.videoModel.get("vid_id"));
+   SocketManagerModel.toTopOfPlaylist(event.data.videoModel.get("videoId"));
    var playlistCellView = new PlaylistCellView({
     playlistItemModel: copyPlaylistItemModel
    });
    var buttonRemove, buttonToTop, videoID;
    playlistCellView.render();
    $("#video-list .videoListContainer").prepend(playlistCellView.el);
-   videoID = copyPlaylistItemModel.get("vid_id");
+   videoID = copyPlaylistItemModel.get("videoId");
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
     videoModel: copyPlaylistItemModel
@@ -582,7 +575,7 @@ $(function() {
   render: function() {
    $(this.el).html(this.playlistCellTemplate({
     title: this.options.playlistItemModel.get('title'),
-    vid_id: this.options.playlistItemModel.get("vid_id")
+    vid_id: this.options.playlistItemModel.get("videoId")
    }));
    this.$(".thumbContainer").attr("src", this.options.playlistItemModel.get("thumb"));
    return this;
@@ -590,7 +583,7 @@ $(function() {
 
   removeFromList: function(playlistItemModel, collection) {
    //hack because backbone sucks
-   $("#vid_" + playlistItemModel.attributes.vid_id).remove();
+   $("#vid_" + playlistItemModel.attributes.videoId).remove();
   }
  });
 
@@ -602,6 +595,7 @@ $(function() {
   initialize: function() {
    this.render();
    this.options.chatCollection.bind("add", this.makeNewChatMsg, this);
+	 this.options.chatCollection.bind("reset", this.clearChat);
    this.chatContainer = new AutoScroll({
     bottomThreshold: 215,
     scrollContainerId: 'messages'
@@ -636,7 +630,11 @@ $(function() {
     msg: chat.get("msg")
    });
    this.chatContainer.activeScroll();
-  }
+  },
+
+	clearChat: function() {
+		$("#messages").empty();
+	}
  }, {
   scrollToBottom: function() {
    this.chatContainer.activeScroll();
@@ -696,7 +694,7 @@ $(function() {
 		},
 		
 	  clickJoinRoom: function(el) {
-			SocketManagerModel.joinRoom($(this).find(".listed-room-name").html(), false) ;
+			SocketManagerModel.joinRoom($(this).find(".listed-room-name").html(), false);
 		}
 		
 		
@@ -782,17 +780,20 @@ $(function() {
   },
 
   removeUser: function(user) {
-   this.$("#" + user.id).remove();
+	 var avatar = this.$("#" + user.id);
+	 avatar.tipsy('hide');
+   avatar.remove();
   }
 
  }, { /* Class properties */
 
   tipsyChat: function(text, fbid) {
    var userPic = $("#" + fbid);
+	 var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
    setTimeout(function() {
-    userPic.tipsy("hide")
+	  if($("#" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
 
@@ -932,7 +933,8 @@ $(function() {
    /* First set up all listeners */
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
-    //video.video = videoID, video.time = seconds into video
+		var curvid, curLen, roomModel, playerModel;
+		curLen = YTPlayer.getDuration();
     if (!window.playerLoaded) {
      window.playerLoaded = true;
      var params = {
@@ -941,18 +943,18 @@ $(function() {
      var atts = {
       id: "YouTubePlayer"
      };
-     swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
+     swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
      window.secs = video.time;
-     window.video_ID = video.video;
+     window.video_ID = video.id;
      playerLoaded = true;
 
     } else {
-     window.YTPlayer.loadVideoById(video.video, video.time);
+     window.YTPlayer.loadVideoById(video.id, video.time);
      new ChatCellView({
       username: "surfstream.tv",
       msg: "Now playing " + video.title
      });
-     window.SurfStreamApp.get("mainView").chatView.chatContainer.activeScroll();
+     app.get("mainView").chatView.chatContainer.activeScroll();
     }
     //HACK
     $("#room-name").html(video.title)
@@ -965,8 +967,16 @@ $(function() {
       user.css("border-color", "yellow");
      }
 
-    })
+    });
     //ENDHACK
+		roomModel = app.get("roomModel")
+		playerModel = roomModel.get("playerModel");
+		curvid =  playerModel.get("curVid");
+		if (curvid) {
+			app.get("mainView").roomHistoryView.addToRoomHistory(new RoomHistoryItemModel({title: curvid.curTitle, length: curLen, percent: curvid.percent, videoId: curvid.curID}));
+		}
+		//save the currently playing state
+		playerModel.set({curVid: {curID: video.id, curTitle: video.title, percent: 0.5} });
    });
 
    socket.on('video:stop', function() {
@@ -977,7 +987,8 @@ $(function() {
    });
 
    socket.on('playlist:refresh', function(videoArray) {
-    app.setPlaylist(videoArray);
+    //app.setPlaylist(videoArray);
+		app.get("userModel").get("playlistCollection").reset(videoArray);
    });
 
    socket.on('message', function(msg) {
@@ -1014,8 +1025,10 @@ $(function() {
 
    //.upvoteset maps userids who up to true, .down, .up totals
    socket.on("meter:announce", function(meterStats) {
+		var total = 0;
     for (var fbid in meterStats.upvoteSet) {
      if (meterStats.upvoteSet[fbid] === true) {
+			total = total + 1;
       //app.get("roomModel").get("users").get(fbid).
       //BEGIN HACK
       if ($("#" + fbid).css("border-color") != "yellow") {
@@ -1026,14 +1039,18 @@ $(function() {
       //ENDHACK
      }
     }
+	 app.get("roomModel").get("playerModel").set({percent: total / meterStats.upvoteSet.size});
    });
 
 	socket.on("rooms:announce", function(roomsData) {
 			app.get("roomModel").get("roomListCollection").reset(roomsData);
 	});
 	
+	/* WE ARE OVERLOADING THIS TO CLEAR THE CHAT, ASSUMING THIS ONLY HAPPENS ON NEW ROOM JOIN */
 	socket.on("room:history", function(roomHistory) {
 		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
+		/* OVERLOADED RESET */
+		app.get("roomModel").get("chatCollection").reset();
 	});
 	
  },
@@ -1102,6 +1119,9 @@ $(function() {
 			payload.currRoom = SurfStreamApp.inRoom;
 		}		
 		SurfStreamApp.inRoom = rID;
+		window.YTPlayer.stopVideo();
+		window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
+		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
 		SocketManagerModel.socket.emit('room:join', payload);
 	}
 
@@ -1114,8 +1134,6 @@ $(function() {
  console.log("started app");
 
 });
-
-
 
 function onYouTubePlayerReady(playerId) {
  if (playerId == "YouTubePlayerTwo") {
@@ -1164,16 +1182,23 @@ function mute(event) {
 
 
 function onytplayerStateChange(newState) {
-/*	$('#state').html("Player state: "+newState);
-	if(newState == 0 && currVideo.isLeader) { 
-		console.log("Video finished, broadcasting back to server");
-		socket.emit('videoFinished');
-		currVideo = {};
-	} */
+
 }
 
+function ss_formatSeconds(time) {
+	var hours = null, minutes = null, seconds = null, result;
+	time = Math.floor(time);
+	hours = Math.floor(time / 3600);
+	time = time - hours * 3600;
+	minutes = Math.floor(time / 60);
+	seconds = time - minutes * 60;
+	result =  "" + ((hours > 0) ? (hours + ":") : "") + ((minutes > 0) ? ((minutes < 10 && hours > 0) ? "0" + minutes + ":" : minutes + ":") : "") + ( (seconds < 10) ? "0" + seconds : seconds);
+	return result;
+}
 
-
+function ss_idToImg(id) {
+	return "http://img.youtube.com/vi/"+id+"/0.jpg";
+}
 function skipVideo() {
  socket_init.emit("video:skip");
 }
