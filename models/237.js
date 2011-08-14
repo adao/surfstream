@@ -5,6 +5,11 @@
 	var redisClient = require('redis').createClient(),
 	http = require('http');
 	
+	var permSockEvents = {};
+	permSockEvents['user:sendFBData'] = true;
+	permSockEvents['room:join'] = true;
+	permSockEvents['rooms:load'] = true;
+	
 	/*************************/
 	/*      VideoManager     */
 	/*************************/
@@ -50,8 +55,10 @@
 					videoId: this.room.currVideo.get('videoId'), 
 					up: this.room.meter.up, 
 					down: this.room.meter.down,
+					title: this.room.currVideo.get('title'),
+					length: this.room.currVideo.get('duration')
 				});
-				redisClient.rpush('room:history', JSON.stringify(videoFinished));
+				redisClient.rpush('room:history:' + this.room.get("name"), JSON.stringify(videoFinished));
 				this.room.history.add(videoFinished);
 				this.room.clearVideo();
 			}
@@ -127,7 +134,7 @@
 				console.log('Sending current video to socket, title is : '+this.currVideo.get('title'));
 
 				user.get("socket").emit('video:sendInfo', {  
-					video: this.currVideo.get('videoId'), 
+					id: this.currVideo.get('videoId'), 
 					time: Math.ceil(timeDiff), 
 					title: this.currVideo.get('title') 
 				});
@@ -181,6 +188,7 @@
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
+				console.log('socket is joining channel with name: '+this.room.get('name'));
 				socket.join(this.room.get("name"));
 			}
 		},
@@ -189,14 +197,19 @@
 			this.announceClients();
 			this.announceDJs();
 			this.announceMeter();
+			this.announceRoomHistory();
 		},
 
 		removeSocket: function(socket) {
 			if(!this.room || !this.room.users || this.room.users == undefined) return;
 			if(!this.room.users.get(socket.id)) return;
 			
-			var userId = this.room.users.get(socket.id).get('userId');
+			socket.leave(this.room.get('name'));
+			
+			this.stripListeners(socket);
+			
 			var userToRemove = this.room.users.get(socket.id);
+			var userId = userToRemove.get('userId');
 			redisClient.set('user:'+userId+':points', userToRemove.get('points'));	//save points for user
 			this.room.removeSocket(socket.id);
 			console.log('there are now '+this.room.users.length+ ' users in the room, and dj count: '+this.room.djs.length);
@@ -208,10 +221,22 @@
 				console.log('...save was successful');
 			});
 			this.announceClients();
+			
+			return userToRemove;
+		},
+		
+		stripListeners: function(socket) {
+			for(var socketEvent in socket._events) {
+				if(socket._events.hasOwnProperty(socketEvent)) {
+					if(!permSockEvents[socketEvent]) {
+						socket.removeAllListeners(socketEvent);
+					}
+				}
+			}
 		},
 
 		announceVideo: function(videoId, duration, title) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { video: videoId, time: 0, title: title});
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title});
 		},
 		
 		announceClients: function() {
@@ -239,6 +264,10 @@
 		
 		announceChat : function(socket, msg) {
 			io.sockets.in(this.room.get('name')).emit('message', {event: 'chat', data: msg});
+		},
+		
+		announceRoomHistory : function() {
+			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.toJSON());
 		}
 	});
 
@@ -276,7 +305,7 @@
 	/*************************/
 	
 	models.VideoCollection = Backbone.Collection.extend({
-		model: models.Video
+		model: models.Video,
 	});
 
 	/*************************/
@@ -301,14 +330,21 @@
 			return this.videos.length;
 		},
 		
-		moveToTop: function(videoId) {
+		moveToIndex: function(videoId, indexToMove) {
+			if(indexToMove < 0 || indexToMove >= this.videos.length) //make sure index is legit
+				return false;
+			
 			var video = this.videos.get(videoId);
 			if(video) {
 				this.videos.remove(video);
-				this.videos.add(video, { at: 0 });
+				this.videos.add(video, { at: indexToMove });
 				return true;
 			}
 			return false;
+		},
+		
+		moveToTop: function(videoId) {
+			return this.moveToIndex(videoId, 0);
 		},
 		
 		moveToBottom: function(videoId) {
@@ -470,10 +506,6 @@
 			});
 		},
 		
-		logPlaylist: function(thisUser) {
-
-		},
-		
 		addPlaylistListeners: function(socket) {			
 			var userCollect = this;
 			socket.on('playlist:addVideo', function(data) {
@@ -500,6 +532,14 @@
 				}
 				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
+			
+			socket.on('playlist:moveVideo', function(data) {
+				var thisUser = userCollect.get(socket.id);
+
+				if(thisUser.playlist.videos.get(data.video)) {
+					thisUser.playlist.moveToIndex(data.video, data.index);
+				}
+			})
 		},
 		
 		xport: function() {

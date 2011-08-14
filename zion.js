@@ -104,11 +104,20 @@ io.sockets.on('connection', function(socket) {
 		if(data.create == true) {
 			roomManager.createRoom(socket, data.rID);
 		} 
+		
 		if(data.currRoom) {
-			roomManager.roomMap[data.currRoomID].sockM.removeSocket(socket);
+				console.log('curr room: '+data.currRoom);
+				var user = roomManager.roomMap[data.currRoom].sockM.removeSocket(socket);
+				if(user) {
+					console.log('user '+user.get('name')+'is already in a room, leaving the room: '+data.currRoom);
+					roomManager.roomMap[data.rID].connectUser(user);
+				}
+				return;
 		}
-		roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
-		if(StagingUsers[socket.id]) StagingUsers[socket.id].inRoom = true;
+		if(StagingUsers[socket.id]) {
+			roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
+		 delete StagingUsers[socket.id];
+		}
 	});
 	
 	socket.on('rooms:load', function(data) {
