@@ -420,12 +420,16 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	background: url('/images/room/remote.png') 50% 50% no-repeat
 	float: right
 	margin-top: 90px
+	.remote-top
+		width: 104px
+		height: 74px
+		display: block
 	.side-button-container
 		margin-top: 10px   
 		vertical-align: top
 		display: inline-block
 		width: 40px
-		height: 60px
+		height: 70px
 		text-align: center
 		display: block
 	#vol-buttons
@@ -435,11 +439,13 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		float: right
 		padding-right: 12px
 	.remote-bottom
-		margin-top: 6px
 		display: block
 		width: 100px
 		height: 90px
 		text-align: center
+
+#vol-up, #vol-down
+	font-size: 10px
 
 .buttonContainer, .bottombuttonContainer, .bottombuttonContainerwide  
 	border: none
@@ -454,7 +460,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 #up-vote, #down-vote, #vol-up, #vol-down, #rooms, #history-button, #mute
 	background: transparent
 	height: 25px
-	width: 30px
+	width: 35px
 	border-radius: 20px
 	-webkit-border-radius: 20px
 	-moz-border-radius: 20px
@@ -463,26 +469,20 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .buttonContainer
 	margin: 3px
 	display: inline-block 
-	width: 30px
+	width: 35px
 	button
 	 background: transparent
-	// button#up-vote
-	// 	background: url('http://i.imgur.com/FY6PW.png') 50% 50% no-repeat
-	// button#down-vote
-	// 	background: url('http://i.imgur.com/947FE.png') 50% 50% no-repeat
-	// button#vol-up
-	// 	background: url('http://i.imgur.com/pI9fe.png') 50% 50% no-repeat
-	// button#vol-down
-	// 	background: url('http://i.imgur.com/4bUJ1.png') 50% 50% no-repeat    
-
-
+	button#up-vote
+		background: url('/images/room/upvote.png') 50% 50% no-repeat
+	button#down-vote
+		background: url('/images/room/downvote.png') 50% 50% no-repeat    
 .bottombuttonContainer
 	margin-top: 5px
 	margin-left: 35px
 	width: 30px
 
 .bottombuttonContainerwide
-	margin-top: 5px
+	margin-top: 7px
 	margin-left: 20px
 	width: 60px
 	#rooms,#mute, #history-button
@@ -619,7 +619,6 @@ div#top-video-name
 	max-height: 370px
 	overflow-y: scroll
 	overflow-x: hidden
-	div #video-list-container
 	.videoListCellContainer
 		width: 285px
 		height: 60px

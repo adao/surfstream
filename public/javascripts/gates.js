@@ -1235,10 +1235,8 @@ function setVideoVolume(event) {
 function mute(event) {
  if (window.YTPlayer.isMuted()) {
   window.YTPlayer.unMute();
-  event.data.button.css("background", 'url("http://i.imgur.com/euzaw.png") 50% 50% no-repeat');
  } else {
   window.YTPlayer.mute();
-  event.data.button.css("background", 'url("http://i.imgur.com/c77ZF.png") 50% 50% no-repeat');
  }
 }
 
