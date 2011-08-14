@@ -988,6 +988,7 @@ $(function() {
 
    socket.on('playlist:refresh', function(videoArray) {
     //app.setPlaylist(videoArray);
+		_.each(videoArray, function(video) {video.id = null}); //To prevent backbone from thinking we need to sync this with the server
 		app.get("userModel").get("playlistCollection").reset(videoArray);
    });
 
