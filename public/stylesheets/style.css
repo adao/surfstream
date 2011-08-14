@@ -1,60 +1,3 @@
-button {
-  margin: 0 8px 0 0;
-  padding: 2px 6px;
-  text-align: center;
-  vertical-align: middle;
-  display: inline-block;
-  white-space: nowrap;
-  cursor: pointer;
-  outline: none;
-  color: #000;
-  border: 1px solid #bbb;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e3e3e3));
-  background: -moz-linear-gradient(top, #f9f9f9, #e3e3e3);
-  border-top-color: #ccc;
-  border-bottom-color: #a0a0a0;
-}
-button:hover {
-  border: 1px solid #636363;
-}
-button:active {
-  background: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#f9f9f9));
-}
-.leftbtn,
-.rightbtn {
-  width: 146px;
-  height: 25px;
-}
-.leftbtn {
-  background-color: #f00 !important;
-  margin: 0 !important;
-  -webkit-border-top-right-radius: 0 !important;
-  -webkit-border-bottom-right-radius: 0 !important;
-  -moz-border-radius-topright: 0 !important;
-  -moz-border-radius-bottomright: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  border-top-right-radius: 0 !important;
-  float: left !important;
-}
-.rightbtn {
-  -webkit-border-top-left-radius: 0 !important;
-  -webkit-border-bottom-left-radius: 0 !important;
-  -moz-border-radius-topleft: 0 !important;
-  -moz-border-radius-bottomleft: 0 !important;
-  border-bottom-left-radius: 0 !important;
-  border-top-left-radius: 0 !important;
-  border-left: 0 !important;
-  float: clear !important;
-}
-.rightbtn:hover {
-  padding: 2px 6px 2px 5px !important;
-  border: 1px solid #636363 !important;
-}
 div #preview-container {
   display: none;
   height: 195;
@@ -424,7 +367,6 @@ div.historyContainer .history .videoHistory {
   height: 25px;
   width: 160px;
 }
-#room-container #people-area .bottom-user-controls button#history-button,
 #room-container #people-area .bottom-user-controls button#dj {
   height: 25px;
   width: 80px;
@@ -435,11 +377,6 @@ div.historyContainer .history .videoHistory {
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
-}
-#room-container #people-area .bottom-user-controls button#history-button {
-  background-image: url("/images/room/actionbar.png");
-}
-#room-container #people-area .bottom-user-controls button#dj {
   background-image: url("/images/room/actionbar.png");
 }
 #room-name,
@@ -556,27 +493,31 @@ button.search.active {
   z-index: 666;
 }
 #remote {
-  padding-top: 5px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  background-color: #323131;
-  background: -webkit-gradient(linear, left top, left bottom, from(#323131), to(#161616));
+  height: 180px !important;
+  width: 104px !important;
+  background: url("/images/room/remote.png") 50% 50% no-repeat;
   float: right;
-  margin-top: 114px;
+  margin-top: 90px;
 }
-#remote height: 150px©,
-#remote width: 100px,
-#remote background-color: black,
 #remote .side-button-container {
+  margin-top: 10px;
   vertical-align: top;
   display: inline-block;
-  width: 50px;
+  width: 40px;
   height: 60px;
   text-align: center;
+  display: block;
+}
+#remote #vol-buttons {
+  float: left;
+  padding-left: 12px;
+}
+#remote #vote-buttons {
+  float: right;
+  padding-right: 12px;
 }
 #remote .remote-bottom {
-  margin-top: 18px;
+  margin-top: 6px;
   display: block;
   width: 100px;
   height: 90px;
@@ -589,54 +530,46 @@ button.search.active {
   background-color: #818181;
   background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a));
   border: none;
-  height: 30px;
-  border-radius: 6px;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-}
-.buttonContainer {
-  margin: 3px;
-  display: inline-block;
-  width: 30px;
-}
-.buttonContainer button#up-vote {
-  background: url("http://i.imgur.com/FY6PW.png") 50% 50% no-repeat;
-}
-.buttonContainer button#down-vote {
-  background: url("http://i.imgur.com/947FE.png") 50% 50% no-repeat;
-}
-.buttonContainer button#vol-up {
-  background: url("http://i.imgur.com/pI9fe.png") 50% 50% no-repeat;
-}
-.buttonContainer button#vol-down {
-  background: url("http://i.imgur.com/4bUJ1.png") 50% 50% no-repeat;
+  height: 25px;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
 }
 #up-vote,
 #down-vote,
 #vol-up,
 #vol-down,
-#mute,
-#rooms {
-  height: 30px;
+#rooms,
+#history-button,
+#mute {
+  background: transparent;
+  height: 25px;
   width: 30px;
-  border-radius: 6px;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  color: #e5e5e5;
+}
+.buttonContainer {
+  margin: 3px;
+  display: inline-block;
+  width: 30px;
+button
+  background: transparent;
 }
 .bottombuttonContainer {
   margin-top: 5px;
   margin-left: 35px;
   width: 30px;
 }
-.bottombuttonContainer button#mute {
-  background: url("http://i.imgur.com/euzaw.png") 50% 50% no-repeat;
-}
 .bottombuttonContainerwide {
   margin-top: 5px;
   margin-left: 20px;
   width: 60px;
 }
-.bottombuttonContainerwide #rooms {
+.bottombuttonContainerwide #rooms,
+.bottombuttonContainerwide #mute,
+.bottombuttonContainerwide #history-button {
   width: 60px;
   background: transparent;
 }
