@@ -730,38 +730,46 @@ background-color: green,
   overflow-y: scroll;
   overflow-x: hidden;
 }
+#video-list div #video-list-container,
 #video-list .videoListCellContainer {
   width: 285px;
   height: 60px;
 }
+#video-list div #video-list-container .thumbContainer,
 #video-list .videoListCellContainer .thumbContainer {
   float: left;
   width: 75px;
   height: 60px;
 }
+#video-list div #video-list-container .cellInfo,
 #video-list .videoListCellContainer .cellInfo {
   float: right;
   width: 210px;
   height: 60px;
   border-bottom: 2px solid #ececec;
 }
+#video-list div #video-list-container .cellInfo .videoInfo,
 #video-list .videoListCellContainer .cellInfo .videoInfo {
   float: left;
   width: 180px;
   height: 60px;
 }
+#video-list div #video-list-container .cellInfo .videoInfo .title,
 #video-list .videoListCellContainer .cellInfo .videoInfo .title {
   width: 150px;
   height: 17px;
   font-weight: bold;
   font-size: 12px;
 }
+#video-list div #video-list-container .cellInfo .cellButtons,
 #video-list .videoListCellContainer .cellInfo .cellButtons {
   width: 30px;
   height: 60px;
   float: right;
 }
+#video-list div #video-list-container .cellInfo .cellButtons .remove,
 #video-list .videoListCellContainer .cellInfo .cellButtons .remove,
+#video-list div #video-list-container .cellInfo .cellButtons .remove:hover,
 #video-list .videoListCellContainer .cellInfo .cellButtons .remove:hover {
   width: 30px;
   height: 30px;
@@ -772,10 +780,13 @@ background-color: green,
   margin-right: 1px;
   background: url("/images/room/remove.png") 50% 50% no-repeat;
 }
+#video-list div #video-list-container .cellInfo .cellButtons .remove:hover,
 #video-list .videoListCellContainer .cellInfo .cellButtons .remove:hover {
   background: url("/images/room/remove_hover.png") 50% 50% no-repeat;
 }
+#video-list div #video-list-container .cellInfo .cellButtons .toTheTop,
 #video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop,
+#video-list div #video-list-container .cellInfo .cellButtons .toTheTop:hover,
 #video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
   border: none;
   cursor: points;
@@ -784,6 +795,7 @@ background-color: green,
   display: block;
   background: url("/images/room/to_the_top.png") 50% 50% no-repeat;
 }
+#video-list div #video-list-container .cellInfo .cellButtons .toTheTop:hover,
 #video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
   background: url("/images/room/to_the_top_hover.png") 50% 50% no-repeat;
 }
