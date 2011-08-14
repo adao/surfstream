@@ -357,6 +357,10 @@ $(function() {
     searchView: this
    }, this.searchVideos);
    this.options.searchBarModel.get("searchResultsCollection").bind("add", this.updateResults, this);
+	 var clearSearchButton = $("#clearsearch");
+	 clearSearchButton.bind("click", function() {
+		$(":input", "#searchBar .inputBox").val("");
+	 });
   },
 
   render: function() {
