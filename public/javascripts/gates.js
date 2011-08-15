@@ -387,7 +387,7 @@ $(function() {
    input.bind("submit", {
     searchView: this
    }, this.searchVideos);
-	 this.suggestionList = [];
+	 this.suggestionHash = {};
 	 $("#youtubeInput").autocomplete({
 		source: this.suggestionList,
 		select: function(event, ui) {
@@ -398,7 +398,7 @@ $(function() {
 	 $("#youtubeInput").bind( "autocompleteselect", {searchView: this}, function(event, ui) {
 		event.data.searchView.options.searchBarModel.executeSearch(ui.item.value);
 	 });
-	 input.keyup(this.getSuggestions);
+	 input.bind("keyup", {searchView: this}, this.getSuggestions);
    this.options.searchBarModel.get("searchResultsCollection").bind("add", this.updateResults, this);
 	 var clearSearchButton = $("#clearsearch");
 	 clearSearchButton.bind("click", function() {
@@ -436,17 +436,21 @@ $(function() {
    })
   },
 
-	getSuggestions: function() {
+	getSuggestions: function(event) {
 		var input = $("#searchBar .inputBox :input");
 		console.log(input.val());
 		var query = input.val();
-		var length = query.length;
-		var the_url = 'http://suggestqueries.google.com/complete/search?hl=en&ds=yt&client=youtube&hjson=t&jsonp=window.setSuggestions&q=' + encodeURIComponent(query) + '&cp=' + length;
-    $.ajax({
-        type: "GET",
-        url: the_url,
-				dataType: "script"
-    });
+		if (event.data.searchView.suggestionHash[query]) {
+			$("#youtubeInput").autocomplete( "option", "source", event.data.searchView.suggestionHash[query]);
+		} else {
+			var length = query.length;
+			var the_url = 'http://suggestqueries.google.com/complete/search?hl=en&ds=yt&client=youtube&hjson=t&jsonp=window.setSuggestions&q=' + encodeURIComponent(query) + '&cp=' + length;
+	    $.ajax({
+	        type: "GET",
+	        url: the_url,
+					dataType: "script"
+	    });
+		}
 	},
 	
 	suggestions: function() {
@@ -1228,10 +1232,9 @@ $(function() {
 });
 
 setSuggestions = function(suggestions) {
- for (var i = 0; i < suggestions[1].length; i++) {
-	 window.SurfStreamApp.get("mainView").sideBarView.searchView.suggestionList[i] =  suggestions[1][i][0];
- }
-	$( "#youtubeInput" ).autocomplete( "option", "source", window.SurfStreamApp.get("mainView").sideBarView.searchView.suggestionList );
+	var suggestionSource = _.pluck(suggestions[1], 0);
+	window.SurfStreamApp.get("mainView").sideBarView.searchView.suggestionHash[suggestions[0]] = suggestionSource;
+	$( "#youtubeInput" ).autocomplete( "option", "source", suggestionSource);
 };
 
 function onYouTubePlayerReady(playerId) {
