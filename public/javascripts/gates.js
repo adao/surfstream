@@ -172,9 +172,11 @@ $(function() {
 
   }
  });
+
  window.RoomHistoryCollection = Backbone.Collection.extend({
 	model: RoomHistoryItemModel
  });
+
  window.SearchResultsCollection = Backbone.Collection.extend({
   model: SearchResultModel,
 
@@ -385,10 +387,23 @@ $(function() {
    input.bind("submit", {
     searchView: this
    }, this.searchVideos);
+	 this.suggestionList = [];
+	 $("#youtubeInput").autocomplete({
+		source: this.suggestionList,
+		select: function(event, ui) {
+		 console.log(ui.item.value);
+		 
+		}
+	});
+	 $("#youtubeInput").bind( "autocompleteselect", {searchView: this}, function(event, ui) {
+		event.data.searchView.options.searchBarModel.executeSearch(ui.item.value);
+	 });
+	 input.keyup(this.getSuggestions);
    this.options.searchBarModel.get("searchResultsCollection").bind("add", this.updateResults, this);
 	 var clearSearchButton = $("#clearsearch");
 	 clearSearchButton.bind("click", function() {
 		$(":input", "#searchBar .inputBox").val("");
+		$("#youtubeInput").autocomplete("close");
 	 });
   },
 
@@ -409,6 +424,7 @@ $(function() {
    event.preventDefault();
    var query = $($('input[name=search]')[0]).val();
    $("#searchContainer").empty();
+	 $("#youtubeInput").autocomplete("close");
    event.data.searchView.options.searchBarModel.executeSearch(query);
    return false;
   },
@@ -418,7 +434,24 @@ $(function() {
     video: model,
     playlistCollection: this.options.playlistCollection
    })
-  }
+  },
+
+	getSuggestions: function() {
+		var input = $("#searchBar .inputBox :input");
+		console.log(input.val());
+		var query = input.val();
+		var length = query.length;
+		var the_url = 'http://suggestqueries.google.com/complete/search?hl=en&ds=yt&client=youtube&hjson=t&jsonp=window.setSuggestions&q=' + encodeURIComponent(query) + '&cp=' + length;
+    $.ajax({
+        type: "GET",
+        url: the_url,
+				dataType: "script"
+    });
+	},
+	
+	suggestions: function() {
+		return this.suggestionList;
+	}
  });
 
  window.SearchCellView = Backbone.View.extend({
@@ -691,10 +724,6 @@ $(function() {
 	clearChat: function() {
 		$("#messages").empty();
 	}
- }, {
-  scrollToBottom: function() {
-   this.chatContainer.activeScroll();
-  }
  });
 
  window.RoomListView = Backbone.View.extend({
@@ -1161,14 +1190,14 @@ $(function() {
   deleteFromPlaylist: function(vid_id) {
    SocketManagerModel.socket.emit("playlist:delete", {
     video: vid_id
-   })
+   });
   },
 
 	toIndexInPlaylist: function(vid_id, newIndex) {
-		SocketManagerModel.socket.emit("playlist:moveVideo"), {
+		SocketManagerModel.socket.emit("playlist:moveVideo", {
 			video: vid_id,
 			index: newIndex
-		}
+		});
 	},
 
 	loadRoomsInfo: function() {
@@ -1198,6 +1227,13 @@ $(function() {
 
 });
 
+setSuggestions = function(suggestions) {
+ for (var i = 0; i < suggestions[1].length; i++) {
+	 window.SurfStreamApp.get("mainView").sideBarView.searchView.suggestionList[i] =  suggestions[1][i][0];
+ }
+	$( "#youtubeInput" ).autocomplete( "option", "source", window.SurfStreamApp.get("mainView").sideBarView.searchView.suggestionList );
+};
+
 function onYouTubePlayerReady(playerId) {
  if (playerId == "YouTubePlayerTwo") {
   window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
@@ -1213,15 +1249,11 @@ function onYouTubePlayerReady(playerId) {
  }
 }
 
-
-
 function setToTime() {
  window.YTPlayer = document.getElementById('YouTubePlayer');
  window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
  window.YTPlayer.seekTo(window.secs);
 }
-
-
 
 function setVideoVolume(event) {
  var volume = window.YTPlayer.getVolume();
@@ -1229,8 +1261,6 @@ function setVideoVolume(event) {
   window.YTPlayer.setVolume(volume + event.data.offset);
  }
 }
-
-
 
 function mute(event) {
  if (window.YTPlayer.isMuted()) {
@@ -1241,8 +1271,6 @@ function mute(event) {
   event.data.button.css("background", 'url("http://i.imgur.com/c77ZF.png") 50% 50% no-repeat');
  }
 }
-
-
 
 function onytplayerStateChange(newState) {
 
@@ -1262,6 +1290,7 @@ function ss_formatSeconds(time) {
 function ss_idToImg(id) {
 	return "http://img.youtube.com/vi/"+id+"/0.jpg";
 }
+
 function skipVideo() {
  socket_init.emit("video:skip");
 }
