@@ -171,9 +171,11 @@ $(function() {
 
   }
  });
+
  window.RoomHistoryCollection = Backbone.Collection.extend({
 	model: RoomHistoryItemModel
  });
+
  window.SearchResultsCollection = Backbone.Collection.extend({
   model: SearchResultModel,
 
@@ -385,10 +387,23 @@ $(function() {
    input.bind("submit", {
     searchView: this
    }, this.searchVideos);
+	 this.suggestionHash = {};
+	 $("#youtubeInput").autocomplete({
+		source: this.suggestionList,
+		select: function(event, ui) {
+		 console.log(ui.item.value);
+		 
+		}
+	});
+	 $("#youtubeInput").bind( "autocompleteselect", {searchView: this}, function(event, ui) {
+		event.data.searchView.options.searchBarModel.executeSearch(ui.item.value);
+	 });
+	 input.bind("keyup", {searchView: this}, this.getSuggestions);
    this.options.searchBarModel.get("searchResultsCollection").bind("add", this.updateResults, this);
 	 var clearSearchButton = $("#clearsearch");
 	 clearSearchButton.bind("click", function() {
 		$(":input", "#searchBar .inputBox").val("");
+		$("#youtubeInput").autocomplete("close");
 	 });
   },
 
@@ -409,6 +424,7 @@ $(function() {
    event.preventDefault();
    var query = $($('input[name=search]')[0]).val();
    $("#searchContainer").empty();
+	 $("#youtubeInput").autocomplete("close");
    event.data.searchView.options.searchBarModel.executeSearch(query);
    return false;
   },
@@ -418,7 +434,28 @@ $(function() {
     video: model,
     playlistCollection: this.options.playlistCollection
    })
-  }
+  },
+
+	getSuggestions: function(event) {
+		var input = $("#searchBar .inputBox :input");
+		console.log(input.val());
+		var query = input.val();
+		if (event.data.searchView.suggestionHash[query]) {
+			$("#youtubeInput").autocomplete( "option", "source", event.data.searchView.suggestionHash[query]);
+		} else {
+			var length = query.length;
+			var the_url = 'http://suggestqueries.google.com/complete/search?hl=en&ds=yt&client=youtube&hjson=t&jsonp=window.setSuggestions&q=' + encodeURIComponent(query) + '&cp=' + length;
+	    $.ajax({
+	        type: "GET",
+	        url: the_url,
+					dataType: "script"
+	    });
+		}
+	},
+	
+	suggestions: function() {
+		return this.suggestionList;
+	}
  });
 
  window.SearchCellView = Backbone.View.extend({
@@ -691,10 +728,6 @@ $(function() {
 	clearChat: function() {
 		$("#messages").empty();
 	}
- }, {
-  scrollToBottom: function() {
-   this.chatContainer.activeScroll();
-  }
  });
 
  window.RoomListView = Backbone.View.extend({
@@ -1218,7 +1251,7 @@ $(function() {
   deleteFromPlaylist: function(vid_id) {
    SocketManagerModel.socket.emit("playlist:delete", {
     video: vid_id
-   })
+   });
   },
 
 	toIndexInPlaylist: function(vid_id, newIndex) {
@@ -1255,6 +1288,12 @@ $(function() {
 
 });
 
+setSuggestions = function(suggestions) {
+	var suggestionSource = _.pluck(suggestions[1], 0);
+	window.SurfStreamApp.get("mainView").sideBarView.searchView.suggestionHash[suggestions[0]] = suggestionSource;
+	$( "#youtubeInput" ).autocomplete( "option", "source", suggestionSource);
+};
+
 function onYouTubePlayerReady(playerId) {
  if (playerId == "YouTubePlayerTwo") {
   window.YTPlayerTwo.loadVideoById(window.videoIdTwo);
@@ -1270,15 +1309,11 @@ function onYouTubePlayerReady(playerId) {
  }
 }
 
-
-
 function setToTime() {
  window.YTPlayer = document.getElementById('YouTubePlayer');
  window.YTPlayer.addEventListener('onStateChange', 'onytplayerStateChange');
  window.YTPlayer.seekTo(window.secs);
 }
-
-
 
 function setVideoVolume(event) {
  var volume = window.YTPlayer.getVolume();
@@ -1287,8 +1322,6 @@ function setVideoVolume(event) {
  }
 }
 
-
-
 function mute(event) {
  if (window.YTPlayer.isMuted()) {
   window.YTPlayer.unMute();
@@ -1296,8 +1329,6 @@ function mute(event) {
   window.YTPlayer.mute();
  }
 }
-
-
 
 function onytplayerStateChange(newState) {
 
@@ -1317,6 +1348,7 @@ function ss_formatSeconds(time) {
 function ss_idToImg(id) {
 	return "http://img.youtube.com/vi/"+id+"/0.jpg";
 }
+
 function skipVideo() {
  socket_init.emit("video:skip");
 }
