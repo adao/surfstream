@@ -16,20 +16,19 @@ $(function() {
   updateDisplayedUsers: function(userJSONArray) {
    var hash = {};
    var userCollection = this.get("userCollection");
-   for (var user in userJSONArray) {
-    if (!userCollection.get(userJSONArray[user].id)) {
-     userCollection.add(userJSONArray[user]);
-    }
-    hash[userJSONArray[user].id] = true;
-   }
+   _.each(userJSONArray, function(user) { 
+			if (!userCollection.get(user.id)) userCollection.add(user);
+	    hash[user.id] = true;
+		});
 
-   userCollection.forEach(function(userModel) {
+
+   userCollection.each(function(userModel) {
     if (!hash[userModel.get('id')]) userModel.collection.remove(userModel);
    });
 
   }
 
- })
+ });
 
  window.SearchBarModel = Backbone.Model.extend({
 
@@ -217,16 +216,17 @@ $(function() {
    this.render();
 	 $("#video-list-container").sortable({
 		update: function(event, ui) {
+			var i;
 			var videoId = $(ui.item).attr('id');
 			var index;
 			var playlistArray = $(this).sortable('toArray');
-			for (var i = 0; i < playlistArray.length; i++) {
+			for (i = 0; i < playlistArray.length; i++) {
 				if (videoId == playlistArray[i])
 					index = i;
 			}
 			var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
 			var playlistItemModel;
-			for (var i = 0; i < playlistCollection.length; i++) {
+			for (i = 0; i < playlistCollection.length; i++) {
 				if (playlistCollection.at(i).get("videoId") == videoId) {
 					playlistItemModel = playlistCollection.at(i);
 					break;
@@ -238,7 +238,7 @@ $(function() {
 		    at: index,
 		    silent: true
 		   });
-		 	SocketManagerModel.toIndexInPlaylist(videoId, index);
+		 SocketManagerModel.toIndexInPlaylist(videoId, index);
 		},
 		containment: "#right-side"
 	 });
@@ -823,7 +823,12 @@ $(function() {
   },
 
   placeUser: function(user) {
-   this.$("#people-area").append("<img id='" + user.id + "' src=http://graph.facebook.com/" + user.id + "/picture style='position:absolute; margin-left:" + user.get("x") + "px; margin-top:" + user.get("y") + "px;' >");
+	 var avatarImg = this.getAvatar(user.get("avatar"));
+	 var imgtag = "<img id='" + user.id + "' style='position:absolute;' title='"+user.get('name')+"' src=" + avatarImg + ">";
+	 var defaultSmile = "<img class='defaultSmile"+user.get("avatar")+" default' src=/images/room/monsters/smiles/line.png>";
+	 var sillySmile = "<img class='defaultSmile"+user.get("avatar")+" smiley' src="+this.getSmile(user.get("avatar")) +">";
+   this.$("#people-area").append("<div id=" + user.id +"_ style='position:absolute; margin-left:" + user.get("x") + "px; margin-top:" + 
+																	user.get("y") + "px;'>" +  imgtag + defaultSmile + sillySmile + "</div>");
    this.$("#" + user.id).tipsy({
     gravity: 'sw',
     fade: 'true',
@@ -833,7 +838,48 @@ $(function() {
      return this.getAttribute('latest_txt')
     }
    });
+		this.$("#" + user.id).tipsy({
+	    gravity: 'n',
+	    fade: 'true',
+	   });
+	 this.$("#" + user.id+ '_').data("isDJ", "0");
   },
+
+	getAvatar: function(avatarID) {
+		switch(parseInt(avatarID, 10))
+		{
+		case 1:
+		  return "/images/room/monsters/blue.PNG";
+		case 2:
+		  return "/images/room/monsters/green.png";
+		case 3:
+			return "/images/room/monsters/purple.png";
+		case 4:
+			return "/images/room/monsters/red.png";
+		case 5:
+			return "/images/room/monsters/yellow.png";
+		default:
+		  console.log("RUH-ROH!");
+		}
+	},
+	
+	getSmile: function(avatarID) {
+		switch(parseInt(avatarID))
+		{
+		case 1:
+		  return "/images/room/monsters/smiles/cucumberteeth.png";
+		case 2:
+		  return "/images/room/monsters/smiles/jankyteeth.png";
+		case 3:
+			return "/images/room/monsters/smiles/openteeth.png";
+		case 4:
+			return "/images/room/monsters/smiles/openmouth.png";
+		case 5:
+			return "/images/room/monsters/smiles/openteeth.png";
+		default:
+		  console.log("RUH-ROH!");
+		}
+	},
 
   removeUser: function(user) {
 	 var avatar = this.$("#" + user.id);
@@ -1014,13 +1060,9 @@ $(function() {
     //HACK
     $("#room-name").html(video.title)
     app.get("roomModel").get("userCollection").forEach(function(userModel) {
-     var user = $("#" + userModel.get("id"));
-     if (user.attr("isDJ") != "1") {
-      user.css("border-width", "0px");
-     } else {
-      user.css("border-width", "2px");
-      user.css("border-color", "yellow");
-     }
+     $("#" + userModel.get("id")+ "_ .smiley").hide();
+     $("#" + userModel.get("id")+ "_ .default").show();
+     
 
     });
     //ENDHACK
@@ -1062,21 +1104,36 @@ $(function() {
    });
 
    socket.on('djs:announce', function(djArray) {
-    app.get("roomModel").get("userCollection").forEach(function(userModel) {
-     var user = $("#" + userModel.get("id"));
-     user.attr("isDJ", "0")
-    })
+		var user;
+		//remove anyone who is no longer a DJ
+    app.get("roomModel").get("userCollection").each(function(userModel) {
+		 var oldPos;
+     user = $("#" + userModel.get("id") + "_");
+     if(user.data("isDJ") == "1") {
+				if(!_.any(_.pluck(djArray, 'id'), function(el) {return (''+ el) == ('' + userModel.get("id"))})) {
+					//restore user to old position
+					oldPos = user.data("oldPos");
+					user.css("margin-left", oldPos.x).css("margin-top", oldPos.y);
+	     	  user.data("isDJ", 0);
+				}
+		 }
+    });
+		//add DJs
+		var X_COORDS = [200,260,320,380, 440]; //5th DJ spot needs work
+		var Y_COORD = 25;
     for (var dj in djArray) {
-     $("#" + djArray[dj].id).css("border-style", "solid").css("border-color", "yellow").css("border-width", "2px");
-     $("#" + djArray[dj].id).attr("isDJ", "1")
+		 user = $("#" + djArray[dj].id+"_");
+		 if(user.data("isDJ") == "0") {
+			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
+			 user.data("isDJ", "1")
+		 }
+     
+		user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
+			 
     }
-    app.get("roomModel").get("userCollection").forEach(function(userModel) {
-     var user = $("#" + userModel.get("id"));
-     if (user.attr("isDJ") != "1" && user.css("border-right-color") == "rgb(255, 255, 0)") {
-      user.css("border-width", "0px");
-     }
+    
 
-    })
+    
    });
 
    //.upvoteset maps userids who up to true, .down, .up totals
@@ -1087,14 +1144,14 @@ $(function() {
 			total = total + 1;
       //app.get("roomModel").get("users").get(fbid).
       //BEGIN HACK
-      if ($("#" + fbid).css("border-color") != "yellow") {
-       $("#" + fbid).css("border-width", $("#" + fbid).css("border-width") + 20 + "px");
-       $("#" + fbid).css("border-color", "#98bf21");
-       $("#" + fbid).css("border-style", "solid");
-      }
+			$("#" + fbid + "_ .smiley").show();
+			$("#" + fbid + "_ .default").hide();
       //ENDHACK
-     }
-    }
+     } else { //FOR UPVOTE, THEN DOWNVOTE
+			$("#" + fbid + "_ .smiley").hide();
+			$("#" + fbid + "_ .default").show();
+		}
+   }
 	 app.get("roomModel").get("playerModel").set({percent: total / meterStats.upvoteSet.size});
    });
 
@@ -1165,10 +1222,10 @@ $(function() {
   },
 
 	toIndexInPlaylist: function(vid_id, newIndex) {
-		SocketManagerModel.socket.emit("playlist:moveVideo"), {
+		SocketManagerModel.socket.emit("playlist:moveVideo", {
 			video: vid_id,
 			index: newIndex
-		}
+		});
 	},
 
 	loadRoomsInfo: function() {

@@ -404,9 +404,10 @@
 	/*         User          */
 	/*************************/
 	
-	var X_MAX = 510;
-	var Y_MAX = 95;
-
+	var X_MAX = 590;
+	var Y_MAX = 150;
+	var Y_MIN = 20;
+	
 	models.User = Backbone.Model.extend({
 		defaults: {
 			'avatar': null,
@@ -420,7 +421,8 @@
 		
 		initialize: function() {
 			this.id = this.get('socketId');	
-			this.playlist = new models.Playlist();
+			this.playlist = new models.Playlist();			
+			this.getAvatar();			
 			this.randLoc();
 		},
 		
@@ -428,9 +430,34 @@
 			this.playlist = playlist;
 		},
 		
+		getAvatar: function() {
+			var userId = this.get("userId");
+			var userObj = this;
+			redisClient.get('user:'+userId+':avatar', function(err, reply) {
+				var avatarData, newAvatar;
+				if(err) {
+					console.log("Error in getting user "+userId+"'s avatar!");
+				} else {
+					avatarData = reply;
+					console.log('getting avatar for user '+userId+', reply: '+reply);
+					if(reply != 'undefined' && reply != null) {
+						userObj.set({avatar: avatarData});
+					} else { //give them a random first default
+						newAvatar = Math.ceil(Math.random() * 5);
+						redisClient.set('user:'+userId+':avatar', newAvatar);
+						userObj.set({avatar: newAvatar});
+					}
+				} 
+			});
+		},
+		
 		randLoc: function() {
 			var thisX = Math.random()*X_MAX;
 			var thisY = Math.random()*Y_MAX;
+			if (thisY < 90 && thisX > 100 && thisX < 510) { //avoid the sofa
+				thisX = thisX % 180;
+				if (thisX > 100) thisX = thisX + 410;
+			} //TODO: More logic to avoid remote
 			this.set({ xCoord: thisX, yCoord: thisY});
 			return { x: thisX, y: thisY };
 		},
