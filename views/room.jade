@@ -7,21 +7,25 @@
 				div#video-score
 			#video-time
 			.bottom-user-controls
-				button#history-button history
 				button#dj dj videos
 			#remote
-				.side-button-container
-					.buttonContainer
-						button#vol-up
-					.buttonContainer
-						button#vol-down
-				.side-button-container 
-					.buttonContainer
-						button#up-vote
-					.buttonContainer
-						button#down-vote
+				.remote-top
+					.side-button-container#vol-buttons
+						.buttonContainer
+							button#vol-up Vol
+								span +
+						.buttonContainer
+							button#vol-down Vol
+								span -
+					.side-button-container#vote-buttons 
+						.buttonContainer
+							button#up-vote
+						.buttonContainer
+							button#down-vote 
 				.remote-bottom
-					.bottombuttonContainer
-						button#mute
 					.bottombuttonContainerwide
-						button#rooms Rooms
+						button#mute mute
+					.bottombuttonContainerwide
+						button#rooms rooms
+					.bottombuttonContainerwide
+						button#history-button history
