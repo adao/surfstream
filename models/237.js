@@ -9,14 +9,44 @@
 	permSockEvents['user:sendFBData'] = true;
 	permSockEvents['room:join'] = true;
 	permSockEvents['rooms:load'] = true;
+
+	models.VAL = Backbone.Model.extend({
+		initialize: function(room) {
+			this.room = room;
+			this.userSuggest = new models.Playlist();
+			this.autoPlaylist = new models.Playlist();
+			
+			this.isDJ = false;
+		},
+		
+		addValListeners: function(socket) {
+			var val = this;
+			socket.on('val:suggestVideoToVal', function(data) {
+				var thisUser = val.room.users.get(socket.id);
+				if(!val.userSuggest.containsVideo(data.video)) {
+					val.userSuggest.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
+					val.userSuggest.videos.get(data.video).set({ 'suggestedBy': thisUser.get('name')});
+				}
+			});
+		},
+		
+		hasVideos: function() {
+			if((userSuggest.getSize() > 0) || (autoPlaylist.getSize() > 0))
+				return true;
+			return false;
+		}	
+	});
 	
 	/*************************/
 	/*      VideoManager     */
 	/*************************/
 	models.VideoManager = Backbone.Model.extend({
-		initialize: function(room) {
+		initialize: function(room, val) {
 			this.room = room;
+			VAL = val;
 		},
+		
+		VAL: null,
 		
 		playVideoFromPlaylist: function(socketId) {
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
@@ -26,10 +56,17 @@
 				return;
 			}
 			
+			this.play(videoToPlay);
+		},
+		
+		// videoToPlay: models.Video 
+		play: function(videoToPlay) {
+			if(!videoToPlay) return;
+			
 			var videoId = videoToPlay.get('videoId');
 			var videoDuration = videoToPlay.get('duration');
 			var videoTitle = videoToPlay.get('title');
-			
+
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
 				videoId: videoId, 
@@ -39,7 +76,7 @@
 				timeStart: (new Date()).getTime(),
 				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000)
 			});
-			
+
 			this.room.meter.reset();
 			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle);
 		},
@@ -61,10 +98,11 @@
 				redisClient.rpush('room:history:' + this.room.get("name"), JSON.stringify(videoFinished));
 				this.room.history.add(videoFinished);
 				this.room.clearVideo();
+				//make a call to VAL to use this video to generate more recommendations
 			}
 		
-			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
-				console.log('DJs: '+this.room.djs.length + ' and total vids: '+this.room.djs.getNumVideos());
+			//logic for setting up the next video
+			if((this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) && !VAL.isDJ) {
 				this.room.sockM.announceStopVideo();
 			} else {
 				this.playNextVideo();
@@ -73,14 +111,22 @@
 		
 		playNextVideo: function() {
 			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
-				console.log('DJs: '+this.room.djs.length + ' and total vids: '+this.room.djs.getNumVideos());
+				if(VAL.isDJ) {	//then play a video from Val
+					var videoToPlay = VAL.getVideoToPlay();
+					this.play(videoToPlay);
+				}
 				return;
 			}
-
-			var currDJInfo = this.room.djs.nextDJ(); 
-			console.log('Playing next video, dj has index '+currDJInfo.index+' and is user '
-									+ currDJInfo.dj.get('userId')); 
-			this.playVideoFromPlaylist(this.room.djs.currDJ.get('socketId'));
+			
+			if(this.room.djs.onLastDJ() && VAL.isDJ && VAL.hasVideos()) {
+				var videoToPlay = VAL.getVideoToPlay();
+				this.play(videoToPlay);
+			} else {	//play a video from a human
+				var currDJInfo = this.room.djs.nextDJ(); 	//need to insert case of VAL being the DJ
+				console.log('Playing next video, dj has index '+currDJInfo.index+' and is user '
+										+ currDJInfo.dj.get('userId')); 
+				this.playVideoFromPlaylist(this.room.djs.currDJ.get('socketId'));
+			}
 		}
 	});
 	
@@ -99,7 +145,8 @@
 		initialize: function(io, redisClient) {
 			this.io = io;
 			this.redisClient = redisClient;
-			this.vm = new models.VideoManager(this);
+			this.VAL = new models.VAL(this);
+			this.vm = new models.VideoManager(this, this.VAL);
 			
 			this.users = new models.UserCollection();
 			this.users.setRoom(this);
@@ -184,7 +231,6 @@
 			
 			if(this.room) {
 				this.room.addChatListener(socket);
-				//this.room.users.addConnectListener(socket);
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
@@ -318,12 +364,17 @@
 		},
 
 		addVideo: function(id, thumb, title, duration, author) {
-			if(this.videos.get(id) >= 0)
+			if(this.videos.get(id))
 				return false;
 			var vid = new models.Video();
 			vid.id = id;
 			vid.set({ videoId: id, thumb: thumb, title: title, duration: duration, author: author});
 			this.videos.add(vid);
+		},
+		
+		containsVideo: function(id) {
+			if(this.videos.get(id)) return true;
+			return false;
 		},
 		
 		getSize: function() {
@@ -667,6 +718,12 @@
 				}
 			});
 			return numVideos;
+		},
+		
+		onLastDJ: function() {
+			var numDJs = this.length;
+			if(numDJs == 0 || this.currDJIndex == (numDJs-1)) return true;
+			return false;
 		}
 	});
 	

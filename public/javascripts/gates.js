@@ -1161,14 +1161,14 @@ $(function() {
   deleteFromPlaylist: function(vid_id) {
    SocketManagerModel.socket.emit("playlist:delete", {
     video: vid_id
-   })
+   });
   },
 
 	toIndexInPlaylist: function(vid_id, newIndex) {
-		SocketManagerModel.socket.emit("playlist:moveVideo"), {
+		SocketManagerModel.socket.emit("playlist:moveVideo", {
 			video: vid_id,
 			index: newIndex
-		}
+		});
 	},
 
 	loadRoomsInfo: function() {
