@@ -78,30 +78,29 @@ $(function() {
    is_main_user: false
   },
 
-  initialize: function() {
+  getFBUserData: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
-    FB.api('/me/friends', function(response) {
-     console.log(response);
-    });
-   }
-  },
-
-  getUserData: function(self) {
-   if (this.get("fbUserInfo")) {
-    return this.get("fbUserInfo");
+    FB.api('/me/friends', this.sendUserFBFriends);
    }
   },
 
   setUserData: function(info) {
    window.SurfStreamApp.get('userModel').set({
-    fbInfo: info,
+    displayName: info.first_name + " " + info.last_name,
     avatarImage: 'https://graph.facebook.com/' + info.id + '/picture'
    });
-   window.SurfStreamApp.get('userModel').get("socketManagerModel").makeFirstContact({
-    user: info
-   });
-  }
+   SocketManagerModel.sendFBUser(info);
+  },
+
+	sendUserFBFriends: function(info) {
+		var friendIdList = _.pluck(info.data, "id");
+		console.log(friendIdList);
+		SocketManagerModel.sendUserFBFriends({
+			fbId: window.SurfStreamApp.get('userModel').get("fbId"),
+			fbFriends: friendIdList
+		});
+	}
 
  });
 
@@ -155,7 +154,7 @@ $(function() {
 	
 	 this.get("mainView").initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
 	 this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));
-   this.get('userModel').getUserData(this.get('userModel'));
+	 //this.get("userModel").getFBUserData();
   }
  });
 
@@ -710,9 +709,9 @@ $(function() {
    var userMessage = this.$('input[name=message]').val();
    this.$('input[name=message]').val('');
    SocketManagerModel.sendMsg({
-    name: this.options.userModel.get("fbInfo").name,
+    name: this.options.userModel.get("displayName"),
     text: userMessage,
-    id: this.options.userModel.get("fbInfo").id
+    id: this.options.userModel.get("fbId")
    });
    return false;
   },
@@ -1074,6 +1073,17 @@ $(function() {
     window.YTPlayer.clearVideo();
    });
 
+	 socket.on("user:fbProfile", function(fbProfile) {
+		if (fbProfile == null) {
+			app.get("userModel").getFBUserData();
+		} else {
+			app.get("userModel").set({
+				displayName: fbProfile.first_name + " " + fbProfile.last_name,
+				avatarImage: 'https://graph.facebook.com/' + fbProfile.id + '/picture'
+			});
+		}
+	 });
+
    socket.on('playlist:refresh', function(videoArray) {
     //app.setPlaylist(videoArray);
 		_.each(videoArray, function(video) {video.id = null}); //To prevent backbone from thinking we need to sync this with the server
@@ -1142,18 +1152,23 @@ $(function() {
 		app.get("roomModel").get("chatCollection").reset();
 	});
 	
- },
-
-  /* Initialize first contact */
-  makeFirstContact: function(user) {
-   var socket = this.get("socket");
-   socket.emit('user:sendFBData', user);
-  },
+ }
 
  }, {
   socket: socket_init,
 
   /* Outgoing Socket Events*/
+  sendFBId: function(id) {
+		SocketManagerModel.socket.emit("user:sendFBId", id);
+  },
+
+	sendFBUser: function(user) {
+		SocketManagerModel.socket.emit("user:sendFBData", user);
+	},
+	
+	sendUserFBFriends: function(friendIdList) {
+		SocketManagerModel.socket.emit("user:sendUserFBFriends", friendIdList);
+	},
 
   sendMsg: function(data) {
    SocketManagerModel.socket.emit("message", data);
@@ -1205,7 +1220,9 @@ $(function() {
 	},
 
 	loadRoomsInfo: function() {
-		SocketManagerModel.socket.emit('rooms:load');
+		SocketManagerModel.socket.emit('rooms:load', {id: window.SurfStreamApp.get("userModel").get("fbId")});
+		console.log(window.SurfStreamApp.get("userModel").get("fbId"));
+		console.log("LOGGED");
 	},
 	
 	joinRoom: function(rID, create) {
@@ -1215,6 +1232,7 @@ $(function() {
 			payload.currRoom = SurfStreamApp.inRoom;
 		}		
 		SurfStreamApp.inRoom = rID;
+		payload.id = window.SurfStreamApp.get("userModel").get("fbId");
 		window.YTPlayer.stopVideo();
 		window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
 		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce

@@ -101,6 +101,8 @@
 			this.redisClient = redisClient;
 			this.vm = new models.VideoManager(this);
 			
+			this.friends = [];
+			
 			this.users = new models.UserCollection();
 			this.users.setRoom(this);
 			

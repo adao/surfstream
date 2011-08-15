@@ -54,15 +54,44 @@ RoomManager = Backbone.Model.extend({
 		this.roomMap = {};
 	},
 	
-	sendRoomsInfo: function(socket) {
-		var roomsInfo = [];
-		for(var rName in this.roomMap) {
-			if(this.roomMap.hasOwnProperty(rName)) {
-				var currRoom = this.roomMap[rName];
-				roomsInfo.push(currRoom.xport())
-			}
+	sendRoomsInfo: function(socket, id) {
+		// var roomsInfo = [];
+		if (redisClient) {
+			redisClient.sinter("user:" + id + ":fbFriends", "onlineUsers", function(err, reply) {
+				console.log("WTF");
+				console.log(reply);
+				var topRooms = {};
+				var roomsInfo = [];
+				for (var index in reply) {
+					topRooms[userToRoom[reply[index]]] = 1;
+					redisClient.sadd("user:" + id + ":fbOnlineFriends:rooms", userToRoom[reply[index]]);
+					//roomManager.roomMap[userToRoom[reply[index]]].get("friends").push(reply[index]);
+				}
+				redisClient.smembers("user:" + id + ":fbOnlineFriends:rooms", function(err, reply) {
+					if (err) {
+						console.log("Error WTF");
+					} else {
+						for (var index in reply) {
+							
+						}
+					}
+				});
+				for(var rName in roomManager.roomMap) {
+					if(roomManager.roomMap.hasOwnProperty(rName)) {
+						var currRoom = roomManager.roomMap[rName];
+						roomsInfo.push(currRoom.xport())
+					}
+				}
+				socket.emit('rooms:announce', roomsInfo);
+			});
 		}
-		socket.emit('rooms:announce', roomsInfo);
+		// for(var rName in this.roomMap) {
+		// 	if(this.roomMap.hasOwnProperty(rName)) {
+		// 		var currRoom = this.roomMap[rName];
+		// 		roomsInfo.push(currRoom.xport())
+		// 	}
+		// }
+		// socket.emit('rooms:announce', roomsInfo);
 	},
 	
 	createRoom: function(socket, roomId) {
@@ -75,29 +104,64 @@ RoomManager = Backbone.Model.extend({
 
 var roomManager = new RoomManager();
 var StagingUsers = {};
+var userToRoom = {};
 
 io.sockets.on('connection', function(socket) {
 	
+	socket.on("user:sendFBId", function(fbId) {
+		if (redisClient) {
+			redisClient.get("user:" + fbId + ":fb_info", function(err, reply) {
+				if (err) {
+					console.log("Error trying to fetch user by Facebook id on initial login");
+				} else {
+					var fbUser = JSON.parse(reply);
+					if (fbUser == null) {
+						
+					} else {
+						roomManager.sendRoomsInfo(socket);
+						var name = fbUser.name;
+						var currUser = new models.User({
+							name: name, 
+							socketId: socket.id, 
+							userId: fbUser.id, 
+							socket: socket
+					  });
+						StagingUsers[socket.id] = currUser;
+					}
+					socket.emit("user:fbProfile", fbUser);
+				}
+			});
+		}
+	});
+	
 	socket.on('user:sendFBData', function(fbUser) {
 		roomManager.sendRoomsInfo(socket);
-		var name = fbUser.user.name;
+		var name = fbUser.name;
 		var currUser = new models.User({
 			name: name, 
 			socketId: socket.id, 
-			userId: fbUser.user.id, 
+			userId: fbUser.id, 
 			socket: socket
 	  });
 		StagingUsers[socket.id] = currUser;
 	
 		if(redisClient) {
-			redisClient.set('user:'+fbUser.user.id+':fb_info', JSON.stringify(fbUser)); 
+			redisClient.set('user:'+fbUser.id+':fb_info', JSON.stringify(fbUser));
 		}
-		// redisClient.get('user:'+fbUser.user.id+':points', function(err, reply) {
+		// redisClient.get('user:'+fbUser.id+':points', function(err, reply) {
 		// 	if(reply) {
-		// 		console.log("Points for "+fbUser.user.name+": "+reply);
+		// 		console.log("Points for "+fbUser.name+": "+reply);
 		// 		if(StagingUsers[socket.id]) StagingUsers[socket.id].set({ points: reply});
 		// 	}	
 		// });
+	});
+	
+	socket.on("user:sendUserFBFriends", function(data) {
+		if (redisClient) {
+			for (var i = 0; i < data.fbFriends.length; i++) {
+				redisClient.sadd("user:" + data.fbId + ":fbFriends", data.fbFriends[i]);
+			}
+		}
 	});
 	
 	socket.on('room:join', function(data) {
@@ -118,10 +182,15 @@ io.sockets.on('connection', function(socket) {
 			roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
 		 delete StagingUsers[socket.id];
 		}
+		if (redisClient) {
+			redisClient.hset("userToRoom", data.id, data.rID);
+			redisClient.sadd("onlineUsers", data.id);
+			userToRoom[data.id] = data.rID;
+		}
 	});
 	
 	socket.on('rooms:load', function(data) {
-		roomManager.sendRoomsInfo(socket);
+		roomManager.sendRoomsInfo(socket, data.id);
 	});
 });
 
