@@ -916,6 +916,7 @@ $(function() {
 
   removeUser: function(user) {
 	 var avatar = this.$("#" + user.id);
+	 avatar.data("animating", false);
 	 avatar.tipsy('hide');
    avatar.remove();
   }
@@ -1093,6 +1094,7 @@ $(function() {
     //HACK
     $("#room-name").html(video.title)
     app.get("roomModel").get("userCollection").forEach(function(userModel) {
+		 $("#" + userModel.get("id") + "_").data("animating", false);
      $("#" + userModel.get("id")+ "_ .smiley").hide();
      $("#" + userModel.get("id")+ "_ .default").show();
      
@@ -1179,8 +1181,21 @@ $(function() {
       //BEGIN HACK
 			$("#" + fbid + "_ .smiley").show();
 			$("#" + fbid + "_ .default").hide();
+			(function() {
+				var element = $("#" + fbid + "_");
+				element.data("animating", true);
+				var marginTop = element.css("margin-top").match(/\d+/)[0];
+			    (function(){
+							if (element.data("animating") == true) {
+			        element
+			            .animate({ marginTop: marginTop - 6 }, 500)
+			            .animate({ marginTop: marginTop },   500, arguments.callee);
+							}
+			    }());
+			}())
       //ENDHACK
      } else { //FOR UPVOTE, THEN DOWNVOTE
+			$("#" + fbid + "_").data("animating", false);
 			$("#" + fbid + "_ .smiley").hide();
 			$("#" + fbid + "_ .default").show();
 		}
