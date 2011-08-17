@@ -1,7 +1,41 @@
 #now-playing-container {
-  height: 60px !important;
+  height: 100px !important;
   width: 300px !important;
   background-color: #f00 !important;
+}
+#now-playing-container #now-playing-video-container {
+  height: 60px;
+  background-color: #00f;
+  display: block;
+}
+#now-playing-container #now-playing-video-container #now-playing-thumb {
+  display: inline-block;
+  height: 60px;
+  width: 60px;
+  background-color: #008000;
+}
+#now-playing-container #now-playing-video-container #now-playing-video-info {
+  vertical-align: top;
+  display: inline-block;
+  height: 60px;
+  width: 200px;
+}
+#now-playing-container #now-playing-video-container #now-playing-video-info #now-playing-title {
+  height: 40px;
+  width: 200px;
+  background-color: #ff0;
+  display: block;
+}
+#now-playing-container #now-playing-video-container #now-playing-video-info #now-playing-views {
+  height: 20px;
+  width: 200px;
+  background-color: #800080;
+  display: block;
+}
+#now-playing-container #now-playing-meter-container {
+  height: 40px;
+  display: block;
+  background-color: #f00;
 }
 #become-dj {
   width: 50px;

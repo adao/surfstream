@@ -4,7 +4,14 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		link(rel='stylesheet', href="/stylesheets/login.css")
 		link(rel='stylesheet', href="/stylesheets/style.css")
 		title surfstream.tv
-		
-		
+
 	body
 	#now-playing-container
+		#now-playing-video-container
+			#now-playing-thumb {{ nowPlayingThumb }}
+			#now-playing-video-info
+				#now-playing-title {{ nowPlayingTitle }}
+				#now-playing-views {{ nowPlayingViews }} 
+		#now-playing-meter-container
+				{{ nowPlayingMeterScore }}
+		
