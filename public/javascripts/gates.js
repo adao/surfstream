@@ -1196,7 +1196,7 @@ $(function() {
 	socket.on("room:history", function(roomHistory) {
 		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
 		/* OVERLOADED RESET */
-		app.get("roomModel").get("chatCollection").reset();
+		//app.get("roomModel").get("chatCollection").reset();
 	});
 	
  },

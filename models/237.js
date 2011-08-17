@@ -10,6 +10,10 @@
 	permSockEvents['room:join'] = true;
 	permSockEvents['rooms:load'] = true;
 
+
+	/*************************/
+	/*      		VAL			     */
+	/*************************/
 	models.VAL = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
@@ -17,16 +21,36 @@
 			this.autoPlaylist = new models.Playlist();
 			
 			this.isDJ = false;
+			this.takeSuggest = false;
 		},
 		
 		addValListeners: function(socket) {
 			var val = this;
+			
 			socket.on('val:suggestVideoToVal', function(data) {
+				if(!val.takeSuggest) return;
+				
 				var thisUser = val.room.users.get(socket.id);
 				if(!val.userSuggest.containsVideo(data.video)) {
 					val.userSuggest.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
 					val.userSuggest.videos.get(data.video).set({ 'suggestedBy': thisUser.get('name')});
 				}
+			});
+			
+			socket.on('val:turnOffDJ', function() {
+				val.isDJ = false;
+			});
+			
+			socket.on('val:turnOnDJ', function() {
+				val.isDJ = true;
+			});
+			
+			socket.on('val:turnOnSuggest', function() {
+				val.takeSuggest = true;
+			});
+			
+			socket.on('val:turnOffSuggest', function() {
+				val.takeSuggest = false;
 			});
 		},
 		
@@ -34,7 +58,73 @@
 			if((userSuggest.getSize() > 0) || (autoPlaylist.getSize() > 0))
 				return true;
 			return false;
+		},
+		
+		playVideo: function() {
+			if(userSuggest.getSize() > 0) {	//right now just pull the top video off
+				console.log('playing a video from the user suggestions');
+				var videoToPlay = this.userSuggest.popVideo();
+				this.room.vm.play(videoToPlay);					//TODO: need to change meter logic to add points to the suggestor
+				return;
+			} 
+			else if(this.autoPlaylist.getSize() > 0) {
+				console.log('playing a video from the autoplaylist');
+				var videoToPlay = this.autoPlaylist.popVideo();
+				this.room.vm.play(videoToPlay);
+				return;
+			} 
+			else {	//fetch related video from YouTube -- this is temporary
+				console.log('no other videos - fetching one from YouTube');
+				if(this.room.history.length == 0) return;
+				var recentVideo = this.room.history.at(this.room.history.length - 1);
+				if(!recentVideo) return;
+				var videoId = recentVideo.get('videoId');
+				
+				var options = { 
+					host: 'gdata.youtube.com',
+					port: 80,
+					path: '/feeds/api/videos/'+videoId+'/related?alt=json&start-index=1&max-results=25&v=2',
+				};
+				
+				var room = this.room;
+				var VAL = this;
+				var req = http.request(options, function(res) {
+				  res.setEncoding('utf8');
+					var videoData = '';
+				  res.on('data', function (chunk) {
+				    videoData += chunk;
+				  });
+				
+					res.on('end', function() {
+						videoData = JSON.parse(videoData);
+						
+						var videoEntry = videoData['feed']['link']['entry'][0];
+						
+						var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
+						var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
+						var videoTitle = videoEntry['media$group']['media$title']['$t'];
+						var videoThumb = videoEntry['media$group']['media$thumbnail'][0]['url'];
+						var videoAuthor = videoEntry['author']['name']['$t'];
+		
+						var videoToPlay = new models.Video({
+							videoId: videoToPlayId,
+							duration: videoDuration,
+							title: videoTitle,
+							thumb: videoThumb,
+							author: videoAuthor
+						});
+						
+						room.vm.play(videotoPlay);
+					});
+				});
+		
+				req.on('error', function(e) {
+				  console.log('problem with request: ' + e.message);
+				});
+				req.end();
+			}
 		}	
+		
 	});
 	
 	/*************************/
@@ -98,11 +188,12 @@
 				redisClient.rpush('room:history:' + this.room.get("name"), JSON.stringify(videoFinished));
 				this.room.history.add(videoFinished);
 				this.room.clearVideo();
-				//make a call to VAL to use this video to generate more recommendations
+				//TODO: make a call to VAL to use this video to generate more recommendations
 			}
 		
 			//logic for setting up the next video
 			if((this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) && !VAL.isDJ) {
+				
 				this.room.sockM.announceStopVideo();
 			} else {
 				this.playNextVideo();
@@ -111,18 +202,16 @@
 		
 		playNextVideo: function() {
 			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
-				if(VAL.isDJ) {	//then play a video from Val
-					var videoToPlay = VAL.getVideoToPlay();
-					this.play(videoToPlay);
+				if(VAL.isDJ) {
+					VAL.playVideo();
 				}
 				return;
 			}
 			
-			if(this.room.djs.onLastDJ() && VAL.isDJ && VAL.hasVideos()) {
-				var videoToPlay = VAL.getVideoToPlay();
-				this.play(videoToPlay);
+			if(VAL.isDJ && VAL.hasVideos() && this.room.djs.isValsTurn()) {	//BUG: this will fail if there is just 1 human dj
+				VAL.playVideo();										//since that DJ will always be the last one
 			} else {	//play a video from a human
-				var currDJInfo = this.room.djs.nextDJ(); 	//need to insert case of VAL being the DJ
+				var currDJInfo = this.room.djs.nextDJ(); 	
 				console.log('Playing next video, dj has index '+currDJInfo.index+' and is user '
 										+ currDJInfo.dj.get('userId')); 
 				this.playVideoFromPlaylist(this.room.djs.currDJ.get('socketId'));
@@ -186,6 +275,7 @@
 					title: this.currVideo.get('title') 
 				});
 			}	
+			//this.sockM.sendRoomState(user.get("socket"));
 			this.sockM.sendRoomState();
 		},
 		
@@ -243,7 +333,7 @@
 			this.announceClients();
 			this.announceDJs();
 			this.announceMeter();
-			this.announceRoomHistory();
+			//this.announceRoomHistory();
 		},
 
 		removeSocket: function(socket) {
@@ -411,12 +501,25 @@
 		//returns the first Video, and moves the Video
 		//to the end of the playlist 
 		playFirstVideo: function() {
-			if(this.videos.length == 0) {
-				return null;
+			// if(this.videos.length == 0) {
+			// 				return null;
+			// 			}
+			// 			var first = this.videos.at(0);
+			// 			this.videos.remove(first);
+			// 			this.videos.add(first);	//adds video to the end;
+			// 			return first;
+			var firstVideo = this.popVideo();
+			if(firstVideo) {
+				this.videos.add(firstVideo);
 			}
+			return firstVideo;
+		},
+		
+		popVideo: function() {
+			if(this.videos.length == 0) return null;
+
 			var first = this.videos.at(0);
 			this.videos.remove(first);
-			this.videos.add(first);	//adds video to the end;
 			return first;
 		},
 		
@@ -747,10 +850,29 @@
 			return numVideos;
 		},
 		
-		onLastDJ: function() {
+		isValsTurn: function() {
 			var numDJs = this.length;
-			if(numDJs == 0 || this.currDJIndex == (numDJs-1)) return true;
+			if(numDJs == 0) return true;
+			else if(numDJs == 1) { 
+				var nextDJInfo = this.peekNextDJ();
+				if(nextDJInfo.dj == this.currDJ) {
+					this.currDJ = null;
+					return true;
+				}
+				return false;
+			}
+			
+			if(this.currDJIndex == (this.length - 1) && this.currDJ != null) {
+				this.currDJ = null;
+				return true;
+			}
 			return false;
+		},
+		
+		peekNextDJ: function() {
+			var nextDJIndex = (this.currDJIndex + 1) % this.length;
+			var nextDJ = this.at(nextDJIndex);
+			return { dj: nextDJ, index: currDJIndex };
 		}
 	});
 	
