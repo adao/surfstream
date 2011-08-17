@@ -534,8 +534,9 @@ $(function() {
     //ytplayer.loadVideoById(currVideo.video, currVideo.time);
    } else {
     var params = {
-     allowScriptAccess: "always"
-    };
+      wmode: "opaque",
+			allowScriptAccess: "always"
+    };                           
     var atts = {
      id: "YouTubePlayer"
     };
@@ -563,7 +564,8 @@ $(function() {
    } else {
     var params = {
      allowScriptAccess: "always",
-     allowFullScreen: 'false'
+     wmode: "opaque",
+		 allowFullScreen: 'false'
     };
     var atts = {
      id: "YouTubePlayerTwo"
@@ -1073,8 +1075,9 @@ $(function() {
     if (!window.playerLoaded) {
      window.playerLoaded = true;
      var params = {
-      allowScriptAccess: "always"
-     };
+      allowScriptAccess: "always",
+     	wmode: "opaque"
+		 };
      var atts = {
       id: "YouTubePlayer"
      };

@@ -57,6 +57,10 @@ function setupRoutes(app) {
 		app.get('/topvideocell', function(req, res){
 	    res.render('topvideocell', { locals: {title: "surfstream.tv"}});
     });
+
+		app.get('/nowplaying', function(req, res){
+	    res.render('nowplaying', { locals: {title: "surfstream.tv"}});
+    });
 }
 
 exports.setupRoutes = setupRoutes;
