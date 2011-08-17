@@ -38,6 +38,7 @@
   background-color: #f00;
 }
 #become-dj {
+  position: absolute;
   width: 50px;
   height: 55px;
 }
