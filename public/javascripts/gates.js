@@ -77,28 +77,29 @@ $(function() {
    is_main_user: false
   },
 
-  initialize: function() {
+  getFBUserData: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
-    FB.api('/me/friends', function(response) {
-     console.log(response);
-    });
+    FB.api('/me/friends', this.sendUserFBFriends);
    }
-  },
-
-  getUserData: function(self) {
-    return this.get("fbInfo");
   },
 
   setUserData: function(info) {
    window.SurfStreamApp.get('userModel').set({
-    fbInfo: info,
+    displayName: info.first_name + " " + info.last_name,
     avatarImage: 'https://graph.facebook.com/' + info.id + '/picture'
    });
-   window.SurfStreamApp.get('userModel').get("socketManagerModel").makeFirstContact({
-    user: info
-   });
-  }
+   SocketManagerModel.sendFBUser(info);
+  },
+
+	sendUserFBFriends: function(info) {
+		var friendIdList = _.pluck(info.data, "id");
+		console.log(friendIdList);
+		SocketManagerModel.sendUserFBFriends({
+			fbId: window.SurfStreamApp.get('userModel').get("fbId"),
+			fbFriends: friendIdList
+		});
+	}
 
  });
 
@@ -152,11 +153,15 @@ $(function() {
 	
 	 this.get("mainView").initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
 	 this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));
-   this.get('userModel').getUserData(this.get('userModel'));
+	 //this.get("userModel").getFBUserData();
   }
  });
 
- window.RoomlistCellModel = Backbone.Model.extend({});
+ window.RoomlistCellModel = Backbone.Model.extend({
+	initialize: function() {
+		this.set({friends: []});
+	}
+});
  
  window.ChatCollection = Backbone.Collection.extend({
   model: ChatMessageModel,
@@ -193,7 +198,13 @@ $(function() {
  });
 
  window.RoomlistCollection = Backbone.Collection.extend({
-	model: RoomlistCellModel
+	model: RoomlistCellModel,
+	
+	initialize: function() {
+		this.comparator = function(roomlistCellModel) {
+			return (-roomlistCellModel.get("friends").length * 15 + -roomlistCellModel.get("numUsers"));
+		}
+	}
 
  });
 
@@ -225,13 +236,7 @@ $(function() {
 					index = i;
 			}
 			var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
-			var playlistItemModel;
-			for (i = 0; i < playlistCollection.length; i++) {
-				if (playlistCollection.at(i).get("videoId") == videoId) {
-					playlistItemModel = playlistCollection.at(i);
-					break;
-				}
-			}
+			var playlistItemModel = ss_modelWithAttribute(playlistCollection, "videoId", videoId);
 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 			playlistCollection.remove(playlistItemModel, {silent: true});
 			playlistCollection.add(copyPlaylistItemModel, {
@@ -616,12 +621,8 @@ $(function() {
   removeFromPlaylist: function(event) {
 	 $(this).parent().parent().parent().remove();
 	 var collectionReference = event.data.playlistCollection;
-   for (var i = 0; i < collectionReference.length; i++) {
-		if (collectionReference.at(i).get("videoId") == event.data.videoModel.get("videoId")) {
-			collectionReference.remove(collectionReference.at(i));
-			break;
-		}
-	 }
+	 var playlistModelToRemove = ss_modelWithAttribute(collectionReference, "videoId", event.data.videoModel.get("videoId"));
+   collectionReference.remove(playlistModelToRemove);
    SocketManagerModel.deleteFromPlaylist(event.data.videoModel.get("videoId"));
   },
 
@@ -632,12 +633,8 @@ $(function() {
 		return;
 	 }
    $(this).parent().parent().parent().remove();
-	 for (var i = 0; i < collectionReference.length; i++) {
-		if (collectionReference.at(i).get("videoId") == event.data.videoModel.get("videoId")) {
-			collectionReference.remove(collectionReference.at(i));
-			break;
-		}
-	 }
+	 var playlistModelToRemove = ss_modelWithAttribute(collectionReference, "videoId", event.data.videoModel.get("videoId"));
+   collectionReference.remove(playlistModelToRemove);
    collectionReference.add(copyPlaylistItemModel, {
     at: 0,
     silent: true
@@ -710,9 +707,9 @@ $(function() {
    var userMessage = this.$('input[name=message]').val();
    this.$('input[name=message]').val('');
    SocketManagerModel.sendMsg({
-    name: this.options.userModel.get("fbInfo").name,
+    name: this.options.userModel.get("displayName"),
     text: userMessage,
-    id: this.options.userModel.get("fbInfo").id
+    id: this.options.userModel.get("fbId")
    });
    return false;
   },
@@ -738,6 +735,7 @@ $(function() {
 
 		initialize: function () {
 			this.options.roomlistCollection.bind("reset", this.addRooms, this);
+			this.options.roomlistCollection.bind("sort", this.addRooms, this);
 			this.render();
 			this.hide();
 		},
@@ -771,14 +769,14 @@ $(function() {
 		roomListCellTemplate: _.template($('#roomlistCell-template #celltemplate-table .room-row').html()),
 
 		initialize: function () {
-			$($(".table-header")[0]).after(this.render().el);
+			$($("#roomsTable tbody:first")[0]).append(this.render().el);
 			$(this.el).bind("click", this.clickJoinRoom);																					
 		},
 	
 		render: function() {
 			var roomListCellModel = this.options.roomListCellModel; 
 			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: roomListCellModel.get("curVidTitle"),
-				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("fbids")}));
+				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("friends").length}));
 			return this;
 		},
 		
@@ -1060,7 +1058,7 @@ $(function() {
     throw "No App Passed to SocketManager!";
    } else {
     console.log("Got app. " + app);
-   }
+  }
 
    /* First set up all listeners */
    //Chat -- msg received
@@ -1115,6 +1113,17 @@ $(function() {
     window.YTPlayer.stopVideo();
     window.YTPlayer.clearVideo();
    });
+
+	 socket.on("user:fbProfile", function(fbProfile) {
+		if (fbProfile == null) {
+			app.get("userModel").getFBUserData();
+		} else {
+			app.get("userModel").set({
+				displayName: fbProfile.first_name + " " + fbProfile.last_name,
+				avatarImage: 'https://graph.facebook.com/' + fbProfile.id + '/picture'
+			});
+		}
+	 });
 
    socket.on('playlist:refresh', function(videoArray) {
     //app.setPlaylist(videoArray);
@@ -1222,8 +1231,19 @@ $(function() {
 	 app.get("roomModel").get("playerModel").set({percent: total / meterStats.upvoteSet.size});
    });
 
-	socket.on("rooms:announce", function(roomsData) {
-			app.get("roomModel").get("roomListCollection").reset(roomsData);
+	socket.on("rooms:announce", function(roomList) {
+		var roomlistCollection = app.get("roomModel").get("roomListCollection");
+		roomlistCollection.reset();
+		for (var i = 0; i < roomList.rooms.length; i++) {
+			roomlistCollection.add(new RoomlistCellModel(roomList.rooms[i]));
+		}
+		for(var friendId in roomList.friendsRooms) {
+			if(roomList.friendsRooms.hasOwnProperty(friendId)) {
+				var roomModel = ss_modelWithAttribute(roomlistCollection, "rID", roomList.friendsRooms[friendId]);
+				roomModel.get("friends").push(friendId);
+			}
+		}
+		roomlistCollection.sort();
 	});
 	
 	/* WE ARE OVERLOADING THIS TO CLEAR THE CHAT, ASSUMING THIS ONLY HAPPENS ON NEW ROOM JOIN */
@@ -1233,18 +1253,23 @@ $(function() {
 		//app.get("roomModel").get("chatCollection").reset();
 	});
 	
- },
-
-  /* Initialize first contact */
-  makeFirstContact: function(user) {
-   var socket = this.get("socket");
-   socket.emit('user:sendFBData', user);
-  },
+ }
 
  }, {
   socket: socket_init,
 
   /* Outgoing Socket Events*/
+  sendFBId: function(id) {
+		SocketManagerModel.socket.emit("user:sendFBId", id);
+  },
+
+	sendFBUser: function(user) {
+		SocketManagerModel.socket.emit("user:sendFBData", user);
+	},
+	
+	sendUserFBFriends: function(friendIdList) {
+		SocketManagerModel.socket.emit("user:sendUserFBFriends", friendIdList);
+	},
 
   sendMsg: function(data) {
    SocketManagerModel.socket.emit("message", data);
@@ -1296,7 +1321,9 @@ $(function() {
 	},
 
 	loadRoomsInfo: function() {
-		SocketManagerModel.socket.emit('rooms:load');
+		SocketManagerModel.socket.emit('rooms:load', {id: window.SurfStreamApp.get("userModel").get("fbId")});
+		console.log(window.SurfStreamApp.get("userModel").get("fbId"));
+		console.log("LOGGED");
 	},
 	
 	joinRoom: function(rID, create) {
@@ -1306,6 +1333,7 @@ $(function() {
 			payload.currRoom = SurfStreamApp.inRoom;
 		}		
 		SurfStreamApp.inRoom = rID;
+		payload.id = window.SurfStreamApp.get("userModel").get("fbId");
 		window.YTPlayer.stopVideo();
 		window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
 		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
@@ -1381,6 +1409,15 @@ function ss_formatSeconds(time) {
 
 function ss_idToImg(id) {
 	return "http://img.youtube.com/vi/"+id+"/0.jpg";
+}
+
+function ss_modelWithAttribute(collection, attribute, valueToMatch) {
+	for (var i = 0; i < collection.length; i++) {
+		if (collection.at(i).get(attribute) == valueToMatch) {
+			return collection.at(i);
+		}
+	}
+	return null;
 }
 
 function skipVideo() {

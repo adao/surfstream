@@ -7,17 +7,15 @@ window.fbAsyncInit = function() {
 		
 	button = document.getElementById('fb-auth');
 	button.onclick = function() {
-		FB.login(function(response) {}, {scope:'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence'});
+		FB.login(function(response) {}, {scope:'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence,read_friendlists'});
 	};
 	
 	function proceed_to_site(response) {
 		console.log(response);
 		if (response.authResponse) {
 			//user is already logged in and connected
-			$.getScript("/javascripts/gates.js", function(data, textStatus){
-				//console.log(data);
-				console.log(textStatus);
-			});
+			window.SurfStreamApp.get("userModel").set({fbId: response.authResponse.userID});
+			SocketManagerModel.sendFBId(response.authResponse.userID);
 			document.getElementById('frontdoor').style.display = 'none';
 			document.getElementById('loadingScreen').style.display = 'none';
 			document.getElementById('outer').style.display = 'block';
