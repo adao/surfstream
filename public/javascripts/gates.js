@@ -87,9 +87,7 @@ $(function() {
   },
 
   getUserData: function(self) {
-   if (this.get("fbUserInfo")) {
-    return this.get("fbUserInfo");
-   }
+    return this.get("fbInfo");
   },
 
   setUserData: function(info) {
@@ -534,8 +532,9 @@ $(function() {
     //ytplayer.loadVideoById(currVideo.video, currVideo.time);
    } else {
     var params = {
-     allowScriptAccess: "always"
-    };
+      wmode: "opaque",
+			allowScriptAccess: "always"
+    };                           
     var atts = {
      id: "YouTubePlayer"
     };
@@ -563,7 +562,8 @@ $(function() {
    } else {
     var params = {
      allowScriptAccess: "always",
-     allowFullScreen: 'false'
+     wmode: "opaque",
+		 allowFullScreen: 'false'
     };
     var atts = {
      id: "YouTubePlayerTwo"
@@ -824,7 +824,7 @@ $(function() {
   el: '#room-container',
 
   initialize: function() {
-   $("#dj").bind("click", this.toggleDJStatus);
+   $("#become-dj").bind("click", this.toggleDJStatus);
    $("#up-vote").bind("click", SocketManagerModel.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
@@ -836,23 +836,20 @@ $(function() {
    $("#mute").bind("click", {
     button: $("#mute")
    }, mute);
-
    this.options.userCollection.bind("add", this.placeUser, this);
    this.options.userCollection.bind("remove", this.removeUser, this);
    this.chats = [];
   },
 
   toggleDJStatus: function() {
-   if (this.innerHTML != "Step Down") {
+   if ($(this).css("display") == "block") {
+		$(this).hide();
     SocketManagerModel.becomeDJ();
-    this.innerHTML = "Step Down";
-    $("#people-area").append("<button id='skip'> Skip Video </button>");
-    $("#skip").bind("click", skipVideo);
-   } else {
-    SocketManagerModel.stepDownFromDJ();
-    this.innerHTML = "Become DJ";
-    $("#skip").remove();
-   }
+    if ($("#skip").length == 0) {
+			$("#people-area").append("<button id='skip'> Skip Video </button>");
+			$("#skip").bind("click", skipVideo);
+		} 
+   } 
   },
 
   placeUser: function(user) {
@@ -862,7 +859,7 @@ $(function() {
 	 var sillySmile = "<img class='defaultSmile"+user.get("avatar")+" smiley' src="+this.getSmile(user.get("avatar")) +">";
    this.$("#people-area").append("<div id=" + user.id +"_ style='position:absolute; margin-left:" + user.get("x") + "px; margin-top:" + 
 																	user.get("y") + "px;'>" +  imgtag + defaultSmile + sillySmile + "</div>");
-   this.$("#" + user.id).tipsy({
+   this.$("#" + user.id+"_").tipsy({
     gravity: 'sw',
     fade: 'true',
     delayOut: 3000,
@@ -915,7 +912,8 @@ $(function() {
 	},
 
   removeUser: function(user) {
-	 var avatar = this.$("#" + user.id);
+	 var avatar = this.$("#" + user.id + "_");
+	 avatar.data("animating", false);
 	 avatar.tipsy('hide');
    avatar.remove();
   }
@@ -923,7 +921,7 @@ $(function() {
  }, { /* Class properties */
 
   tipsyChat: function(text, fbid) {
-   var userPic = $("#" + fbid);
+   var userPic = $("#" + fbid + "_");
 	 var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
@@ -1072,8 +1070,9 @@ $(function() {
     if (!window.playerLoaded) {
      window.playerLoaded = true;
      var params = {
-      allowScriptAccess: "always"
-     };
+      allowScriptAccess: "always",
+     	wmode: "opaque"
+		 };
      var atts = {
       id: "YouTubePlayer"
      };
@@ -1093,6 +1092,7 @@ $(function() {
     //HACK
     $("#room-name").html(video.title)
     app.get("roomModel").get("userCollection").forEach(function(userModel) {
+		 $("#" + userModel.get("id") + "_").data("animating", false);
      $("#" + userModel.get("id")+ "_ .smiley").hide();
      $("#" + userModel.get("id")+ "_ .default").show();
      
@@ -1154,17 +1154,38 @@ $(function() {
 		//add DJs
 		var X_COORDS = [200,260,320,380, 440]; //5th DJ spot needs work
 		var Y_COORD = 25;
+		var cur_is_dj = false;
     for (var dj in djArray) {
 		 user = $("#" + djArray[dj].id+"_");
 		 if(user.data("isDJ") == "0") {
 			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
 			 user.data("isDJ", "1")
 		 }
-     
-		user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
-			 
-    }
-    
+     user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
+		 if (djArray[dj].id == app.get("userModel").get("fbInfo").id) {
+				cur_is_dj = true;
+				$('#getOff').live('click', function() {
+				  $("#stepDown").remove();
+					$("#skip").remove();
+					SocketManagerModel.stepDownFromDJ();
+					
+				});
+				user.append("<div id='stepDown' style='width: 80px; height: 95px'></div>");
+				$('#stepDown').tipsy({
+			    gravity: 'sw',
+			    fade: 'true',
+			    delayOut: 1000,
+					html: true,
+			    title: function() {
+			     return "<a id='getOff'>Get Off Sofa</a>"
+			    }
+			   });
+				
+			}
+		}
+		//NEED BOUNDS CHECK HERE TODO
+		$("#become-dj").css("margin-left", X_COORDS[djArray.length] + "px").css("margin-top", Y_COORD + "px");
+    if(!cur_is_dj) $("#become-dj").show();
 
     
    });
@@ -1179,8 +1200,21 @@ $(function() {
       //BEGIN HACK
 			$("#" + fbid + "_ .smiley").show();
 			$("#" + fbid + "_ .default").hide();
+			(function() {
+				var element = $("#" + fbid + "_");
+				element.data("animating", true);
+				var marginTop = element.css("margin-top").match(/\d+/)[0];
+			    (function(){
+							if (element.data("animating") == true) {
+			        element
+			            .animate({ marginTop: marginTop - 6 }, 500)
+			            .animate({ marginTop: marginTop },   500, arguments.callee);
+							}
+			    }());
+			}())
       //ENDHACK
      } else { //FOR UPVOTE, THEN DOWNVOTE
+			$("#" + fbid + "_").data("animating", false);
 			$("#" + fbid + "_ .smiley").hide();
 			$("#" + fbid + "_ .default").show();
 		}
