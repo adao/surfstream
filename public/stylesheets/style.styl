@@ -1,9 +1,48 @@
+#now-playing-container
+	height: 100px!important
+	width: 300px!important
+	background-color: red!important
+	#now-playing-video-container
+		height: 60px
+		background-color: blue
+		display: block
+		#now-playing-thumb
+			display: inline-block
+			height: 60px
+			width: 60px
+			background-color: green
+		#now-playing-video-info
+			vertical-align: top
+			display: inline-block
+			height: 60px
+			width: 200px
+			#now-playing-title
+				height: 40px
+				width: 200px
+				background-color: yellow
+				display: block 
+			#now-playing-views
+				height: 20px
+				width: 200px 
+				background-color: purple
+				display: block  
+	#now-playing-meter-container 
+		height: 40px
+		display: block
+		background-color: red
+
+#become-dj
+	position: absolute
+	width: 50px
+	height: 55px
+
 div #preview-container
 	display: none
 	height: 195
 div#loadingScreen
 	background-color: color
 div#frontdoor
+	background: transparent
 	display: none
 div#outer
 	display: none
@@ -46,7 +85,6 @@ body
 			float: left
 			height: 690px
 			width: 660px
-			background-color: black
 		#right-side
 			float: right
 			height: 690px
@@ -113,7 +151,7 @@ body
 div.chatContainer
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	width: 300px
-	height: 296px
+	height: 266px
 	max-width: 300px
 	max-height: 290px
 	display: block
@@ -127,6 +165,7 @@ div.chatContainer
 			margin-top: 5px
 			margin-left: 5px
 		div.chatTitle
+			font-size: 12px
 			text-indent: 10px
 			vertical-align: top
 			display: inline-block                                         
@@ -138,7 +177,7 @@ div.chatContainer
 		background-color: #E7E7E7
 		border: none
 		color: black
-		height: 230px
+		height: 200px
 		overflow-y: scroll
 		overflow-x: hidden
 		div.messageContainer
@@ -414,35 +453,47 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .tipsy-inner
 	z-index: 666
 	
-#remote
-	height: 180px!important
+#remote-container
+	height: 190px!important
 	width: 104px!important
-	background: url('/images/room/remote.png') 50% 50% no-repeat
 	float: right
-	margin-top: 90px
-	.remote-top
-		width: 104px
-		height: 74px
-		display: block
-	.side-button-container
-		margin-top: 10px   
-		vertical-align: top
-		display: inline-block
-		width: 40px
-		height: 70px
-		text-align: center
-		display: block
-	#vol-buttons
-		float: left
-		padding-left: 12px
-	#vote-buttons
-		float: right
-		padding-right: 12px
-	.remote-bottom
-		display: block
-		width: 100px
-		height: 90px
-		text-align: center
+	display: block
+	margin-top: 180px
+	margin-right: 5px
+	text-align: center
+	button#remote-pullup
+		border: none
+		height: 10px
+		width: 30px
+		background: url('/images/room/pullup.png') 50% 50% no-repeat
+		margin-bottom: 3px
+	#remote
+		height: 180px!important
+		width: 104px!important
+		background: url('/images/room/remote.png') 50% 50% no-repeat
+		.remote-top
+			width: 104px
+			height: 74px
+			display: block
+		.side-button-container
+			margin-top: 10px   
+			vertical-align: top
+			display: inline-block
+			width: 40px
+			height: 70px
+			text-align: center
+			display: block
+		#vol-buttons
+			float: left
+			padding-left: 12px
+		#vote-buttons
+			float: right
+			padding-right: 12px
+		.remote-bottom
+			display: block
+			width: 100px
+			height: 90px
+			text-align: center 
 
 #vol-up, #vol-down
 	font-size: 10px
@@ -668,6 +719,23 @@ div#top-video-name
 #YouTubePlayerTwo
 	margin-top: 0px
 	margin-left: -1px
+
+.ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all
+	position: absolute
+	top: 30px
+	background-color: white
+	margin-left: -100px
+	margin-top: 50px
+	width: 200px!important
+	height: 238px!important
+	list-style-type: none
+	li
+		margin-left: -40px
+		padding: 3px
+	li:hover
+		background-color: #3C6EC7
+		color: white
+		
 	
 #preview-container
 	border: 1px solid gray
@@ -681,3 +749,41 @@ div#top-video-name
 		color: gray
 	button.hidePlayer:hover
 		color: black
+
+.default
+	position: absolute
+
+.defaultSmile1
+	margin-top: 45px
+	margin-left: 10px
+.defaultSmile2
+	margin-top: 48px
+	margin-left: 14px
+.defaultSmile3
+	margin-top: 33px
+	margin-left: 9px
+.defaultSmile4
+	margin-top: 47px
+	margin-left: 10px
+.defaultSmile5
+	margin-top: 50px
+	margin-left: 8px
+
+.smiley
+	display: none;
+	position: absolute
+.upSmile1
+	margin-top: 45px
+	margin-left: 10px
+.upSmile2
+	margin-top: 43px
+	margin-left: 14px
+.upSmile3
+	margin-top: 36px
+	margin-left: 9px
+.upSmile4
+	margin-top: 47px
+	margin-left: 10px
+.upSmile5
+	margin-top: 50px
+	margin-left: 8px
