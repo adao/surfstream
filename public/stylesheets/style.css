@@ -112,7 +112,7 @@ body {
 #outer #coolshit #right-side .sidebarContainer {
   display: block;
   width: 300px;
-  height: 395px;
+  height: 455px;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar {
   height: 25px;
@@ -141,7 +141,7 @@ body {
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 330px;
+  height: 290px;
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
@@ -178,9 +178,9 @@ body {
 div.chatContainer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   width: 300px;
-  height: 266px;
+  height: 236px;
   max-width: 300px;
-  max-height: 290px;
+  max-height: 236px;
   display: block;
 }
 div.chatContainer div.chatHeader {
@@ -208,7 +208,7 @@ div.chatContainer #messages {
   background-color: #e7e7e7;
   border: none;
   color: #000;
-  height: 200px;
+  height: 170px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -527,7 +527,7 @@ button.search.active {
   color: #808080;
 }
 .videoView {
-  height: 370px;
+  height: 330px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -801,6 +801,7 @@ background-color: green,
   max-height: 370px;
   overflow-y: scroll;
   overflow-x: hidden;
+  z-index: -1;
 }
 #video-list .videoListCellContainer {
   width: 285px;
