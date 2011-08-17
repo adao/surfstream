@@ -158,7 +158,11 @@ $(function() {
   }
  });
 
- window.RoomlistCellModel = Backbone.Model.extend({});
+ window.RoomlistCellModel = Backbone.Model.extend({
+	initialize: function() {
+		this.set({friends: []});
+	}
+});
  
  window.ChatCollection = Backbone.Collection.extend({
   model: ChatMessageModel,
@@ -195,7 +199,13 @@ $(function() {
  });
 
  window.RoomlistCollection = Backbone.Collection.extend({
-	model: RoomlistCellModel
+	model: RoomlistCellModel,
+	
+	initialize: function() {
+		this.comparator = function(roomlistCellModel) {
+			return (-roomlistCellModel.get("friends").length * 15 + -roomlistCellModel.get("numUsers"));
+		}
+	}
 
  });
 
@@ -226,13 +236,7 @@ $(function() {
 					index = i;
 			}
 			var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
-			var playlistItemModel;
-			for (var i = 0; i < playlistCollection.length; i++) {
-				if (playlistCollection.at(i).get("videoId") == videoId) {
-					playlistItemModel = playlistCollection.at(i);
-					break;
-				}
-			}
+			var playlistItemModel = ss_modelWithAttribute(playlistCollection, "videoId", videoId);
 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 			playlistCollection.remove(playlistItemModel, {silent: true});
 			playlistCollection.add(copyPlaylistItemModel, {
@@ -615,12 +619,8 @@ $(function() {
   removeFromPlaylist: function(event) {
 	 $(this).parent().parent().parent().remove();
 	 var collectionReference = event.data.playlistCollection;
-   for (var i = 0; i < collectionReference.length; i++) {
-		if (collectionReference.at(i).get("videoId") == event.data.videoModel.get("videoId")) {
-			collectionReference.remove(collectionReference.at(i));
-			break;
-		}
-	 }
+	 var playlistModelToRemove = ss_modelWithAttribute(collectionReference, "videoId", event.data.videoModel.get("videoId"));
+   collectionReference.remove(playlistModelToRemove);
    SocketManagerModel.deleteFromPlaylist(event.data.videoModel.get("videoId"));
   },
 
@@ -631,12 +631,8 @@ $(function() {
 		return;
 	 }
    $(this).parent().parent().parent().remove();
-	 for (var i = 0; i < collectionReference.length; i++) {
-		if (collectionReference.at(i).get("videoId") == event.data.videoModel.get("videoId")) {
-			collectionReference.remove(collectionReference.at(i));
-			break;
-		}
-	 }
+	 var playlistModelToRemove = ss_modelWithAttribute(collectionReference, "videoId", event.data.videoModel.get("videoId"));
+   collectionReference.remove(playlistModelToRemove);
    collectionReference.add(copyPlaylistItemModel, {
     at: 0,
     silent: true
@@ -737,6 +733,7 @@ $(function() {
 
 		initialize: function () {
 			this.options.roomlistCollection.bind("reset", this.addRooms, this);
+			this.options.roomlistCollection.bind("sort", this.addRooms, this);
 			this.render();
 			this.hide();
 		},
@@ -770,14 +767,14 @@ $(function() {
 		roomListCellTemplate: _.template($('#roomlistCell-template #celltemplate-table .room-row').html()),
 
 		initialize: function () {
-			$($(".table-header")[0]).after(this.render().el);
+			$($("#roomsTable tbody:first")[0]).append(this.render().el);
 			$(this.el).bind("click", this.clickJoinRoom);																					
 		},
 	
 		render: function() {
 			var roomListCellModel = this.options.roomListCellModel; 
 			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: roomListCellModel.get("curVidTitle"),
-				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("fbids")}));
+				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("friends").length}));
 			return this;
 		},
 		
@@ -1015,7 +1012,7 @@ $(function() {
     throw "No App Passed to SocketManager!";
    } else {
     console.log("Got app. " + app);
-   }
+  }
 
    /* First set up all listeners */
    //Chat -- msg received
@@ -1141,8 +1138,19 @@ $(function() {
 	 app.get("roomModel").get("playerModel").set({percent: total / meterStats.upvoteSet.size});
    });
 
-	socket.on("rooms:announce", function(roomsData) {
-			app.get("roomModel").get("roomListCollection").reset(roomsData);
+	socket.on("rooms:announce", function(roomList) {
+		var roomlistCollection = app.get("roomModel").get("roomListCollection");
+		roomlistCollection.reset();
+		for (var i = 0; i < roomList.rooms.length; i++) {
+			roomlistCollection.add(new RoomlistCellModel(roomList.rooms[i]));
+		}
+		for(var friendId in roomList.friendsRooms) {
+			if(roomList.friendsRooms.hasOwnProperty(friendId)) {
+				var roomModel = ss_modelWithAttribute(roomlistCollection, "rID", roomList.friendsRooms[friendId]);
+				roomModel.get("friends").push(friendId);
+			}
+		}
+		roomlistCollection.sort();
 	});
 	
 	/* WE ARE OVERLOADING THIS TO CLEAR THE CHAT, ASSUMING THIS ONLY HAPPENS ON NEW ROOM JOIN */
@@ -1308,6 +1316,15 @@ function ss_formatSeconds(time) {
 
 function ss_idToImg(id) {
 	return "http://img.youtube.com/vi/"+id+"/0.jpg";
+}
+
+function ss_modelWithAttribute(collection, attribute, valueToMatch) {
+	for (var i = 0; i < collection.length; i++) {
+		if (collection.at(i).get(attribute) == valueToMatch) {
+			return collection.at(i);
+		}
+	}
+	return null;
 }
 
 function skipVideo() {
