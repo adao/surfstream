@@ -1,3 +1,12 @@
+#now-playing-container {
+  height: 60px !important;
+  width: 300px !important;
+  background-color: #f00 !important;
+}
+#become-dj {
+  width: 50px;
+  height: 55px;
+}
 div #preview-container {
   display: none;
   height: 195;
@@ -6,6 +15,7 @@ div#loadingScreen {
   background-color: color;
 }
 div#frontdoor {
+  background: transparent;
   display: none;
 }
 div#outer {
@@ -59,7 +69,6 @@ body {
   float: left;
   height: 690px;
   width: 660px;
-  background-color: #000;
 }
 #outer #coolshit #right-side {
   float: right;
@@ -135,7 +144,7 @@ body {
 div.chatContainer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   width: 300px;
-  height: 296px;
+  height: 266px;
   max-width: 300px;
   max-height: 290px;
   display: block;
@@ -152,6 +161,7 @@ div.chatContainer div.chatHeader img.chatIcon {
   margin-left: 5px;
 }
 div.chatContainer div.chatHeader div.chatTitle {
+  font-size: 12px;
   text-indent: 10px;
   vertical-align: top;
   display: inline-block;
@@ -164,7 +174,7 @@ div.chatContainer #messages {
   background-color: #e7e7e7;
   border: none;
   color: #000;
-  height: 230px;
+  height: 200px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -492,19 +502,33 @@ button.search.active {
 .tipsy-inner {
   z-index: 666;
 }
-#remote {
+#remote-container {
+  height: 190px !important;
+  width: 104px !important;
+  float: right;
+  display: block;
+  margin-top: 180px;
+  margin-right: 5px;
+  text-align: center;
+}
+#remote-container button#remote-pullup {
+  border: none;
+  height: 10px;
+  width: 30px;
+  background: url("/images/room/pullup.png") 50% 50% no-repeat;
+  margin-bottom: 3px;
+}
+#remote-container #remote {
   height: 180px !important;
   width: 104px !important;
   background: url("/images/room/remote.png") 50% 50% no-repeat;
-  float: right;
-  margin-top: 90px;
 }
-#remote .remote-top {
+#remote-container #remote .remote-top {
   width: 104px;
   height: 74px;
   display: block;
 }
-#remote .side-button-container {
+#remote-container #remote .side-button-container {
   margin-top: 10px;
   vertical-align: top;
   display: inline-block;
@@ -513,15 +537,15 @@ button.search.active {
   text-align: center;
   display: block;
 }
-#remote #vol-buttons {
+#remote-container #remote #vol-buttons {
   float: left;
   padding-left: 12px;
 }
-#remote #vote-buttons {
+#remote-container #remote #vote-buttons {
   float: right;
   padding-right: 12px;
 }
-#remote .remote-bottom {
+#remote-container #remote .remote-bottom {
   display: block;
   width: 100px;
   height: 90px;
@@ -804,6 +828,24 @@ background-color: green,
 #YouTubePlayerTwo {
   margin-top: 0px;
   margin-left: -1px;
+}
+.ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all {
+  position: absolute;
+  top: 30px;
+  background-color: #fff;
+  margin-left: -100px;
+  margin-top: 50px;
+  width: 200px !important;
+  height: 238px !important;
+  list-style-type: none;
+}
+.ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all li {
+  margin-left: -40px;
+  padding: 3px;
+}
+.ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all li:hover {
+  background-color: #3c6ec7;
+  color: #fff;
 }
 #preview-container {
   border: 1px solid #808080;
