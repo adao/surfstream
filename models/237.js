@@ -39,7 +39,10 @@
 			
 			socket.on('val:turnOffDJ', function() {
 				val.isDJ = false;
-				
+				if(val.room.currVideo.get('dj')) {	//VAL is the current DJ
+					clearTimeout(val.room.currVideo.get('timeoutId'));
+					val.room.vm.onVideoEnd();
+				}
 			});
 			
 			socket.on('val:turnOnDJ', function() {
@@ -115,7 +118,8 @@
 							duration: videoDuration,
 							title: videoTitle,
 							thumb: videoThumb,
-							author: videoAuthor
+							author: videoAuthor,
+							dj: 'VAL'
 						});
 						
 						room.vm.play(videotoPlay);
@@ -854,6 +858,9 @@
 			return numVideos;
 		},
 		
+		//note this function changes program state 
+		//(it doesn't just return true/false)
+		//If it is VAL's turn, this.currDJ is set to null
 		isValsTurn: function() {
 			var numDJs = this.length;
 			if(numDJs == 0) return true;
