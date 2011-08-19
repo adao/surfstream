@@ -7,7 +7,7 @@ window.fbAsyncInit = function() {
 		
 	button = document.getElementById('fb-auth');
 	button.onclick = function() {
-		FB.login(function(response) {}, {scope:'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence,read_friendlists'});
+		FB.login(function(response) {}, {scope:'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence,read_friendlists,offline_access,create_event'});
 	};
 	
 	function proceed_to_site(response) {
@@ -31,8 +31,9 @@ window.fbAsyncInit = function() {
 	}
 		
 	// run once with current status and whenever the status changes
+	FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
 	FB.Event.subscribe('auth.statusChange', proceed_to_site);
-    document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('loadingScreen').style.display = 'none';
 	document.getElementById('frontdoor').style.display = 'inline-block';
 };
 (function() {
