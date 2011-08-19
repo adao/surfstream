@@ -81,6 +81,7 @@ $(function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
     FB.api('/me/friends', this.sendUserFBFriends);
+		this.getUserPostedVideos();
    }
   },
 
@@ -99,8 +100,124 @@ $(function() {
 			fbId: window.SurfStreamApp.get('userModel').get("fbId"),
 			fbFriends: friendIdList
 		});
+	},
+	
+	getUserPostedVideos: function() {
+		FB.api('/me/feed?fields=from,link', 
+			{
+				since: 1133308800,
+				limit: 50
+			}, this.addUserPostedVideos);
+	},
+	
+	addUserPostedVideos: function(info) {
+		console.log(info);
+		if (info.paging) {
+			if (info.paging.next) {
+				FB.api('/me/feed?fields=from,link', 
+					{
+						until: info.paging.next.substr(info.paging.next.indexOf('until') + 6),
+						limit: 50
+				}, window.SurfStreamApp.get("userModel").addUserPostedVideos);
+			}
+		} else {
+			window.SurfStreamApp.get("userModel").sendFacebookPlaylistBatchToYoutube();
+		}
+		for (var index in info.data) {
+			if (info.data[index]['link']) {
+				if (info.data[index]['link'].indexOf("youtube") != -1) {
+					window.SurfStreamApp.get("userModel").addToFacebookPlaylist(info.data[index]['link']);
+				}
+			}
+		}
+	},
+	
+	addToFacebookPlaylist: function(videoUrl) {
+		// if (this.get("facebookPlaylist").length == 10) {
+		// 	this.sendFacebookPlaylistBatchToYoutube();
+		// }
+		var videoUrlEnding = videoUrl.substr(videoUrl.indexOf("v=") + 2);
+		var length = videoUrlEnding.indexOf("&") < 11 && videoUrlEnding.indexOf("&") != -1 ? videoUrlEnding.indexOf("&") : 11;
+		var videoId = videoUrl.substr(videoUrl.indexOf("v=") + 2, length);
+		$.ajax({
+	    url: "http://gdata.youtube.com/feeds/api/videos?max-results=1&format=5&alt=json&q=" + videoId,
+	    success: $.proxy(this.processYoutubeResult, this)
+	   });
+	},
+	
+	sendFacebookPlaylistBatchToYoutube: function() {
+		// var facebookPlaylistString = this.get("facebookPlaylist").join("%7C");
+		// console.log(facebookPlaylistString);
+		// $.ajax({
+		// 	url:"http://gdata.youtube.com/feeds/api/videos?format=5&alt=json&q=" + facebookPlaylistString,
+		//   success: $.proxy(this.processYoutubeResults, this)
+		// });
+		// var batch =
+		// 	"<feed "
+		// 	+ "xmlns='http://www.w3.org/2005/Atom' "
+		// 	+ "xmlns:media='http://search.yahoo.com/mrss/' "
+		// 	+ "xmlns:batch='http://schemas.google.com/gdata/batch'>"
+		// 	+ "<batch:operation type='query'/>";
+		// //for (var index in this.get("facebookPlaylist")) {
+		// var arrayza = ['h5jKcDH9s64','elzqvWXG1Y'];
+		// for (var index in arrayza) {
+		// 	batch += '<entry><id>http://gdata.youtube.com/feeds/api/videos/';
+		// 	batch += arrayza[index];
+		// 	batch += '</id></entry>';
+		// }
+		// batch += '</feed>';
+		// $.ajax({
+		// 	url:"https://gdata.youtube.com/feeds/api/videos/batch",
+		// 	type: "POST",
+		// 	contentType: "text/xml",
+		//   success: $.proxy(this.processYoutubeResults, this),
+		// 	contents: batch
+		// });
+		// var feed = {};
+		// feed['xmlns'] = 'http://www.w3.org/2005/Atom';
+		// feed['xmlns:media'] = 'http://search.yahoo.com/mrss/';
+		// feed['xmlns:batch'] = 'http://www.w3.org/2005/Atom';
+		// feed['xmlns:'] = 'http://schemas.google.com/gdata/batch';
+		// feed['batch:operation'] = {type: 'query'};
+		// feed['entry'] = [];
+		// // for (var index in this.get("facebookPlaylist")) {
+		// 	feed['entry'].push({id: 'http://gdata.youtube.com/feeds/api/videos/h5jKcDH9s64'});
+		// // }
+		// 
+		// $.post({
+		// 	url:"http://gdata.youtube.com/feeds/api/videos/batch?v=2&alt=json",
+		//   success: $.proxy(this.processYoutubeResults, this),
+		// 	data: {feed: feed},
+		// 	datatype: 'json'
+		// });
+	},
+	
+	processYoutubeResult: function(data) {
+		console.log('wow made it here');
+		console.log(data);
+		
+		
+		console.log(data);
+	  var feed = data.feed ? data.feed : jQuery.parseJSON(data).feed;
+	  var entries = feed.entry;
+		if (!entries) return;
+	  var entry = entries[0];
+		var videoId = entry.id.$t.replace("http://gdata.youtube.com/feeds/api/videos/", "");
+		if (ss_modelWithAttribute(this.get("playlistCollection"), "videoId", videoId)) {
+	       return;
+	  }
+		var attributes = {
+			title: entry.title.$t,
+			thumb: entry.media$group.media$thumbnail[0].url,
+			videoId: videoId,
+			duration: entry.media$group.yt$duration.seconds,
+			author: entry.author[0].name.$t
+		}
+		var playlistItemModel = new PlaylistItemModel(attributes);
+		this.get("playlistCollection").add(playlistItemModel);
+		SocketManagerModel.addVideoToPlaylist(videoId, attributes.thumb, attributes.title, attributes.duration, attributes.author);
 	}
-
+	
  });
 
  window.SearchResultModel = Backbone.Model.extend({});
@@ -478,6 +595,9 @@ $(function() {
 
   addToPlaylist: function() {
    var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
+   if (ss_modelWithAttribute(this.options.playlistCollection, "videoId", videoID)) {
+       return;
+   }
    this.options.video.set({
     videoId: videoID
    });
