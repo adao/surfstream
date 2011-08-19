@@ -39,10 +39,14 @@
 			
 			socket.on('val:turnOffDJ', function() {
 				val.isDJ = false;
+				
 			});
 			
 			socket.on('val:turnOnDJ', function() {
 				val.isDJ = true;
+				if(val.room.djs.length == 0) {
+					val.playVideo();
+				}
 			});
 			
 			socket.on('val:turnOnSuggest', function() {
@@ -208,7 +212,7 @@
 				return;
 			}
 			
-			if(VAL.isDJ && VAL.hasVideos() && this.room.djs.isValsTurn()) {	//BUG: this will fail if there is just 1 human dj
+			if(VAL.isDJ && VAL.hasVideos() && this.room.djs.isValsTurn()) {	
 				VAL.playVideo();										//since that DJ will always be the last one
 			} else {	//play a video from a human
 				var currDJInfo = this.room.djs.nextDJ(); 	
