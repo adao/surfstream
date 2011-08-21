@@ -91,10 +91,10 @@
 				
 				var lookBackNum = 5;
 				if (this.room.history.length < 5) lookBackNum = this.room.history.length;
-				var randInt = Math.ceil(Math.random()*lookBackNum);	//between 0 and lookBackNum, inclusive
+				var randInt = 1 + Math.floor(Math.random()*5);	//between 1 and lookBackNum, inclusive
 				
 				console.log("lookbacknum: "+lookBackNum);
-				var recentVideo = this.room.history.at(this.room.history.length - lookBackNum);
+				var recentVideo = this.room.history.at(this.room.history.length - randInt);
 				if(!recentVideo) {
 					console.log("ERROR No video found");
 					return;
@@ -118,7 +118,7 @@
 				
 					res.on('end', function() {
 						videoData = JSON.parse(videoData);
-						var randIndex = Math.floor(Math.random()*5);	//picks one at random from top 5
+						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 5
 						
 						var videoEntry = videoData['feed']['entry'][randIndex];
 						var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
