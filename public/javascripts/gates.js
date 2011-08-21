@@ -946,6 +946,8 @@ $(function() {
   initialize: function() {
    $("#become-dj").bind("click", this.toggleDJStatus);
 	 $("#become-dj").hide();
+	 $("#avatarWrapper_VAL").css("margin-left", '410px');
+	 $("#avatarWrapper_VAL").hide();
    $("#up-vote").bind("click", SocketManagerModel.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
@@ -981,10 +983,12 @@ $(function() {
     });
 
 		//Add new DJs
-		var X_COORDS = [200,260,320,380, 440, 660]; //5th DJ spot needs work
+		var X_COORDS = [200,260,320]; 
 		var Y_COORD = 25;
 		var cur_is_dj = false;
+		var numOnSofa = 0;
     for (var dj in djArray) {
+		 numOnSofa = numOnSofa + 1;
 		 user = $("#avatarWrapper_" + djArray[dj].id);
 		 if(user.data("isDJ") == "0") {
 			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
@@ -1007,8 +1011,12 @@ $(function() {
 				
 			}
 		}
+		
+		$("#avatarWrapper_VAL").show();
+		
+		
 		//NEED BOUNDS CHECK HERE TODO
-		$("#become-dj").css("margin-left", X_COORDS[djArray.length] + "px").css("margin-top", Y_COORD + "px");
+		$("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + "px");
     if(!cur_is_dj) $("#become-dj").show();
 	},
 
@@ -1062,7 +1070,7 @@ $(function() {
 		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
 		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
 		$(this.el).css("margin-left", user.get('x')).css("margin-top", user.get('y')).css("position", 'absolute');
-		$("#people-area").append(this.el);
+		$("#people-area").prepend(this.el);
 	   this.$("#avatarWrapper_" + user.id).tipsy({
 	    gravity: 'sw',
 	    fade: 'true',
@@ -1298,6 +1306,9 @@ $(function() {
 		}
 		//save the currently playing state
 		playerModel.set({curVid: {curID: video.id, curTitle: video.title, percent: 0.5} });
+		
+		//put remote on appropro DJ
+		//$("#avatarWrapper_" + video.dj).append($("#remote"));
    });
 
    socket.on('video:stop', function() {
