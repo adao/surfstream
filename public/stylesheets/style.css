@@ -902,13 +902,6 @@ background-color: green,
 .default {
   position: absolute;
 }
-.nametip {
-  position: absolute;
-  height: 39px;
-  width: 60px;
-  margin-top: 40px;
-  margin-left: 10px;
-}
 .defaultSmile1 {
   margin-top: 45px;
   margin-left: 10px;
