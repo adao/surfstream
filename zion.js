@@ -191,7 +191,7 @@ io.sockets.on('connection', function(socket) {
 		}
 		if(StagingUsers[socket.id]) {
 			roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
-		 delete StagingUsers[socket.id];
+		 	delete StagingUsers[socket.id];
 		}
 	});
 	
