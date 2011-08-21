@@ -1462,6 +1462,17 @@ $(function() {
 
  });
 
+	window.Workspace = Backbone.Router.extend({ 
+		routes: {
+			"room/:rID"	"joinRoom"
+		},
+		
+		joinRoom: function(rID) {
+			SocketManagerModel.joinRoom($(this).find(".listed-room-name").html(), false);
+		}
+	});
+
+ Backbone.history.start();
  window.playerLoaded = false;
  window.SurfStreamApp = new SurfStreamModel({
   socket: socket_init
