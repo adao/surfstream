@@ -995,20 +995,15 @@ $(function() {
 				cur_is_dj = true;
 				$('#getOff').live('click', function() {
 				  $("#stepDown").remove();
+					$('#getOff').remove();
 					$("#skip").remove();
 					SocketManagerModel.stepDownFromDJ();
 					
 				});
-				user.append("<div id='stepDown' style='width: 80px; height: 95px'></div>");
-				$('#stepDown').tipsy({
-			    gravity: 'sw',
-			    fade: 'true',
-			    delayOut: 60000,
-					html: true,
-			    title: function() {
-			     return "<a id='getOff'>Get Off Sofa</a>"
-			    }
-			   });
+				user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
+				$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>")
+				$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();})
+				
 				
 			}
 		}
@@ -1042,12 +1037,12 @@ $(function() {
  }, { /* Class properties */
 
   tipsyChat: function(text, fbid) {
-   var userPic = $("#avatarBody_" + fbid);
+   var userPic = $("#nameDiv_" + fbid);
 	 var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
    setTimeout(function() {
-	  if($("#avatarBody_" + fbID).length > 0) userPic.tipsy("hide");
+	  if($("#nameDiv_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
 
@@ -1056,15 +1051,16 @@ $(function() {
  window.AvatarView = Backbone.View.extend({
 	
 	initialize: function() {
-		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user;
+		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv;
 		user = this.options.user;
 		this.el.id = "avatarWrapper_" + user.id;
 		avatarId = user.get("avatar")
 		avatarImgSrc = this.getAvatarSrc(avatarId);
-		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', title: user.get('name'), src: avatarImgSrc })
+		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc })
+		nameDiv = this.make('div', {id:'nameDiv_' + user.id, class:"nametip", style: 'position:absolute;', title: user.get('name') })
 		avatarMouth = this.make('img', {class: 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
 		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
-		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile);
+		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
 		$(this.el).css("margin-left", user.get('x')).css("margin-top", user.get('y')).css("position", 'absolute');
 		$("#people-area").append(this.el);
 	   this.$("#avatarWrapper_" + user.id).tipsy({
@@ -1076,7 +1072,7 @@ $(function() {
 	     return this.getAttribute('latest_txt')
 	    }
 	   });
-			this.$("#avatarBody_" + user.id).tipsy({
+			this.$("#nameDiv_" + user.id).tipsy({
 		    gravity: 'n',
 		    fade: 'true',
 		   });

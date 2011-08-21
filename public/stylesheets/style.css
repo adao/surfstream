@@ -902,6 +902,13 @@ background-color: green,
 .default {
   position: absolute;
 }
+.nametip {
+  position: absolute;
+  height: 39px;
+  width: 60px;
+  margin-top: 40px;
+  margin-left: 10px;
+}
 .defaultSmile1 {
   margin-top: 45px;
   margin-left: 10px;
@@ -945,4 +952,14 @@ background-color: green,
 .upSmile5 {
   margin-top: 50px;
   margin-left: 8px;
+}
+.getOff {
+  cursor: pointer;
+  position: absolute;
+  background: #34c9ff;
+  font-size: 14px;
+  padding: 3px;
+  text-align: center;
+  width: 82px;
+  margin-top: 40px;
 }
