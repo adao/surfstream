@@ -405,6 +405,7 @@ div.historyContainer .history .videoHistory {
   display: block;
   width: 660px;
   height: 270px;
+  position: absolute;
 }
 #room-container #people-area .bottom-user-controls {
   position: absolute;
