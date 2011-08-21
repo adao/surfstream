@@ -20,7 +20,7 @@
 			this.userSuggest = new models.Playlist();
 			this.autoPlaylist = new models.Playlist();
 			
-			this.isDJ = false;
+			this.isDJ = true;
 			this.takeSuggest = false;
 		},
 		
@@ -62,13 +62,16 @@
 		},
 		
 		hasVideos: function() {
-			if((userSuggest.getSize() > 0) || (autoPlaylist.getSize() > 0))
-				return true;
-			return false;
+			// if((this.userSuggest.getSize() > 0) || (this.autoPlaylist.getSize() > 0))
+			// 	return true;
+			// return false;
+			return true;
 		},
 		
 		playVideo: function() {
-			if(userSuggest.getSize() > 0) {	//right now just pull the top video off
+			if(this.room.users.length == 0) return;
+			
+			if(this.userSuggest.getSize() > 0) {	//right now just pull the top video off
 				console.log('playing a video from the user suggestions');
 				var videoToPlay = this.userSuggest.popVideo();
 				this.room.vm.play(videoToPlay);					//TODO: need to change meter logic to add points to the suggestor
@@ -83,6 +86,11 @@
 			else {	//fetch related video from YouTube -- this is temporary
 				console.log('no other videos - fetching one from YouTube');
 				if(this.room.history.length == 0) return;
+				
+				var lookBackNum = 5;
+				if (this.room.history.length < 5) lookBackNum = this.room.history.length;
+				var randInt = Math.floor(Math.random()*lookBackNum);
+				
 				var recentVideo = this.room.history.at(this.room.history.length - 1);
 				if(!recentVideo) return;
 				var videoId = recentVideo.get('videoId');
@@ -105,13 +113,13 @@
 					res.on('end', function() {
 						videoData = JSON.parse(videoData);
 						
-						var videoEntry = videoData['feed']['link']['entry'][0];
 						
+						var videoEntry = videoData['feed']['entry'][0];
 						var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
 						var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
 						var videoTitle = videoEntry['media$group']['media$title']['$t'];
 						var videoThumb = videoEntry['media$group']['media$thumbnail'][0]['url'];
-						var videoAuthor = videoEntry['author']['name']['$t'];
+						var videoAuthor = videoEntry['author'][0]['name']['$t'];
 		
 						var videoToPlay = new models.Video({
 							videoId: videoToPlayId,
@@ -122,7 +130,7 @@
 							dj: 'VAL'
 						});
 						
-						room.vm.play(videotoPlay);
+						room.vm.play(videoToPlay);
 					});
 				});
 		
@@ -791,7 +799,6 @@
 			socket.on("video:skip", function () { 
 				if(djs.room.currVideo) {
 					clearTimeout(djs.room.currVideo.get('timeoutId'));
-					console.log('playlist of dj after skipping: '+djs.currDJ.playlist.xport());
 				}
 				djs.room.vm.onVideoEnd();
 			});
@@ -883,7 +890,7 @@
 		peekNextDJ: function() {
 			var nextDJIndex = (this.currDJIndex + 1) % this.length;
 			var nextDJ = this.at(nextDJIndex);
-			return { dj: nextDJ, index: currDJIndex };
+			return { dj: nextDJ, index: this.currDJIndex };
 		}
 	});
 	
