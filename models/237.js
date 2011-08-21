@@ -920,12 +920,14 @@
 
 				var currUser = meter.room.users.get(socket.id);
 				console.log('voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
-				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
+				
+				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 
 				var success = meter.addUpvote(currUser.get('userId'));	//checks to make sure the user hasn't already voted
 				if(success) {
 					console.log('...success!');
-					meter.room.djs.currDJ.addPoint();
+					if(meter.room.currVideo.get('dj') != 'VAL')
+						meter.room.djs.currDJ.addPoint();
 					meter.room.sockM.announceMeter();
 				}
 			});
@@ -934,13 +936,13 @@
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
-				console.log('downvoting user: '+currUser.get('name'));
-				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
+				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
 
 				var success = meter.room.meter.addDownvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
 				if(success) {
 					console.log('..success!');
-					meter.room.users.get(socket.id).subtractPoint();
+					if(meter.room.currVideo.get('dj') != 'VAL')
+						meter.room.djs.currDJ.addPoint();
 					meter.room.sockM.announceMeter();
 				}
 			});
