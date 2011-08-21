@@ -991,7 +991,7 @@ $(function() {
 			 user.data("isDJ", "1")
 		 }
      user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
-		 if (djArray[dj].id == this.options.userModel.get("fbInfo").id) {
+		 if (djArray[dj].id == this.options.userModel.get("fbId")) {
 				cur_is_dj = true;
 				$('#getOff').live('click', function() {
 				  $("#stepDown").remove();
