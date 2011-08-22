@@ -1306,9 +1306,16 @@ $(function() {
    socket.on("video:sendInfo", function(video) {
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
 		var curvid, curLen, roomModel, playerModel;
-		curLen = YTPlayer.getDuration();
+		if (video.dj == app.get("userModel").get("fbId")) {
+			console.log("here");
+			$("#video-list-container .videoListCellContainer:first").remove();
+			var playlistCollection = app.get("userModel").get("playlistCollection");
+			var playlistItemModel = playlistCollection.at(0);
+			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
+			playlistCollection.remove(playlistItemModel);
+			playlistCollection.add(copyPlaylistItemModel);
+		}
     if (!window.playerLoaded) {
-     window.playerLoaded = true;
      var params = {
       allowScriptAccess: "always",
      	wmode: "opaque"
@@ -1343,6 +1350,7 @@ $(function() {
 		playerModel = roomModel.get("playerModel");
 		curvid =  playerModel.get("curVid");
 		if (curvid) {
+			curLen = YTPlayer.getDuration();
 			app.get("mainView").roomHistoryView.addToRoomHistory(new RoomHistoryItemModel({title: curvid.curTitle, length: curLen, percent: curvid.percent, videoId: curvid.curID}));
 		}
 		//save the currently playing state
