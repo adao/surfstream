@@ -248,9 +248,14 @@ $(function() {
 
   initialize: function() {
 	 var roomModel, mainView;
+	
+	this.set({
+		mainRouter: new RaRouter()
+	});
+	
    this.set({
     mainView: new MainView()
-   })
+   });
 
    this.set({
     roomModel: new RoomModel({
@@ -282,7 +287,7 @@ $(function() {
      playlistCollection: new PlaylistCollection(),
      socketManagerModel: this.get("socketManagerModel")
     })
-   })
+   });
  
 	 mainView.initializePlayerView(roomModel.get("playerModel"), roomModel.get("userCollection"), this.get("userModel"));
 	 mainView.initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
@@ -926,7 +931,9 @@ $(function() {
 		},
 		
 	  clickJoinRoom: function(el) {
-			SocketManagerModel.joinRoom($(this).find(".listed-room-name").html(), false);
+			var roomName = $(this).find(".listed-room-name").html();
+			SocketManagerModel.joinRoom(roomName, false);
+			window.SurfStreamApp.get("mainRouter").navigate("room/" + roomName, false);
 		}
 		
 		
@@ -1296,7 +1303,7 @@ $(function() {
    /* First set up all listeners */
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
-		console.log('received video, the DJ is: '+video.dj);	//debugging
+		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
 		var curvid, curLen, roomModel, playerModel;
 		curLen = YTPlayer.getDuration();
     if (!window.playerLoaded) {
@@ -1359,7 +1366,6 @@ $(function() {
 				displayName: fbProfile.first_name + " " + fbProfile.last_name,
 				avatarImage: 'https://graph.facebook.com/' + fbProfile.id + '/picture'
 			});
-			new RaRouter();
 			Backbone.history.start({pushState: true});
 		}
 	 });
