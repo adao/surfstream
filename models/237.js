@@ -9,14 +9,150 @@
 	permSockEvents['user:sendFBData'] = true;
 	permSockEvents['room:join'] = true;
 	permSockEvents['rooms:load'] = true;
+
+
+	/*************************/
+	/*      		VAL			     */
+	/*************************/
+	models.VAL = Backbone.Model.extend({
+		initialize: function(room) {
+			this.room = room;
+			this.userSuggest = new models.Playlist();
+			this.autoPlaylist = new models.Playlist();
+			
+			this.isDJ = true;
+			this.takeSuggest = false;
+		},
+		
+		addValListeners: function(socket) {
+			var val = this;
+			
+			socket.on('val:suggestVideoToVal', function(data) {
+				if(!val.takeSuggest) return;
+				
+				var thisUser = val.room.users.get(socket.id);
+				if(!val.userSuggest.containsVideo(data.video)) {
+					val.userSuggest.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
+					val.userSuggest.videos.get(data.video).set({ 'suggestedBy': thisUser.get('name')});
+				}
+			});
+			
+			socket.on('val:turnOffDJ', function() {
+				val.isDJ = false;
+				if(val.room.currVideo.get('dj')) {	//VAL is the current DJ
+					clearTimeout(val.room.currVideo.get('timeoutId'));
+					val.room.vm.onVideoEnd();
+				}
+			});
+			
+			socket.on('val:turnOnDJ', function() {
+				val.isDJ = true;
+				if(val.room.djs.length == 0) {
+					val.playVideo();
+				}
+			});
+			
+			socket.on('val:turnOnSuggest', function() {
+				val.takeSuggest = true;
+			});
+			
+			socket.on('val:turnOffSuggest', function() {
+				val.takeSuggest = false;
+			});
+		},
+		
+		hasVideos: function() {
+			// if((this.userSuggest.getSize() > 0) || (this.autoPlaylist.getSize() > 0))
+			// 	return true;
+			// return false;
+			return true;
+		},
+		
+		playVideo: function() {
+			if(this.room.users.length == 0) return;
+			
+			if(this.userSuggest.getSize() > 0) {	//right now just pull the top video off
+				console.log('playing a video from the user suggestions');
+				var videoToPlay = this.userSuggest.popVideo();
+				this.room.vm.play(videoToPlay);					//TODO: need to change meter logic to add points to the suggestor
+				return;
+			} 
+			else if(this.autoPlaylist.getSize() > 0) {
+				console.log('playing a video from the autoplaylist');
+				var videoToPlay = this.autoPlaylist.popVideo();
+				this.room.vm.play(videoToPlay);
+				return;
+			} 
+			else {	//fetch related video from YouTube -- this is temporary
+				console.log('no other videos - fetching one from YouTube');
+				if(this.room.history.length == 0) return;
+				
+				var lookBackNum = 5;
+				if (this.room.history.length < 5) lookBackNum = this.room.history.length;
+				var randInt = Math.floor(Math.random()*lookBackNum);
+				
+				var recentVideo = this.room.history.at(this.room.history.length - 1);
+				if(!recentVideo) return;
+				var videoId = recentVideo.get('videoId');
+				
+				var options = { 
+					host: 'gdata.youtube.com',
+					port: 80,
+					path: '/feeds/api/videos/'+videoId+'/related?alt=json&start-index=1&max-results=25&v=2',
+				};
+				
+				var room = this.room;
+				var VAL = this;
+				var req = http.request(options, function(res) {
+				  res.setEncoding('utf8');
+					var videoData = '';
+				  res.on('data', function (chunk) {
+				    videoData += chunk;
+				  });
+				
+					res.on('end', function() {
+						videoData = JSON.parse(videoData);
+						
+						
+						var videoEntry = videoData['feed']['entry'][0];
+						var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
+						var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
+						var videoTitle = videoEntry['media$group']['media$title']['$t'];
+						var videoThumb = videoEntry['media$group']['media$thumbnail'][0]['url'];
+						var videoAuthor = videoEntry['author'][0]['name']['$t'];
+		
+						var videoToPlay = new models.Video({
+							videoId: videoToPlayId,
+							duration: videoDuration,
+							title: videoTitle,
+							thumb: videoThumb,
+							author: videoAuthor,
+							dj: 'VAL'
+						});
+						
+						room.vm.play(videoToPlay);
+					});
+				});
+		
+				req.on('error', function(e) {
+				  console.log('problem with request: ' + e.message);
+				});
+				req.end();
+			}
+		}	
+		
+	});
 	
 	/*************************/
 	/*      VideoManager     */
 	/*************************/
 	models.VideoManager = Backbone.Model.extend({
-		initialize: function(room) {
+		initialize: function(room, val) {
 			this.room = room;
+			VAL = val;
 		},
+		
+		VAL: null,
 		
 		playVideoFromPlaylist: function(socketId) {
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
@@ -26,10 +162,17 @@
 				return;
 			}
 			
+			this.play(videoToPlay);
+		},
+		
+		// videoToPlay: models.Video 
+		play: function(videoToPlay) {
+			if(!videoToPlay) return;
+			
 			var videoId = videoToPlay.get('videoId');
 			var videoDuration = videoToPlay.get('duration');
 			var videoTitle = videoToPlay.get('title');
-			
+
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
 				videoId: videoId, 
@@ -39,7 +182,7 @@
 				timeStart: (new Date()).getTime(),
 				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000)
 			});
-			
+
 			this.room.meter.reset();
 			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle);
 		},
@@ -61,10 +204,12 @@
 				redisClient.rpush('room:history:' + this.room.get("name"), JSON.stringify(videoFinished));
 				this.room.history.add(videoFinished);
 				this.room.clearVideo();
+				//TODO: make a call to VAL to use this video to generate more recommendations
 			}
 		
-			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
-				console.log('DJs: '+this.room.djs.length + ' and total vids: '+this.room.djs.getNumVideos());
+			//logic for setting up the next video
+			if((this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) && !VAL.isDJ) {
+				
 				this.room.sockM.announceStopVideo();
 			} else {
 				this.playNextVideo();
@@ -73,14 +218,20 @@
 		
 		playNextVideo: function() {
 			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
-				console.log('DJs: '+this.room.djs.length + ' and total vids: '+this.room.djs.getNumVideos());
+				if(VAL.isDJ) {
+					VAL.playVideo();
+				}
 				return;
 			}
-
-			var currDJInfo = this.room.djs.nextDJ(); 
-			console.log('Playing next video, dj has index '+currDJInfo.index+' and is user '
-									+ currDJInfo.dj.get('userId')); 
-			this.playVideoFromPlaylist(this.room.djs.currDJ.get('socketId'));
+			
+			if(VAL.isDJ && VAL.hasVideos() && this.room.djs.isValsTurn()) {	
+				VAL.playVideo();										//since that DJ will always be the last one
+			} else {	//play a video from a human
+				var currDJInfo = this.room.djs.nextDJ(); 	
+				console.log('Playing next video, dj has index '+currDJInfo.index+' and is user '
+										+ currDJInfo.dj.get('userId')); 
+				this.playVideoFromPlaylist(this.room.djs.currDJ.get('socketId'));
+			}
 		}
 	});
 	
@@ -99,7 +250,8 @@
 		initialize: function(io, redisClient) {
 			this.io = io;
 			this.redisClient = redisClient;
-			this.vm = new models.VideoManager(this);
+			this.VAL = new models.VAL(this);
+			this.vm = new models.VideoManager(this, this.VAL);
 			
 			this.users = new models.UserCollection();
 			this.users.setRoom(this);
@@ -139,6 +291,7 @@
 					title: this.currVideo.get('title') 
 				});
 			}	
+			//this.sockM.sendRoomState(user.get("socket"));
 			this.sockM.sendRoomState();
 		},
 		
@@ -184,7 +337,6 @@
 			
 			if(this.room) {
 				this.room.addChatListener(socket);
-				//this.room.users.addConnectListener(socket);
 				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
@@ -197,7 +349,7 @@
 			this.announceClients();
 			this.announceDJs();
 			this.announceMeter();
-			this.announceRoomHistory();
+			//this.announceRoomHistory();
 		},
 
 		removeSocket: function(socket) {
@@ -318,12 +470,17 @@
 		},
 
 		addVideo: function(id, thumb, title, duration, author) {
-			if(this.videos.get(id) >= 0)
+			if(this.videos.get(id))
 				return false;
 			var vid = new models.Video();
 			vid.id = id;
 			vid.set({ videoId: id, thumb: thumb, title: title, duration: duration, author: author});
 			this.videos.add(vid);
+		},
+		
+		containsVideo: function(id) {
+			if(this.videos.get(id)) return true;
+			return false;
 		},
 		
 		getSize: function() {
@@ -360,12 +517,25 @@
 		//returns the first Video, and moves the Video
 		//to the end of the playlist 
 		playFirstVideo: function() {
-			if(this.videos.length == 0) {
-				return null;
+			// if(this.videos.length == 0) {
+			// 				return null;
+			// 			}
+			// 			var first = this.videos.at(0);
+			// 			this.videos.remove(first);
+			// 			this.videos.add(first);	//adds video to the end;
+			// 			return first;
+			var firstVideo = this.popVideo();
+			if(firstVideo) {
+				this.videos.add(firstVideo);
 			}
+			return firstVideo;
+		},
+		
+		popVideo: function() {
+			if(this.videos.length == 0) return null;
+
 			var first = this.videos.at(0);
 			this.videos.remove(first);
-			this.videos.add(first);	//adds video to the end;
 			return first;
 		},
 		
@@ -629,7 +799,6 @@
 			socket.on("video:skip", function () { 
 				if(djs.room.currVideo) {
 					clearTimeout(djs.room.currVideo.get('timeoutId'));
-					console.log('playlist of dj after skipping: '+djs.currDJ.playlist.xport());
 				}
 				djs.room.vm.onVideoEnd();
 			});
@@ -694,6 +863,34 @@
 				}
 			});
 			return numVideos;
+		},
+		
+		//note this function changes program state 
+		//(it doesn't just return true/false)
+		//If it is VAL's turn, this.currDJ is set to null
+		isValsTurn: function() {
+			var numDJs = this.length;
+			if(numDJs == 0) return true;
+			else if(numDJs == 1) { 
+				var nextDJInfo = this.peekNextDJ();
+				if(nextDJInfo.dj == this.currDJ) {
+					this.currDJ = null;
+					return true;
+				}
+				return false;
+			}
+			
+			if(this.currDJIndex == (this.length - 1) && this.currDJ != null) {
+				this.currDJ = null;
+				return true;
+			}
+			return false;
+		},
+		
+		peekNextDJ: function() {
+			var nextDJIndex = (this.currDJIndex + 1) % this.length;
+			var nextDJ = this.at(nextDJIndex);
+			return { dj: nextDJ, index: this.currDJIndex };
 		}
 	});
 	

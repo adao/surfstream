@@ -946,6 +946,8 @@ $(function() {
   initialize: function() {
    $("#become-dj").bind("click", this.toggleDJStatus);
 	 $("#become-dj").hide();
+	 $("#avatarWrapper_VAL").css("margin-left", '410px');
+	 $("#avatarWrapper_VAL").hide();
    $("#up-vote").bind("click", SocketManagerModel.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
@@ -981,10 +983,12 @@ $(function() {
     });
 
 		//Add new DJs
-		var X_COORDS = [200,260,320,380, 440, 660]; //5th DJ spot needs work
+		var X_COORDS = [200,260,320]; 
 		var Y_COORD = 25;
 		var cur_is_dj = false;
+		var numOnSofa = 0;
     for (var dj in djArray) {
+		 numOnSofa = numOnSofa + 1;
 		 user = $("#avatarWrapper_" + djArray[dj].id);
 		 if(user.data("isDJ") == "0") {
 			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
@@ -995,25 +999,24 @@ $(function() {
 				cur_is_dj = true;
 				$('#getOff').live('click', function() {
 				  $("#stepDown").remove();
+					$('#getOff').remove();
 					$("#skip").remove();
 					SocketManagerModel.stepDownFromDJ();
 					
 				});
-				user.append("<div id='stepDown' style='width: 80px; height: 95px'></div>");
-				$('#stepDown').tipsy({
-			    gravity: 'sw',
-			    fade: 'true',
-			    delayOut: 60000,
-					html: true,
-			    title: function() {
-			     return "<a id='getOff'>Get Off Sofa</a>"
-			    }
-			   });
+				user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
+				$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>")
+				$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();})
+				
 				
 			}
 		}
+		
+		$("#avatarWrapper_VAL").show();
+		
+		
 		//NEED BOUNDS CHECK HERE TODO
-		$("#become-dj").css("margin-left", X_COORDS[djArray.length] + "px").css("margin-top", Y_COORD + "px");
+		$("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + "px");
     if(!cur_is_dj) $("#become-dj").show();
 	},
 
@@ -1042,12 +1045,12 @@ $(function() {
  }, { /* Class properties */
 
   tipsyChat: function(text, fbid) {
-   var userPic = $("#avatarBody_" + fbid);
+   var userPic = $("#nameDiv_" + fbid);
 	 var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
    setTimeout(function() {
-	  if($("#avatarBody_" + fbID).length > 0) userPic.tipsy("hide");
+	  if($("#nameDiv_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
 
@@ -1056,17 +1059,18 @@ $(function() {
  window.AvatarView = Backbone.View.extend({
 	
 	initialize: function() {
-		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user;
+		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv;
 		user = this.options.user;
 		this.el.id = "avatarWrapper_" + user.id;
 		avatarId = user.get("avatar")
 		avatarImgSrc = this.getAvatarSrc(avatarId);
-		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', title: user.get('name'), src: avatarImgSrc })
+		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc })
+		nameDiv = this.make('div', {id:'nameDiv_' + user.id, class:"nametip", style: 'position:absolute;', title: user.get('name') })
 		avatarMouth = this.make('img', {class: 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
 		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
-		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile);
+		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
 		$(this.el).css("margin-left", user.get('x')).css("margin-top", user.get('y')).css("position", 'absolute');
-		$("#people-area").append(this.el);
+		$("#people-area").prepend(this.el);
 	   this.$("#avatarWrapper_" + user.id).tipsy({
 	    gravity: 'sw',
 	    fade: 'true',
@@ -1076,7 +1080,7 @@ $(function() {
 	     return this.getAttribute('latest_txt')
 	    }
 	   });
-			this.$("#avatarBody_" + user.id).tipsy({
+			this.$("#nameDiv_" + user.id).tipsy({
 		    gravity: 'n',
 		    fade: 'true',
 		   });
@@ -1302,6 +1306,9 @@ $(function() {
 		}
 		//save the currently playing state
 		playerModel.set({curVid: {curID: video.id, curTitle: video.title, percent: 0.5} });
+		
+		//put remote on appropro DJ
+		//$("#avatarWrapper_" + video.dj).append($("#remote"));
    });
 
    socket.on('video:stop', function() {
@@ -1397,7 +1404,7 @@ $(function() {
 	socket.on("room:history", function(roomHistory) {
 		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
 		/* OVERLOADED RESET */
-		app.get("roomModel").get("chatCollection").reset();
+		//app.get("roomModel").get("chatCollection").reset();
 	});
 	
  }
