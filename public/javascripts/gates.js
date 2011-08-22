@@ -1305,6 +1305,15 @@ $(function() {
    socket.on("video:sendInfo", function(video) {
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
 		var curvid, curLen, roomModel, playerModel;
+		if (video.dj == app.get("userModel").get("fbId")) {
+			console.log("here");
+			$("#video-list-container .videoListCellContainer:first").remove();
+			var playlistCollection = app.get("userModel").get("playlistCollection");
+			var playlistItemModel = playlistCollection.at(0);
+			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
+			playlistCollection.remove(playlistItemModel);
+			playlistCollection.add(copyPlaylistItemModel);
+		}
     if (!window.playerLoaded) {
      var params = {
       allowScriptAccess: "always",
