@@ -17,6 +17,10 @@ function setupRoutes(app) {
 	app.get('/index', function(req, res) {
 		res.render('skeleton', { locals: { title: "surfstream.tv"}});
 	});
+	
+	app.get('/room/:rID', function(req, res) {
+		res.render('skeleton', { locals: { title: "surfstream.tv"}});
+	});
     
     app.get('/chat', function(req, res){
 	    res.render('chat', { locals: {title: "surfstream.tv"}});

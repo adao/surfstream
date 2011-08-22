@@ -14,8 +14,14 @@ window.fbAsyncInit = function() {
 		console.log(response);
 		if (response.authResponse) {
 			//user is already logged in and connected
+			window.SurfStreamApp = new SurfStreamModel({
+			  socket: socket_init
+			 });
+			console.log("started app");
 			window.SurfStreamApp.get("userModel").set({fbId: response.authResponse.userID});
 			SocketManagerModel.sendFBId(response.authResponse.userID);
+			new RaRouter();
+			Backbone.history.start({pushState: true});
 			document.getElementById('frontdoor').style.display = 'none';
 			document.getElementById('loadingScreen').style.display = 'none';
 			document.getElementById('outer').style.display = 'block';
@@ -36,6 +42,7 @@ window.fbAsyncInit = function() {
   document.getElementById('loadingScreen').style.display = 'none';
 	document.getElementById('frontdoor').style.display = 'inline-block';
 };
+
 (function() {
 	var e = document.createElement('script'); e.async = true;
 	e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
