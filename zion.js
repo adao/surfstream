@@ -90,6 +90,7 @@ RoomManager = Backbone.Model.extend({
 	},
 	
 	createRoom: function(socket, roomId) {
+		console.log('[RoomMgr] createRoom(): socket '+socket.id+' is creating a room: '+roomId);
 		this.roomMap[roomId] = new models.Room(io, redisClient);
 		this.roomMap[roomId].set({ name: roomId });
 		redisClient.set('room:'+roomId, this.roomMap[roomId].xport());
