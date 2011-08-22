@@ -14,13 +14,15 @@ function setupRoutes(app) {
 		res.render('skeleton', {locals: { title: "surfstream.tv"}});
 	});
 	
+	app.get('/:rID', function(req, res) {
+		res.render('skeleton', { locals: { title: "surfstream.tv"}});
+	});
+	
 	app.get('/index', function(req, res) {
 		res.render('skeleton', { locals: { title: "surfstream.tv"}});
 	});
 	
-	app.get('/room/:rID', function(req, res) {
-		res.render('skeleton', { locals: { title: "surfstream.tv"}});
-	});
+	
     
     app.get('/chat', function(req, res){
 	    res.render('chat', { locals: {title: "surfstream.tv"}});
@@ -65,6 +67,8 @@ function setupRoutes(app) {
 		app.get('/nowplaying', function(req, res){
 	    res.render('nowplaying', { locals: {title: "surfstream.tv"}});
     });
+
+		
 }
 
 exports.setupRoutes = setupRoutes;

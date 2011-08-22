@@ -250,7 +250,7 @@ $(function() {
 	 var roomModel, mainView;
 	
 	this.set({
-		mainRouter: new RaRouter()
+		mainRouter: new RaRouter({})
 	});
 	
    this.set({
@@ -898,7 +898,8 @@ $(function() {
 	
 	  bindButtonEvents : function() {
 			$("#CreateRoom").bind("click", function() { 
-				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true) 
+				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true);
+				window.SurfStreamApp.get("mainRouter").navigate("/" + $("#CreateRoomName").val(), false);
 			});
 			$("#CreateRoomName").bind("submit", function() { return false });
 		},
@@ -933,7 +934,7 @@ $(function() {
 	  clickJoinRoom: function(el) {
 			var roomName = $(this).find(".listed-room-name").html();
 			SocketManagerModel.joinRoom(roomName, false);
-			window.SurfStreamApp.get("mainRouter").navigate("room/" + roomName, false);
+			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
 		}
 		
 		
@@ -1366,7 +1367,13 @@ $(function() {
 				displayName: fbProfile.first_name + " " + fbProfile.last_name,
 				avatarImage: 'https://graph.facebook.com/' + fbProfile.id + '/picture'
 			});
-			Backbone.history.start({pushState: true});
+			var getPath = function(href) {
+			    var l = document.createElement("a");
+			    l.href = href;
+			    return l.pathname;
+			}
+			console.log("ROUTING ON " + getPath(window.location));
+			Backbone.history.start({pushState: true, silent: (getPath(window.location) == "/") ? true : false});
 		}
 	 });
 
@@ -1543,7 +1550,7 @@ $(function() {
 
 	window.RaRouter = Backbone.Router.extend({ 
 		routes: {
-			"room/:rID":	"joinRoom"
+			":rID":	"joinRoom"
 		},
 		
 		joinRoom: function(rID) {
