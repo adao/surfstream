@@ -1,31 +1,38 @@
+.hidden {
+  display: none;
+}
+#header img {
+  margin-top: -4px;
+}
 #now-playing-container {
   height: 100px !important;
   width: 300px !important;
   background-color: #f00 !important;
 }
-#now-playing-container #now-playing-video-container      		height: 60px {
+#now-playing-container #now-playing-video-container {
+  height: 60px;
   background-color: #00f;
   display: block;
 }
-#now-playing-container #now-playing-video-container      		height: 60px #now-playing-thumb {
+#now-playing-container #now-playing-video-container #now-playing-thumb {
   display: inline-block;
   height: 60px;
   width: 60px;
   background-color: #008000;
 }
-#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info {
+#now-playing-container #now-playing-video-container #now-playing-video-info {
   vertical-align: top;
   display: inline-block;
   height: 60px;
   width: 200px;
 }
-#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info #now-playing-title {
+#now-playing-container #now-playing-video-container #now-playing-video-info #now-playing-title {
   height: 40px;
   width: 200px;
   background-color: #ff0;
   display: block;
 }
-#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info #now-playing-views {
+#now-playing-container #now-playing-video-container #now-playing-video-info #now-playing-views {
   height: 20px;
   width: 200px;
   background-color: #800080;
@@ -204,13 +211,12 @@ div.chatContainer div.chatHeader img.chatIcon {
   margin-left: 5px;
 }
 div.chatContainer div.chatHeader div.chatTitle {
-  margin-top: 5px;
+  margin-top: 7px;
   font-size: 16px;
   font-weight: bold;
   text-indent: 10px;
   vertical-align: top;
   display: inline-block;
-  font-weight: 500;
   color: #fff;
   height: 18px;
   width: 36px;
@@ -402,10 +408,15 @@ div.historyContainer .history .videoHistory {
   width: 20px;
   height: 20px;
   display: block;
+}
+.searchCellContainer .cellInfo .cellButtons .addToPlaylist {
   background: url("/images/room/add.png");
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist:hover {
   background: url("/images/room/add_hover.png");
+}
+.searchCellContainer .cellInfo .cellButtons .addToPlaylist:active {
+  background: url("/images/room/checkbox.png");
 }
 .searchCellContainer .cellInfo .cellButtons button.previewVideo {
   font-size: 9px;
@@ -716,6 +727,7 @@ button
   outline: 0;
 }
 #room-modal #searchbar #clearSearch {
+  display: inline-block;
   display: none;
   padding-bottom: 8px;
   vertical-align: bottom;
@@ -723,7 +735,6 @@ button
   height: 25px;
   width: 26px;
   background-color: transparent;
-  display: inline-block;
 }
 #room-modal #rooms {
   width: 600px;
