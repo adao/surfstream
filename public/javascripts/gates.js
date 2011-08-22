@@ -232,7 +232,7 @@ $(function() {
   },
 
   initialize: function() {
-
+	 var roomModel, mainView;
    this.set({
     mainView: new MainView()
    })
@@ -254,10 +254,11 @@ $(function() {
     })
    });
    
-   this.get("mainView").initializeTopBarView();
-	 this.get("mainView").initializeRoomListView(this.get("roomModel").get("roomListCollection"));      
-   this.get("mainView").initializePlayerView(this.get("roomModel").get("playerModel"), this.get("roomModel").get("userCollection"));
-	 this.get("mainView").initializeRoomHistoryView(this.get("roomModel").get("roomHistoryCollection"));
+	 mainView = this.get("mainView");
+	 roomModel = this.get("roomModel");
+   mainView.initializeTopBarView();
+	 mainView.initializeRoomListView(roomModel.get("roomListCollection"));
+	 mainView.initializeRoomHistoryView(roomModel.get("roomHistoryCollection"));
 	
 	//initing the user sends the initial socket event
 	 this.set({
@@ -267,10 +268,11 @@ $(function() {
      socketManagerModel: this.get("socketManagerModel")
     })
    })
+ 
+	 mainView.initializePlayerView(roomModel.get("playerModel"), roomModel.get("userCollection"), this.get("userModel"));
+	 mainView.initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
+	 mainView.initializeChatView(roomModel.get("chatCollection"), this.get("userModel"));
 	
-	 this.get("mainView").initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
-	 this.get("mainView").initializeChatView(this.get("roomModel").get("chatCollection"), this.get("userModel"));
-	 //this.get("userModel").getFBUserData();
   }
  });
 
@@ -943,6 +945,9 @@ $(function() {
 
   initialize: function() {
    $("#become-dj").bind("click", this.toggleDJStatus);
+	 $("#become-dj").hide();
+	 $("#avatarWrapper_VAL").css("margin-left", '410px');
+	 $("#avatarWrapper_VAL").hide();
    $("#up-vote").bind("click", SocketManagerModel.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
@@ -959,6 +964,62 @@ $(function() {
    this.chats = [];
   },
 
+	updateDJs : function(djArray) {
+		var oldPos, user;
+		
+		//Remove old DJs
+		this.options.userCollection.each(function(userModel) {
+     user = $("#avatarWrapper_" + userModel.get("id"));
+		//if the user is a DJ
+     if(user.data("isDJ") == "1") {
+				//If there are not any DJ ID's that match the current ID of the user we're looking at
+				if(!_.any(_.pluck(djArray, 'id'), function(el) {return (''+ el) == ('' + userModel.get("id"))})) {
+					//take DJ off sofa
+					oldPos = user.data("oldPos");
+					user.css("margin-left", oldPos.x).css("margin-top", oldPos.y);
+	     	  user.data("isDJ", 0);
+				}
+		 }
+    });
+
+		//Add new DJs
+		var X_COORDS = [200,260,320]; 
+		var Y_COORD = 25;
+		var cur_is_dj = false;
+		var numOnSofa = 0;
+    for (var dj in djArray) {
+		 numOnSofa = numOnSofa + 1;
+		 user = $("#avatarWrapper_" + djArray[dj].id);
+		 if(user.data("isDJ") == "0") {
+			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
+			 user.data("isDJ", "1")
+		 }
+     user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
+		 if (djArray[dj].id == this.options.userModel.get("fbId")) {
+				cur_is_dj = true;
+				$('#getOff').live('click', function() {
+				  $("#stepDown").remove();
+					$('#getOff').remove();
+					$("#skip").remove();
+					SocketManagerModel.stepDownFromDJ();
+					
+				});
+				user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
+				$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>")
+				$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();})
+				
+				
+			}
+		}
+		
+		$("#avatarWrapper_VAL").show();
+		
+		
+		//NEED BOUNDS CHECK HERE TODO
+		$("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + "px");
+    if(!cur_is_dj) $("#become-dj").show();
+	},
+
   toggleDJStatus: function() {
    if ($(this).css("display") == "block") {
 		$(this).hide();
@@ -970,30 +1031,69 @@ $(function() {
    } 
   },
 
-  placeUser: function(user) {
-	 var avatarImg = this.getAvatar(user.get("avatar"));
-	 var imgtag = "<img id='" + user.id + "' style='position:absolute;' title='"+user.get('name')+"' src=" + avatarImg + ">";
-	 var defaultSmile = "<img class='defaultSmile"+user.get("avatar")+" default' src=/images/room/monsters/smiles/line.png>";
-	 var sillySmile = "<img class='defaultSmile"+user.get("avatar")+" smiley' src="+this.getSmile(user.get("avatar")) +">";
-   this.$("#people-area").append("<div id=" + user.id +"_ style='position:absolute; margin-left:" + user.get("x") + "px; margin-top:" + 
-																	user.get("y") + "px;'>" +  imgtag + defaultSmile + sillySmile + "</div>");
-   this.$("#" + user.id+"_").tipsy({
-    gravity: 'sw',
-    fade: 'true',
-    delayOut: 3000,
-    trigger: 'manual',
-    title: function() {
-     return this.getAttribute('latest_txt')
-    }
-   });
-		this.$("#" + user.id).tipsy({
-	    gravity: 'n',
-	    fade: 'true',
-	   });
-	 this.$("#" + user.id+ '_').data("isDJ", "0");
+  placeUser: function(user) {	
+	 new AvatarView({user: user});	 
   },
 
-	getAvatar: function(avatarID) {
+  removeUser: function(user) {
+	 var avatar = this.$("#avatarWrapper_" + user.id);
+	 avatar.data("animating", false);
+	 avatar.tipsy('hide');
+   avatar.remove();
+  }
+
+ }, { /* Class properties */
+
+  tipsyChat: function(text, fbid) {
+   var userPic = $("#nameDiv_" + fbid);
+	 var fbID = fbid;
+   userPic.attr('latest_txt', text);
+   userPic.tipsy("show");
+   setTimeout(function() {
+	  if($("#nameDiv_" + fbID).length > 0) userPic.tipsy("hide");
+   }, 3000);
+  }
+
+ });
+
+ window.AvatarView = Backbone.View.extend({
+	
+	initialize: function() {
+		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv;
+		user = this.options.user;
+		this.el.id = "avatarWrapper_" + user.id;
+		avatarId = user.get("avatar")
+		avatarImgSrc = this.getAvatarSrc(avatarId);
+		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc })
+		nameDiv = this.make('div', {id:'nameDiv_' + user.id, class:"nametip", style: 'position:absolute;', title: user.get('name') })
+		avatarMouth = this.make('img', {class: 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
+		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
+		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
+		$(this.el).css("margin-left", user.get('x')).css("margin-top", user.get('y')).css("position", 'absolute');
+		$("#people-area").prepend(this.el);
+	   this.$("#avatarWrapper_" + user.id).tipsy({
+	    gravity: 'sw',
+	    fade: 'true',
+	    delayOut: 3000,
+	    trigger: 'manual',
+	    title: function() {
+	     return this.getAttribute('latest_txt')
+	    }
+	   });
+			this.$("#nameDiv_" + user.id).tipsy({
+		    gravity: 'n',
+		    fade: 'true',
+		   });
+		 $("#avatarWrapper_" + user.id).data("isDJ", "0");
+	},
+	
+	putOnSofa : function() {
+		
+	},
+	
+	defaultMouthSrc: "/images/room/monsters/smiles/line.png",
+	
+	getAvatarSrc: function(avatarID) {
 		switch(parseInt(avatarID, 10))
 		{
 		case 1:
@@ -1011,7 +1111,7 @@ $(function() {
 		}
 	},
 	
-	getSmile: function(avatarID) {
+	getSmileSrc: function(avatarID) {
 		switch(parseInt(avatarID))
 		{
 		case 1:
@@ -1028,26 +1128,6 @@ $(function() {
 		  console.log("RUH-ROH!");
 		}
 	},
-
-  removeUser: function(user) {
-	 var avatar = this.$("#" + user.id + "_");
-	 avatar.data("animating", false);
-	 avatar.tipsy('hide');
-   avatar.remove();
-  }
-
- }, { /* Class properties */
-
-  tipsyChat: function(text, fbid) {
-   var userPic = $("#" + fbid + "_");
-	 var fbID = fbid;
-   userPic.attr('latest_txt', text);
-   userPic.tipsy("show");
-   setTimeout(function() {
-	  if($("#" + fbID).length > 0) userPic.tipsy("hide");
-   }, 3000);
-  }
-
  });
 	
  window.ShareBarView = Backbone.View.extend({
@@ -1137,12 +1217,13 @@ $(function() {
    });
   },
 
-  initializePlayerView: function(playerModel, userCollection) {
+  initializePlayerView: function(playerModel, userCollection, userModel) {
    this.videoPlayerView = new VideoPlayerView({
     playerModel: playerModel
    });
    this.theatreView = new TheatreView({
-    userCollection: userCollection
+    userCollection: userCollection,
+		userModel: userModel
    });
   },
 
@@ -1210,9 +1291,9 @@ $(function() {
     //HACK
     $("#room-name").html(video.title)
     app.get("roomModel").get("userCollection").forEach(function(userModel) {
-		 $("#" + userModel.get("id") + "_").data("animating", false);
-     $("#" + userModel.get("id")+ "_ .smiley").hide();
-     $("#" + userModel.get("id")+ "_ .default").show();
+		 $("#avatarWrapper_" + userModel.get("id")).data("animating", false);
+     $("#avatarWrapper_" + userModel.get("id")+ " .smiley").hide();
+     $("#avatarWrapper_" + userModel.get("id")+ " .default").show();
      
 
     });
@@ -1225,6 +1306,9 @@ $(function() {
 		}
 		//save the currently playing state
 		playerModel.set({curVid: {curID: video.id, curTitle: video.title, percent: 0.5} });
+		
+		//put remote on appropro DJ
+		//$("#avatarWrapper_" + video.dj).append($("#remote"));
    });
 
    socket.on('video:stop', function() {
@@ -1266,57 +1350,7 @@ $(function() {
    });
 
    socket.on('djs:announce', function(djArray) {
-		var user;
-		//remove anyone who is no longer a DJ
-    app.get("roomModel").get("userCollection").each(function(userModel) {
-		 var oldPos;
-     user = $("#" + userModel.get("id") + "_");
-     if(user.data("isDJ") == "1") {
-				if(!_.any(_.pluck(djArray, 'id'), function(el) {return (''+ el) == ('' + userModel.get("id"))})) {
-					//restore user to old position
-					oldPos = user.data("oldPos");
-					user.css("margin-left", oldPos.x).css("margin-top", oldPos.y);
-	     	  user.data("isDJ", 0);
-				}
-		 }
-    });
-		//add DJs
-		var X_COORDS = [200,260,320,380, 440]; //5th DJ spot needs work
-		var Y_COORD = 25;
-		var cur_is_dj = false;
-    for (var dj in djArray) {
-		 user = $("#" + djArray[dj].id+"_");
-		 if(user.data("isDJ") == "0") {
-			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
-			 user.data("isDJ", "1")
-		 }
-     user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
-		 if (djArray[dj].id == app.get("userModel").get("fbInfo").id) {
-				cur_is_dj = true;
-				$('#getOff').live('click', function() {
-				  $("#stepDown").remove();
-					$("#skip").remove();
-					SocketManagerModel.stepDownFromDJ();
-					
-				});
-				user.append("<div id='stepDown' style='width: 80px; height: 95px'></div>");
-				$('#stepDown').tipsy({
-			    gravity: 'sw',
-			    fade: 'true',
-			    delayOut: 1000,
-					html: true,
-			    title: function() {
-			     return "<a id='getOff'>Get Off Sofa</a>"
-			    }
-			   });
-				
-			}
-		}
-		//NEED BOUNDS CHECK HERE TODO
-		$("#become-dj").css("margin-left", X_COORDS[djArray.length] + "px").css("margin-top", Y_COORD + "px");
-    if(!cur_is_dj) $("#become-dj").show();
-
-    
+		app.get("mainView").theatreView.updateDJs(djArray);
    });
 
    //.upvoteset maps userids who up to true, .down, .up totals
@@ -1327,10 +1361,10 @@ $(function() {
 			total = total + 1;
       //app.get("roomModel").get("users").get(fbid).
       //BEGIN HACK
-			$("#" + fbid + "_ .smiley").show();
-			$("#" + fbid + "_ .default").hide();
+			$("#avatarWrapper_" + fbid + " .smiley").show();
+			$("#avatarWrapper_" + fbid + " .default").hide();
 			(function() {
-				var element = $("#" + fbid + "_");
+				var element = $("#avatarWrapper_" + fbid);
 				element.data("animating", true);
 				var marginTop = element.css("margin-top").match(/\d+/)[0];
 			    (function(){
@@ -1343,9 +1377,9 @@ $(function() {
 			}())
       //ENDHACK
      } else { //FOR UPVOTE, THEN DOWNVOTE
-			$("#" + fbid + "_").data("animating", false);
-			$("#" + fbid + "_ .smiley").hide();
-			$("#" + fbid + "_ .default").show();
+			$("#avatarWrapper_" + fbid).data("animating", false);
+			$("#avatarWrapper_" + fbid + " .smiley").hide();
+			$("#avatarWrapper_" + fbid + " .default").show();
 		}
    }
 	 app.get("roomModel").get("playerModel").set({percent: total / meterStats.upvoteSet.size});
@@ -1370,7 +1404,7 @@ $(function() {
 	socket.on("room:history", function(roomHistory) {
 		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
 		/* OVERLOADED RESET */
-		app.get("roomModel").get("chatCollection").reset();
+		//app.get("roomModel").get("chatCollection").reset();
 	});
 	
  }
