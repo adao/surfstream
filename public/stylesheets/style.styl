@@ -360,7 +360,7 @@ div.historyContainer
 			.addToPlaylist:hover
 				background: url('/images/room/add_hover.png')
 			.addToPlaylist:active
-				background: url('/images/room/checkbox.png')
+				background: url('/images/room/checkbox.png') 50% 50% no-repeat
 			button.previewVideo
 				font-size: 9px
 				background: transparent
@@ -585,12 +585,17 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		background: transparent
 
 #room-modal
+	position: absolute
+	top: 200px
+	left: 50%
+	margin-left: -300px
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	overflow-y: none
 	overflow-x: none
 	width: 600px
 	height: 404px
-	background-color: #313131
+	background-color: black
+	z-index: 500
 	#searchbar
 		background-color: gray
 		display: block
@@ -625,6 +630,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			width: 26px
 			background-color: transparent
 	#rooms
+		background-color: #313131
 		width: 600px
 		height: 310px
 		overflow-y: scroll
@@ -637,6 +643,9 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				color: white
 				height: 30px
 				th.viewers-hd
+					border-radius: 0px!important
+					-webkit-border-radius: 0px!important
+					-moz-border-radius: 0px!important
 					width: 50px
 					padding: 6px
 				th.room-name-hd, th.room-friends-hd, th.viewers-hd
@@ -694,6 +703,14 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			font-weight: bold
 			color: white
 			background-color: #34C8FF
+			margin-right: -46px
+		button.hideRoomsList
+			height: 40px
+			font-size: 14px
+			margin-top: 10px
+			float: right
+			border: none
+			background: transparent
 		
 #video-div
 	width: 660px
