@@ -14,6 +14,7 @@ $(function() {
  window.RoomModel = Backbone.Model.extend({
 	
 	initialize : function() {
+		this.get("userCollection").bind("reset", this.roomJoin, this);
 	},
 
   updateDisplayedUsers: function(userJSONArray) {
@@ -36,7 +37,12 @@ $(function() {
 		userCollection.remove(remove[userModel]);
 	}
 
-  }
+  },
+
+	roomJoin : function() {
+		$("#avatarWrapper_VAL").css('margin-top', -120);
+		$("#avatarWrapper_VAL").animate({ 'margin-top': 0 }, 900, "bounceout");
+	}
 
  });
 
@@ -1067,7 +1073,7 @@ $(function() {
  window.AvatarView = Backbone.View.extend({
 	
 	initialize: function() {
-		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv;
+		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv, stageX;
 		user = this.options.user;
 		this.el.id = "avatarWrapper_" + user.id;
 		avatarId = user.get("avatar")
@@ -1077,7 +1083,14 @@ $(function() {
 		avatarMouth = this.make('img', {class: 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
 		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
 		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
-		$(this.el).css("margin-left", user.get('x')).css("margin-top", user.get('y')).css("position", 'absolute');
+		//put off stage
+		if (user.get('x') < 290) {
+			stageX = -80;
+		} else {
+			stageX = 680;
+		}
+		
+		$(this.el).css("margin-left", stageX).css("margin-top", 280).css("position", 'absolute');
 		$("#people-area").prepend(this.el);
 	  $("#avatarWrapper_" + user.id).tipsy({
 	    gravity: 'sw',
@@ -1092,7 +1105,8 @@ $(function() {
 		    gravity: 'n',
 		    fade: 'true',
 		   });
-		 $("#avatarWrapper_" + user.id).data("isDJ", "0");
+		$("#avatarWrapper_" + user.id).data("isDJ", "0");
+		$(this.el).animate({"margin-top": user.get('y'), "margin-left": user.get('x') }, 900, 'expoout');
 	},
 	
 	putOnSofa : function() {
@@ -1449,7 +1463,6 @@ $(function() {
   },
 
   stepDownFromDJ: function() {
-	console.log("fuck!")
    SocketManagerModel.socket.emit('dj:quit');
   },
 
