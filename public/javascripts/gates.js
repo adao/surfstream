@@ -1037,7 +1037,7 @@ $(function() {
 				
 				
 			
-		 user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
+		 user.animate({"margin-left": X_COORDS[dj], "margin-top": Y_COORD}, 400, 'bounceout');
 		}
 		
 		$("#avatarWrapper_VAL").show();
@@ -1120,6 +1120,7 @@ $(function() {
 		    fade: 'true',
 		   });
 		$("#avatarWrapper_" + user.id).data("isDJ", "0");
+		$(this.el).data({"trueX": user.get('x'), "trueY": user.get('y')});
 		$(this.el).animate({"margin-top": user.get('y'), "margin-left": user.get('x') }, 900, 'expoout');
 	},
 	
@@ -1405,7 +1406,7 @@ $(function() {
 			(function() {
 				var element = $("#avatarWrapper_" + fbid);
 				element.data("animating", true);
-				var marginTop = element.css("margin-top").match(/\d+/)[0];
+				var marginTop = element.data("trueY");
 			    (function(){
 							if (element.data("animating") == true) {
 			        element

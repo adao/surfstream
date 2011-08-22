@@ -186,6 +186,7 @@ body {
   margin-top: 9px;
   vertical-align: center;
   align: middle;
+  cursor: pointer;
   width: 17px;
   height: 17px;
   background: url("/images/room/clearsearch.png") 50% 50% no-repeat;
@@ -404,7 +405,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -5px;
   margin-top: 15px;
   border: none;
-  cursor: point;
+  cursor: pointer;
   width: 20px;
   height: 20px;
   display: block;
@@ -426,6 +427,7 @@ div.historyContainer .history .videoHistory {
   margin-bottom: 2px;
   border: none;
   color: #d4d4d4;
+  cursor: pointer;
 }
 .searchCellContainer .cellInfo .cellButtons button.previewVideo:hover {
   color: #e7e7e7;
@@ -805,6 +807,7 @@ button
   background-color: #808080;
   text-align: center;
   vertical-align: middle;
+  padding-top: 9px;
 }
 #room-modal #create-room #CreateRoomName {
   width: 150px;
@@ -813,8 +816,7 @@ button
 }
 #room-modal #create-room #CreateRoomName,
 #room-modal #create-room #CreateRoom {
-  margin-top: 6px;
-  padding: 0px;
+  padding-top: 0px;
   height: 28px;
   border-radius: 6px;
   -webkit-border-radius: 6px;
@@ -823,7 +825,7 @@ button
 }
 #room-modal #create-room #CreateRoom {
   margin-left: 6px;
-  width: 100px;
+  width: 110px;
   font-size: 14px;
   font-weight: bold;
   color: #fff;
@@ -895,6 +897,7 @@ background-color: green,
 #video-list .videoListCellContainer {
   width: 285px;
   height: 60px;
+  cursor: move;
 }
 #video-list .videoListCellContainer .thumbContainer {
   float: left;
@@ -939,7 +942,7 @@ background-color: green,
   width: 15px;
   height: 15px;
   border: none;
-  cursor: point;
+  cursor: pointer;
   display: block;
   background: url("/images/room/close.png") 50% 50% no-repeat;
 }
@@ -950,7 +953,7 @@ background-color: green,
 #video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
   margin-top: 8px;
   border: none;
-  cursor: points;
+  cursor: pointer;
   width: 15px;
   height: 15px;
   display: block;
@@ -1045,7 +1048,7 @@ background-color: green,
   margin-left: 8px;
 }
 .getOff {
-  cursor: pointer;
+  cursor: s-resize;
   position: absolute;
   background: #34c9ff;
   font-size: 14px;
