@@ -175,9 +175,13 @@ io.sockets.on('connection', function(socket) {
 	
 	socket.on('room:join', function(data) {
 		if(data.create == true) {
+			if(data.rID == '') {
+				console.log("\n\n[   zion   ] [socket] [room:join]: user tried to create an empty room! returning")
+				return;
+			}
 			roomManager.createRoom(socket, data.rID);
 		} 
-		if (redisClient) {
+		if(redisClient) {
 			redisClient.sadd("onlineUsers", data.id);
 			roomManager.userToRoom[data.id] = data.rID;
 		}
