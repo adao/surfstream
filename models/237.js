@@ -9,6 +9,8 @@
 	permSockEvents['user:sendFBData'] = true;
 	permSockEvents['room:join'] = true;
 	permSockEvents['rooms:load'] = true;
+	permSockEvents['user:sendFBId'] = true;
+	permSockEvents['user:sendUserFBFriends'] = true;
 
 
 	/*************************/
@@ -69,31 +71,32 @@
 		},
 		
 		playVideo: function() {
+			var roomName = this.room.get('name');
+			console.log('['+roomName+'][VAL] playVideo(): # of users --> '+this.room.users.length)
 			if(this.room.users.length == 0) return;
 			
 			if(this.userSuggest.getSize() > 0) {	//right now just pull the top video off
-				console.log('playing a video from the user suggestions');
+				console.log('['+roomName+'][VAL] playVideo(): playing a video from the user suggestions');
 				var videoToPlay = this.userSuggest.popVideo();
 				videoToPlay.set({ dj: 'VAL'});
 				this.room.vm.play(videoToPlay);					//TODO: need to change meter logic to add points to the suggestor
 				return;
 			} 
 			else if(this.autoPlaylist.getSize() > 0) {
-				console.log('playing a video from the autoplaylist');
+				console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
 				var videoToPlay = this.autoPlaylist.popVideo();
 				videoToPlay.set({ dj: 'VAL'});
 				this.room.vm.play(videoToPlay);
 				return;
 			} 
 			else {	//fetch related video from YouTube -- this is temporary
-				console.log('no other videos - fetching one from YouTube');
+				console.log('['+roomName+'][VAL] playVideo(): no other videos - fetching one from YouTube');
 				if(this.room.history.length == 0) return;
 				
 				var lookBackNum = 4;
 				if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
 				var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
 				
-				console.log("lookbacknum: "+lookBackNum);
 				var recentVideo = this.room.history.at(this.room.history.length - randInt);
 				if(!recentVideo) {
 					console.log("ERROR No video found. You should never see this message! ");
@@ -102,8 +105,8 @@
 				var videoId = recentVideo.get('videoId');
 				
 				
-				console.log("Basing recommendation off of video "+recentVideo.get('title')+", the "+randInt
-					+ " most recently played video");
+				console.log('['+roomName+'][VAL] playVideo(): basing recommendation off of video '+recentVideo.get('title')+", the "+randInt
+					+ "/"+lookBackNum+" most recently played video");
 				
 				var options = { 
 					host: 'gdata.youtube.com',
@@ -123,9 +126,7 @@
 					res.on('end', function() {
 						videoData = JSON.parse(videoData);
 						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
-						
-						console.log("got the related videos, out of the first five picking index "+randIndex);
-						
+												
 						var videoEntry = videoData['feed']['entry'][randIndex];
 						var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
 						var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
@@ -133,6 +134,7 @@
 						var videoThumb = videoEntry['media$group']['media$thumbnail'][0]['url'];
 						var videoAuthor = videoEntry['author'][0]['name']['$t'];
 		
+						console.log('['+room.get('name')+']'+"[VAL] playVideo(): got the related videos, out of the first four picking index "+randIndex+" with videoid: "+videoToPlayId+" and title: "+videoTitle);
 						var videoToPlay = new models.Video({
 							videoId: videoToPlayId,
 							duration: videoDuration,
@@ -161,18 +163,16 @@
 	models.VideoManager = Backbone.Model.extend({
 		initialize: function(room, val) {
 			this.room = room;
-			VAL = val;
+			this.VAL = val;
 		},
 		
-		VAL: null,
-		
 		playVideoFromPlaylist: function(socketId) {
+			var roomName = this.room.get('name');
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
 			var currDJ = this.room.djs.currDJ.get('userId');
-			console.log('current dj has id '+currDJ);
 			videoToPlay.set({ dj: currDJ });
 			if(!videoToPlay) {
-				console.log('Request to play video from playlist, but playlist has no videos!');
+				console.log('['+roomName+'][VM] playVideoFromPlaylist(): Request to play video from playlist, but playlist has no videos!');
 				this.playNextVideo();
 				return;
 			}
@@ -202,12 +202,15 @@
 			
 			this.room.meter.reset();
 			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle, videoDJ);
+			
+			var roomName = this.room.get('name');
+			console.log('['+roomName+']'+"[VM] play(): announcing video with (id,title,dur): ("+videoId+','+videoTitle+','+videoDuration+')');
 		},
 		
 		onVideoEnd: function () {	
-			console.log('onVideoEnd(): clearing the video '+this.room.currVideo.get('title')+' from dj: '+this.room.currVideo.get('dj'));
 			//add the video the room history
 			if(this.room.currVideo != null) {
+				console.log('['+this.room.get('name')+'][VM] onVideoEnd(): '+this.room.currVideo.get('title')+' from dj: '+this.room.currVideo.get('dj'));
 				if(this.room.djs.currDJ) {
 					this.room.djs.currDJ.playlist.moveToBottom(this.room.currVideo.get('videoId'));	
 				}
@@ -227,28 +230,27 @@
 			}
 		
 			//logic for setting up the next video
-			if((this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) && !VAL.isDJ) {
-				
+			if((this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) && !this.VAL.isDJ) {	
 				this.room.sockM.announceStopVideo();
 			} else {
-				this.playNextVideo();
+				this.room.vm.playNextVideo();
 			};
 		},
 		
 		playNextVideo: function() {
 			if(this.room.djs.length == 0 || this.room.djs.getNumVideos() == 0) {
-				if(VAL.isDJ) {
-					VAL.playVideo();
+				if(this.VAL.isDJ) {
+					console.log('['+this.room.get('name')+'][VM] playNextVideo(): playing next video from VAL');
+					this.VAL.playVideo();
 				}
 				return;
 			}
 			
-			if(VAL.isDJ && VAL.hasVideos() && this.room.djs.isValsTurn()) {	
-				VAL.playVideo();										//since that DJ will always be the last one
+			if(this.VAL.isDJ && this.VAL.hasVideos() && this.room.djs.isValsTurn()) {	
+				this.VAL.playVideo();										//since that DJ will always be the last one
 			} else {	//play a video from a human
 				var currDJInfo = this.room.djs.nextDJ(); 	
-				console.log('Playing next video, dj has index '+currDJInfo.index+' and is user '
-										+ currDJInfo.dj.get('userId')); 
+				console.log('['+this.room.get('name')+'][VM] playNextVideo(): playing next video, dj has index '+currDJInfo.index+' and is user ' + currDJInfo.dj.get('name')); 
 				this.playVideoFromPlaylist(this.room.djs.currDJ.get('socketId'));
 			}
 		}
@@ -386,11 +388,11 @@
 			var userId = userToRemove.get('userId');
 			redisClient.set('user:'+userId+':points', userToRemove.get('points'));	//save points for user
 			this.room.removeSocket(socket.id);
-			console.log('there are now '+this.room.users.length+ ' users in the room, and dj count: '+this.room.djs.length);
+			console.log('['+this.room.get('name')+'][Room] removeSocket(): there are now '+this.room.users.length+ ' users in the room, and dj count: '+this.room.djs.length);
 
 			//save playlist for user
 			var userPlaylist = userToRemove.playlist.xport();
-			console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
+			//console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
 			redisClient.set('user:'+userId+':playlist', userPlaylist, function() {
 				console.log('...save was successful');
 			});
@@ -415,7 +417,7 @@
 		
 		announceClients: function() {
 			var allUsers = this.room.users.xport();
-			console.log("'announceClients' fired to all sockets, client count: "+allUsers.length);
+			console.log("["+this.room.get('name')+"] 'announceClients' fired to all sockets, client count: "+allUsers.length);
 			io.sockets.in(this.room.get('name')).emit('users:announce', allUsers);
 		},
 		
@@ -713,7 +715,7 @@
 					console.log("Error in getting user"+userId+"'s playlist!");
 				} else {
 					var currPlaylist = new models.Playlist();
-					console.log('getting playlist for user '+userId+', reply: '+reply);
+					console.log('getting playlist for user '+userId);
 					if(reply != 'undefined' && reply != null) {
 						var playlist = JSON.parse(reply);	
 						currPlaylist.mport(playlist);
@@ -730,7 +732,7 @@
 				var thisUser = userCollect.get(socket.id);
 				if(thisUser.playlist.videos.get(data.video)) return;
 				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
@@ -739,7 +741,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.moveToTop(data.video);
 				}
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
 
 			socket.on('playlist:delete', function(data) {
@@ -748,7 +750,7 @@
 				if(thisUser.playlist.videos.get(data.video)) {
 					thisUser.playlist.deleteVideo(data.video);
 				}
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
+				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
 			});
 			
 			socket.on('playlist:moveVideo', function(data) {
@@ -791,14 +793,14 @@
 		addListeners: function (socket) {
 			var djs = this;
 			socket.on('dj:join', function() {
-				console.log(djs.room.users.get(socket.id).get('name')+' requesting to be DJ');
+				var roomName = djs.room.get('name');
+				console.log('\n\n['+roomName+'][socket] [dj:join] '+ djs.room.users.get(socket.id).get('name')+' requesting to be DJ');
 
 				var users = djs.room.users;
 				//in order to be a dj, the user has to have vids in his playlist, has to not be a dj, and
 				//the dj list can't be full
-				console.log('user playlist has length: '+djs.room.users.get(socket.id).playlist.getSize());
 				if(djs.length < 4 && users.get(socket.id).playlist.getSize() > 0 && !djs.get(socket.id)) {
-					console.log('user '+ users.get(socket.id).get('userId')+' is now a DJ');
+					console.log('['+roomName+'][socket] [dj:join] user '+ users.get(socket.id).get('name')+' is now a DJ');
 					var currUser = users.get(socket.id);
 					var numDJs = djs.length;
 					djs.addDJ(currUser, numDJs);
@@ -807,7 +809,7 @@
 
 					if(djs.length == 1) { //this user is the only human dj
 						if(djs.room.currVideo) {	//VAL is playing a video, need to clear it
-							console.log('clearing the timeout for VAL\'s video');
+							console.log('['+roomName+'][socket] [dj:join] clearing the timeout for VAL\'s video'+djs.room.currVideo.get('timeoutId'));
 							clearTimeout(djs.room.currVideo.get('timeoutId'));
 						}
 						djs.nextDJ();
@@ -817,12 +819,14 @@
 			});
 
 			socket.on('dj:quit', function() { 
-				console.log("Quit dj event called for socket" + socket.id);
+				var roomName = djs.room.get('name');
+				console.log("\n\n["+roomName+"][socket] [dj:quit] Quit dj event called for socket " + socket.id);
 				djs.removeDJ(socket.id) 
 			});
 			
 			socket.on("video:skip", function () { 
-				console.log('video:skip called')
+				var roomName = djs.room.get('name');
+				console.log('\n\n['+roomName+'][socket] [video:skip] called...')
 				if(djs.room.currVideo) {
 					console.log('...video playing, clearing the timeout '+djs.room.currVideo.get('timeoutId'));
 					clearTimeout(djs.room.currVideo.get('timeoutId'));
@@ -855,7 +859,7 @@
 			
 			this.room.sockM.announceDJs();
 			if(this.room.currVideo != null && this.room.currVideo.get('dj') == this.room.users.get(socketId).get('userId')) {
-					console.log('the DJ removed was the current one, going to the next DJ');
+					console.log('['+this.room.get('name')+'][DJCollection] removeDJ(): the DJ removed was the current one, clearing timeout');
 					clearTimeout(this.room.currVideo.get('timeoutId'));
 					this.room.vm.onVideoEnd();
 			}

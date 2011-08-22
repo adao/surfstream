@@ -1302,7 +1302,7 @@ $(function() {
    /* First set up all listeners */
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
-		console.log('received video, the DJ is: '+video.dj);	//debugging
+		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
 		var curvid, curLen, roomModel, playerModel;
 		curLen = YTPlayer.getDuration();
     if (!window.playerLoaded) {
