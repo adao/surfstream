@@ -416,7 +416,7 @@ div.historyContainer .history .videoHistory {
   background: url("/images/room/add_hover.png");
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist:active {
-  background: url("/images/room/checkbox.png");
+  background: url("/images/room/checkbox.png") 50% 50% no-repeat;
 }
 .searchCellContainer .cellInfo .cellButtons button.previewVideo {
   font-size: 9px;
@@ -692,12 +692,17 @@ button
   background: transparent;
 }
 #room-modal {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  margin-left: -300px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   overflow-y: none;
   overflow-x: none;
   width: 600px;
   height: 404px;
   background-color: #313131;
+  z-index: 500;
 }
 #room-modal #searchbar {
   background-color: #808080;
@@ -752,6 +757,9 @@ button
   height: 30px;
 }
 #room-modal #rooms table#roomsTable tr.table-header th.viewers-hd {
+  border-radius: 0px !important;
+  -webkit-border-radius: 0px !important;
+  -moz-border-radius: 0px !important;
   width: 50px;
   padding: 6px;
 }
@@ -828,6 +836,15 @@ button
   font-weight: bold;
   color: #fff;
   background-color: #34c8ff;
+  margin-right: -46px;
+}
+#room-modal #create-room button.hideRoomsList {
+  height: 40px;
+  font-size: 14px;
+  margin-top: 10px;
+  float: right;
+  border: none;
+  background: transparent;
 }
 #video-div {
   width: 660px;
