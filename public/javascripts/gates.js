@@ -1243,6 +1243,262 @@ $(function() {
 
  });
 
+ window.SocketManagerModel = Backbone.Model.extend({
+  initialize: function() {
+   var socket, app;
+   socket = this.get("socket");
+   app = this.get("app");
+   if (!socket) {
+    throw "No Socket Passed to SocketManager!";
+   } else {
+    console.log("Got socket. " + socket);
+   }
+
+   if (!app) {
+    throw "No App Passed to SocketManager!";
+   } else {
+    console.log("Got app. " + app);
+  }
+
+   /* First set up all listeners */
+   //Chat -- msg received
+   socket.on("video:sendInfo", function(video) {
+		var curvid, curLen, roomModel, playerModel;
+		curLen = YTPlayer.getDuration();
+    if (!window.playerLoaded) {
+     window.playerLoaded = true;
+     var params = {
+      allowScriptAccess: "always",
+     	wmode: "opaque"
+		 };
+     var atts = {
+      id: "YouTubePlayer"
+     };
+     swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
+     window.secs = video.time;
+     window.video_ID = video.id;
+     playerLoaded = true;
+
+    } else {
+     window.YTPlayer.loadVideoById(video.id, video.time);
+     new ChatCellView({
+      username: "surfstream.tv",
+      msg: "Now playing " + video.title
+     });
+     app.get("mainView").chatView.chatContainer.activeScroll();
+    }
+    //HACK
+    $("#room-name").html(video.title)
+    app.get("roomModel").get("userCollection").forEach(function(userModel) {
+		 $("#avatarWrapper_" + userModel.get("id")).data("animating", false);
+     $("#avatarWrapper_" + userModel.get("id")+ " .smiley").hide();
+     $("#avatarWrapper_" + userModel.get("id")+ " .default").show();
+     
+
+    });
+    //ENDHACK
+		roomModel = app.get("roomModel")
+		playerModel = roomModel.get("playerModel");
+		curvid =  playerModel.get("curVid");
+		if (curvid) {
+			app.get("mainView").roomHistoryView.addToRoomHistory(new RoomHistoryItemModel({title: curvid.curTitle, length: curLen, percent: curvid.percent, videoId: curvid.curID}));
+		}
+		//save the currently playing state
+		playerModel.set({curVid: {curID: video.id, curTitle: video.title, percent: 0.5} });
+		
+		//put remote on appropro DJ
+		//$("#avatarWrapper_" + video.dj).append($("#remote"));
+   });
+
+   socket.on('video:stop', function() {
+    if (!window.playerLoaded) return;
+    console.log('video ending!');
+    window.YTPlayer.stopVideo();
+    window.YTPlayer.clearVideo();
+   });
+
+	 socket.on("user:fbProfile", function(fbProfile) {
+		if (fbProfile == null) {
+			app.get("userModel").getFBUserData();
+		} else {
+			app.get("userModel").set({
+				displayName: fbProfile.first_name + " " + fbProfile.last_name,
+				avatarImage: 'https://graph.facebook.com/' + fbProfile.id + '/picture'
+			});
+			new RaRouter();
+			Backbone.history.start({pushState: true});
+		}
+	 });
+
+   socket.on('playlist:refresh', function(videoArray) {
+    //app.setPlaylist(videoArray);
+		_.each(videoArray, function(video) {video.id = null}); //To prevent backbone from thinking we need to sync this with the server
+		app.get("userModel").get("playlistCollection").reset(videoArray);
+   });
+
+   socket.on('message', function(msg) {
+    app.get("roomModel").get("chatCollection").add({
+     username: msg.data.name,
+     msg: msg.data.text
+    });
+    TheatreView.tipsyChat(msg.data.text, msg.data.id);
+   });
+
+   socket.on('users:announce', function(userJSONArray) {
+    //userJSONArray is an array of users, with .userId = fbid#, .name = full name, .avatar = TBD,
+    // .points = TBA, .x = top coord for room-conatiner, .y = leftmost coord for room-container
+    app.get("roomModel").updateDisplayedUsers(userJSONArray);
+   });
+
+   socket.on('djs:announce', function(djArray) {
+		app.get("mainView").theatreView.updateDJs(djArray);
+   });
+
+   //.upvoteset maps userids who up to true, .down, .up totals
+   socket.on("meter:announce", function(meterStats) {
+		var total = 0;
+    for (var fbid in meterStats.upvoteSet) {
+     if (meterStats.upvoteSet[fbid] === true) {
+			total = total + 1;
+      //app.get("roomModel").get("users").get(fbid).
+      //BEGIN HACK
+			$("#avatarWrapper_" + fbid + " .smiley").show();
+			$("#avatarWrapper_" + fbid + " .default").hide();
+			(function() {
+				var element = $("#avatarWrapper_" + fbid);
+				element.data("animating", true);
+				var marginTop = element.css("margin-top").match(/\d+/)[0];
+			    (function(){
+							if (element.data("animating") == true) {
+			        element
+			            .animate({ marginTop: marginTop - 6 }, 500)
+			            .animate({ marginTop: marginTop },   500, arguments.callee);
+							}
+			    }());
+			}())
+      //ENDHACK
+     } else { //FOR UPVOTE, THEN DOWNVOTE
+			$("#avatarWrapper_" + fbid).data("animating", false);
+			$("#avatarWrapper_" + fbid + " .smiley").hide();
+			$("#avatarWrapper_" + fbid + " .default").show();
+		}
+   }
+	 app.get("roomModel").get("playerModel").set({percent: total / meterStats.upvoteSet.size});
+   });
+
+	socket.on("rooms:announce", function(roomList) {
+		var roomlistCollection = app.get("roomModel").get("roomListCollection");
+		roomlistCollection.reset();
+		for (var i = 0; i < roomList.rooms.length; i++) {
+			roomlistCollection.add(new RoomlistCellModel(roomList.rooms[i]));
+		}
+		for(var friendId in roomList.friendsRooms) {
+			if(roomList.friendsRooms.hasOwnProperty(friendId)) {
+				var roomModel = ss_modelWithAttribute(roomlistCollection, "rID", roomList.friendsRooms[friendId]);
+				roomModel.get("friends").push(friendId);
+			}
+		}
+		roomlistCollection.sort();
+	});
+	
+	/* WE ARE OVERLOADING THIS TO CLEAR THE CHAT, ASSUMING THIS ONLY HAPPENS ON NEW ROOM JOIN */
+	socket.on("room:history", function(roomHistory) {
+		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
+		/* OVERLOADED RESET */
+		//app.get("roomModel").get("chatCollection").reset();
+	});
+	
+ }
+
+ }, {
+  socket: socket_init,
+
+  /* Outgoing Socket Events*/
+  sendFBId: function(id) {
+		SocketManagerModel.socket.emit("user:sendFBId", id);
+  },
+
+	sendFBUser: function(user) {
+		SocketManagerModel.socket.emit("user:sendFBData", user);
+	},
+	
+	sendUserFBFriends: function(friendIdList) {
+		SocketManagerModel.socket.emit("user:sendUserFBFriends", friendIdList);
+	},
+
+  sendMsg: function(data) {
+   SocketManagerModel.socket.emit("message", data);
+  },
+
+  becomeDJ: function() {
+   SocketManagerModel.socket.emit('dj:join');
+  },
+
+  stepDownFromDJ: function() {
+   SocketManagerModel.socket.emit('dj:quit');
+  },
+
+  addVideoToPlaylist: function(video, thumb, title, duration, author) {
+   SocketManagerModel.socket.emit('playlist:addVideo', {
+    video: video,
+    thumb: thumb,
+    title: title,
+		duration: duration,
+		author: author
+   });
+  },
+
+  voteUp: function() {
+   SocketManagerModel.socket.emit('meter:upvote');
+  },
+
+  voteDown: function() {
+   SocketManagerModel.socket.emit('meter:downvote');
+  },
+
+  toTopOfPlaylist: function(vid_id) {
+   SocketManagerModel.socket.emit("playlist:moveVideoToTop", {
+    video: vid_id
+   });
+  },
+
+  deleteFromPlaylist: function(vid_id) {
+   SocketManagerModel.socket.emit("playlist:delete", {
+    video: vid_id
+   });
+  },
+
+	toIndexInPlaylist: function(vid_id, newIndex) {
+		SocketManagerModel.socket.emit("playlist:moveVideo", {
+			video: vid_id,
+			index: newIndex
+		});
+	},
+
+	loadRoomsInfo: function() {
+		SocketManagerModel.socket.emit('rooms:load', {id: window.SurfStreamApp.get("userModel").get("fbId")});
+		console.log(window.SurfStreamApp.get("userModel").get("fbId"));
+		console.log("LOGGED");
+	},
+	
+	joinRoom: function(rID, create) {
+		var payload = {rID: rID};
+		if (create) payload.create = true;
+		if (SurfStreamApp.inRoom) {
+			payload.currRoom = SurfStreamApp.inRoom;
+		}		
+		SurfStreamApp.inRoom = rID;
+		payload.id = window.SurfStreamApp.get("userModel").get("fbId");
+		if (window.YTPlayer) {
+			window.YTPlayer.stopVideo();
+			window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
+		}
+		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
+		SocketManagerModel.socket.emit('room:join', payload);
+	}
+
+ });
+
 	window.RaRouter = Backbone.Router.extend({ 
 		routes: {
 			"room/:rID":	"joinRoom"
