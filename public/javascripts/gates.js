@@ -888,7 +888,15 @@ $(function() {
 	
 		render: function() {
 			$(this.el).html(this.roomListTemplate());
+			this.bindButtonEvents();
 			return this;
+		},
+	
+	  bindButtonEvents : function() {
+			$("#CreateRoom").bind("click", function() { 
+				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true) 
+			});
+			$("#CreateRoomName").bind("submit", function() { return false });
 		},
 	
 		addRooms: function (roomListCollection) {
@@ -1258,11 +1266,7 @@ $(function() {
 	initializeRoomListView: function(roomListCollection) {
 		//HACK
 			$("#ListRooms").bind("click", SocketManagerModel.loadRoomsInfo);		
-			this.roomModal = new RoomListView({roomlistCollection: roomListCollection});	
-			$("#CreateRoom").bind("click", function() { 
-				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true) 
-			});
-			$("#CreateRoomName").bind("submit", function() { return false });
+			this.roomModal = new RoomListView({roomlistCollection: roomListCollection});		
 		//ENDHACK
 	},
 	
