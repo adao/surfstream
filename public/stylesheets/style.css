@@ -3,30 +3,29 @@
   width: 300px !important;
   background-color: #f00 !important;
 }
-#now-playing-container #now-playing-video-container {
-  height: 60px;
+#now-playing-container #now-playing-video-container      		height: 60px {
   background-color: #00f;
   display: block;
 }
-#now-playing-container #now-playing-video-container #now-playing-thumb {
+#now-playing-container #now-playing-video-container      		height: 60px #now-playing-thumb {
   display: inline-block;
   height: 60px;
   width: 60px;
   background-color: #008000;
 }
-#now-playing-container #now-playing-video-container #now-playing-video-info {
+#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info {
   vertical-align: top;
   display: inline-block;
   height: 60px;
   width: 200px;
 }
-#now-playing-container #now-playing-video-container #now-playing-video-info #now-playing-title {
+#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info #now-playing-title {
   height: 40px;
   width: 200px;
   background-color: #ff0;
   display: block;
 }
-#now-playing-container #now-playing-video-container #now-playing-video-info #now-playing-views {
+#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info #now-playing-views {
   height: 20px;
   width: 200px;
   background-color: #800080;
@@ -95,39 +94,45 @@ body {
   margin-top: 3px;
 }
 #outer #coolshit {
-  height: 690px;
+  height: 700px;
   width: 960px;
   background-color: transparent;
   display: block;
 }
 #outer #coolshit #funroom {
   float: left;
-  height: 690px;
   width: 660px;
 }
 #outer #coolshit #right-side {
   float: right;
-  height: 690px;
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer {
   display: block;
   width: 300px;
-  height: 395px;
+  height: 413px;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar {
   height: 25px;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist,
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
   text-align: center !important;
   width: 150px !important;
-  height: 25px !important;
-  border-radius: 5px !important;
-  -moz-border-radius: 5px !important;
-  -webkit-border-radius: 5px !important;
+  height: 36px !important;
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar .search {
+  border-top-right-radius: 2px !important;
+  -moz-border-top-right-radius: 2px !important;
+  -webkit-border-top-right-radius: 2px !important;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
+  border-top-left-radius: 2px !important;
+  -moz-border-top-left-radius: 2px !important;
+  -webkit-border-top-left-radius: 2px !important;
   float: left;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
@@ -135,32 +140,33 @@ body {
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .active {
   color: #fff;
-  background-color: #a8f3f7;
-  background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8));
-  background: -moz-linear-gradient(top, #80d5f7, #60ccf8);
+  background-color: #34c8ff;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 330px;
+  height: 340px;
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
+  background-color: #808080;
   width: 300px;
-  background-image: url("/images/room/search.png");
   height: 36px;
-  text-indent: 30px;
+  text-indent: 5px;
   font-size: 14px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox input {
-  vertical-align: top;
-  display: inline-block;
-  margin-top: 10px;
-  width: 226px;
-  height: 14px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  margin-top: 5px;
+  width: 290px;
+  height: 26px;
+  padding: 0;
   border: 0;
   outline: 0;
-  background: transparent;
+  background-color: #e7e7e7;
+  text-indent: 4px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox #clear-search-container {
   height: 34px;
@@ -179,24 +185,27 @@ body {
 div.chatContainer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   width: 300px;
-  height: 266px;
+  height: 270px;
   max-width: 300px;
-  max-height: 290px;
+  max-height: 270px;
   display: block;
 }
 div.chatContainer div.chatHeader {
   width: 300px;
   height: 30px;
-  background-image: url("/images/room/actionbar.png");
   background-color: #808080;
 }
 div.chatContainer div.chatHeader img.chatIcon {
   display: inline-block;
-  margin-top: 5px;
+  width: 27px;
+  height: 24px;
+  margin-top: 4px;
   margin-left: 5px;
 }
 div.chatContainer div.chatHeader div.chatTitle {
-  font-size: 12px;
+  margin-top: 5px;
+  font-size: 16px;
+  font-weight: bold;
   text-indent: 10px;
   vertical-align: top;
   display: inline-block;
@@ -206,10 +215,10 @@ div.chatContainer div.chatHeader div.chatTitle {
   width: 36px;
 }
 div.chatContainer #messages {
-  background-color: #e7e7e7;
+  background-color: #373737;
   border: none;
   color: #000;
-  height: 200px;
+  height: 204px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -222,7 +231,7 @@ div.chatContainer #messages div.messageContainer {
   width: 274px;
   max-width: 274px;
   font-size: 14px;
-  color: #000;
+  color: #d4d4d4;
 }
 div.chatContainer #messages div.messageContainer span {
   padding: 2px 0px 2px;
@@ -236,21 +245,26 @@ div.chatContainer #messages div.messageContainer div {
   display: inline;
 }
 div.chatContainer #messages div.messageContainer:nth-child(odd) {
-  background-color: #fff;
+  background-color: #313131;
 }
 div.chatContainer form.inputBox {
-  background-image: url("/images/room/search.png");
+  background-color: #808080;
   height: 36px;
-  text-indent: 30px;
+  text-indent: 7px;
   font-size: 14px;
 }
 div.chatContainer form.inputBox input {
-  margin-top: 10px;
-  width: 240px;
-  height: 14px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  margin-top: 5px;
+  width: 286px;
+  height: 26px;
+  padding: 0;
   border: 0;
   outline: 0;
-  background: transparent;
+  background-color: #e7e7e7;
+  text-indent: 4px;
 }
 div.historyContainer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -302,8 +316,10 @@ div.historyContainer .history .videoHistory {
 }
 .videoLog .thumbContainer {
   float: left;
-  width: 75px;
-  height: 75px;
+  width: 58px;
+  height: 46px;
+  margin-left: 7px;
+  margin-top: 7px;
 }
 .videoLog .videoInfo {
   float: right;
@@ -333,12 +349,13 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer {
   width: 285px;
   height: 60px;
-  border-bottom: 2px solid #ececec;
 }
 .searchCellContainer .thumbContainer {
   float: left;
-  width: 75px;
-  height: 60px;
+  width: 58px;
+  height: 46px;
+  margin-left: 7px;
+  margin-top: 7px;
 }
 .searchCellContainer .cellInfo {
   float: right;
@@ -388,7 +405,7 @@ div.historyContainer .history .videoHistory {
   color: #42e841;
 }
 .searchCellContainer:nth-child(odd) {
-  background-color: #eee;
+  background-color: #313131;
 }
 #room-container {
   width: 660px;
@@ -401,11 +418,11 @@ div.historyContainer .history .videoHistory {
   background-color: #f00;
 }
 #room-container #people-area {
-  background: url("/images/room/room-blue.png");
   display: block;
   width: 660px;
   height: 270px;
   position: absolute;
+  background: url("/images/room/room-270px.png");
 }
 #room-container #people-area .bottom-user-controls {
   position: absolute;
@@ -529,11 +546,12 @@ button.search.active {
   color: #808080;
 }
 .videoView {
-  height: 370px;
+  color: #d4d4d4;
+  height: 379px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
-  background-color: #e7e7e7;
+  background-color: #373737;
 }
 .tipsy-inner {
   z-index: 666;
@@ -652,31 +670,35 @@ button
   overflow-y: none;
   overflow-x: none;
   width: 600px;
-  height: 360px;
-  border: 1px solid #000;
+  height: 404px;
+  background-color: #313131;
 }
 #room-modal #searchbar {
-  background: url("http://i.imgur.com/4QNd7.png") 50% 50% no-repeat;
+  background-color: #808080;
   display: block;
-  height: 50px;
+  height: 54px;
   background-color: #666;
 }
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
-  width: 560px;
-  height: 40px;
-  text-indent: 45px;
-  color: #666;
+  width: 600px;
+  height: 54px;
 }
 #room-modal #searchbar form.roomSearch input {
-  color: #fff;
+  color: #000;
+  text-indent: 10px;
+  border: 0 !important;
+  margin-left: 10px;
+  background-color: #e7e7e7;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
   font-size: 16px;
-  margin-top: 12px;
-  width: 240px;
-  height: 25px;
+  margin-top: 9px;
+  width: 580px;
+  height: 36px;
   border: 0;
   outline: 0;
-  background: transparent;
 }
 #room-modal #searchbar #clearSearch {
   padding-bottom: 8px;
@@ -746,19 +768,51 @@ button
   font-size: 12px;
 }
 #room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
-  background-color: #ededed;
-  color: #000;
+  background-color: #313131;
+}
+#room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
+  background-color: #373737;
+}
+#room-modal #create-room {
+  height: 40px;
+  background-color: #808080;
+  text-align: center;
+  vertical-align: middle;
+}
+#room-modal #create-room #CreateRoomName {
+  width: 150px;
+  background-color: #e7e7e7;
+  text-indent: 3px;
+}
+#room-modal #create-room #CreateRoomName,
+#room-modal #create-room #CreateRoom {
+  margin-top: 6px;
+  padding: 0px;
+  height: 28px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border: none;
+}
+#room-modal #create-room #CreateRoom {
+  margin-left: 6px;
+  width: 100px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #34c8ff;
 }
 #video-div {
   width: 660px;
-  height: 420px;
+  height: 413px;
   background: url("/images/room/tv.png") 50% 50% no-repeat;
   z-index: 1;
 }
 #YouTubePlayer {
-  padding-left: 15px;
+  padding-left: 10px;
   position: absolute;
-  top: 68px;
+  top: 60px;
+  z-index: 30;
 }
 #top-video-cell {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -799,10 +853,17 @@ background-color: green,
   background-color: #000;
 }
 #video-list {
-  height: 370px;
-  max-height: 370px;
+  height: 379px;
+  max-height: 379px;
   overflow-y: scroll;
   overflow-x: hidden;
+  z-index: -1;
+}
+#video-list .videoListCellContainer:nth-child(odd) {
+  background-color: #313131;
+}
+#video-list .videoListCellContainer:nth-child(even) {
+  background-color: #373737;
 }
 #video-list .videoListCellContainer {
   width: 285px;
@@ -810,14 +871,15 @@ background-color: green,
 }
 #video-list .videoListCellContainer .thumbContainer {
   float: left;
-  width: 75px;
-  height: 60px;
+  width: 58px;
+  height: 46px;
+  margin-left: 7px;
+  margin-top: 7px;
 }
 #video-list .videoListCellContainer .cellInfo {
   float: right;
   width: 210px;
   height: 60px;
-  border-bottom: 2px solid #ececec;
 }
 #video-list .videoListCellContainer .cellInfo .videoInfo {
   float: left;
@@ -825,6 +887,8 @@ background-color: green,
   height: 60px;
 }
 #video-list .videoListCellContainer .cellInfo .videoInfo .title {
+  margin-top: 5px;
+  margin-left: 5px;
   width: 150px;
   height: 17px;
   font-weight: bold;
@@ -866,13 +930,13 @@ background-color: green,
   margin-left: -1px;
 }
 .ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all {
+  background-color: #e7e7e7;
   position: absolute;
-  top: 30px;
-  background-color: #fff;
+  top: 96px !important;
   margin-left: -100px;
-  margin-top: 50px;
-  width: 200px !important;
-  height: 238px !important;
+  width: 250px !important;
+  max-height: 238px !important;
+  font-size: 14px;
   list-style-type: none;
 }
 .ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all li {
@@ -955,4 +1019,12 @@ background-color: green,
   text-align: center;
   width: 82px;
   margin-top: 40px;
+}
+#avatarWrapper_VAL {
+  position: absolute;
+}
+#tvglowimg {
+  margin-top: 164px;
+  margin-left: 98px;
+  position: absolute;
 }

@@ -2,8 +2,7 @@
 	height: 100px!important
 	width: 300px!important
 	background-color: red!important
-	#now-playing-video-container
-		height: 60px
+	#now-playing-video-container      		height: 60px
 		background-color: blue
 		display: block
 		#now-playing-thumb
@@ -77,62 +76,71 @@ body
 			#video-name
 				margin-top: 3px
 	#coolshit
-		height: 690px
+		height: 700px
 		width: 960px
 		background-color: transparent
 		display: block
 		#funroom
 			float: left
-			height: 690px
 			width: 660px
 		#right-side
 			float: right
-			height: 690px
 			width: 300px
 			.sidebarContainer
 				display: block
 				width: 300px
-				height: 395px
+				height: 413px
 				.viewBar
 					height: 25px
 					.playlist, .search
+						border: none
+						font-size: 14px
+						font-weight: bold
 						text-align: center!important
 						width: 150px!important
-						height: 25px!important
-						border-radius: 5px!important
-						-moz-border-radius: 5px!important
-						-webkit-border-radius: 5px!important
+						height: 36px!important
+					.search
+						border-top-right-radius: 2px!important
+						-moz-border-top-right-radius: 2px!important
+						-webkit-border-top-right-radius: 2px!important
 					.playlist
+						border-top-left-radius: 2px!important
+						-moz-border-top-left-radius: 2px!important
+						-webkit-border-top-left-radius: 2px!important
 						float: left
 					.search
 						float: right
 					.active
 						color: white
-						background-color: #A8F3F7
-						background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8))
-						background: -moz-linear-gradient(top, #80d5f7 , #60ccf8)
+						background-color: #34C8FF
+					// background-color: #A8F3F7
+					// background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8))
+					// background: -moz-linear-gradient(top, #80d5f7 , #60ccf8)   
 				#search-view
 					#searchContainer
 						overflow-y: scroll
 						overflow-x: hidden
-						height: 330px
+						height: 340px
 						width: 300px
 					#searchBar
 						.inputBox
+							background-color: gray
 							width: 300px
-							background-image: url('/images/room/search.png')
 							height: 36px
-							text-indent: 30px
+							text-indent: 5px
 							font-size: 14px
 							input
-								vertical-align: top
-								display: inline-block
-								margin-top: 10px
-								width: 226px
-								height: 14px
+								border-radius: 4px
+								-webkit-border-radius: 4px
+								-moz-border-radius: 4px
+								margin-top: 5px
+								width: 290px
+								height: 26px
+								padding: 0
 								border: 0
 								outline: 0
-								background: transparent
+								background-color: #E7E7E7
+								text-indent: 4px  
 							#clear-search-container
 								height: 34px
 								width: 10px
@@ -151,21 +159,24 @@ body
 div.chatContainer
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	width: 300px
-	height: 266px
+	height: 270px
 	max-width: 300px
-	max-height: 290px
+	max-height: 270px
 	display: block
 	div.chatHeader
 		width: 300px
 		height: 30px
-		background-image: url('/images/room/actionbar.png')
 		background-color: gray
 		img.chatIcon
 			display: inline-block
-			margin-top: 5px
+			width: 27px
+			height: 24px
+			margin-top: 4px
 			margin-left: 5px
 		div.chatTitle
-			font-size: 12px
+			margin-top: 5px
+			font-size: 16px
+			font-weight: bold
 			text-indent: 10px
 			vertical-align: top
 			display: inline-block                                         
@@ -174,10 +185,10 @@ div.chatContainer
 			height: 18px
 			width: 36px
 	#messages
-		background-color: #E7E7E7
+		background-color: #373737
 		border: none
 		color: black
-		height: 200px
+		height: 204px
 		overflow-y: scroll
 		overflow-x: hidden
 		div.messageContainer
@@ -189,7 +200,7 @@ div.chatContainer
 			width: 274px
 			max-width: 274px
 			font-size: 14px
-			color: black
+			color: #D4D4D4
 			span
 				padding: 2px 0px 2px
 				margin-right: 3px
@@ -200,19 +211,24 @@ div.chatContainer
 				padding-bottom: 2px
 				display: inline
 		div.messageContainer:nth-child(odd)
-					background-color: white
+					background-color: #313131
 	form.inputBox
-		background-image: url('/images/room/search.png')
+		background-color: gray
 		height: 36px
-		text-indent: 30px
+		text-indent: 7px
 		font-size: 14px
 		input
-			margin-top: 10px
-			width: 240px
-			height: 14px
+			border-radius: 4px
+			-webkit-border-radius: 4px
+			-moz-border-radius: 4px
+			margin-top: 5px
+			width: 286px
+			height: 26px
+			padding: 0
 			border: 0
 			outline: 0
-			background: transparent
+			background-color: #E7E7E7
+			text-indent: 4px
 					 
 //History Container
 div.historyContainer
@@ -258,8 +274,10 @@ div.historyContainer
 	height: 95px
 	.thumbContainer
 		float: left
-		width: 75px
-		height: 75px
+		width: 58px
+		height: 46px
+		margin-left: 7px
+		margin-top: 7px
 	.videoInfo
 		float: right
 		width: 197px
@@ -286,11 +304,12 @@ div.historyContainer
 .searchCellContainer
 	width: 285px
 	height: 60px
-	border-bottom: 2px solid #ECECEC
 	.thumbContainer
 		float: left
-		width: 75px
-		height: 60px
+		width: 58px
+		height: 46px
+		margin-left: 7px
+		margin-top: 7px
 	.cellInfo
 		float: right
 		width: 210px
@@ -331,7 +350,7 @@ div.historyContainer
 			button.previewVideo:hover
 					color: #42E841
 .searchCellContainer:nth-child(odd)
-	background-color: #EEE
+	background-color: #313131
 //room
 #room-container
 	width: 660px
@@ -342,11 +361,11 @@ div.historyContainer
 		height: 400px
 		background-color: red
 	#people-area
-		background: url('/images/room/room-blue.png')
 		display: block
 		width: 660px
 		height: 270px
 		position: absolute
+		background: url('/images/room/room-270px.png') 
 		.bottom-user-controls
 			position: absolute
 			top: 710px
@@ -444,11 +463,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	color: gray
 	
 .videoView
-	height: 370px
+	color: #D4D4D4
+	height: 379px
 	width: 300px
 	overflow-x: hidden 
 	overflow-y: hidden
-	background-color: #E7E7E7
+	background-color: #373737
 
 //chat bubbles
 .tipsy-inner
@@ -546,28 +566,32 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	overflow-y: none
 	overflow-x: none
 	width: 600px
-	height: 360px
-	border: 1px solid black
+	height: 404px
+	background-color: #313131
 	#searchbar
-		background: url('http://i.imgur.com/4QNd7.png') 50% 50% no-repeat
+		background-color: gray
 		display: block
-		height: 50px
+		height: 54px
 		background-color: #666
 		form.roomSearch
 			display: inline-block
-			width: 560px
-			height: 40px
-			text-indent: 45px
-			color: #666
+			width: 600px
+			height: 54px
 			input
-				color: white
+				color: black
+				text-indent: 10px
+				border: 0!important
+				margin-left: 10px
+				background-color: #E7E7E7
+				border-radius: 6px
+				-webkit-border-radius: 6px
+				-moz-border-radius: 6px
 				font-size: 16px
-				margin-top: 12px
-				width: 240px
-				height: 25px
+				margin-top: 9px
+				width: 580px
+				height: 36px
 				border: 0
 				outline: 0
-				background: transparent
 		#clearSearch			
 			padding-bottom: 8px
 			vertical-align: bottom
@@ -619,19 +643,45 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						.listed-video-name
 							font-size: 12px
 			tr.room-row:nth-child(odd)
-				background-color: #EDEDED
-				color:black
-
+				background-color: #313131
+			tr.room-row:nth-child(odd)
+				background-color: #373737    
+	#create-room
+		height: 40px
+		background-color: gray
+		text-align: center
+		vertical-align: middle
+		#CreateRoomName
+			width: 150px
+			background-color: #E7E7E7
+			text-indent: 3px
+		#CreateRoomName, #CreateRoom
+			margin-top: 6px
+			padding: 0px
+			height: 28px
+			border-radius: 6px
+			-webkit-border-radius: 6px
+			-moz-border-radius: 6px
+			border: none 
+		#CreateRoom
+			margin-left: 6px
+			width: 100px
+			font-size: 14px
+			font-weight: bold
+			color: white
+			background-color: #34C8FF
+		
 #video-div
 	width: 660px
-	height: 420px
+	height: 413px
 	background: url('/images/room/tv.png') 50% 50% no-repeat
 	z-index: 1
 
 #YouTubePlayer
-	padding-left: 15px
+	padding-left: 10px
 	position: absolute
-	top: 68px
+	top: 60px
+	z-index:30
 	
 #top-video-cell
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
@@ -667,27 +717,35 @@ div#top-video-name
 	background-color: black 
                     
 #video-list
-	height: 370px
-	max-height: 370px
+	height: 379px
+	max-height: 379px
 	overflow-y: scroll
 	overflow-x: hidden
+	z-index: -1
+	.videoListCellContainer:nth-child(odd)
+		background-color: #313131  
+	.videoListCellContainer:nth-child(even)
+		background-color: #373737
 	.videoListCellContainer
 		width: 285px
 		height: 60px
 		.thumbContainer
 			float: left
-			width: 75px
-			height: 60px
+			width: 58px
+			height: 46px
+			margin-left: 7px
+			margin-top: 7px
 		.cellInfo
 			float: right
 			width: 210px
 			height: 60px
-			border-bottom: 2px solid #ECECEC
 			.videoInfo
 				float: left
 				width: 180px
 				height: 60px
 				.title
+					margin-top: 5px
+					margin-left: 5px
 					width: 150px
 					height: 17px
 					font-weight: bold
@@ -722,13 +780,13 @@ div#top-video-name
 	margin-left: -1px
 
 .ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all
+	background-color: #E7E7E7
 	position: absolute
-	top: 30px
-	background-color: white
+	top: 96px!important
 	margin-left: -100px
-	margin-top: 50px
-	width: 200px!important
-	height: 238px!important
+	width: 250px!important
+	max-height: 238px!important
+	font-size: 14px
 	list-style-type: none
 	li
 		margin-left: -40px
@@ -798,3 +856,11 @@ div#top-video-name
 	text-align: center
 	width: 82px
 	margin-top: 40px
+
+#avatarWrapper_VAL
+	position:absolute;
+
+#tvglowimg
+	margin-top: 164px
+	margin-left: 98px
+	position: absolute
