@@ -147,6 +147,7 @@ body
 								display: inline-block
 								vertical-align: middle
 								#clearsearch
+									display: none
 									margin-top: 9px
 									vertical-align: center
 									align: middle
@@ -319,12 +320,22 @@ div.historyContainer
 			width: 180px
 			height: 60px
 			.title
-				margin-top: 5px
-				margin-left: 5px
+				overflow-y: hidden
+				margin-top: 7px
 				width: 150px
-				height: 17px
+				height: 28px
 				font-weight: bold
-				font-size: 12px
+				font-size: 11px
+			.views
+				margin-top: 2px
+				width: 150px
+				height: 10px
+				font-size: 9px
+			.time
+				margin-top: 2px
+				width: 150px
+				height: 10px
+				font-size: 9px
 		.cellButtons
 			float: right
 			width: 30px
@@ -335,20 +346,22 @@ div.historyContainer
 				margin-top: 15px
 				border: none
 				cursor: point
-				width: 30px
-				height: 30px
+				width: 20px
+				height: 20px
 				display: block
-				background: url('/images/room/add_small.png')
+				background: url('/images/room/add.png')
 			.addToPlaylist:hover
-				background-color: black
-				background: url('/images/room/add_small_hover.png')
+				background: url('/images/room/add_hover.png')
 			button.previewVideo
+				font-size: 9px
 				background: transparent
-				margin-left: -22px
+				margin-left: -18px
+				margin-top: 4px
 				margin-bottom: 2px
 				border: none
+				color: #D4D4D4
 			button.previewVideo:hover
-					color: #42E841
+					color: #E7E7E7
 .searchCellContainer:nth-child(odd)
 	background-color: #313131
 //room
@@ -592,7 +605,8 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				height: 36px
 				border: 0
 				outline: 0
-		#clearSearch			
+		#clearSearch
+			display: none
 			padding-bottom: 8px
 			vertical-align: bottom
 			background: url('http://i.imgur.com/cOliI.png') 50% 50% no-repeat
@@ -744,32 +758,38 @@ div#top-video-name
 				width: 180px
 				height: 60px
 				.title
-					margin-top: 5px
-					margin-left: 5px
+					overflow-y: hidden
+					margin-top: 7px
 					width: 150px
-					height: 17px
+					height: 28px
 					font-weight: bold
-					font-size: 12px
+					font-size: 11px
+					text-wrap: suppress
+				.views
+					margin-top: 2px
+					width: 150px
+					height: 10px
+					font-size: 9px 
 			.cellButtons
 				width: 30px
 				height: 60px
 				float: right
 				.remove, .remove:hover
-					width: 30px
-					height: 30px
-					margin-left: -3px
+					margin-top: 10px
+					width: 15px
+					height: 15px
 					border: none
 					cursor: point
 					display: block
-					margin-right: 1px
-					background: url('/images/room/remove.png') 50% 50% no-repeat   
+					background: url('/images/room/close.png') 50% 50% no-repeat   
 				.remove:hover
-					background: url('/images/room/remove_hover.png') 50% 50% no-repeat
+					background: url('/images/room/close_hover.png') 50% 50% no-repeat
 				.toTheTop, .toTheTop:hover
+					margin-top: 8px
 					border: none
 					cursor: points
-					width: 25px
-					height: 25px
+					width: 15px
+					height: 15px
 					display: block
 					background: url('/images/room/to_the_top.png') 50% 50% no-repeat
 				.toTheTop:hover
