@@ -74,12 +74,14 @@
 			if(this.userSuggest.getSize() > 0) {	//right now just pull the top video off
 				console.log('playing a video from the user suggestions');
 				var videoToPlay = this.userSuggest.popVideo();
+				videoToPlay.set({ dj: 'VAL'});
 				this.room.vm.play(videoToPlay);					//TODO: need to change meter logic to add points to the suggestor
 				return;
 			} 
 			else if(this.autoPlaylist.getSize() > 0) {
 				console.log('playing a video from the autoplaylist');
 				var videoToPlay = this.autoPlaylist.popVideo();
+				videoToPlay.set({ dj: 'VAL'});
 				this.room.vm.play(videoToPlay);
 				return;
 			} 
@@ -87,13 +89,21 @@
 				console.log('no other videos - fetching one from YouTube');
 				if(this.room.history.length == 0) return;
 				
-				var lookBackNum = 5;
-				if (this.room.history.length < 5) lookBackNum = this.room.history.length;
-				var randInt = Math.floor(Math.random()*lookBackNum);
+				var lookBackNum = 4;
+				if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
+				var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
 				
-				var recentVideo = this.room.history.at(this.room.history.length - 1);
-				if(!recentVideo) return;
+				console.log("lookbacknum: "+lookBackNum);
+				var recentVideo = this.room.history.at(this.room.history.length - randInt);
+				if(!recentVideo) {
+					console.log("ERROR No video found. You should never see this message! ");
+					return;
+				}
 				var videoId = recentVideo.get('videoId');
+				
+				
+				console.log("Basing recommendation off of video "+recentVideo.get('title')+", the "+randInt
+					+ " most recently played video");
 				
 				var options = { 
 					host: 'gdata.youtube.com',
@@ -112,9 +122,11 @@
 				
 					res.on('end', function() {
 						videoData = JSON.parse(videoData);
+						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
 						
+						console.log("got the related videos, out of the first five picking index "+randIndex);
 						
-						var videoEntry = videoData['feed']['entry'][0];
+						var videoEntry = videoData['feed']['entry'][randIndex];
 						var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
 						var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
 						var videoTitle = videoEntry['media$group']['media$title']['$t'];
@@ -156,6 +168,9 @@
 		
 		playVideoFromPlaylist: function(socketId) {
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
+			var currDJ = this.room.djs.currDJ.get('userId');
+			console.log('current dj has id '+currDJ);
+			videoToPlay.set({ dj: currDJ });
 			if(!videoToPlay) {
 				console.log('Request to play video from playlist, but playlist has no videos!');
 				this.playNextVideo();
@@ -172,6 +187,7 @@
 			var videoId = videoToPlay.get('videoId');
 			var videoDuration = videoToPlay.get('duration');
 			var videoTitle = videoToPlay.get('title');
+			var videoDJ = videoToPlay.get('dj');			
 
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
@@ -180,14 +196,16 @@
 				duration: videoDuration,
 				author: videoToPlay.get('author'),
 				timeStart: (new Date()).getTime(),
-				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000)
+				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
+				dj: videoToPlay.get('dj')
 			});
-
+			
 			this.room.meter.reset();
-			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle);
+			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle, videoDJ);
 		},
 		
 		onVideoEnd: function () {	
+			console.log('onVideoEnd(): clearing the video '+this.room.currVideo.get('title')+' from dj: '+this.room.currVideo.get('dj'));
 			//add the video the room history
 			if(this.room.currVideo != null) {
 				if(this.room.djs.currDJ) {
@@ -199,7 +217,8 @@
 					up: this.room.meter.up, 
 					down: this.room.meter.down,
 					title: this.room.currVideo.get('title'),
-					length: this.room.currVideo.get('duration')
+					length: this.room.currVideo.get('duration'),
+					dj: this.room.currVideo.get('dj')
 				});
 				redisClient.rpush('room:history:' + this.room.get("name"), JSON.stringify(videoFinished));
 				this.room.history.add(videoFinished);
@@ -272,23 +291,26 @@
 		},
 		
 		removeSocket: function(socketId) {
-			this.users.remove(socketId);
 			this.djs.removeDJ(socketId);
+			this.users.remove(socketId);
 		},
 		
 		connectUser: function(user) {
 			this.users.addUser(user);
 			this.sockM.addSocket(user.get("socket"));
-			
+			user.randLoc();
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
 				console.log('Sending current video to socket, title is : '+this.currVideo.get('title'));
 
-				user.get("socket").emit('video:sendInfo', {  
+				var dj = this.currVideo.get('dj');
+				console.log("the current dj is "+dj);
+				user.get("socket").emit('video:sendInfo', { 
 					id: this.currVideo.get('videoId'), 
 					time: Math.ceil(timeDiff), 
-					title: this.currVideo.get('title') 
+					title: this.currVideo.get('title'),
+					dj: this.currVideo.get('dj')
 				});
 			}	
 			//this.sockM.sendRoomState(user.get("socket"));
@@ -387,8 +409,8 @@
 			}
 		},
 
-		announceVideo: function(videoId, duration, title) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title});
+		announceVideo: function(videoId, duration, title, dj) {
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title, dj: dj });
 		},
 		
 		announceClients: function() {
@@ -592,8 +614,7 @@
 		initialize: function() {
 			this.id = this.get('socketId');	
 			this.playlist = new models.Playlist();			
-			this.getAvatar();			
-			this.randLoc();
+			this.getAvatar();
 		},
 		
 		setPlaylist: function(playlist) {
@@ -784,7 +805,11 @@
 
 					djs.room.sockM.announceDJs(); 
 
-					if(djs.length == 1) { //this user is the only dj
+					if(djs.length == 1) { //this user is the only human dj
+						if(djs.room.currVideo) {	//VAL is playing a video, need to clear it
+							console.log('clearing the timeout for VAL\'s video');
+							clearTimeout(djs.room.currVideo.get('timeoutId'));
+						}
 						djs.nextDJ();
 						djs.room.vm.playVideoFromPlaylist(socket.id);
 					}
@@ -797,7 +822,9 @@
 			});
 			
 			socket.on("video:skip", function () { 
+				console.log('video:skip called')
 				if(djs.room.currVideo) {
+					console.log('...video playing, clearing the timeout '+djs.room.currVideo.get('timeoutId'));
 					clearTimeout(djs.room.currVideo.get('timeoutId'));
 				}
 				djs.room.vm.onVideoEnd();
@@ -827,13 +854,11 @@
 			this.remove(socketId);
 			
 			this.room.sockM.announceDJs();
-			if(this.currDJ == null) {
-				console.log('the DJ removed was the current one, going to the next DJ');
-				if(this.room.currVideo != null) {
+			if(this.room.currVideo != null && this.room.currVideo.get('dj') == this.room.users.get(socketId).get('userId')) {
+					console.log('the DJ removed was the current one, going to the next DJ');
 					clearTimeout(this.room.currVideo.get('timeoutId'));
-				}
-				this.room.vm.onVideoEnd();
-			}	
+					this.room.vm.onVideoEnd();
+			}
 		},
 		
 		xport: function() {
@@ -920,12 +945,14 @@
 
 				var currUser = meter.room.users.get(socket.id);
 				console.log('voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
-				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
+				
+				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 
 				var success = meter.addUpvote(currUser.get('userId'));	//checks to make sure the user hasn't already voted
 				if(success) {
 					console.log('...success!');
-					meter.room.djs.currDJ.addPoint();
+					if(meter.room.currVideo.get('dj') != 'VAL')
+						meter.room.djs.currDJ.addPoint();
 					meter.room.sockM.announceMeter();
 				}
 			});
@@ -934,13 +961,13 @@
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
-				console.log('downvoting user: '+currUser.get('name'));
-				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
+				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
 
 				var success = meter.room.meter.addDownvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
 				if(success) {
 					console.log('..success!');
-					meter.room.users.get(socket.id).subtractPoint();
+					if(meter.room.currVideo.get('dj') != 'VAL')
+						meter.room.djs.currDJ.addPoint();
 					meter.room.sockM.announceMeter();
 				}
 			});

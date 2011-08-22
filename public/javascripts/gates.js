@@ -12,10 +12,14 @@ $(function() {
  window.VideoPlayerModel = Backbone.Model.extend({});
 
  window.RoomModel = Backbone.Model.extend({
+	
+	initialize : function() {
+	},
 
   updateDisplayedUsers: function(userJSONArray) {
    var hash = {};
    var userCollection = this.get("userCollection");
+	 var remove = [];
    _.each(userJSONArray, function(user) { 
 			if (!userCollection.get(user.id)) userCollection.add(user);
 	    hash[user.id] = true;
@@ -23,8 +27,14 @@ $(function() {
 
 
    userCollection.each(function(userModel) {
-    if (!hash[userModel.get('id')]) userModel.collection.remove(userModel);
+	
+		console.log('lookin at id '+ userModel.get('id'))
+    if (!hash[userModel.get('id')]) remove.push(userModel);
    });
+
+	for (var userModel in remove) {
+		userCollection.remove(remove[userModel]);
+	}
 
   }
 
@@ -979,7 +989,7 @@ $(function() {
 					user.css("margin-left", oldPos.x).css("margin-top", oldPos.y);
 	     	  user.data("isDJ", 0);
 				}
-		 }
+		 }	
     });
 
 		//Add new DJs
@@ -990,26 +1000,24 @@ $(function() {
     for (var dj in djArray) {
 		 numOnSofa = numOnSofa + 1;
 		 user = $("#avatarWrapper_" + djArray[dj].id);
-		 if(user.data("isDJ") == "0") {
-			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
-			 user.data("isDJ", "1")
-		 }
-     user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
-		 if (djArray[dj].id == this.options.userModel.get("fbId")) {
-				cur_is_dj = true;
-				$('#getOff').live('click', function() {
-				  $("#stepDown").remove();
-					$('#getOff').remove();
-					$("#skip").remove();
-					SocketManagerModel.stepDownFromDJ();
-					
-				});
-				user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
-				$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>")
-				$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();})
-				
-				
+     
+		 	if (djArray[dj].id == this.options.userModel.get("fbId")) {
+				  cur_is_dj = true;
 			}
+			
+			if(user.data("isDJ") == "0") {				
+				user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
+				user.data("isDJ", "1");		
+				if (djArray[dj].id == this.options.userModel.get("fbId"))  {
+					user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
+					$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>");
+					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();});
+				}
+			}
+				
+				
+			
+		 user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
 		}
 		
 		$("#avatarWrapper_VAL").show();
@@ -1045,12 +1053,12 @@ $(function() {
  }, { /* Class properties */
 
   tipsyChat: function(text, fbid) {
-   var userPic = $("#nameDiv_" + fbid);
+   var userPic = $("#avatarWrapper_" + fbid);
 	 var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
    setTimeout(function() {
-	  if($("#nameDiv_" + fbID).length > 0) userPic.tipsy("hide");
+	  if($("#avatarWrapper_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
 
@@ -1071,7 +1079,7 @@ $(function() {
 		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
 		$(this.el).css("margin-left", user.get('x')).css("margin-top", user.get('y')).css("position", 'absolute');
 		$("#people-area").prepend(this.el);
-	   this.$("#avatarWrapper_" + user.id).tipsy({
+	  $("#avatarWrapper_" + user.id).tipsy({
 	    gravity: 'sw',
 	    fade: 'true',
 	    delayOut: 3000,
@@ -1080,7 +1088,7 @@ $(function() {
 	     return this.getAttribute('latest_txt')
 	    }
 	   });
-			this.$("#nameDiv_" + user.id).tipsy({
+		$("#nameDiv_" + user.id).tipsy({
 		    gravity: 'n',
 		    fade: 'true',
 		   });
@@ -1193,7 +1201,13 @@ $(function() {
   el: 'body',
 
   initialize: function() {
-
+		$('#getOff').live('click', function() {
+		  $("#stepDown").remove();
+			$('#getOff').remove();
+			$("#skip").remove();
+			SocketManagerModel.stepDownFromDJ();
+			
+		});
   },
 
   initializeTopBarView: function() {
@@ -1264,6 +1278,7 @@ $(function() {
    /* First set up all listeners */
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
+		console.log('received video, the DJ is: '+video.dj);	//debugging
 		var curvid, curLen, roomModel, playerModel;
 		curLen = YTPlayer.getDuration();
     if (!window.playerLoaded) {
@@ -1434,6 +1449,7 @@ $(function() {
   },
 
   stepDownFromDJ: function() {
+	console.log("fuck!")
    SocketManagerModel.socket.emit('dj:quit');
   },
 
@@ -1488,6 +1504,8 @@ $(function() {
 		}		
 		SurfStreamApp.inRoom = rID;
 		payload.id = window.SurfStreamApp.get("userModel").get("fbId");
+		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
+		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
 		window.YTPlayer.stopVideo();
 		window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
 		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
