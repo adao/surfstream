@@ -841,7 +841,7 @@ button
   background-color: #34c8ff;
   margin-right: -46px;
 }
-#room-modal #create-room button.hideRoomsList {
+#room-modal #create-room button#hideRoomsList {
   height: 40px;
   font-size: 14px;
   margin-top: 10px;

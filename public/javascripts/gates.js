@@ -875,6 +875,7 @@ $(function() {
 		
 		roomListTemplate: _.template($('#roomlist-template').html()),
 
+		
 		initialize: function () {
 			this.options.roomlistCollection.bind("reset", this.addRooms, this);
 			this.options.roomlistCollection.bind("sort", this.addRooms, this);
@@ -902,6 +903,8 @@ $(function() {
 				window.SurfStreamApp.get("mainRouter").navigate("/" + $("#CreateRoomName").val(), false);
 			});
 			$("#CreateRoomName").bind("submit", function() { return false });
+			$("#hideRoomsList").bind("click", this.hide);
+			$("#rooms").bind("click", this.show);
 		},
 	
 		addRooms: function (roomListCollection) {
