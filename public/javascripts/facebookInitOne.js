@@ -14,6 +14,10 @@ window.fbAsyncInit = function() {
 		console.log(response);
 		if (response.authResponse) {
 			//user is already logged in and connected
+			window.SurfStreamApp = new SurfStreamModel({
+			  socket: socket_init
+			 });
+			 console.log("started app");
 			window.SurfStreamApp.get("userModel").set({fbId: response.authResponse.userID});
 			SocketManagerModel.sendFBId(response.authResponse.userID);
 			document.getElementById('frontdoor').style.display = 'none';
@@ -36,7 +40,10 @@ window.fbAsyncInit = function() {
   document.getElementById('loadingScreen').style.display = 'none';
 	document.getElementById('frontdoor').style.display = 'inline-block';
 };
+
 (function() {
+	socket_init = io.connect();
+	
 	var e = document.createElement('script'); e.async = true;
 	e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
 	document.getElementById('fb-root').appendChild(e);

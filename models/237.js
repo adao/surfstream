@@ -298,7 +298,7 @@
 		connectUser: function(user) {
 			this.users.addUser(user);
 			this.sockM.addSocket(user.get("socket"));
-			
+			user.randLoc();
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
@@ -614,8 +614,7 @@
 		initialize: function() {
 			this.id = this.get('socketId');	
 			this.playlist = new models.Playlist();			
-			this.getAvatar();			
-			this.randLoc();
+			this.getAvatar();
 		},
 		
 		setPlaylist: function(playlist) {

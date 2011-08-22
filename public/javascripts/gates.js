@@ -1,6 +1,5 @@
 $(function() {
  
- socket_init = io.connect();
  _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
  };
@@ -12,10 +11,15 @@ $(function() {
  window.VideoPlayerModel = Backbone.Model.extend({});
 
  window.RoomModel = Backbone.Model.extend({
+	
+	initialize : function() {
+		this.get("userCollection").bind("reset", this.roomJoin, this);
+	},
 
   updateDisplayedUsers: function(userJSONArray) {
    var hash = {};
    var userCollection = this.get("userCollection");
+	 var remove = [];
    _.each(userJSONArray, function(user) { 
 			if (!userCollection.get(user.id)) userCollection.add(user);
 	    hash[user.id] = true;
@@ -23,10 +27,21 @@ $(function() {
 
 
    userCollection.each(function(userModel) {
-    if (!hash[userModel.get('id')]) userModel.collection.remove(userModel);
+	
+		console.log('lookin at id '+ userModel.get('id'))
+    if (!hash[userModel.get('id')]) remove.push(userModel);
    });
 
-  }
+	for (var userModel in remove) {
+		userCollection.remove(remove[userModel]);
+	}
+
+  },
+
+	roomJoin : function() {
+		$("#avatarWrapper_VAL").css('margin-top', -120);
+		$("#avatarWrapper_VAL").animate({ 'margin-top': 0 }, 900, "bounceout");
+	}
 
  });
 
@@ -280,7 +295,7 @@ $(function() {
 	initialize: function() {
 		this.set({friends: []});
 	}
-});
+ });
  
  window.ChatCollection = Backbone.Collection.extend({
   model: ChatMessageModel,
@@ -872,7 +887,15 @@ $(function() {
 	
 		render: function() {
 			$(this.el).html(this.roomListTemplate());
+			this.bindButtonEvents();
 			return this;
+		},
+	
+	  bindButtonEvents : function() {
+			$("#CreateRoom").bind("click", function() { 
+				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true) 
+			});
+			$("#CreateRoomName").bind("submit", function() { return false });
 		},
 	
 		addRooms: function (roomListCollection) {
@@ -979,7 +1002,7 @@ $(function() {
 					user.css("margin-left", oldPos.x).css("margin-top", oldPos.y);
 	     	  user.data("isDJ", 0);
 				}
-		 }
+		 }	
     });
 
 		//Add new DJs
@@ -990,26 +1013,24 @@ $(function() {
     for (var dj in djArray) {
 		 numOnSofa = numOnSofa + 1;
 		 user = $("#avatarWrapper_" + djArray[dj].id);
-		 if(user.data("isDJ") == "0") {
-			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
-			 user.data("isDJ", "1")
-		 }
-     user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
-		 if (djArray[dj].id == this.options.userModel.get("fbId")) {
-				cur_is_dj = true;
-				$('#getOff').live('click', function() {
-				  $("#stepDown").remove();
-					$('#getOff').remove();
-					$("#skip").remove();
-					SocketManagerModel.stepDownFromDJ();
-					
-				});
-				user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
-				$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>")
-				$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();})
-				
-				
+     
+		 	if (djArray[dj].id == this.options.userModel.get("fbId")) {
+				  cur_is_dj = true;
 			}
+			
+			if(user.data("isDJ") == "0") {				
+				user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
+				user.data("isDJ", "1");		
+				if (djArray[dj].id == this.options.userModel.get("fbId"))  {
+					user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
+					$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>");
+					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();});
+				}
+			}
+				
+				
+			
+		 user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
 		}
 		
 		$("#avatarWrapper_VAL").show();
@@ -1045,12 +1066,12 @@ $(function() {
  }, { /* Class properties */
 
   tipsyChat: function(text, fbid) {
-   var userPic = $("#nameDiv_" + fbid);
+   var userPic = $("#avatarWrapper_" + fbid);
 	 var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
    setTimeout(function() {
-	  if($("#nameDiv_" + fbID).length > 0) userPic.tipsy("hide");
+	  if($("#avatarWrapper_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
 
@@ -1059,19 +1080,26 @@ $(function() {
  window.AvatarView = Backbone.View.extend({
 	
 	initialize: function() {
-		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv;
+		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv, stageX;
 		user = this.options.user;
 		this.el.id = "avatarWrapper_" + user.id;
-		avatarId = user.get("avatar")
+		avatarId = user.get("avatar");
 		avatarImgSrc = this.getAvatarSrc(avatarId);
 		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc })
 		nameDiv = this.make('div', {id:'nameDiv_' + user.id, class:"nametip", style: 'position:absolute;', title: user.get('name') })
 		avatarMouth = this.make('img', {class: 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
 		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
 		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
-		$(this.el).css("margin-left", user.get('x')).css("margin-top", user.get('y')).css("position", 'absolute');
+		//put off stage
+		if (user.get('x') < 290) {
+			stageX = -80;
+		} else {
+			stageX = 680;
+		}
+		
+		$(this.el).css("margin-left", stageX).css("margin-top", 280).css("position", 'absolute');
 		$("#people-area").prepend(this.el);
-	   this.$("#avatarWrapper_" + user.id).tipsy({
+	  $("#avatarWrapper_" + user.id).tipsy({
 	    gravity: 'sw',
 	    fade: 'true',
 	    delayOut: 3000,
@@ -1080,11 +1108,12 @@ $(function() {
 	     return this.getAttribute('latest_txt')
 	    }
 	   });
-			this.$("#nameDiv_" + user.id).tipsy({
+		$("#nameDiv_" + user.id).tipsy({
 		    gravity: 'n',
 		    fade: 'true',
 		   });
-		 $("#avatarWrapper_" + user.id).data("isDJ", "0");
+		$("#avatarWrapper_" + user.id).data("isDJ", "0");
+		$(this.el).animate({"margin-top": user.get('y'), "margin-left": user.get('x') }, 900, 'expoout');
 	},
 	
 	putOnSofa : function() {
@@ -1193,7 +1222,13 @@ $(function() {
   el: 'body',
 
   initialize: function() {
-
+		$('#getOff').live('click', function() {
+		  $("#stepDown").remove();
+			$('#getOff').remove();
+			$("#skip").remove();
+			SocketManagerModel.stepDownFromDJ();
+			
+		});
   },
 
   initializeTopBarView: function() {
@@ -1230,11 +1265,7 @@ $(function() {
 	initializeRoomListView: function(roomListCollection) {
 		//HACK
 			$("#ListRooms").bind("click", SocketManagerModel.loadRoomsInfo);		
-			this.roomModal = new RoomListView({roomlistCollection: roomListCollection});	
-			$("#CreateRoom").bind("click", function() { 
-				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true) 
-			});
-			$("#CreateRoomName").bind("submit", function() { return false });
+			this.roomModal = new RoomListView({roomlistCollection: roomListCollection});		
 		//ENDHACK
 	},
 	
@@ -1327,6 +1358,8 @@ $(function() {
 				displayName: fbProfile.first_name + " " + fbProfile.last_name,
 				avatarImage: 'https://graph.facebook.com/' + fbProfile.id + '/picture'
 			});
+			new RaRouter();
+			Backbone.history.start({pushState: true});
 		}
 	 });
 
@@ -1489,19 +1522,28 @@ $(function() {
 		}		
 		SurfStreamApp.inRoom = rID;
 		payload.id = window.SurfStreamApp.get("userModel").get("fbId");
-		window.YTPlayer.stopVideo();
-		window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
+		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
+		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
+		if (window.YTPlayer) {
+			window.YTPlayer.stopVideo();
+			window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
+		}
 		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
 		SocketManagerModel.socket.emit('room:join', payload);
 	}
 
  });
 
+	window.RaRouter = Backbone.Router.extend({ 
+		routes: {
+			"room/:rID":	"joinRoom"
+		},
+		
+		joinRoom: function(rID) {
+			SocketManagerModel.joinRoom(rID, false);
+		}
+	});
  window.playerLoaded = false;
- window.SurfStreamApp = new SurfStreamModel({
-  socket: socket_init
- });
- console.log("started app");
 
 });
 

@@ -185,9 +185,9 @@ body {
 div.chatContainer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   width: 300px;
-  height: 290px;
+  height: 270px;
   max-width: 300px;
-  max-height: 290px;
+  max-height: 270px;
   display: block;
 }
 div.chatContainer div.chatHeader {
@@ -218,7 +218,7 @@ div.chatContainer #messages {
   background-color: #373737;
   border: none;
   color: #000;
-  height: 221px;
+  height: 204px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -410,7 +410,6 @@ div.historyContainer .history .videoHistory {
 #room-container {
   width: 660px;
   height: 700px;
-  background: url("/images/room/room.png");
 }
 #room-container #video-container {
   display: block;
@@ -423,6 +422,7 @@ div.historyContainer .history .videoHistory {
   width: 660px;
   height: 270px;
   position: absolute;
+  background: url("/images/room/room-270px.png");
 }
 #room-container #people-area .bottom-user-controls {
   position: absolute;
@@ -670,34 +670,35 @@ button
   overflow-y: none;
   overflow-x: none;
   width: 600px;
-  height: 360px;
-  border: 1px solid #000;
+  height: 404px;
+  background-color: #313131;
 }
 #room-modal #searchbar {
-  background: url("http://i.imgur.com/4QNd7.png") 50% 50% no-repeat;
+  background-color: #808080;
   display: block;
-  height: 50px;
+  height: 54px;
   background-color: #666;
 }
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
-  width: 560px;
-  height: 40px;
-  text-indent: 45px;
-  color: #666;
+  width: 600px;
+  height: 54px;
 }
 #room-modal #searchbar form.roomSearch input {
-  border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  color: #fff;
+  color: #000;
+  text-indent: 10px;
+  border: 0 !important;
+  margin-left: 10px;
+  background-color: #e7e7e7;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
   font-size: 16px;
-  margin-top: 12px;
-  width: 240px;
-  height: 25px;
+  margin-top: 9px;
+  width: 580px;
+  height: 36px;
   border: 0;
   outline: 0;
-  background: transparent;
 }
 #room-modal #searchbar #clearSearch {
   padding-bottom: 8px;
@@ -767,8 +768,39 @@ button
   font-size: 12px;
 }
 #room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
-  background-color: #ededed;
-  color: #000;
+  background-color: #313131;
+}
+#room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
+  background-color: #373737;
+}
+#room-modal #create-room {
+  height: 40px;
+  background-color: #808080;
+  text-align: center;
+  vertical-align: middle;
+}
+#room-modal #create-room #CreateRoomName {
+  width: 150px;
+  background-color: #e7e7e7;
+  text-indent: 3px;
+}
+#room-modal #create-room #CreateRoomName,
+#room-modal #create-room #CreateRoom {
+  margin-top: 6px;
+  padding: 0px;
+  height: 28px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border: none;
+}
+#room-modal #create-room #CreateRoom {
+  margin-left: 6px;
+  width: 100px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #34c8ff;
 }
 #video-div {
   width: 660px;
@@ -780,6 +812,7 @@ button
   padding-left: 10px;
   position: absolute;
   top: 60px;
+  z-index: 30;
 }
 #top-video-cell {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -828,6 +861,9 @@ background-color: green,
 }
 #video-list .videoListCellContainer:nth-child(odd) {
   background-color: #313131;
+}
+#video-list .videoListCellContainer:nth-child(even) {
+  background-color: #373737;
 }
 #video-list .videoListCellContainer {
   width: 285px;
@@ -894,13 +930,13 @@ background-color: green,
   margin-left: -1px;
 }
 .ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all {
+  background-color: #e7e7e7;
   position: absolute;
-  top: 30px;
-  background-color: #fff;
+  top: 96px !important;
   margin-left: -100px;
-  margin-top: 50px;
-  width: 200px !important;
-  height: 238px !important;
+  width: 250px !important;
+  max-height: 238px !important;
+  font-size: 14px;
   list-style-type: none;
 }
 .ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all li {
@@ -983,4 +1019,12 @@ background-color: green,
   text-align: center;
   width: 82px;
   margin-top: 40px;
+}
+#avatarWrapper_VAL {
+  position: absolute;
+}
+#tvglowimg {
+  margin-top: 164px;
+  margin-left: 98px;
+  position: absolute;
 }
