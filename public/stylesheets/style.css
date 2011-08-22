@@ -703,7 +703,7 @@ button
   overflow-x: none;
   width: 600px;
   height: 404px;
-  background-color: #313131;
+  background-color: #000;
   z-index: 500;
 }
 #room-modal #searchbar {
@@ -744,6 +744,7 @@ button
   background-color: transparent;
 }
 #room-modal #rooms {
+  background-color: #313131;
   width: 600px;
   height: 310px;
   overflow-y: scroll;
