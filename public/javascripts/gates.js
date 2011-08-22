@@ -1,6 +1,5 @@
 $(function() {
  
- socket_init = io.connect();
  _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
  };
@@ -296,7 +295,7 @@ $(function() {
 	initialize: function() {
 		this.set({friends: []});
 	}
-});
+ });
  
  window.ChatCollection = Backbone.Collection.extend({
   model: ChatMessageModel,
@@ -1084,7 +1083,7 @@ $(function() {
 		var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv, stageX;
 		user = this.options.user;
 		this.el.id = "avatarWrapper_" + user.id;
-		avatarId = user.get("avatar")
+		avatarId = user.get("avatar");
 		avatarImgSrc = this.getAvatarSrc(avatarId);
 		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc })
 		nameDiv = this.make('div', {id:'nameDiv_' + user.id, class:"nametip", style: 'position:absolute;', title: user.get('name') })
@@ -1359,6 +1358,8 @@ $(function() {
 				displayName: fbProfile.first_name + " " + fbProfile.last_name,
 				avatarImage: 'https://graph.facebook.com/' + fbProfile.id + '/picture'
 			});
+			new RaRouter();
+			Backbone.history.start({pushState: true});
 		}
 	 });
 
@@ -1523,19 +1524,26 @@ $(function() {
 		payload.id = window.SurfStreamApp.get("userModel").get("fbId");
 		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
 		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
-		window.YTPlayer.stopVideo();
-		window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
+		if (window.YTPlayer) {
+			window.YTPlayer.stopVideo();
+			window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
+		}
 		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
 		SocketManagerModel.socket.emit('room:join', payload);
 	}
 
  });
 
+	window.RaRouter = Backbone.Router.extend({ 
+		routes: {
+			"room/:rID":	"joinRoom"
+		},
+		
+		joinRoom: function(rID) {
+			SocketManagerModel.joinRoom(rID, false);
+		}
+	});
  window.playerLoaded = false;
- window.SurfStreamApp = new SurfStreamModel({
-  socket: socket_init
- });
- console.log("started app");
 
 });
 
