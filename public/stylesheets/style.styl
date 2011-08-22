@@ -159,9 +159,9 @@ body
 div.chatContainer
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	width: 300px
-	height: 290px
+	height: 270px
 	max-width: 300px
-	max-height: 290px
+	max-height: 270px
 	display: block
 	div.chatHeader
 		width: 300px
@@ -188,7 +188,7 @@ div.chatContainer
 		background-color: #373737
 		border: none
 		color: black
-		height: 221px
+		height: 204px
 		overflow-y: scroll
 		overflow-x: hidden
 		div.messageContainer
@@ -355,7 +355,6 @@ div.historyContainer
 #room-container
 	width: 660px
 	height: 700px
-	background: url('/images/room/room.png') 
 	#video-container
 		display: block
 		width: 660px
@@ -366,6 +365,7 @@ div.historyContainer
 		width: 660px
 		height: 270px
 		position: absolute
+		background: url('/images/room/room-270px.png') 
 		.bottom-user-controls
 			position: absolute
 			top: 710px
@@ -566,31 +566,32 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	overflow-y: none
 	overflow-x: none
 	width: 600px
-	height: 360px
-	border: 1px solid black
+	height: 404px
+	background-color: #313131
 	#searchbar
-		background: url('http://i.imgur.com/4QNd7.png') 50% 50% no-repeat
+		background-color: gray
 		display: block
-		height: 50px
+		height: 54px
 		background-color: #666
 		form.roomSearch
 			display: inline-block
-			width: 560px
-			height: 40px
-			text-indent: 45px
-			color: #666
+			width: 600px
+			height: 54px
 			input
-				border-radius: 2px
-				-webkit-border-radius: 2px
-				-moz-border-radius: 2px
-				color: white
+				color: black
+				text-indent: 10px
+				border: 0!important
+				margin-left: 10px
+				background-color: #E7E7E7
+				border-radius: 6px
+				-webkit-border-radius: 6px
+				-moz-border-radius: 6px
 				font-size: 16px
-				margin-top: 12px
-				width: 240px
-				height: 25px
+				margin-top: 9px
+				width: 580px
+				height: 36px
 				border: 0
 				outline: 0
-				background: transparent
 		#clearSearch			
 			padding-bottom: 8px
 			vertical-align: bottom
@@ -642,9 +643,34 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						.listed-video-name
 							font-size: 12px
 			tr.room-row:nth-child(odd)
-				background-color: #EDEDED
-				color:black
-
+				background-color: #313131
+			tr.room-row:nth-child(odd)
+				background-color: #373737    
+	#create-room
+		height: 40px
+		background-color: gray
+		text-align: center
+		vertical-align: middle
+		#CreateRoomName
+			width: 150px
+			background-color: #E7E7E7
+			text-indent: 3px
+		#CreateRoomName, #CreateRoom
+			margin-top: 6px
+			padding: 0px
+			height: 28px
+			border-radius: 6px
+			-webkit-border-radius: 6px
+			-moz-border-radius: 6px
+			border: none 
+		#CreateRoom
+			margin-left: 6px
+			width: 100px
+			font-size: 14px
+			font-weight: bold
+			color: white
+			background-color: #34C8FF
+		
 #video-div
 	width: 660px
 	height: 413px
@@ -696,7 +722,9 @@ div#top-video-name
 	overflow-x: hidden
 	z-index: -1
 	.videoListCellContainer:nth-child(odd)
-		background-color: #313131
+		background-color: #313131  
+	.videoListCellContainer:nth-child(even)
+		background-color: #373737
 	.videoListCellContainer
 		width: 285px
 		height: 60px
