@@ -1331,8 +1331,8 @@ $(function() {
     } else {
      window.YTPlayer.loadVideoById(video.id, video.time);
      new ChatCellView({
-      username: "surfstream.tv",
-      msg: "Now playing " + video.title
+      username: "Now Playing: ",
+      msg: video.title
      });
      app.get("mainView").chatView.chatContainer.activeScroll();
     }

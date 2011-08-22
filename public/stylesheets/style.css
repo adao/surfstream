@@ -147,7 +147,7 @@ body {
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .active {
   color: #fff;
-  background-color: #34c8ff;
+  background-color: #34b7fe;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
@@ -212,7 +212,7 @@ div.chatContainer div.chatHeader img.chatIcon {
   margin-left: 5px;
 }
 div.chatContainer div.chatHeader div.chatTitle {
-  margin-top: 7px;
+  margin-top: 6px;
   font-size: 16px;
   font-weight: bold;
   text-indent: 10px;
