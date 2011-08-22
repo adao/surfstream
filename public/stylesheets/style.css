@@ -812,6 +812,7 @@ button
   padding-left: 10px;
   position: absolute;
   top: 60px;
+  z-index: 30;
 }
 #top-video-cell {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -1018,6 +1019,9 @@ background-color: green,
   text-align: center;
   width: 82px;
   margin-top: 40px;
+}
+#avatarWrapper_VAL {
+  position: absolute;
 }
 #tvglowimg {
   margin-top: 164px;
