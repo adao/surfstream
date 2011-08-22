@@ -175,6 +175,7 @@ body {
   vertical-align: middle;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox #clear-search-container #clearsearch {
+  display: none;
   margin-top: 9px;
   vertical-align: center;
   align: middle;
@@ -368,12 +369,24 @@ div.historyContainer .history .videoHistory {
   height: 60px;
 }
 .searchCellContainer .cellInfo .videoInfo .title {
-  margin-top: 5px;
-  margin-left: 5px;
+  overflow-y: hidden;
+  margin-top: 7px;
   width: 150px;
-  height: 17px;
+  height: 28px;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 11px;
+}
+.searchCellContainer .cellInfo .videoInfo .views {
+  margin-top: 2px;
+  width: 150px;
+  height: 10px;
+  font-size: 9px;
+}
+.searchCellContainer .cellInfo .videoInfo .time {
+  margin-top: 2px;
+  width: 150px;
+  height: 10px;
+  font-size: 9px;
 }
 .searchCellContainer .cellInfo .cellButtons {
   float: right;
@@ -386,23 +399,25 @@ div.historyContainer .history .videoHistory {
   margin-top: 15px;
   border: none;
   cursor: point;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   display: block;
-  background: url("/images/room/add_small.png");
+  background: url("/images/room/add.png");
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist:hover {
-  background-color: #000;
-  background: url("/images/room/add_small_hover.png");
+  background: url("/images/room/add_hover.png");
 }
 .searchCellContainer .cellInfo .cellButtons button.previewVideo {
+  font-size: 9px;
   background: transparent;
-  margin-left: -22px;
+  margin-left: -18px;
+  margin-top: 4px;
   margin-bottom: 2px;
   border: none;
+  color: #d4d4d4;
 }
 .searchCellContainer .cellInfo .cellButtons button.previewVideo:hover {
-  color: #42e841;
+  color: #e7e7e7;
 }
 .searchCellContainer:nth-child(odd) {
   background-color: #313131;
@@ -701,6 +716,7 @@ button
   outline: 0;
 }
 #room-modal #searchbar #clearSearch {
+  display: none;
   padding-bottom: 8px;
   vertical-align: bottom;
   background: url("http://i.imgur.com/cOliI.png") 50% 50% no-repeat;
@@ -887,12 +903,19 @@ background-color: green,
   height: 60px;
 }
 #video-list .videoListCellContainer .cellInfo .videoInfo .title {
-  margin-top: 5px;
-  margin-left: 5px;
+  overflow-y: hidden;
+  margin-top: 7px;
   width: 150px;
-  height: 17px;
+  height: 28px;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 11px;
+  text-wrap: suppress;
+}
+#video-list .videoListCellContainer .cellInfo .videoInfo .views {
+  margin-top: 2px;
+  width: 150px;
+  height: 10px;
+  font-size: 9px;
 }
 #video-list .videoListCellContainer .cellInfo .cellButtons {
   width: 30px;
@@ -901,24 +924,24 @@ background-color: green,
 }
 #video-list .videoListCellContainer .cellInfo .cellButtons .remove,
 #video-list .videoListCellContainer .cellInfo .cellButtons .remove:hover {
-  width: 30px;
-  height: 30px;
-  margin-left: -3px;
+  margin-top: 10px;
+  width: 15px;
+  height: 15px;
   border: none;
   cursor: point;
   display: block;
-  margin-right: 1px;
-  background: url("/images/room/remove.png") 50% 50% no-repeat;
+  background: url("/images/room/close.png") 50% 50% no-repeat;
 }
 #video-list .videoListCellContainer .cellInfo .cellButtons .remove:hover {
-  background: url("/images/room/remove_hover.png") 50% 50% no-repeat;
+  background: url("/images/room/close_hover.png") 50% 50% no-repeat;
 }
 #video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop,
 #video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
+  margin-top: 8px;
   border: none;
   cursor: points;
-  width: 25px;
-  height: 25px;
+  width: 15px;
+  height: 15px;
   display: block;
   background: url("/images/room/to_the_top.png") 50% 50% no-repeat;
 }
