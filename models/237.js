@@ -89,17 +89,21 @@
 				console.log('no other videos - fetching one from YouTube');
 				if(this.room.history.length == 0) return;
 				
-				var lookBackNum = 5;
-				if (this.room.history.length < 5) lookBackNum = this.room.history.length;
-				var randInt = 1 + Math.floor(Math.random()*5);	//between 1 and lookBackNum, inclusive
+				var lookBackNum = 4;
+				if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
+				var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
 				
 				console.log("lookbacknum: "+lookBackNum);
 				var recentVideo = this.room.history.at(this.room.history.length - randInt);
 				if(!recentVideo) {
-					console.log("ERROR No video found");
+					console.log("ERROR No video found. You should never see this message! ");
 					return;
 				}
 				var videoId = recentVideo.get('videoId');
+				
+				
+				console.log("Basing recommendation off of video "+recentVideo.get('title')+", the "+randInt
+					+ " most recently played video");
 				
 				var options = { 
 					host: 'gdata.youtube.com',
@@ -118,7 +122,9 @@
 				
 					res.on('end', function() {
 						videoData = JSON.parse(videoData);
-						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 5
+						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
+						
+						console.log("got the related videos, out of the first five picking index "+randIndex);
 						
 						var videoEntry = videoData['feed']['entry'][randIndex];
 						var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
@@ -181,9 +187,7 @@
 			var videoId = videoToPlay.get('videoId');
 			var videoDuration = videoToPlay.get('duration');
 			var videoTitle = videoToPlay.get('title');
-			var videoDJ = videoToPlay.get('dj');
-			
-			console.log("Video to play has dj: "+videoDJ);
+			var videoDJ = videoToPlay.get('dj');			
 
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
@@ -201,6 +205,7 @@
 		},
 		
 		onVideoEnd: function () {	
+			console.log('onVideoEnd(): clearing the video '+this.room.currVideo.get('title')+' from dj: '+this.room.currVideo.get('dj'));
 			//add the video the room history
 			if(this.room.currVideo != null) {
 				if(this.room.djs.currDJ) {
@@ -286,8 +291,8 @@
 		},
 		
 		removeSocket: function(socketId) {
-			this.users.remove(socketId);
 			this.djs.removeDJ(socketId);
+			this.users.remove(socketId);
 		},
 		
 		connectUser: function(user) {
@@ -800,7 +805,11 @@
 
 					djs.room.sockM.announceDJs(); 
 
-					if(djs.length == 1) { //this user is the only dj
+					if(djs.length == 1) { //this user is the only human dj
+						if(djs.room.currVideo) {	//VAL is playing a video, need to clear it
+							console.log('clearing the timeout for VAL\'s video');
+							clearTimeout(djs.room.currVideo.get('timeoutId'));
+						}
 						djs.nextDJ();
 						djs.room.vm.playVideoFromPlaylist(socket.id);
 					}
@@ -813,7 +822,9 @@
 			});
 			
 			socket.on("video:skip", function () { 
+				console.log('video:skip called')
 				if(djs.room.currVideo) {
+					console.log('...video playing, clearing the timeout '+djs.room.currVideo.get('timeoutId'));
 					clearTimeout(djs.room.currVideo.get('timeoutId'));
 				}
 				djs.room.vm.onVideoEnd();
@@ -843,13 +854,11 @@
 			this.remove(socketId);
 			
 			this.room.sockM.announceDJs();
-			if(this.currDJ == null) {
-				console.log('the DJ removed was the current one, going to the next DJ');
-				if(this.room.currVideo != null) {
+			if(this.room.currVideo != null && this.room.currVideo.get('dj') == this.room.users.get(socketId).get('userId')) {
+					console.log('the DJ removed was the current one, going to the next DJ');
 					clearTimeout(this.room.currVideo.get('timeoutId'));
-				}
-				this.room.vm.onVideoEnd();
-			}	
+					this.room.vm.onVideoEnd();
+			}
 		},
 		
 		xport: function() {
@@ -936,12 +945,14 @@
 
 				var currUser = meter.room.users.get(socket.id);
 				console.log('voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
-				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
+				
+				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 
 				var success = meter.addUpvote(currUser.get('userId'));	//checks to make sure the user hasn't already voted
 				if(success) {
 					console.log('...success!');
-					meter.room.djs.currDJ.addPoint();
+					if(meter.room.currVideo.get('dj') != 'VAL')
+						meter.room.djs.currDJ.addPoint();
 					meter.room.sockM.announceMeter();
 				}
 			});
@@ -950,13 +961,13 @@
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
-				console.log('downvoting user: '+currUser.get('name'));
-				if(currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
+				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
 
 				var success = meter.room.meter.addDownvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
 				if(success) {
 					console.log('..success!');
-					meter.room.users.get(socket.id).subtractPoint();
+					if(meter.room.currVideo.get('dj') != 'VAL')
+						meter.room.djs.currDJ.addPoint();
 					meter.room.sockM.announceMeter();
 				}
 			});
