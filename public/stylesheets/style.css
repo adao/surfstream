@@ -3,30 +3,29 @@
   width: 300px !important;
   background-color: #f00 !important;
 }
-#now-playing-container #now-playing-video-container {
-  height: 60px;
+#now-playing-container #now-playing-video-container      		height: 60px {
   background-color: #00f;
   display: block;
 }
-#now-playing-container #now-playing-video-container #now-playing-thumb {
+#now-playing-container #now-playing-video-container      		height: 60px #now-playing-thumb {
   display: inline-block;
   height: 60px;
   width: 60px;
   background-color: #008000;
 }
-#now-playing-container #now-playing-video-container #now-playing-video-info {
+#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info {
   vertical-align: top;
   display: inline-block;
   height: 60px;
   width: 200px;
 }
-#now-playing-container #now-playing-video-container #now-playing-video-info #now-playing-title {
+#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info #now-playing-title {
   height: 40px;
   width: 200px;
   background-color: #ff0;
   display: block;
 }
-#now-playing-container #now-playing-video-container #now-playing-video-info #now-playing-views {
+#now-playing-container #now-playing-video-container      		height: 60px #now-playing-video-info #now-playing-views {
   height: 20px;
   width: 200px;
   background-color: #800080;
@@ -95,39 +94,45 @@ body {
   margin-top: 3px;
 }
 #outer #coolshit {
-  height: 690px;
+  height: 700px;
   width: 960px;
   background-color: transparent;
   display: block;
 }
 #outer #coolshit #funroom {
   float: left;
-  height: 690px;
   width: 660px;
 }
 #outer #coolshit #right-side {
   float: right;
-  height: 690px;
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer {
   display: block;
   width: 300px;
-  height: 395px;
+  height: 413px;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar {
   height: 25px;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist,
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
   text-align: center !important;
   width: 150px !important;
-  height: 25px !important;
-  border-radius: 5px !important;
-  -moz-border-radius: 5px !important;
-  -webkit-border-radius: 5px !important;
+  height: 36px !important;
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar .search {
+  border-top-right-radius: 2px !important;
+  -moz-border-top-right-radius: 2px !important;
+  -webkit-border-top-right-radius: 2px !important;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
+  border-top-left-radius: 2px !important;
+  -moz-border-top-left-radius: 2px !important;
+  -webkit-border-top-left-radius: 2px !important;
   float: left;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
@@ -135,32 +140,33 @@ body {
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .active {
   color: #fff;
-  background-color: #a8f3f7;
-  background: -webkit-gradient(linear, left top, left bottom, from(#80d5f7), to(#60ccf8));
-  background: -moz-linear-gradient(top, #80d5f7, #60ccf8);
+  background-color: #34c8ff;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 330px;
+  height: 340px;
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
+  background-color: #808080;
   width: 300px;
-  background-image: url("/images/room/search.png");
   height: 36px;
-  text-indent: 30px;
+  text-indent: 5px;
   font-size: 14px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox input {
-  vertical-align: top;
-  display: inline-block;
-  margin-top: 10px;
-  width: 226px;
-  height: 14px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  margin-top: 5px;
+  width: 290px;
+  height: 26px;
+  padding: 0;
   border: 0;
   outline: 0;
-  background: transparent;
+  background-color: #e7e7e7;
+  text-indent: 4px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox #clear-search-container {
   height: 34px;
@@ -179,7 +185,7 @@ body {
 div.chatContainer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   width: 300px;
-  height: 266px;
+  height: 290px;
   max-width: 300px;
   max-height: 290px;
   display: block;
@@ -187,16 +193,19 @@ div.chatContainer {
 div.chatContainer div.chatHeader {
   width: 300px;
   height: 30px;
-  background-image: url("/images/room/actionbar.png");
   background-color: #808080;
 }
 div.chatContainer div.chatHeader img.chatIcon {
   display: inline-block;
-  margin-top: 5px;
+  width: 27px;
+  height: 24px;
+  margin-top: 4px;
   margin-left: 5px;
 }
 div.chatContainer div.chatHeader div.chatTitle {
-  font-size: 12px;
+  margin-top: 5px;
+  font-size: 16px;
+  font-weight: bold;
   text-indent: 10px;
   vertical-align: top;
   display: inline-block;
@@ -206,10 +215,10 @@ div.chatContainer div.chatHeader div.chatTitle {
   width: 36px;
 }
 div.chatContainer #messages {
-  background-color: #e7e7e7;
+  background-color: #373737;
   border: none;
   color: #000;
-  height: 200px;
+  height: 221px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -222,7 +231,7 @@ div.chatContainer #messages div.messageContainer {
   width: 274px;
   max-width: 274px;
   font-size: 14px;
-  color: #000;
+  color: #d4d4d4;
 }
 div.chatContainer #messages div.messageContainer span {
   padding: 2px 0px 2px;
@@ -236,21 +245,26 @@ div.chatContainer #messages div.messageContainer div {
   display: inline;
 }
 div.chatContainer #messages div.messageContainer:nth-child(odd) {
-  background-color: #fff;
+  background-color: #313131;
 }
 div.chatContainer form.inputBox {
-  background-image: url("/images/room/search.png");
+  background-color: #808080;
   height: 36px;
-  text-indent: 30px;
+  text-indent: 7px;
   font-size: 14px;
 }
 div.chatContainer form.inputBox input {
-  margin-top: 10px;
-  width: 240px;
-  height: 14px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  margin-top: 5px;
+  width: 286px;
+  height: 26px;
+  padding: 0;
   border: 0;
   outline: 0;
-  background: transparent;
+  background-color: #e7e7e7;
+  text-indent: 4px;
 }
 div.historyContainer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -302,8 +316,10 @@ div.historyContainer .history .videoHistory {
 }
 .videoLog .thumbContainer {
   float: left;
-  width: 75px;
-  height: 75px;
+  width: 58px;
+  height: 46px;
+  margin-left: 7px;
+  margin-top: 7px;
 }
 .videoLog .videoInfo {
   float: right;
@@ -333,12 +349,13 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer {
   width: 285px;
   height: 60px;
-  border-bottom: 2px solid #ececec;
 }
 .searchCellContainer .thumbContainer {
   float: left;
-  width: 75px;
-  height: 60px;
+  width: 58px;
+  height: 46px;
+  margin-left: 7px;
+  margin-top: 7px;
 }
 .searchCellContainer .cellInfo {
   float: right;
@@ -388,11 +405,12 @@ div.historyContainer .history .videoHistory {
   color: #42e841;
 }
 .searchCellContainer:nth-child(odd) {
-  background-color: #eee;
+  background-color: #313131;
 }
 #room-container {
   width: 660px;
   height: 700px;
+  background: url("/images/room/room.png");
 }
 #room-container #video-container {
   display: block;
@@ -401,7 +419,6 @@ div.historyContainer .history .videoHistory {
   background-color: #f00;
 }
 #room-container #people-area {
-  background: url("/images/room/room-blue.png");
   display: block;
   width: 660px;
   height: 270px;
@@ -529,11 +546,12 @@ button.search.active {
   color: #808080;
 }
 .videoView {
-  height: 370px;
+  color: #d4d4d4;
+  height: 379px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
-  background-color: #e7e7e7;
+  background-color: #373737;
 }
 .tipsy-inner {
   z-index: 666;
@@ -669,6 +687,9 @@ button
   color: #666;
 }
 #room-modal #searchbar form.roomSearch input {
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
   color: #fff;
   font-size: 16px;
   margin-top: 12px;
@@ -751,14 +772,14 @@ button
 }
 #video-div {
   width: 660px;
-  height: 420px;
+  height: 413px;
   background: url("/images/room/tv.png") 50% 50% no-repeat;
   z-index: 1;
 }
 #YouTubePlayer {
-  padding-left: 15px;
+  padding-left: 10px;
   position: absolute;
-  top: 68px;
+  top: 60px;
 }
 #top-video-cell {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -799,10 +820,14 @@ background-color: green,
   background-color: #000;
 }
 #video-list {
-  height: 370px;
-  max-height: 370px;
+  height: 379px;
+  max-height: 379px;
   overflow-y: scroll;
   overflow-x: hidden;
+  z-index: -1;
+}
+#video-list .videoListCellContainer:nth-child(odd) {
+  background-color: #313131;
 }
 #video-list .videoListCellContainer {
   width: 285px;
@@ -810,14 +835,15 @@ background-color: green,
 }
 #video-list .videoListCellContainer .thumbContainer {
   float: left;
-  width: 75px;
-  height: 60px;
+  width: 58px;
+  height: 46px;
+  margin-left: 7px;
+  margin-top: 7px;
 }
 #video-list .videoListCellContainer .cellInfo {
   float: right;
   width: 210px;
   height: 60px;
-  border-bottom: 2px solid #ececec;
 }
 #video-list .videoListCellContainer .cellInfo .videoInfo {
   float: left;
@@ -825,6 +851,8 @@ background-color: green,
   height: 60px;
 }
 #video-list .videoListCellContainer .cellInfo .videoInfo .title {
+  margin-top: 5px;
+  margin-left: 5px;
   width: 150px;
   height: 17px;
   font-weight: bold;
