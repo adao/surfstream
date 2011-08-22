@@ -1522,17 +1522,12 @@ $(function() {
 		}		
 		SurfStreamApp.inRoom = rID;
 		payload.id = window.SurfStreamApp.get("userModel").get("fbId");
-<<<<<<< HEAD
+		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
+		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
 		if (window.YTPlayer) {
 			window.YTPlayer.stopVideo();
 			window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
 		}
-=======
-		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
-		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
-		window.YTPlayer.stopVideo();
-		window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
->>>>>>> cdbc7b020b0b25d8acf69c62ce14e79b222d5a42
 		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
 		SocketManagerModel.socket.emit('room:join', payload);
 	}
