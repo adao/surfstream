@@ -1010,7 +1010,7 @@ $(function() {
 				if(!_.any(_.pluck(djArray, 'id'), function(el) {return (''+ el) == ('' + userModel.get("id"))})) {
 					//take DJ off sofa
 					oldPos = user.data("oldPos");
-					user.animate({"margin-top": Y_COORD}, 500, "bouceout").animate({"margin-left": oldPos.x, "margin-top": oldPos.y}, 600);
+					user.animate({"margin-top": Y_COORD + 70}, 500, "bounceout").animate({"margin-left": oldPos.x, "margin-top": oldPos.y}, 600);
 	     	  user.data("isDJ", 0);
 				}
 		 }	
