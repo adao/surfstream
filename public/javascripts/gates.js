@@ -997,7 +997,10 @@ $(function() {
 
 	updateDJs : function(djArray) {
 		var oldPos, user;
-		
+		var X_COORDS = [200,260,320]; 
+		var Y_COORD = 25;
+		var cur_is_dj = false;
+		var numOnSofa = 0;
 		//Remove old DJs
 		this.options.userCollection.each(function(userModel) {
      user = $("#avatarWrapper_" + userModel.get("id"));
@@ -1007,17 +1010,14 @@ $(function() {
 				if(!_.any(_.pluck(djArray, 'id'), function(el) {return (''+ el) == ('' + userModel.get("id"))})) {
 					//take DJ off sofa
 					oldPos = user.data("oldPos");
-					user.css("margin-left", oldPos.x).css("margin-top", oldPos.y);
+					user.animate({"margin-top": Y_COORD}, 500, "bouceout").animate({"margin-left": oldPos.x, "margin-top": oldPos.y}, 600);
 	     	  user.data("isDJ", 0);
 				}
 		 }	
     });
 
 		//Add new DJs
-		var X_COORDS = [200,260,320]; 
-		var Y_COORD = 25;
-		var cur_is_dj = false;
-		var numOnSofa = 0;
+		
     for (var dj in djArray) {
 		 numOnSofa = numOnSofa + 1;
 		 user = $("#avatarWrapper_" + djArray[dj].id);
@@ -1038,7 +1038,7 @@ $(function() {
 				
 				
 			
-		 user.animate({"margin-left": X_COORDS[dj], "margin-top": Y_COORD}, 400, 'bounceout');
+		 user.animate({"margin-left": X_COORDS[dj], "margin-top": Y_COORD + 70}, 400).animate({"margin-top": Y_COORD}, 500, "bouncein");
 		}
 		
 		$("#avatarWrapper_VAL").show();
