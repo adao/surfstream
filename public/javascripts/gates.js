@@ -989,7 +989,7 @@ $(function() {
 					user.css("margin-left", oldPos.x).css("margin-top", oldPos.y);
 	     	  user.data("isDJ", 0);
 				}
-		 }
+		 }	
     });
 
 		//Add new DJs
@@ -1000,19 +1000,24 @@ $(function() {
     for (var dj in djArray) {
 		 numOnSofa = numOnSofa + 1;
 		 user = $("#avatarWrapper_" + djArray[dj].id);
-		 if(user.data("isDJ") == "0") {
-			 user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
-			 user.data("isDJ", "1")
-		 }
-     user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
-		 if (djArray[dj].id == this.options.userModel.get("fbId")) {
-				cur_is_dj = true;				
-				user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
-				$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>")
-				$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();})
-				
-				
+     
+		 	if (djArray[dj].id == this.options.userModel.get("fbId")) {
+				  cur_is_dj = true;
 			}
+			
+			if(user.data("isDJ") == "0") {				
+				user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
+				user.data("isDJ", "1");		
+				if (djArray[dj].id == this.options.userModel.get("fbId"))  {
+					user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
+					$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>");
+					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();});
+				}
+			}
+				
+				
+			
+		 user.css("margin-left", X_COORDS[dj] + "px").css("margin-top", Y_COORD + "px");
 		}
 		
 		$("#avatarWrapper_VAL").show();
