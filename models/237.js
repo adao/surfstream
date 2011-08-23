@@ -93,7 +93,7 @@
 				console.log('['+roomName+'][VAL] playVideo(): no other videos - fetching one from YouTube');
 				if(this.room.history.length == 0) return;
 				
-				var lookBackNum = 4;
+				var lookBackNum = 3;
 				if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
 				var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
 				
