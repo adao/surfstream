@@ -54,9 +54,6 @@ app.configure('production', function(){
 
 require('./router.js').setupRoutes(app);
 
-//backbone stuff
-//var currRoom = new m.Room(io,redisClient);
-
 RoomManager = Backbone.Model.extend({
 	initialize: function() {
 		this.roomMap = {};
@@ -64,11 +61,8 @@ RoomManager = Backbone.Model.extend({
 	},
 	
 	sendRoomsInfo: function(socket, id) {
-		// var roomsInfo = [];
 		if (redisClient) {
 			redisClient.sinter("user:fb_id:" + id + ":fb_friends", "onlineUsers", function(err, reply) {
-				console.log("WTF");
-				console.log(reply);
 				var rooms = [];
 				var friendsRooms = {};
 				for (var index in reply) {
@@ -90,11 +84,10 @@ RoomManager = Backbone.Model.extend({
 	},
 	
 	createRoom: function(socket, roomId) {
-		console.log('[RoomMgr] createRoom(): socket '+socket.id+' is creating a room: '+roomId);
+		console.log('[   zion   ][RoomMgr] createRoom(): socket '+socket.id+' is creating a room: '+roomId);
 		this.roomMap[roomId] = new models.Room(io, redisClient);
 		this.roomMap[roomId].set({ name: roomId });
 		redisClient.set('room:'+roomId, this.roomMap[roomId].xport());
-		//delete StagingUsers[socket.id];
 	},
 	
 	roomListForUser: function(friendIds) {
@@ -174,7 +167,7 @@ io.sockets.on('connection', function(socket) {
 	});
 	
 	socket.on('room:join', function(data) {
-		if(data.create == true) {
+		if(data.create == true) {	
 			if(data.rID == '') {
 				console.log("\n\n[   zion   ] [socket] [room:join]: user tried to create an empty room! returning")
 				return;
@@ -185,7 +178,7 @@ io.sockets.on('connection', function(socket) {
 			redisClient.sadd("onlineUsers", data.id);
 			roomManager.userToRoom[data.id] = data.rID;
 		}
-		if(data.currRoom) {
+		if(data.currRoom && roomManager.roomMap[data.currRoom]) {
 				console.log('curr room: '+data.currRoom);
 				var user = roomManager.roomMap[data.currRoom].sockM.removeSocket(socket);
 				if(user) {
@@ -195,8 +188,14 @@ io.sockets.on('connection', function(socket) {
 				return;
 		}
 		if(StagingUsers[socket.id]) {
-			roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
-		 	delete StagingUsers[socket.id];
+			if(roomManager.roomMap[data.rID]) {
+				roomManager.roomMap[data.rID].connectUser(StagingUsers[socket.id]);
+				delete StagingUsers[socket.id];
+			}
+			else if(StagingUsers[socket.id] && StagingUsers[socket.id].get('userId')) {
+				roomManager.sendRoomsInfo(socket, StagingUsers[socket.id].get('userId'));
+				//TODO: notify them that this is not a room on the front end
+			}
 		}
 	});
 	

@@ -214,15 +214,16 @@
 				if(this.room.djs.currDJ) {
 					this.room.djs.currDJ.playlist.moveToBottom(this.room.currVideo.get('videoId'));	
 				}
+				
 				var videoFinished = new models.Video({
 					id: (new Date()).getTime(),
 					videoId: this.room.currVideo.get('videoId'), 
-					up: this.room.meter.up, 
-					down: this.room.meter.down,
+					percent: this.room.meter.calculatePercent(),
 					title: this.room.currVideo.get('title'),
 					length: this.room.currVideo.get('duration'),
 					dj: this.room.currVideo.get('dj')
 				});
+							
 				redisClient.rpush('room:history:' + this.room.get("name"), JSON.stringify(videoFinished));
 				this.room.history.add(videoFinished);
 				this.room.clearVideo();
@@ -438,11 +439,11 @@
 			io.sockets.in(this.room.get('name')).emit('video:stop');
 		},
 		
-		announceChat : function(socket, msg) {
+		announceChat: function(socket, msg) {
 			io.sockets.in(this.room.get('name')).emit('message', {event: 'chat', data: msg});
 		},
 		
-		announceRoomHistory : function() {
+		announceRoomHistory: function() {
 			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.toJSON());
 		}
 	});
@@ -869,6 +870,9 @@
 		removeDJ: function(socketId) {
 			var djIndex = this.indexOf(this.get(socketId));
 			
+			var roomName = this.room.get('name');
+			console.log('['+roomName+'][DJS] removeDJ(): djIndex of user is '+djIndex);
+
 			if(djIndex < 0) return false;
 			
 			if(this.currDJIndex >= djIndex && this.currDJIndex > 0) {	
@@ -960,6 +964,7 @@
 	/*         Meter         */
 	/*************************/
 	
+	var SKIP_PERCENT_THRESHOLD = 37;
 	models.Meter = Backbone.Model.extend({
 		initialize: function() {
 			//this.room = room;
@@ -1007,8 +1012,17 @@
 				if(success) {
 					console.log('..success!');
 					if(meter.room.currVideo.get('dj') != 'VAL')
-						meter.room.djs.currDJ.addPoint();
-					meter.room.sockM.announceMeter();
+						meter.room.djs.currDJ.subtractPoint();
+					
+					var currPercent = meter.calculatePercent();
+					if(currPercent < SKIP_PERCENT_THRESHOLD) {
+						console.log('\n\n['+roomName+'][socket] [meter:downvote] called, percent below threshold...skipping current video');
+						if(meter.room.currVideo) {
+							console.log('...video playing, clearing timeout :'+meter.room.currVideo.get('timeoutId'));
+							clearTimeout(meter.room.currVideo.get('timeoutId'));
+						}
+						meter.room.vm.onVideoEnd();
+					}
 				}
 			});
 		},
@@ -1065,6 +1079,21 @@
 			this.initialize();
 			if(this.room) this.room.sockM.announceMeter();
 		}, 
+		
+		calculatePercent: function() { 
+			var numUp = this.up, 
+				numDown = this.down,
+				numUsers = this.room.users.length,
+				basePercent = 50;
+				
+			var percentUp = ((1.0 * numUp) / numUsers) * (100 - basePercent);
+			var percentDown = ((1.0 * numDown) / numUsers) * (100 - basePercent);
+		
+			var videoScore = basePercent + percentUp - percentDown;
+			console.log('['+this.room.get('name')+'][MET] calculatePercent(): percent for video is '+videoScore+' with up: '+numUp+' and down: '+numDown+' and numUsers: '+numUsers);
+			return videoScore;
+		}
+
 	});
 	
 }) ()
