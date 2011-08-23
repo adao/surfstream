@@ -1094,3 +1094,9 @@ background-color: green,
   opacity: 0.8;
   z-index: 9999;
 }
+#become-dj-txt {
+  position: absolute;
+  font-size: 12px;
+  margin-top: -28px;
+  margin-left: 5px;
+}
