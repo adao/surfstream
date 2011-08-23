@@ -708,7 +708,7 @@
 		
 		addUser: function(user) {
 			this.add(user);
-			this.initializeAndSendPlaylist(user.get("socket"));
+			//this.initializeAndSendPlaylist(user.get("socket"));
 		},
 		
 		initializeAndSendPlaylist: function(socket) {
