@@ -714,7 +714,7 @@
 		initializeAndSendPlaylist: function(socket) {
 			var userId = this.get(socket.id).get('userId');
 			var userCollection = this;
-			redisClient.hgetall('user:fb_id:'+userId+':playlists', function(err, reply) {
+			redisClient.hgetall('user:'+userId+':playlists', function(err, reply) {
 				if(err) {
 					console.log("Error in getting user"+userId+"'s playlists");
 				} else {

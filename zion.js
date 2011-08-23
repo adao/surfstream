@@ -66,7 +66,7 @@ RoomManager = Backbone.Model.extend({
 	sendRoomsInfo: function(socket, id) {
 		// var roomsInfo = [];
 		if (redisClient) {
-			redisClient.sinter("user:fb_id:" + id + ":fb_friends", "onlineUsers", function(err, reply) {
+			redisClient.sinter("user:" + id + ":fb_friends", "onlineFacebookUsers", function(err, reply) {
 				console.log("WTF");
 				console.log(reply);
 				var rooms = [];
@@ -114,63 +114,64 @@ io.sockets.on('connection', function(socket) {
 				if (err) {
 					console.log("Error trying to fetch user by Facebook id on initial login");
 				} else {
-					var fbUser = JSON.parse(reply);
-					if (fbUser == null) {
+					var ssUser = JSON.parse(reply);
+					if (ssUser == null || ssUser == 'undefined') {
 						
 					} else {
-						roomManager.sendRoomsInfo(socket, fbId);
-						var name = fbUser.name;
+						roomManager.sendRoomsInfo(socket, ssUser.ssId);
+						var name = ssUser.name;
 						var currUser = new models.User({
 							name: name, 
 							socketId: socket.id, 
-							userId: fbUser.id, 
+							userId: ssUser.ssId, 
 							socket: socket
 					  });
-						StagingUsers[socket.id] = currUser;
+						StagingUsers[socket.id] = currUser; 
+						redisClient.get("user:" + ssUser.ssId + ":playlists", function(err, reply) {
+							if (err) {
+								//throw error
+								console.log("Error getting playlist for user " + ssId);
+							} else {
+								socket.emit("user:playlists", JSON.parse(reply));
+							}
+						});
 					}
-					socket.emit("user:fbProfile", fbUser);
-					
-					redisClient.get("user:fb_id:" + fbId + ":playlists", function(err, reply) {
-						if (err) {
-							//throw error
-							console.log("Error getting playlist for facebook user " + fbId);
-						} else {
-							socket.emit("user:playlists", JSON.parse(reply));
-						}
-					});
+					socket.emit("user:profile", ssUser);
 				}
 			});
 		}
 	});
 	
 	socket.on('user:sendFBData', function(fbUser) {
-		roomManager.sendRoomsInfo(socket, fbUser.id);
 		if(redisClient) {
 			redisClient.incr("userId", function(err, reply){
 				var ssUser = fbUser;
 				ssUser.ssId = reply;
-				redisClient.set("user:" + reply + ":profile", JSON.stringify(ssUser), function(err, reply) {
+				socket.emit("user:profile", ssUser);
+				roomManager.sendRoomsInfo(socket, ssUser.ssId);
+				var stringSSUser = JSON.stringify(ssUser);
+				redisClient.set("user:" + ssUser.ssId + ":profile", stringSSUser, function(err, reply) {
 					if (err) {
-						console.log("Error writing facebook user " + fbUser.id + " to Redids");
+						console.log("Error writing ss user " + ssUser.ssId + " to Redis");
 					}
 				});
-				redisClient.set("user:fb_id:" + fbUser.id + ":profile", JSON.stringify(ssUser), function(err, reply) {
+				redisClient.set("user:fb_id:" + fbUser.id + ":profile", stringSSUser, function(err, reply) {
 					if (err) {
-						console.log("Error writing facebook user " + fbUser.id + " to Redids");
+						console.log("Error writing facebook user " + fbUser.id + " to Redis");
 					}
 				});
 				var defaultPlaylists = {
 					
 				}
-				redisClient.set("user:fb_id:" + fbUser.id + ":playlists", JSON.stringify(defaultPlaylists), function(err, reply) {
+				redisClient.set("user:" + reply + ":playlists", JSON.stringify(defaultPlaylists), function(err, reply) {
 					if (err) {
-						console.log("Error writing facebook user " + fbUser.id + " to Redids");
+						console.log("Error writing ss user's playlists " + ssUser.ssId + " to Redis");
 					}
 				});
 				var currUser = new models.User({
-					name: fbUser.name, 
+					name: ssUser.name, 
 					socketId: socket.id, 
-					userId: fbUser.id, 
+					userId: ssUser.ssId, 
 					socket: socket
 			  });
 				StagingUsers[socket.id] = currUser;
@@ -187,7 +188,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on("user:sendUserFBFriends", function(data) {
 		if (redisClient) {
 			for (var i = 0; i < data.fbFriends.length; i++) {
-				redisClient.sadd("user:fb_id:" + data.fbId + ":fb_friends", data.fbFriends[i]);
+				redisClient.sadd("user:" + data.ssId + ":fb_friends", data.fbFriends[i]);
 			}
 		}
 	});
@@ -201,7 +202,7 @@ io.sockets.on('connection', function(socket) {
 			roomManager.createRoom(socket, data.rID);
 		} 
 		if(redisClient) {
-			redisClient.sadd("onlineUsers", data.id);
+			redisClient.sadd("onlineFacebookUsers", data.id);
 			roomManager.userToRoom[data.id] = data.rID;
 		}
 		if(data.currRoom) {

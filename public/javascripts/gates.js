@@ -95,16 +95,11 @@ $(function() {
   getFBUserData: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
-    FB.api('/me/friends', this.sendUserFBFriends);
 		this.getUserPostedVideos();
    }
   },
 
   setUserData: function(info) {
-   window.SurfStreamApp.get('userModel').set({
-    displayName: info.first_name + " " + info.last_name,
-    avatarImage: 'https://graph.facebook.com/' + info.id + '/picture'
-   });
    SocketManagerModel.sendFBUser(info);
   },
 
@@ -112,7 +107,7 @@ $(function() {
 		var friendIdList = _.pluck(info.data, "id");
 		console.log(friendIdList);
 		SocketManagerModel.sendUserFBFriends({
-			fbId: window.SurfStreamApp.get('userModel').get("fbId"),
+			ssId: window.SurfStreamApp.get('userModel').get("ssId"),
 			fbFriends: friendIdList
 		});
 	},
@@ -848,8 +843,8 @@ $(function() {
 	
 	render: function(data) {
 		$(this.el).html(this.playlistDropdownCellTemplate({
-			value: "dummy_value",
-			name: "dummy_name"
+			playlist_dropdown_value: "dummy_value",
+			playlist_dropdown_name: "dummy_name"
 		}));
 	}
  });
@@ -886,7 +881,7 @@ $(function() {
    SocketManagerModel.sendMsg({
     name: this.options.userModel.get("displayName"),
     text: userMessage,
-    id: this.options.userModel.get("fbId")
+    id: this.options.userModel.get("ssId")
    });
    return false;
   },
@@ -1070,14 +1065,14 @@ $(function() {
 		 numOnSofa = numOnSofa + 1;
 		 user = $("#avatarWrapper_" + djArray[dj].id);
      
-		 	if (djArray[dj].id == this.options.userModel.get("fbId")) {
+		 	if (djArray[dj].id == this.options.userModel.get("ssId")) {
 				  cur_is_dj = true;
 			}
 			
 			if(user.data("isDJ") == "0") {				
 				user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
 				user.data("isDJ", "1");		
-				if (djArray[dj].id == this.options.userModel.get("fbId"))  {
+				if (djArray[dj].id == this.options.userModel.get("ssId"))  {
 					user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
 					$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>");
 					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();});
@@ -1355,7 +1350,7 @@ $(function() {
    socket.on("video:sendInfo", function(video) {
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
 		var curvid, curLen, roomModel, playerModel;
-		if (video.dj == app.get("userModel").get("fbId")) {
+		if (video.dj == app.get("userModel").get("ssId")) {
 			console.log("here");
 			$("#video-list-container .videoListCellContainer:first").remove();
 			var playlistCollection = app.get("userModel").get("playlistCollection");
@@ -1416,14 +1411,16 @@ $(function() {
     window.YTPlayer.clearVideo();
    });
 
-	 socket.on("user:fbProfile", function(fbProfile) {
-		if (fbProfile == null) {
+	 socket.on("user:profile", function(profile) {
+		if (profile == null) {
 			app.get("userModel").getFBUserData();
 		} else {
 			app.get("userModel").set({
-				displayName: fbProfile.first_name + " " + fbProfile.last_name,
-				avatarImage: 'https://graph.facebook.com/' + fbProfile.id + '/picture'
+				displayName: profile.first_name + " " + profile.last_name,
+				avatarImage: 'https://graph.facebook.com/' + profile.id + '/picture',
+				ssId: profile.ssId
 			});
+			FB.api('/me/friends', app.get("userModel").sendUserFBFriends);
 			var getPath = function(href) {
 			    var l = document.createElement("a");
 			    l.href = href;
@@ -1580,8 +1577,8 @@ $(function() {
 	},
 
 	loadRoomsInfo: function() {
-		SocketManagerModel.socket.emit('rooms:load', {id: window.SurfStreamApp.get("userModel").get("fbId")});
-		console.log(window.SurfStreamApp.get("userModel").get("fbId"));
+		SocketManagerModel.socket.emit('rooms:load', {id: window.SurfStreamApp.get("userModel").get("ssId")});
+		console.log(window.SurfStreamApp.get("userModel").get("ssId"));
 		console.log("LOGGED");
 	},
 	
@@ -1592,7 +1589,7 @@ $(function() {
 			payload.currRoom = SurfStreamApp.inRoom;
 		}		
 		SurfStreamApp.inRoom = rID;
-		payload.id = window.SurfStreamApp.get("userModel").get("fbId");
+		payload.id = window.SurfStreamApp.get("userModel").get("ssId");
 		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
 		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
 		if (window.YTPlayer) {
