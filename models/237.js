@@ -624,6 +624,10 @@
 		},
 		
 		setPlaylist: function(playlist) {
+			var inPlaylists = true;
+			for (var index in this.playlists) {
+				if ()
+			}
 			this.playlist = playlist;
 		},
 		
@@ -673,6 +677,94 @@
 			if(points > 0) this.set({ points: points-1 });
 		},
 		
+		initializeAndSendPlaylists: function(socket) {
+			var userId = this.get('userId');
+			var userCollection = this;
+			redisClient.hgetall('user:'+userId+':playlists', function(err, reply) {
+				if(err) {
+					console.log("Error in getting user"+userId+"'s playlists");
+				} else {
+					if (reply != 'undefined' && reply != null) {
+						var userPlaylists = JSON.parse(reply);
+						var currPlaylist = new models.Playlist();
+						//create new models.Playlists for every two
+						//then mport info into each one
+						currPlaylist.mport(userPlaylists[0]);
+						console.log('getting playlist for user '+userId);
+						this.setPlaylist(currPlaylist);
+						socket.emit("playlist:refresh", userPlaylists);
+					}
+				}
+			});
+		},
+		
+		addPlaylistListeners: function(socket) {
+			socket.on('playlists:choosePlaylist', function(data) {
+				if (!this.playlists[data.playlistId]) {
+					return;
+				} else {
+					this.playlist = this.playlists[data.playlistId];
+				}
+			});
+			socket.on('playlists:addPlaylist', function(data) {
+				redisClient.hlen("user:fb_id:" + data.fbId + ":playlists", function(err, reply) {
+					if (err) {
+						console.log("Error retrieving retrieving length of user's playlists hash for facebook user " + data.fbId);
+					} else {
+						var numPlaylists = reply;
+						if (numPlaylists == null || numPlaylists = 'undefined') {
+							var playlistKey = numPlaylists + 1;
+							var newPlaylist = new models.Playlist();
+						}
+					}
+				});
+			});
+			socket.on('playlists:deletePlaylist', function(data) {
+				
+			});
+			
+			socket.on('playlist:addVideo', function(data) {
+				var thisUser = userCollect.get(socket.id);
+				if(thisUser.playlist.videos.get(data.video)) return;
+				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
+				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xportTwo()));
+			}); 
+
+			socket.on('playlist:moveVideoToTop', function(data) {
+				var thisUser = userCollect.get(socket.id);
+				
+				if(thisUser.playlist.videos.get(data.video)) {
+					thisUser.playlist.moveToTop(data.video);
+				}
+				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xportTwo()));
+			});
+
+			socket.on('playlist:delete', function(data) {
+				var thisUser = userCollect.get(socket.id);
+
+				if(thisUser.playlist.videos.get(data.video)) {
+					thisUser.playlist.deleteVideo(data.video);
+				}
+				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xportTwo()));
+			});
+			
+			socket.on('playlist:moveVideo', function(data) {
+				var thisUser = userCollect.get(socket.id);
+
+				if(thisUser.playlist.videos.get(data.video)) {
+					thisUser.playlist.moveToIndex(data.video, data.index);
+				}
+			})
+		},
+		
+		xportTwo: function() {
+			var array = new Array();
+			this.each(function(user) {
+				array.push(user.xport());
+			});
+			return array;
+		},
+		
 		xport: function() {
 			return { 
 				id: this.get('userId'), 
@@ -708,111 +800,6 @@
 		
 		addUser: function(user) {
 			this.add(user);
-			//this.initializeAndSendPlaylist(user.get("socket"));
-		},
-		
-		initializeAndSendPlaylist: function(socket) {
-			var userId = this.get(socket.id).get('userId');
-			var userCollection = this;
-			redisClient.hgetall('user:'+userId+':playlists', function(err, reply) {
-				if(err) {
-					console.log("Error in getting user"+userId+"'s playlists");
-				} else {
-					if (reply != 'undefined' && reply != null) {
-						var userPlaylists = JSON.parse(reply);
-						var currPlaylist = new models.Playlist();
-						currPlaylist.mport(userPlaylists[0]);
-						console.log('getting playlist for user '+userId);
-						userCollection.get(socket.id).setPlaylist(currPlaylist);
-						socket.emit("playlist:refresh", userPlaylists[0]);
-					}
-					
-					// var currPlaylist = new models.Playlist();
-					// if(reply != 'undefined' && reply != null) {
-					// 	var playlist = JSON.parse(reply);	
-					// 	currPlaylist.mport(playlist);
-					// 	userCollection.get(socket.id).setPlaylist(currPlaylist);
-					// 	socket.emit("playlist:refresh", playlist);
-					// }
-				}
-			});
-			
-			redisClient.hkeys('user:fb_id:'+userId+':playlists', function(err, reply) {
-				if(err) {
-					console.log("Error in getting user"+userId+"'s playlist names");
-				} else {
-					if (reply != 'undefined' && reply != null) {
-						var userPlaylistKeys = JSON.parse(reply);
-						userCollection.get(socket.id).setPlaylists(userPlaylistKeys);
-					}
-				}
-			});
-		},
-		
-		addPlaylistListeners: function(socket) {			
-			var userCollect = this;
-			socket.on('playlists:choosePlaylist', function(data) {
-				redisClient.hget("user:fb_id:" + data.fbId + ":playlists", data.playlistId, function(err, reply) {
-					
-				});
-			});
-			socket.on('playlists:addPlaylist', function(data) {
-				redisClient.hlen("user:fb_id:" + data.fbId + ":playlists", function(err, reply) {
-					if (err) {
-						console.log("Error retrieving retrieving length of user's playlists hash for facebook user " + data.fbId);
-					} else {
-						var numPlaylists = reply;
-						if (numPlaylists == null || numPlaylists = 'undefined') {
-							var playlistKey = numPlaylists + 1;
-							var newPlaylist = new models.Playlist();
-						}
-					}
-				});
-			});
-			socket.on('playlists:deletePlaylist', function(data) {
-				
-			});
-			
-			socket.on('playlist:addVideo', function(data) {
-				var thisUser = userCollect.get(socket.id);
-				if(thisUser.playlist.videos.get(data.video)) return;
-				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
-			}); 
-
-			socket.on('playlist:moveVideoToTop', function(data) {
-				var thisUser = userCollect.get(socket.id);
-				
-				if(thisUser.playlist.videos.get(data.video)) {
-					thisUser.playlist.moveToTop(data.video);
-				}
-				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
-			});
-
-			socket.on('playlist:delete', function(data) {
-				var thisUser = userCollect.get(socket.id);
-
-				if(thisUser.playlist.videos.get(data.video)) {
-					thisUser.playlist.deleteVideo(data.video);
-				}
-				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
-			});
-			
-			socket.on('playlist:moveVideo', function(data) {
-				var thisUser = userCollect.get(socket.id);
-
-				if(thisUser.playlist.videos.get(data.video)) {
-					thisUser.playlist.moveToIndex(data.video, data.index);
-				}
-			})
-		},
-		
-		xport: function() {
-			var array = new Array();
-			this.each(function(user) {
-				array.push(user.xport());
-			});
-			return array;
 		}
 	});
 	

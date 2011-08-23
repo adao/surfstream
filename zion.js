@@ -134,7 +134,7 @@ io.sockets.on('connection', function(socket) {
 							userId: ssUser.ssId, 
 							socket: socket
 					  });
-						currUser.initializeAndSendPlaylist(socket);
+						currUser.initializeAndSendPlaylists(socket);
 						StagingUsers[socket.id] = currUser; 
 						redisClient.get("user:" + ssUser.ssId + ":playlists", function(err, reply) {
 							if (err) {
@@ -186,19 +186,13 @@ io.sockets.on('connection', function(socket) {
 							if (err) {
 								console.log("Error writing ss user's facebook playlist " + ssUser.ssId + " to Redis");
 							} else {
-								currUser.initializeAndSendPlaylist(socket);
+								currUser.initializeAndSendPlaylists(socket);
 							}
 						});
 					}
 				});
 			});
 		}
-		// redisClient.get('user:'+fbUser.id+':points', function(err, reply) {
-		// 	if(reply) {
-		// 		console.log("Points for "+fbUser.name+": "+reply);
-		// 		if(StagingUsers[socket.id]) StagingUsers[socket.id].set({ points: reply});
-		// 	}	
-		// });
 	});
 	
 	socket.on("user:sendUserFBFriends", function(data) {
