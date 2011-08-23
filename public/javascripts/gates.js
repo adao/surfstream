@@ -1237,7 +1237,7 @@ $(function() {
    $('#shareTwit').css('background-image', '/images/twitter_small.png');
    $('#shareEmail').css('background-image', '/images/email_small.png');
    $('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
-   $('#copy-button-container').html("<div id=\"copy-button\">Copy URL</div>");
+   $('#copy-button-container').html("<div id=\"copy-button\">copy link</div>");
    var link = $('input:text').val();
    console.log(link);
    var clip = new ZeroClipboard.Client();

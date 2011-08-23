@@ -87,7 +87,7 @@ button.normalbtn:active {
 .hidden {
   display: none;
 }
-#header img {
+#header img#logo {
   margin-top: -4px;
 }
 #now-playing-container {
@@ -569,23 +569,26 @@ div.historyContainer .history .videoHistory {
   margin-top: 3px;
 }
 .share-image-container {
-  height: 22px;
-  width: 48px;
+  height: 16px;
+  width: 29px;
   background: transparent;
 }
-#share-fb-image {
-  background: url("/images/room/facebook.png") no-repeat;
+img.share-email-image,
+width: 48px {
+  height: 22px;
+  background: transparent;
 }
-#share-twit-image {
-  background: url("/images/room/twitter.png") no-repeat;
-}
-#share-email-image {
-  background: url("/images/room/email2.png") no-repeat;
+#copy-button {
+  width: 48px !important;
+  height: 22px !important;
+  font-size: 10px;
+  padding-top: 2px;
+  margin-left: -6px;
 }
 #share,
 #shareBar {
   float: right;
-  width: 600px;
+  width: 254px;
   height: 40px;
   color: #000;
   margin-left: 6px;
@@ -593,8 +596,9 @@ div.historyContainer .history .videoHistory {
 #share .share,
 #shareBar .share {
   color: #eee;
-  font-size: 14px;
-  width: 48px;
+  font-size: 16px;
+  font-weight: bold;
+  width: 54px;
   height: 22px;
   display: inline-block;
 }
@@ -746,6 +750,7 @@ button
   height: 404px;
   background-color: #000;
   z-index: 10000;
+  border: 1px solid #eee;
 }
 #room-modal #searchbar {
   background-color: #808080;
@@ -857,7 +862,6 @@ button
   background-color: #808080;
   text-align: center;
   vertical-align: middle;
-  padding-top: 9px;
 }
 #room-modal #create-room #CreateRoomName {
   width: 150px;
@@ -866,6 +870,7 @@ button
 }
 #room-modal #create-room #CreateRoomName,
 #room-modal #create-room #CreateRoom {
+  margin-top: 5px;
   vertical-align: top;
   padding-top: 0px;
   height: 28px;
