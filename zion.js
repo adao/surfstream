@@ -56,8 +56,21 @@ require('./router.js').setupRoutes(app);
 
 RoomManager = Backbone.Model.extend({
 	initialize: function() {
+		
 		this.roomMap = {};
 		this.userToRoom = {};
+		
+		var roomMgr = this;
+		redisClient.lrange('rooms',0,-1, function(err, rooms) {
+			if(rooms) { 
+				_.each(rooms, function(roomId) {
+					console.log('fetching room from redis, name: '+roomId)
+					roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
+					roomMgr.roomMap[roomId].set({ name: roomId });
+				});
+			}
+		});
+		
 	},
 	
 	sendRoomsInfo: function(socket, id) {
@@ -87,6 +100,7 @@ RoomManager = Backbone.Model.extend({
 		console.log('[   zion   ][RoomMgr] createRoom(): socket '+socket.id+' is creating a room: '+roomId);
 		this.roomMap[roomId] = new models.Room(io, redisClient);
 		this.roomMap[roomId].set({ name: roomId });
+		redisClient.rpush('rooms', roomId);	//list of all rooms
 		redisClient.set('room:'+roomId, this.roomMap[roomId].xport());
 	},
 	
