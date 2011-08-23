@@ -825,6 +825,7 @@ button
 }
 #room-modal #create-room #CreateRoomName,
 #room-modal #create-room #CreateRoom {
+  vertical-align: top;
   padding-top: 0px;
   height: 28px;
   border-radius: 6px;
@@ -834,7 +835,7 @@ button
 }
 #room-modal #create-room #CreateRoom {
   margin-left: 6px;
-  width: 110px;
+  width: 120px;
   font-size: 14px;
   font-weight: bold;
   color: #fff;
