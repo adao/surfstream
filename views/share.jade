@@ -1,10 +1,13 @@
 #share-template(style="display:none;")
 	#share
-		#social
-			span#share-text Share:
-			button#shareFB(value='FB')
-			button#shareTwit(value='Twit')
-			button#shareEmail(value='Email')
-		#copy
-			#link
-			#copy-button-container
+			.share Share:
+			#social
+				button.leftbtn#shareFB(value='FB')
+					.share-image-container#share-fb-image
+				button.centerbtn#shareTwit(value='Twit')
+					.share-image-container#share-twit-image 
+				button.centerbtn#shareEmail(value='Email')
+					.share-image-container#share-email-image 
+				button.rightbtn#copy-button-container Copy URL 
+			button.normalbtn#feedback-bro
+				.share-image-container#share-feedback-image
