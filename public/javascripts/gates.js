@@ -524,8 +524,9 @@ $(function() {
   initialize: function() {
    this.render();
    this.previewPlayerView = new PreviewPlayerView();
+	 this.playlistDropdownView = new PlaylistDropdownView();
    //Hack because of nested view bindings (events get eaten by Sidebar)
-   var input = $("#searchBar .inputBox")
+   var input = $("#searchBar .inputBox");
    input.bind("submit", {
     searchView: this
    }, this.searchVideos);
@@ -822,6 +823,35 @@ $(function() {
    //hack because backbone sucks
    $("#vid_" + playlistItemModel.attributes.videoId).remove();
   }
+ });
+
+ window.PlaylistDropdownView = Backbone.View.extend({
+	el: "#playlistDropdown",
+	
+	playlistDropdownTemplate: _.template($('#playlist-dropdown-template').html()),
+	
+	initialize: function() {
+		$(this.el).html(this.playlistDropdownTemplate());
+		
+	}
+ });
+
+ window.PlaylistDropdownCellView = Backbone.View.extend({
+	playlistDropdownCellTemplate: _.template($("#playlist-dropdown-cell-template").html()),
+	
+	className: "playlistDropdownCellContainer",
+	
+	initialize: function(data) {
+		this.render(data);
+		$("#playlistDropdown").append(this.el);
+	},
+	
+	render: function(data) {
+		$(this.el).html(this.playlistDropdownCellTemplate({
+			value: "dummy_value",
+			name: "dummy_name"
+		}));
+	}
  });
 
  window.ChatView = Backbone.View.extend({

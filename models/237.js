@@ -619,6 +619,10 @@
 			this.getAvatar();
 		},
 		
+		setPlaylists: function(playlists) {
+			this.playlists = playlists;
+		},
+		
 		setPlaylist: function(playlist) {
 			this.playlist = playlist;
 		},
@@ -710,24 +714,65 @@
 		initializeAndSendPlaylist: function(socket) {
 			var userId = this.get(socket.id).get('userId');
 			var userCollection = this;
-			redisClient.get('user:'+userId+':playlist', function(err, reply) {
+			redisClient.hgetall('user:fb_id:'+userId+':playlists', function(err, reply) {
 				if(err) {
-					console.log("Error in getting user"+userId+"'s playlist!");
+					console.log("Error in getting user"+userId+"'s playlists");
 				} else {
-					var currPlaylist = new models.Playlist();
-					console.log('getting playlist for user '+userId);
-					if(reply != 'undefined' && reply != null) {
-						var playlist = JSON.parse(reply);	
-						currPlaylist.mport(playlist);
+					if (reply != 'undefined' && reply != null) {
+						var userPlaylists = JSON.parse(reply);
+						var currPlaylist = new models.Playlist();
+						currPlaylist.mport(userPlaylists[0]);
+						console.log('getting playlist for user '+userId);
 						userCollection.get(socket.id).setPlaylist(currPlaylist);
-						socket.emit("playlist:refresh", playlist);
+						socket.emit("playlist:refresh", userPlaylists[0]);
 					}
-				} 
+					
+					// var currPlaylist = new models.Playlist();
+					// if(reply != 'undefined' && reply != null) {
+					// 	var playlist = JSON.parse(reply);	
+					// 	currPlaylist.mport(playlist);
+					// 	userCollection.get(socket.id).setPlaylist(currPlaylist);
+					// 	socket.emit("playlist:refresh", playlist);
+					// }
+				}
+			});
+			
+			redisClient.hkeys('user:fb_id:'+userId+':playlists', function(err, reply) {
+				if(err) {
+					console.log("Error in getting user"+userId+"'s playlist names");
+				} else {
+					if (reply != 'undefined' && reply != null) {
+						var userPlaylistKeys = JSON.parse(reply);
+						userCollection.get(socket.id).setPlaylists(userPlaylistKeys);
+					}
+				}
 			});
 		},
 		
 		addPlaylistListeners: function(socket) {			
 			var userCollect = this;
+			socket.on('playlists:choosePlaylist', function(data) {
+				redisClient.hget("user:fb_id:" + data.fbId + ":playlists", data.playlistId, function(err, reply) {
+					
+				});
+			});
+			socket.on('playlists:addPlaylist', function(data) {
+				redisClient.hlen("user:fb_id:" + data.fbId + ":playlists", function(err, reply) {
+					if (err) {
+						console.log("Error retrieving retrieving length of user's playlists hash for facebook user " + data.fbId);
+					} else {
+						var numPlaylists = reply;
+						if (numPlaylists == null || numPlaylists = 'undefined') {
+							var playlistKey = numPlaylists + 1;
+							var newPlaylist = new models.Playlist();
+						}
+					}
+				});
+			});
+			socket.on('playlists:deletePlaylist', function(data) {
+				
+			});
+			
 			socket.on('playlist:addVideo', function(data) {
 				var thisUser = userCollect.get(socket.id);
 				if(thisUser.playlist.videos.get(data.video)) return;

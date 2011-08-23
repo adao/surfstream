@@ -110,7 +110,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on("user:sendFBId", function(fbId) {
 		if (redisClient) {
 			//redisClient.get("user:" + fbId + ":fb_info", function(err, reply) {
-			redisClient.get("user:fb_id:" + fbId, function(err, reply) {
+			redisClient.get("user:fb_id:" + fbId + ":profile", function(err, reply) {
 				if (err) {
 					console.log("Error trying to fetch user by Facebook id on initial login");
 				} else {
@@ -129,6 +129,15 @@ io.sockets.on('connection', function(socket) {
 						StagingUsers[socket.id] = currUser;
 					}
 					socket.emit("user:fbProfile", fbUser);
+					
+					redisClient.get("user:fb_id:" + fbId + ":playlists", function(err, reply) {
+						if (err) {
+							//throw error
+							console.log("Error getting playlist for facebook user " + fbId);
+						} else {
+							socket.emit("user:playlists", JSON.parse(reply));
+						}
+					});
 				}
 			});
 		}
@@ -138,12 +147,22 @@ io.sockets.on('connection', function(socket) {
 		roomManager.sendRoomsInfo(socket, fbUser.id);
 		if(redisClient) {
 			redisClient.incr("userId", function(err, reply){
-				redisClient.set("user:" + reply + ":fb_info", JSON.stringify(fbUser), function(err, reply) {
+				var ssUser = fbUser;
+				ssUser.ssId = reply;
+				redisClient.set("user:" + reply + ":profile", JSON.stringify(ssUser), function(err, reply) {
 					if (err) {
 						console.log("Error writing facebook user " + fbUser.id + " to Redids");
 					}
 				});
-				redisClient.set("user:fb_id:" + fbUser.id, JSON.stringify(fbUser), function(err, reply) {
+				redisClient.set("user:fb_id:" + fbUser.id + ":profile", JSON.stringify(ssUser), function(err, reply) {
+					if (err) {
+						console.log("Error writing facebook user " + fbUser.id + " to Redids");
+					}
+				});
+				var defaultPlaylists = {
+					
+				}
+				redisClient.set("user:fb_id:" + fbUser.id + ":playlists", JSON.stringify(defaultPlaylists), function(err, reply) {
 					if (err) {
 						console.log("Error writing facebook user " + fbUser.id + " to Redids");
 					}
