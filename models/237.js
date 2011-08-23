@@ -929,7 +929,7 @@
 		isValsTurn: function() {
 
 			var numDJs = this.length;
-			console.log('['+this.get('name')+'][DJC] isValsTurn(): human djs: '+ numDJs)
+			console.log('['+this.room.get('name')+'][DJC] isValsTurn(): human djs: '+ numDJs)
 			if(numDJs == 0) {
 				console.log('...VAL is DJ!')
 				return true;
