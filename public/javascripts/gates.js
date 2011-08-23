@@ -289,7 +289,7 @@ $(function() {
     })
    });
  
-	 mainView.initializePlayerView(roomModel.get("playerModel"), roomModel.get("userCollection"), this.get("userModel"));
+	 mainView.initializePlayerView(roomModel.get("playerModel"), roomModel.get("userCollection"), this.get("userModel"), mainView.roomModal);
 	 mainView.initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
 	 mainView.initializeChatView(roomModel.get("chatCollection"), this.get("userModel"));
 	
@@ -882,18 +882,23 @@ $(function() {
 
 		
 		initialize: function () {
+			var modal;
 			this.options.roomlistCollection.bind("reset", this.addRooms, this);
 			this.options.roomlistCollection.bind("sort", this.addRooms, this);
-			this.render();
+			this.render();			
 			this.hide();
+			$("#modalBG").hide();
 		},
 		
 		hide : function() {
 			$("#room-modal").hide();
+			$("#modalBG").hide();
 		},
 	
 		show : function() {
 			$("#room-modal").show();
+			$("#modalBG").show();
+			SocketManagerModel.loadRoomsInfo();
 		},
 	
 		render: function() {
@@ -903,19 +908,22 @@ $(function() {
 		},
 	
 	  bindButtonEvents : function() {
-			$("#CreateRoom").bind("click", function() { 
+			$("#CreateRoom").bind("click", {modal: this}, function(e) { 
 				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true);
 				window.SurfStreamApp.get("mainRouter").navigate("/" + $("#CreateRoomName").val(), false);
+				e.data.modal.hide();
 			});
 			$("#CreateRoomName").bind("submit", function() { return false });
 			$("#hideRoomsList").bind("click", this.hide);
-			$("#rooms").bind("click", this.show);
+			$("#modalBG").click({modal: this}, function(e) {
+				console.log("FUCK")
+				e.data.modal.hide();
+			});
 		},
 	
 		addRooms: function (roomListCollection) {
 			this.render();
 			roomListCollection.each(function(roomListCellModel) { new RoomListCellView({roomListCellModel: roomListCellModel}) });
-			this.show();
 		}
  });
 	
@@ -943,6 +951,7 @@ $(function() {
 			var roomName = $(this).find(".listed-room-name").html();
 			SocketManagerModel.joinRoom(roomName, false);
 			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
+			window.SurfStreamApp.get("mainView").roomModal.hide();
 		}
 		
 		
@@ -998,6 +1007,7 @@ $(function() {
    $("#mute").bind("click", {
     button: $("#mute")
    }, mute);
+	 $("#rooms").bind("click", {modal: this.options.modal}, function(e) { $("#room-modal").css("display") == "none" ? e.data.modal.show() : e.data.modal.hide() });
    this.options.userCollection.bind("add", this.placeUser, this);
    this.options.userCollection.bind("remove", this.removeUser, this);
    this.chats = [];
@@ -1269,13 +1279,14 @@ $(function() {
    });
   },
 
-  initializePlayerView: function(playerModel, userCollection, userModel) {
+  initializePlayerView: function(playerModel, userCollection, userModel, modalPop) {
    this.videoPlayerView = new VideoPlayerView({
     playerModel: playerModel
    });
    this.theatreView = new TheatreView({
     userCollection: userCollection,
-		userModel: userModel
+		userModel: userModel,
+		modal: modalPop
    });
   },
 

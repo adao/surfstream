@@ -595,7 +595,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	width: 600px
 	height: 404px
 	background-color: black
-	z-index: 500
+	z-index: 10000
 	#searchbar
 		background-color: gray
 		display: block
@@ -629,7 +629,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			height: 25px
 			width: 26px
 			background-color: transparent
-	#rooms
+	#roomsWrapper
 		background-color: #313131
 		width: 600px
 		height: 310px
@@ -690,6 +690,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			background-color: #E7E7E7
 			text-indent: 3px
 		#CreateRoomName, #CreateRoom
+			vertical-align: top
 			padding-top: 0px
 			height: 28px
 			border-radius: 6px
@@ -698,7 +699,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			border: none 
 		#CreateRoom
 			margin-left: 6px
-			width: 110px
+			width: 120px
 			font-size: 14px
 			font-weight: bold
 			color: white
@@ -911,3 +912,19 @@ div#top-video-name
 	margin-top: 164px
 	margin-left: 98px
 	position: absolute
+
+#modalBG
+	background: #000
+	position: fixed
+	left: 0
+	top: 0
+	width: 100%
+	height: 100%
+	opacity: .80
+	z-index: 9999
+	
+#become-dj-txt
+	position: absolute
+	font-size: 12px
+	margin-top: -28px
+	margin-left: 5px
