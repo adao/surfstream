@@ -827,22 +827,21 @@ div#top-video-name
 	margin-top: 0px
 	margin-left: -1px
 
-.ui-autocomplete.ui-menu.ui-widget.ui-widget-content.ui-corner-all
-	background-color: #E7E7E7
-	position: absolute
-	top: 96px!important
-	margin-left: -100px
-	width: 250px!important
-	max-height: 238px!important
-	font-size: 14px
+.ui-autocomplete
 	list-style-type: none
-	li
+	width: 250px
+	background-color: #E7E7E7
+	li.ui-menu-item
 		margin-left: -40px
+		width: 290px
+	li .ui-corner-all
+		display: block
+		width: 100%
 		padding: 3px
-	li:hover
+	li .ui-state-hover
 		background-color: #3C6EC7
 		color: white
-		
+		width: 100%
 	
 #preview-container
 	border: 1px solid gray
