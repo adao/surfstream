@@ -704,7 +704,7 @@ button
   width: 600px;
   height: 404px;
   background-color: #000;
-  z-index: 500;
+  z-index: 10000;
 }
 #room-modal #searchbar {
   background-color: #808080;
@@ -743,72 +743,72 @@ button
   width: 26px;
   background-color: transparent;
 }
-#room-modal #rooms {
+#room-modal #roomsWrapper {
   background-color: #313131;
   width: 600px;
   height: 310px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
-#room-modal #rooms table#roomsTable {
+#room-modal #roomsWrapper table#roomsTable {
   width: 590px;
   border-collapse: collapse;
 }
-#room-modal #rooms table#roomsTable tr.table-header {
+#room-modal #roomsWrapper table#roomsTable tr.table-header {
   background-color: #000;
   color: #fff;
   height: 30px;
 }
-#room-modal #rooms table#roomsTable tr.table-header th.viewers-hd {
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.viewers-hd {
   border-radius: 0px !important;
   -webkit-border-radius: 0px !important;
   -moz-border-radius: 0px !important;
   width: 50px;
   padding: 6px;
 }
-#room-modal #rooms table#roomsTable tr.table-header th.room-name-hd,
-#room-modal #rooms table#roomsTable tr.table-header th.room-friends-hd,
-#room-modal #rooms table#roomsTable tr.table-header th.viewers-hd {
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.room-name-hd,
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.room-friends-hd,
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.viewers-hd {
   border-right: 1px solid #666;
 }
-#room-modal #rooms table#roomsTable tr.room-row {
+#room-modal #roomsWrapper table#roomsTable tr.room-row {
   color: #fff;
   height: 60px;
   cursor: pointer;
 }
-#room-modal #rooms table#roomsTable tr.room-row td {
+#room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #666;
 }
-#room-modal #rooms table#roomsTable tr.room-row td .num-viewers,
-#room-modal #rooms table#roomsTable tr.room-row td .num-djs {
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .num-viewers,
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .num-djs {
   font-weight: bold;
   text-align: center;
 }
-#room-modal #rooms table#roomsTable tr.room-row td .num-viewers {
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .num-viewers {
   padding-top: 4px;
   font-size: 25px;
   height: 35px;
 }
-#room-modal #rooms table#roomsTable tr.room-row td .num-djs {
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .num-djs {
   font-size: 14px;
   height: 25px;
 }
-#room-modal #rooms table#roomsTable tr.room-row td .room-name-container .listed-room-name,
-#room-modal #rooms table#roomsTable tr.room-row td .room-name-container .listed-video-name {
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-room-name,
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-video-name {
   text-indent: 8px;
   display: block;
   margin-bottom: 4px;
 }
-#room-modal #rooms table#roomsTable tr.room-row td .room-name-container .listed-room-name {
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-room-name {
   font-size: 16px;
 }
-#room-modal #rooms table#roomsTable tr.room-row td .room-name-container .listed-video-name {
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-video-name {
   font-size: 12px;
 }
-#room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
+#room-modal #roomsWrapper table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #313131;
 }
-#room-modal #rooms table#roomsTable tr.room-row:nth-child(odd) {
+#room-modal #roomsWrapper table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #373737;
 }
 #room-modal #create-room {
@@ -1082,4 +1082,14 @@ background-color: green,
   margin-top: 164px;
   margin-left: 98px;
   position: absolute;
+}
+#modalBG {
+  background: #000;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+  z-index: 9999;
 }
