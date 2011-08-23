@@ -538,6 +538,7 @@ $(function() {
 		}
 	});
 	 $("#youtubeInput").bind( "autocompleteselect", {searchView: this}, function(event, ui) {
+		$("#searchContainer").empty();
 		event.data.searchView.options.searchBarModel.executeSearch(ui.item.value);
 	 });
 	 input.bind("keyup", {searchView: this}, this.getSuggestions);
@@ -579,8 +580,12 @@ $(function() {
   },
 
 	getSuggestions: function(event) {
+		if (event.keyCode == 13) {
+			$("#youtubeInput").autocomplete("option", "disabled", true);
+			return;
+		}
+		$("#youtubeInput").autocomplete( "option", "disabled", false);
 		var input = $("#searchBar .inputBox :input");
-		console.log(input.val());
 		var query = input.val();
 		if (event.data.searchView.suggestionHash[query]) {
 			$("#youtubeInput").autocomplete( "option", "source", event.data.searchView.suggestionHash[query]);
