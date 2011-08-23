@@ -391,6 +391,8 @@
 			this.room.removeSocket(socket.id);
 			console.log('['+this.room.get('name')+'][Room] removeSocket(): there are now '+this.room.users.length+ ' users in the room, and dj count: '+this.room.djs.length);
 
+
+			//TODO: convert to saving multiple playlists
 			//save playlist for user
 			var userPlaylist = userToRemove.playlist.xport();
 			//console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
@@ -489,20 +491,20 @@
 	models.PlaylistCollection = Backbone.Collection.extend({
 		model: models.Playlist,	//playlists indexed by name
 		
-		// addPlaylist: function(name) {
-		// 	if(this.get(name)) return false;
-		// 	var playlist = new models.Playlist({ name: name });
-		// 	playlist.id = name;
-		// 	this.add(playlist);
-		// 	return true;
-		// },
-		// 
-		// removePlaylist: function(name) {
-		// 	var playlist = this.get(name);
-		// 	if(!playlist) return false;
-		// 	this.remove(playlist);
-		// 	return true;
-		// },
+		addPlaylist: function(name) {
+			if(this.get(name)) return false;
+			var playlist = new models.Playlist({ name: name });
+			playlist.id = name;
+			this.add(playlist);
+			return true;
+		},
+		
+		removePlaylist: function(name) {
+			var playlist = this.get(name);
+			if(!playlist) return false;
+			this.remove(playlist);
+			return true;
+		},
 		
 		
 	})
