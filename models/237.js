@@ -614,21 +614,21 @@
 		},
 		
 		initialize: function() {
-			this.id = this.get('socketId');	
-			this.playlist = new models.Playlist();			
+			this.id = this.get('socketId');
 			this.getAvatar();
+			this.playlists = {};
 		},
 		
-		setPlaylists: function(playlists) {
-			this.playlists = playlists;
-		},
-		
-		setPlaylist: function(playlist) {
-			var inPlaylists = true;
-			for (var index in this.playlists) {
-				if ()
+		setPlaylists: function(userPlaylists) {
+			for (var index = 0; i < playlists.length; i+=2) {
+				var playlist = new models.Playlist();
+				playlist.mport(userPlaylists[i + 1]);
+				this.playlists[userPlaylists[i]] = playlist;
 			}
-			this.playlist = playlist;
+		},
+		
+		setPlaylist: function(playlistId) {
+			this.playlist = this.playlists[playlistId];
 		},
 		
 		getAvatar: function() {
@@ -679,20 +679,16 @@
 		
 		initializeAndSendPlaylists: function(socket) {
 			var userId = this.get('userId');
-			var userCollection = this;
-			redisClient.hgetall('user:'+userId+':playlists', function(err, reply) {
+			redisClient.hgetall('user:' + userId + ':playlists', function(err, reply) {
 				if(err) {
-					console.log("Error in getting user"+userId+"'s playlists");
+					console.log("Error in getting user" + userId + "'s playlists");
 				} else {
 					if (reply != 'undefined' && reply != null) {
 						var userPlaylists = JSON.parse(reply);
-						var currPlaylist = new models.Playlist();
-						//create new models.Playlists for every two
-						//then mport info into each one
-						currPlaylist.mport(userPlaylists[0]);
-						console.log('getting playlist for user '+userId);
+						console.log('getting playlists for user '+userId);
+						this.setPlaylists(userPlaylists);
 						this.setPlaylist(currPlaylist);
-						socket.emit("playlist:refresh", userPlaylists);
+						//socket.emit("playlist:initialize", userPlaylists);
 					}
 				}
 			});
@@ -724,8 +720,7 @@
 			});
 			
 			socket.on('playlist:addVideo', function(data) {
-				var thisUser = userCollect.get(socket.id);
-				if(thisUser.playlist.videos.get(data.video)) return;
+				if(this.playlists[data.playlistId].videos.get(data.videoId)) return;
 				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
 				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xportTwo()));
 			}); 
