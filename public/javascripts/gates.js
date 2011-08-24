@@ -1737,7 +1737,7 @@ function ss_formatSeconds(time) {
 	return result;
 }
 
-function ss_idToImg(id) {
+function ss_idToImg(id) {                                                   
 	return "http://img.youtube.com/vi/"+id+"/0.jpg";
 }
 

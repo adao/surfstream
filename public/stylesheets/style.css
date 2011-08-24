@@ -402,7 +402,7 @@ div.chatContainer form.inputBox input {
 div.historyContainer {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 14px;
-  height: 350px;
+  height: 270px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -429,7 +429,7 @@ div.historyContainer .roomDescription {
   font-size: 12px;
 }
 div.historyContainer .history {
-  height: 290px;
+  height: 250px;
   width: 300px;
   background-color: #fff;
 }
@@ -438,26 +438,26 @@ div.historyContainer .history .historyTitle {
   margin-left: 3px;
 }
 div.historyContainer .history .videoHistory {
-  height: 272px;
+  height: 250px;
   background-color: #808080;
   overflow-x: hidden;
   overflow-y: scroll;
 }
 .videoLog {
   width: 285px;
-  height: 95px;
+  height: 108px;
+  background-color: #000;
 }
 .videoLog .thumbContainer {
-  float: left;
-  width: 58px;
-  height: 46px;
-  margin-left: 7px;
-  margin-top: 7px;
+  display: block;
+  height: 60px;
+  background-color: #00f;
 }
 .videoLog .videoInfo {
-  float: right;
-  width: 197px;
-  height: 75px;
+  display: block;
+  width: 285px;
+  height: 48px;
+  background-color: #f00;
 }
 .videoLog .videoInfo .title {
   width: 185px;
@@ -776,7 +776,7 @@ button
 }
 .bottombuttonContainerwide {
   margin-top: 7px;
-  margin-left: 20px;
+  margin-left: 26px;
   width: 60px;
 }
 .bottombuttonContainerwide #rooms,
@@ -1270,4 +1270,10 @@ background-color: green,
 }
 a#fdbk_tab {
   z-index: 10;
+}
+#footer {
+  width: 960px;
+  height: 40px;
+  background-color: #000;
+  z-index: 500;
 }
