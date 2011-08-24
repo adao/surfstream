@@ -48,6 +48,7 @@ $(function() {
  window.SearchBarModel = Backbone.Model.extend({
 
   executeSearch: function(searchQuery) {
+	 mpq.track("Search", {mp_note: "Searched for " + searchQuery});
    this.set({
     searchTerm: searchQuery
    });
@@ -226,11 +227,12 @@ $(function() {
 			thumb: entry.media$group.media$thumbnail[0].url,
 			videoId: videoId,
 			duration: entry.media$group.yt$duration.seconds,
+			viewCount: entry.yt$statistics.viewCount,
 			author: entry.author[0].name.$t
 		}
 		var playlistItemModel = new PlaylistItemModel(attributes);
 		this.get("playlistCollection").add(playlistItemModel);
-		SocketManagerModel.addVideoToPlaylist(videoId, attributes.thumb, attributes.title, attributes.duration, attributes.author);
+		SocketManagerModel.addVideoToPlaylist(videoId, attributes.thumb, attributes.title, attributes.duration, attributes.author, attributes.viewCount);
 	}
 	
  });
@@ -247,6 +249,11 @@ $(function() {
   },
 
   initialize: function() {
+	 this.vidsPlayed = 0;
+	 this.fullscreen = false;
+	 this.onSofa = false;
+	 this.curDJ = "__none__";
+	 this.sofaUsers = [];
 	 var roomModel, mainView;
 	
 	this.set({
@@ -278,7 +285,6 @@ $(function() {
 	 roomModel = this.get("roomModel");
    mainView.initializeTopBarView();
 	 mainView.initializeRoomListView(roomModel.get("roomListCollection"));
-	 mainView.initializeRoomHistoryView(roomModel.get("roomHistoryCollection"));
 	
 	//initing the user sends the initial socket event
 	 this.set({
@@ -290,6 +296,7 @@ $(function() {
    });
  
 	 mainView.initializePlayerView(roomModel.get("playerModel"), roomModel.get("userCollection"), this.get("userModel"), mainView.roomModal);
+	 mainView.initializeRoomHistoryView(roomModel.get("roomHistoryCollection"));
 	 mainView.initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
 	 mainView.initializeChatView(roomModel.get("chatCollection"), this.get("userModel"));
 	
@@ -425,7 +432,6 @@ $(function() {
 	initialize: function() {
 		this.options.roomHistoryCollection.bind("reset", this.resetRoomHistory, this);
 		this.options.roomHistoryCollection.bind("add", this.addToRoomHistory, this);
-		$($("#history-button")[0]).bind("click", this.toggleVisibility);
 		this.render();
 	},
 	
@@ -433,11 +439,13 @@ $(function() {
 		$(this.el).html(this.roomHistoryViewTemplate());
 		$($("#people-area")[0]).append(this.el);
 		$($(".historyContainer")[0]).hide();
-		
+		$($("#history-button")[0]).bind("click", this.toggleVisibility);
 	},
 	
 	toggleVisibility: function() {
-		$($(".historyContainer")[0]).toggle();
+		var history = $($(".historyContainer")[0]);
+		history.toggle();
+		mpq.track("History Toggled", {mp_note: "History was toggled " + (history.css("display") == "none" ? "off" : "on")});
 	},
 	
 	resetRoomHistory: function() {
@@ -621,6 +629,7 @@ $(function() {
   },
 
   addToPlaylist: function() {
+	 var videoModel = this.options.video;
    var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
    if (ss_modelWithAttribute(this.options.playlistCollection, "videoId", videoID)) {
        return;
@@ -628,10 +637,11 @@ $(function() {
    this.options.video.set({
     videoId: videoID
    });
-   var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
+   var playlistItemModel = new PlaylistItemModel(videoModel.attributes);
    console.log(this.options.video.attributes);
    this.options.playlistCollection.add(playlistItemModel);
-   SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author").name.$t);
+
+   SocketManagerModel.addVideoToPlaylist(videoID, videoModel.get("thumb"), videoModel.get("title"), videoModel.get("duration"), videoModel.get("author").name.$t, videoModel.get("viewCount"));
   },
 
   previewVideo: function() {
@@ -692,7 +702,8 @@ $(function() {
      id: "YouTubePlayer"
     };
     swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
-   }
+   	setInterval(updateTime, 1000);
+		}
   }
 
  });
@@ -1021,6 +1032,8 @@ $(function() {
 	fullscreenToggle: function() {
 		this.full = !this.full;
 		if (this.full) {
+			SurfStreamApp.fullscreen = true;
+			mpq.track("Fullscreen on", {mp_note:"Fullscreen open (onsofa: __)"});
 			$("#YouTubePlayer").addClass("fully");
 			$("#fullscreen").addClass("fully");		
 			window.onmousemove = (function() {
@@ -1034,6 +1047,8 @@ $(function() {
 				window.mmTimeoutID = setTimeout(function() {$("#nowPlayingFull").fadeOut(300); $("#fullscreen").fadeOut(300);}, 2000)
 			});
 		} else {
+			SurfStreamApp.fullscreen = false;
+			mpq.track("Fullscreen off", {mp_note:"Fullscreen closed (onsofa: __)"});
 			$("#YouTubePlayer").removeClass("fully");
 			$("#fullscreen").removeClass("fully");
 			$("#nowPlayingFull").hide();
@@ -1052,6 +1067,8 @@ $(function() {
 		var cur_is_dj = false;
 		var numOnSofa = 0;
 		var newDJ;
+		
+		SurfStreamApp.sofaUsers = djArray;
 		//Remove old DJs
 		this.options.userCollection.each(function(userModel) {
      user = $("#avatarWrapper_" + userModel.get("id"));
@@ -1101,6 +1118,11 @@ $(function() {
 		
 		$("#avatarWrapper_VAL").show();
 		
+		if (cur_is_dj) {
+			SurfStreamApp.onSofa = true;
+		} else {
+			SurfStreamApp.onSofa = false;
+		}
 		
 		//NEED BOUNDS CHECK HERE TODO
 		$("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + "px");
@@ -1363,6 +1385,9 @@ $(function() {
    /* First set up all listeners */
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
+		SurfStreamApp.curDJ = video.dj;
+		mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
+		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
 		$("#fullTitle").html(video.title);
 		var curvid, curLen, roomModel, playerModel;
@@ -1386,7 +1411,6 @@ $(function() {
      };
      swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
      window.video_ID = video.id;
-     playerLoaded = true;
 		 setInterval(updateTime, 1000);
     } else {
      window.YTPlayer.loadVideoById(video.id, video.time);
@@ -1537,6 +1561,7 @@ $(function() {
 
 	sendFBUser: function(user) {
 		SocketManagerModel.socket.emit("user:sendFBData", user);
+		mpq.name_tag(user.name);
 	},
 	
 	sendUserFBFriends: function(friendIdList) {
@@ -1548,14 +1573,22 @@ $(function() {
   },
 
   becomeDJ: function() {
+	 var valplay = (SurfStreamApp.curDJ == "VAL" ? true : false );
+	 var numOnSofa = SurfStreamApp.sofaUsers.length;
+	 mpq.track("Sofa Join", {VAL_Playing: valplay, mp_note: "Stepped onto sofa ("+ numOnSofa +" people on sofa, __ friends in room, val playing: " + valplay + ")"});
    SocketManagerModel.socket.emit('dj:join');
   },
 
   stepDownFromDJ: function() {
+	 var valplay = (SurfStreamApp.curDJ == "VAL" ? true : false );
+	 var isdj = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("fbId"));
+	 var numOnSofa = SurfStreamApp.sofaUsers.length
+	 mpq.track("Sofa Leave", {VAL_playing: valplay, mid_play: isdj,mp_note: "Stepped off of sofa ("+ numOnSofa +" people on sofa, __ friends in room, val playing: "+ valplay  +", midPlay: "+ isdj +")"});
    SocketManagerModel.socket.emit('dj:quit');
   },
 
-  addVideoToPlaylist: function(video, thumb, title, duration, author) {
+  addVideoToPlaylist: function(video, thumb, title, duration, author, viewCount) {
+	mpq.track("Playlist Add", {onsofa: SurfStreamApp.onSofa, viewCount: viewCount, mp_note: "Video " + title + "(" + viewCount + " views) was added (onsofa: " + SurfStreamApp.onSofa + ")"});
    SocketManagerModel.socket.emit('playlist:addVideo', {
     video: video,
     thumb: thumb,
@@ -1566,26 +1599,31 @@ $(function() {
   },
 
   voteUp: function() {
+	 mpq.track("Vote up", {mp_note: "Video was voted up (fronthalf: ___)"});
    SocketManagerModel.socket.emit('meter:upvote');
   },
 
   voteDown: function() {
+	 mpq.track("Vote down", {mp_note: "Video was voted down (fronthalf: ___)"});
    SocketManagerModel.socket.emit('meter:downvote');
   },
 
   toTopOfPlaylist: function(vid_id) {
+	 mpq.track("Playlist Top", {mp_note: "Video sent to top of playlist (added from ___, ___ ago, onsofa ___)"});
    SocketManagerModel.socket.emit("playlist:moveVideoToTop", {
     video: vid_id
    });
   },
 
   deleteFromPlaylist: function(vid_id) {
+	 mpq.track("Playlist Delete", {mp_note: "Video was deleted (added from ___, ___ ago, onsofa ___)"});
    SocketManagerModel.socket.emit("playlist:delete", {
     video: vid_id
    });
   },
 
 	toIndexInPlaylist: function(vid_id, newIndex) {
+		mpq.track("Playlist Ordering", {newIndex: newIndex, mp_note: "Video was sent to index " + newIndex + " (added from ___, ___ ago, onsofa ___)"});
 		SocketManagerModel.socket.emit("playlist:moveVideo", {
 			video: vid_id,
 			index: newIndex
@@ -1599,6 +1637,11 @@ $(function() {
 	},
 	
 	joinRoom: function(rID, create) {
+		var vidsPlayed = SurfStreamApp.vidsPlayed;
+		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("fbId"));
+		SurfStreamApp.vidsPlayed = 0;
+		
+		mpq.track("Room Joined", {wasDJ: isDJ, rID:rID, mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"}); 
 		var payload = {rID: rID};
 		if (create) payload.create = true;
 		if (SurfStreamApp.inRoom) {
@@ -1614,6 +1657,7 @@ $(function() {
 		}
 		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
 		SocketManagerModel.socket.emit('room:join', payload);
+		SurfStreamApp.curDJ = "__none__";
 	}
 
  });
@@ -1668,8 +1712,10 @@ function setVideoVolume(event) {
 function mute(event) {
  if (window.YTPlayer.isMuted()) {
   window.YTPlayer.unMute();
+	mpq.track("Mute toggled", {mp_note: "Volume was toggled on"}); 
  } else {
   window.YTPlayer.mute();
+ 	mpq.track("Mute toggled", {mp_note: "Volume was toggled off"});
  }
 }
 

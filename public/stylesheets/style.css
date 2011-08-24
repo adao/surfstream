@@ -869,6 +869,7 @@ button
   top: 0;
   left: 0;
   padding-left: 0;
+  position: fixed;
 }
 #top-video-cell {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -1137,7 +1138,7 @@ background-color: green,
   border-radius: 3px;
   border: solid 2px #fff;
   min-height: 10%;
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   z-index: 32444;
   color: #fff;
