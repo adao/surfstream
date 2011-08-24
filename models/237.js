@@ -620,11 +620,7 @@
 		},
 		
 		setPlaylists: function(userPlaylists) {
-			for (var index = 0; i < playlists.length; i+=2) {
-				var playlist = new models.Playlist();
-				playlist.mport(userPlaylists[i + 1]);
-				this.playlists[userPlaylists[i]] = playlist;
-			}
+			this.playlists = userPlaylists;
 		},
 		
 		setPlaylist: function(playlistId) {
@@ -679,16 +675,20 @@
 		
 		initializeAndSendPlaylists: function(socket) {
 			var userId = this.get('userId');
+			var userModel = this;
 			redisClient.hgetall('user:' + userId + ':playlists', function(err, reply) {
 				if(err) {
 					console.log("Error in getting user" + userId + "'s playlists");
 				} else {
 					if (reply != 'undefined' && reply != null) {
-						var userPlaylists = JSON.parse(reply);
+						var userPlaylists = {};
+						for (var i = 1; i <= Object.size(userPlaylists); i++) {
+							userPlaylists[i] = JSON.parse(reply[i]);
+						}
 						console.log('getting playlists for user '+userId);
-						this.setPlaylists(userPlaylists);
-						this.setPlaylist(currPlaylist);
-						//socket.emit("playlist:initialize", userPlaylists);
+						userModel.setPlaylists(userPlaylists);
+						userModel.setPlaylist(userPlaylists[1]);
+						socket.emit("playlist:initialize", userPlaylists);
 					}
 				}
 			});
@@ -1069,3 +1069,11 @@
 	});
 	
 }) ()
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};

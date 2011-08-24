@@ -136,12 +136,17 @@ io.sockets.on('connection', function(socket) {
 					  });
 						currUser.initializeAndSendPlaylists(socket);
 						StagingUsers[socket.id] = currUser; 
-						redisClient.get("user:" + ssUser.ssId + ":playlists", function(err, reply) {
+						console.log(ssUser.ssId);
+						redisClient.hgetall("user:" + ssUser.ssId + ":playlists", function(err, reply) {
 							if (err) {
 								//throw error
-								console.log("Error getting playlist for user " + ssId);
+								console.log("Error getting playlist for user " + ssUser.ssId);
 							} else {
-								socket.emit("user:playlists", JSON.parse(reply));
+								var userPlaylists = {};
+								for (var i = 1; i <= Object.size(reply); i++) {
+									userPlaylists[i] = JSON.parse(reply[i]);
+								}
+								socket.emit("playlist:initialize", userPlaylists);
 							}
 						});
 					}
@@ -177,18 +182,12 @@ io.sockets.on('connection', function(socket) {
 			  });
 				StagingUsers[socket.id] = currUser;
 				var defaultPlaylist = new models.Playlist({name: "defaultList"});
-				redisClient.hset("user:" + reply + ":playlists", 1, JSON.stringify(defaultPlaylist), function(err, reply) {
+				var facebookPlaylist = new models.Playlist({name: "myFacebookWall"});
+				redisClient.hmset("user:" + reply + ":playlists", 1, JSON.stringify(defaultPlaylist), 2, JSON.stringify(facebookPlaylist), function(err, reply) {
 					if (err) {
-						console.log("Error writing ss user's default playlist " + ssUser.ssId + " to Redis");
+						console.log("Error writing ss user's default playlists " + ssUser.ssId + " to Redis");
 					} else {
-						var facebookPlaylist = new models.Playlist({name: "myFacebookWall"});
-						redisClient.hset("user:" + reply + ":playlists", 2, JSON.stringify(facebookPlaylist), function(err, reply) {
-							if (err) {
-								console.log("Error writing ss user's facebook playlist " + ssUser.ssId + " to Redis");
-							} else {
-								currUser.initializeAndSendPlaylists(socket);
-							}
-						});
+						currUser.initializeAndSendPlaylists(socket);
 					}
 				});
 			});

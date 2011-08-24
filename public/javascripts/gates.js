@@ -93,9 +93,8 @@ $(function() {
   },
 
 	setActivePlaylist: function(playlistId) {
-		this.activePlaylistId = playlistId;
 		this.activePlaylist = this.get("playlistCollection").getPlaylistById(playlistId);
-		this.get("playlistCollection").reset(activePlaylist.videos);
+		this.get("playlistCollection").reset(this.activePlaylist.videos);
 	},
 
   getFBUserData: function() {
@@ -367,6 +366,10 @@ $(function() {
 	
 	removePlaylist: function() {
 		
+	},
+	
+	addVideoToPlaylist: function(playlistId, video) {
+		this.getPlaylistById(playlistId).addVideo(video);
 	}
  });
 
@@ -1492,8 +1495,9 @@ $(function() {
 	 });
 
    socket.on('playlist:initialize', function(userPlaylists) {
-		for (var i = 0; i < userPlaylists.length; i+=2) {
-			app.get("userModel").get("playlistCollection").addPlaylist(userPlaylists[i], userPlaylists[i + 1].name, userPlaylists[i + 1].videos);
+		console.log("here");
+		for (var i = 1; i <= Object.size(userPlaylists); i++) {
+			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, userPlaylists[i].videos);
 		}
 		app.get("userModel").setActivePlaylist(1);
 		//_.each(videoArray, function(video) {video.id = null}); //To prevent backbone from thinking we need to sync this with the server
@@ -1751,3 +1755,11 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 function skipVideo() {
  socket_init.emit("video:skip");
 }
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
