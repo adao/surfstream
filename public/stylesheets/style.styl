@@ -69,6 +69,42 @@ button.leftbtn:active, button.centerbtn:active, button.rightbtn:active, button.n
 #header
 	img#logo
 		margin-top: -4px
+	#cur-room-name
+		margin-top: 4px
+		font-weight: bold
+		vertical-align: top
+		margin-left: 20px
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		color: #B2B2B2
+		font-size: 20px
+		display: inline-block
+		width: 260px
+		height: 40px
+	#cur-video-info
+		margin-left: 10px
+		height: 40px
+		width: 230px
+		vertical-align: top
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		color: #B2B2B2
+		display: inline-block
+		#cur-video-name
+			overflow: hidden
+			text-overflow: ellipsis
+			white-space: nowrap
+			display: block
+			height: 22px
+			font-size: 16px
+		#cur-video-time
+			display: block
+			height: 13px
+			text-align: left
+			font-size: 12px
+		
 #now-playing-container
 	height: 100px!important
 	width: 300px!important
@@ -412,7 +448,7 @@ div.historyContainer
 			float: right
 			width: 30px
 			height: 60px
-			.addToPlaylist
+			.addToPlaylist, .addToPlaylist-added
 				background-color: transparent
 				margin-left: -5px
 				margin-top: 15px
@@ -425,7 +461,7 @@ div.historyContainer
 				background: url('/images/room/add.png')
 			.addToPlaylist:hover
 				background: url('/images/room/add_hover.png')
-			.addToPlaylist:active
+			.addToPlaylist-added
 				background: url('/images/room/checkbox.png') 50% 50% no-repeat
 			button.previewVideo
 				font-size: 9px

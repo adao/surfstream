@@ -90,6 +90,45 @@ button.normalbtn:active {
 #header img#logo {
   margin-top: -4px;
 }
+#header #cur-room-name {
+  margin-top: 4px;
+  font-weight: bold;
+  vertical-align: top;
+  margin-left: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #b2b2b2;
+  font-size: 20px;
+  display: inline-block;
+  width: 260px;
+  height: 40px;
+}
+#header #cur-video-info {
+  margin-left: 10px;
+  height: 40px;
+  width: 230px;
+  vertical-align: top;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #b2b2b2;
+  display: inline-block;
+}
+#header #cur-video-info #cur-video-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  height: 22px;
+  font-size: 16px;
+}
+#header #cur-video-info #cur-video-time {
+  display: block;
+  height: 13px;
+  text-align: left;
+  font-size: 12px;
+}
 #now-playing-container {
   height: 100px !important;
   width: 300px !important;
@@ -486,7 +525,8 @@ div.historyContainer .history .videoHistory {
   width: 30px;
   height: 60px;
 }
-.searchCellContainer .cellInfo .cellButtons .addToPlaylist {
+.searchCellContainer .cellInfo .cellButtons .addToPlaylist,
+.searchCellContainer .cellInfo .cellButtons .addToPlaylist-added {
   background-color: transparent;
   margin-left: -5px;
   margin-top: 15px;
@@ -502,7 +542,7 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist:hover {
   background: url("/images/room/add_hover.png");
 }
-.searchCellContainer .cellInfo .cellButtons .addToPlaylist:active {
+.searchCellContainer .cellInfo .cellButtons .addToPlaylist-added {
   background: url("/images/room/checkbox.png") 50% 50% no-repeat;
 }
 .searchCellContainer .cellInfo .cellButtons button.previewVideo {
@@ -516,7 +556,7 @@ div.historyContainer .history .videoHistory {
   cursor: pointer;
 }
 .searchCellContainer .cellInfo .cellButtons button.previewVideo:hover {
-  color: #e7e7e7;
+  color: #fff;
 }
 .searchCellContainer:nth-child(odd) {
   background-color: #313131;

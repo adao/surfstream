@@ -632,7 +632,10 @@ $(function() {
    console.log(this.options.video.attributes);
    this.options.playlistCollection.add(playlistItemModel);
    SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author").name.$t);
-  },
+   var cellId = "#search_result_" + videoID;
+	 $(cellId).removeClass("addToPlaylist");
+	 $(cellId).addClass("addToPlaylist-added");
+	},
 
   previewVideo: function() {
    var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
