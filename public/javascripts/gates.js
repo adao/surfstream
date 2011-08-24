@@ -1022,7 +1022,7 @@ $(function() {
 		this.full = !this.full;
 		if (this.full) {
 			$("#YouTubePlayer").addClass("fully");
-			$("#fullscreen").addClass("fully");		
+			$("#fullscreen").addClass("fully");
 			window.onmousemove = (function() {
 				console.log("movin");
 				if(window.mmTimeoutID) {
