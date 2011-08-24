@@ -349,23 +349,27 @@ $(function() {
 	}
  });
 
- window.PlaylistCollection = Backbone.Collection.extend({
-  model: PlaylistModel,
+ window.PlaylistCollection = Backbone.Model.extend({
 
   initialize: function() {
-
+		this.idToPlaylist = {};
   },
 
 	getPlaylistById: function(playlistId) {
-		return ss_modelWithAttribute(this, "playlistId", playlistId);
+		return this.idToPlaylist[playlistId];
 	},
 	
 	addPlaylist: function(playlistId, name, videos) {
-		this.add(new PlaylistModel({playlistId: playlistId, name: name, videos: videos}));
+		var playlistModel = new PlaylistModel();
+		playlistModel.playlistId = playlistId;
+		playlistModel.name = name;
+		playlistModel.videos = videos;
+		this.idToPlaylist[playlistId] = playlistModel;
+		//send socket event
 	},
 	
 	removePlaylist: function() {
-		
+		//send socket event
 	},
 	
 	addVideoToPlaylist: function(playlistId, video) {
@@ -398,9 +402,9 @@ $(function() {
 	playlistCollectionTemplate: _.template($("#playlist-collection-template").html()),
 	
 	intialize: function() {
-		this.options.playlistCollection.bind('add', this.addVideo, this);
-	 	this.options.playlistCollection.bind('reset', this.resetPlaylist, this);
-		//this.render();
+		//this.options.playlistCollection.bind('add', this.addVideo, this);
+	 	//this.options.playlistCollection.bind('reset', this.resetPlaylist, this);
+		this.render();
 	},
 	
 	hide: function() {
