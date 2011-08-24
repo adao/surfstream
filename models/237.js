@@ -682,7 +682,7 @@
 				} else {
 					if (reply != 'undefined' && reply != null) {
 						var userPlaylists = {};
-						for (var i = 1; i <= Object.size(userPlaylists); i++) {
+						for (var i = 1; i <= Object.size(reply); i++) {
 							userPlaylists[i] = JSON.parse(reply[i]);
 						}
 						console.log('getting playlists for user '+userId);

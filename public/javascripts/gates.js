@@ -333,7 +333,7 @@ $(function() {
 	model: PlaylistMemberModel,
 	
 	initialize: function() {
-		
+		console.log("here");
 	},
 	
 	addVideo: function() {
@@ -1495,7 +1495,6 @@ $(function() {
 	 });
 
    socket.on('playlist:initialize', function(userPlaylists) {
-		console.log("here");
 		for (var i = 1; i <= Object.size(userPlaylists); i++) {
 			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, userPlaylists[i].videos);
 		}

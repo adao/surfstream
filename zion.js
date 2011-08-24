@@ -137,18 +137,6 @@ io.sockets.on('connection', function(socket) {
 						currUser.initializeAndSendPlaylists(socket);
 						StagingUsers[socket.id] = currUser; 
 						console.log(ssUser.ssId);
-						redisClient.hgetall("user:" + ssUser.ssId + ":playlists", function(err, reply) {
-							if (err) {
-								//throw error
-								console.log("Error getting playlist for user " + ssUser.ssId);
-							} else {
-								var userPlaylists = {};
-								for (var i = 1; i <= Object.size(reply); i++) {
-									userPlaylists[i] = JSON.parse(reply[i]);
-								}
-								socket.emit("playlist:initialize", userPlaylists);
-							}
-						});
 					}
 					socket.emit("user:profile", ssUser);
 				}
