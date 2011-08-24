@@ -463,6 +463,7 @@ div.historyContainer
 				background: url('/images/room/add_hover.png')
 			.addToPlaylist-added
 				background: url('/images/room/checkbox.png') 50% 50% no-repeat
+				cursor: default
 			button.previewVideo
 				font-size: 9px
 				background: transparent
@@ -582,7 +583,10 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		height: 10px
 		width: 30px
 		background: url('/images/room/pullup.png') 50% 50% no-repeat
-		margin-bottom: 3px
+		position: absolute;
+		margin-top: 2px;
+		margin-left: 38px;
+		cursor: n-resize
 	#remote
 		height: 180px!important
 		width: 104px!important
@@ -591,6 +595,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			width: 104px
 			height: 74px
 			display: block
+			cursor: n-resize
 		.side-button-container
 			margin-top: 10px   
 			vertical-align: top
@@ -601,15 +606,18 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			display: block
 		#vol-buttons
 			float: left
-			padding-left: 12px
+			margin-left: 12px
 		#vote-buttons
 			float: right
-			padding-right: 12px
+			margin-right: 12px
 		.remote-bottom
 			display: block
 			width: 100px
 			height: 90px
 			text-align: center 
+
+#remote-container button#remote-pullup:hover
+	background-color: #34b7fe
 
 #vol-up, #vol-down
 	font-size: 10px
@@ -623,6 +631,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	border-radius: 20px
 	-webkit-border-radius: 20px
 	-moz-border-radius: 20px
+	cursor: pointer
 
 #up-vote, #down-vote, #vol-up, #vol-down, #rooms, #history-button, #mute
 	background: transparent
@@ -632,6 +641,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	-webkit-border-radius: 20px
 	-moz-border-radius: 20px
 	color: #e5e5e5  
+	cursor: pointer
 	
 .buttonContainer
 	margin: 3px
@@ -910,8 +920,10 @@ div#top-video-name
 	margin-left: -1px
 
 .ui-autocomplete
+	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
 	list-style-type: none
 	width: 250px
+	margin-top: 10px
 	background-color: #E7E7E7
 	li.ui-menu-item
 		margin-left: -40px
@@ -991,7 +1003,7 @@ div#top-video-name
 
 #tvglowimg
 	margin-top: 164px
-	margin-left: 98px
+	margin-left: 120px
 	position: absolute
 
 #modalBG

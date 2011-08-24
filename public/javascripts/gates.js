@@ -1012,6 +1012,12 @@ $(function() {
 	 $("#become-dj").hide();
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", this.fullscreenToggle);
+	 $(".remote-top").bind("click", this.pullRemoteUp);
+	 $("#remote-pullup").bind("click", this.pullRemoteUp);
+	 $("#remote-pullup").tipsy({
+	    gravity: 's',
+	    title: function() { return "Pull Up"; }
+	   });
 	 $("#avatarWrapper_VAL").css("margin-left", '410px');
 	 $("#avatarWrapper_VAL").hide();
    $("#up-vote").bind("click", SocketManagerModel.voteUp);
@@ -1031,6 +1037,12 @@ $(function() {
    this.chats = [];
 	 this.full = false;
   },
+
+	pullRemoteUp : function (e) {
+		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
+				$("#remote-container").animate({"margin-top": 89}, 400);
+			}
+	},
 
 	fullscreenToggle: function() {
 		this.full = !this.full;
