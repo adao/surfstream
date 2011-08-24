@@ -1201,6 +1201,7 @@ background-color: green,
   margin-top: 234px;
   width: 30px;
   padding: 3px;
+  cursor: pointer;
 }
 #fullscreen:hover {
   background-color: #fff;
