@@ -1046,7 +1046,6 @@ $(function() {
 				}
 				$("#nowPlayingFull").fadeIn(300);
 				$("#fullscreen").fadeIn(300);
-				
 				window.mmTimeoutID = setTimeout(function() {$("#nowPlayingFull").fadeOut(300); $("#fullscreen").fadeOut(300);}, 2000)
 			});
 		} else {
@@ -1393,6 +1392,7 @@ $(function() {
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
 		$("#fullTitle").html(video.title);
+		$("#cur-video-name").html(video.title);
 		var curvid, curLen, roomModel, playerModel;
 		if (video.dj == app.get("userModel").get("fbId")) {
 			console.log("here");
@@ -1751,7 +1751,8 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 }
 
 function updateTime() {
-	$("#countdownFull").html("Time Remaining: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+	$("#countdownFull").html("Time Left: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+	$("#cur-video-time").html("Time Left: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
 }
 
 function skipVideo() {

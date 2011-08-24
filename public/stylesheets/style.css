@@ -669,8 +669,8 @@ button.search.active {
   z-index: 666;
 }
 #remote-container {
-  height: 190px !important;
-  width: 104px !important;
+  height: 245px !important;
+  width: 114px !important;
   float: right;
   display: block;
   margin-top: 180px;
@@ -685,13 +685,13 @@ button.search.active {
   margin-bottom: 3px;
 }
 #remote-container #remote {
-  height: 180px !important;
-  width: 104px !important;
-  background: url("/images/room/remote.png") 50% 50% no-repeat;
+  height: 245px !important;
+  width: 114px !important;
+  background: url("/images/room/remote2.png") 50% 50% no-repeat;
 }
 #remote-container #remote .remote-top {
-  width: 104px;
-  height: 74px;
+  width: 114px;
+  height: 70px;
   display: block;
 }
 #remote-container #remote .side-button-container {
@@ -713,13 +713,18 @@ button.search.active {
 }
 #remote-container #remote .remote-bottom {
   display: block;
-  width: 100px;
-  height: 90px;
-  text-align: center;
+  width: 114px;
+  height: 145px;
 }
 #vol-up,
 #vol-down {
   font-size: 10px;
+}
+#vol-up {
+  text-indent: -3px;
+}
+.vol-container {
+  width: 114px;
 }
 .buttonContainer,
 .bottombuttonContainer,
@@ -739,7 +744,10 @@ button.search.active {
 #vol-down,
 #rooms,
 #history-button,
-#mute {
+#mute,
+#ch-up,
+#ch-down,
+#fullscreen {
   background: transparent;
   height: 25px;
   width: 35px;
@@ -773,9 +781,13 @@ button
 }
 .bottombuttonContainerwide #rooms,
 .bottombuttonContainerwide #mute,
-.bottombuttonContainerwide #history-button {
+.bottombuttonContainerwide #history-button,
+.bottombuttonContainerwide #fullscreen {
   width: 60px;
   background: transparent;
+}
+#fullscreen {
+  text-indent: -4px;
 }
 #room-modal {
   position: absolute;
@@ -1194,19 +1206,8 @@ background-color: green,
   margin-top: -28px;
   margin-left: 5px;
 }
-#fullscreen {
-  position: absolute;
-  margin-left: 2px;
-  z-index: 10000;
-  margin-top: 234px;
-  width: 30px;
-  padding: 3px;
-}
-#fullscreen:hover {
-  background-color: #fff;
-}
 #fullscreen.fully {
-  background-color: #fff;
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1216,7 +1217,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background-color: #34b7fe;
+  background: rgba(255,255,255,0.6);
 }
 #nowPlayingFull {
   border-radius: 3px;
