@@ -121,7 +121,7 @@ button.normalbtn:active {
   white-space: nowrap;
   display: block;
   height: 22px;
-  font-size: 16px;
+  font-size: 14px;
 }
 #header #cur-video-info #cur-video-time {
   display: block;
