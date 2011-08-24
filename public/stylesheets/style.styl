@@ -1,8 +1,110 @@
+button.leftbtn, button.rightbtn, button.centerbtn, button.normalbtn
+	margin: 0 8px 0 0
+	padding: 2px 6px
+	text-align: center
+	vertical-align: middle
+	display: inline-block
+	white-space: nowrap
+	cursor: pointer
+	outline: none
+	color: #000
+	border: 1px solid #bbb
+	-webkit-border-radius: 3px
+	-moz-border-radius: 3px
+	border-radius: 3px
+	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e3e3e3))
+	background: -moz-linear-gradient(top, #f9f9f9, #e3e3e3)
+	border-top-color: #ccc
+	border-bottom-color: #a0a0a0
+button.leftbtn:hover, button.centerbtn:hover, button.rightbtn:hover, button.normalbtn:hover 
+	border: 1px solid #636363       
+button.leftbtn:active, button.centerbtn:active, button.rightbtn:active, button.normalbtn:active
+	background: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#f9f9f9))  
+.leftbtn, .rightbtn, .centerbtn, .normalbtn
+	width: 48px
+	height: 22px 
+.leftbtn
+	margin:0!important;
+	-webkit-border-top-right-radius:0!important;
+	-webkit-border-bottom-right-radius:0!important;
+	-moz-border-radius-topright:0!important;
+	-moz-border-radius-bottomright:0!important;
+	border-bottom-right-radius: 0!important;
+	border-top-right-radius: 0!important;
+	border-bottom-right-radius: 0!important;
+	border-top-right-radius: 0!important; 
+	float:left!important;
+.centerbtn
+	margin:0!important;
+	-webkit-border-top-right-radius:0!important;
+	-webkit-border-bottom-right-radius:0!important;
+	-moz-border-radius-topright:0!important;
+	-moz-border-radius-bottomright:0!important;
+	border-bottom-right-radius: 0!important;
+	border-top-right-radius: 0!important;
+	border-bottom-right-radius: 0!important;
+	border-top-right-radius: 0!important;
+	-webkit-border-top-left-radius:0!important;
+	-webkit-border-bottom-left-radius:0!important;
+	-moz-border-radius-topleft:0!important;
+	-moz-border-radius-bottomleft:0!important;
+	border-bottom-left-radius: 0!important;
+	border-top-left-radius: 0!important;
+	border-left: 0!important; 
+	float:left!important; 
+.rightbtn
+	-webkit-border-top-left-radius:0!important;
+	-webkit-border-bottom-left-radius:0!important;
+	-moz-border-radius-topleft:0!important;
+	-moz-border-radius-bottomleft:0!important;
+	border-bottom-left-radius: 0!important;
+	border-top-left-radius: 0!important;
+	border-left: 0!important;
+	float:clear!important; 
+.rightbtn:hover
+	padding: 2px 6px 2px 5px!important
+	border: 1px solid #636363!important 
 .hidden
 	display: none
 #header
-	img
+	img#logo
 		margin-top: -4px
+	#cur-room-name
+		margin-top: 4px
+		font-weight: bold
+		vertical-align: top
+		margin-left: 20px
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		color: #B2B2B2
+		font-size: 20px
+		display: inline-block
+		width: 260px
+		height: 40px
+	#cur-video-info
+		margin-left: 10px
+		height: 40px
+		width: 230px
+		vertical-align: top
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		color: #B2B2B2
+		display: inline-block
+		#cur-video-name
+			overflow: hidden
+			text-overflow: ellipsis
+			white-space: nowrap
+			display: block
+			height: 22px
+			font-size: 16px
+		#cur-video-time
+			display: block
+			height: 13px
+			text-align: left
+			font-size: 12px
+		
 #now-playing-container
 	height: 100px!important
 	width: 300px!important
@@ -53,7 +155,6 @@ div#outer
 	display: none
 body
 	background-image: url('/images/room/bgtile_black.png')
-	text-shadow: black 0.1em 0.1em 0.1em
 //skeleton
 #outer
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
@@ -347,7 +448,7 @@ div.historyContainer
 			float: right
 			width: 30px
 			height: 60px
-			.addToPlaylist
+			.addToPlaylist, .addToPlaylist-added
 				background-color: transparent
 				margin-left: -5px
 				margin-top: 15px
@@ -360,7 +461,7 @@ div.historyContainer
 				background: url('/images/room/add.png')
 			.addToPlaylist:hover
 				background: url('/images/room/add_hover.png')
-			.addToPlaylist:active
+			.addToPlaylist-added
 				background: url('/images/room/checkbox.png') 50% 50% no-repeat
 			button.previewVideo
 				font-size: 9px
@@ -372,7 +473,7 @@ div.historyContainer
 				color: #D4D4D4
 				cursor: pointer
 			button.previewVideo:hover
-					color: #E7E7E7
+					color: white
 .searchCellContainer:nth-child(odd)
 	background-color: #313131
 //room
@@ -414,71 +515,41 @@ div.historyContainer
 	text-indent: 10px
 	#room-name
 		margin-top: 3px
-	
-//share
+.share-image-container
+	height: 16px
+	width: 29px
+	background: transparent
+
+img.share-email-image
+  width: 48px
+	height: 22px
+	background: transparent
+
+#copy-button
+	width: 48px!important
+	height: 22px!important
+	font-size: 10px
+	padding-top: 2px
+	margin-left: -6px
+
 #share, #shareBar
 	float: right
-	width: 500px
+	width: 254px
 	height: 40px
 	color: black
+	margin-left: 6px
+	.share
+		color: #eee
+		font-size: 16px
+		font-weight: bold
+		width: 54px
+		height: 22px
+		display: inline-block
 	#social
+		display: inline-block
 		margin-top: 3px
-		float: left
-		width: 250px
+		width: 200px
 		height: 40px
-		#share-text
-			width: 50px
-			margin-right: 10px
-	#copy
-		margin-top: 3px
-		float: right
-		width: 250px
-		height: 40px
-		#link
-			vertical-align: top
-			display: inline-block
-			input
-				margin-top: 4px
-				border: 1px solid #777
-				vertical-align: top
-				height: 18px
-				margin-left: 2px
-				width: 60px
-				margin-right: 10px
-		#copy-button-container
-			display: inline-block
-			height: 30px
-			width: 50px
-			#copy-button
-				text-indent: 2px
-				font-size: 20px
-				height: 25px
-				width: 50px
-				display: inline-block
-				vertical-align: bottom
-				color: black
-				margin-top: 2px
-				background-color: #ececec
-				background: -webkit-gradient(linear, left top, left bottom, from(#ececec), to(#dbdbdb))
-				background: -moz-linear-gradient(top, #ececec , #dbdbdb)
-				border-radius: 5px
-				-webkit-border-radius: 5px
-				-moz-border-radius: 5px
-				
-#shareFB, #shareTwit, #shareEmail 
-	vertical-align: middle
-	margin-right: 4px
-	cursor: pointer
-	border: none
-	height: 31px
-	width: 31px
-#shareFB
-	background: url('http://i.imgur.com/1OB6R.png')
-#shareTwit 
-	background: url('http://i.imgur.com/pmbBg.png')
-#shareEmail
-	background: url('http://i.imgur.com/mz8Sc.png')
-
 
 button.playlist, button.playlist.active, button.search, button.search.active
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
@@ -597,6 +668,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	height: 404px
 	background-color: black
 	z-index: 10000
+	border: 1px solid #eee
 	#searchbar
 		background-color: gray
 		display: block
@@ -685,12 +757,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		background-color: gray
 		text-align: center
 		vertical-align: middle
-		padding-top: 9px
 		#CreateRoomName
 			width: 150px
 			background-color: #E7E7E7
 			text-indent: 3px
 		#CreateRoomName, #CreateRoom
+			margin-top: 5px
 			vertical-align: top
 			padding-top: 0px
 			height: 28px
@@ -941,7 +1013,7 @@ div#top-video-name
 #fullscreen
 	position: absolute
 	margin-left: 2px
-	z-index: 31
+	z-index: 10000
 	margin-top: 234px
 	width: 30px
 	padding: 3px
@@ -962,25 +1034,36 @@ div#top-video-name
 #fullscreen.fully:hover
 	background-color: #34b7fe
 
-
 #nowPlayingFull
 	border-radius: 3px
-	border: solid 2px white
-	min-height: 10%
+	border: solid 1px gray
+	min-height: 60px
+	height: 20%
+	max-height: 100px 
 	position: fixed
 	bottom: 0px
 	z-index: 32444
 	color: white
 	width: 80%
 	margin-left: 100px
-	text-shadow: black 0.1em 0.1em 0.5em
+	text-shadow: gray 0.1em 0.1em 0.5em
 	margin-bottom: 20px
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
-	font-size: 170%
 	left: 50%;
 	margin-left: -40%;
-	background: rgba(0, 183, 254, .4)
+	background: rgba(0, 0, 0, .7)
 	box-shadow: 0px 0px 10px black
+	text-align: center
+	#fullTitle
+		width: 100%
+		height: 70%
+		font-size: 28px
+		display: block
+	#coundownFull
+		vertical-align: bottom
+		font-size: 100%
+		width: 100%
+		display: block
 	
 #nowTitle
 	font-weight: bold
@@ -997,11 +1080,6 @@ div#top-video-name
 	margin-right: 1%
 	left: 50%
 	width: 75%
-
-#countdownFull
-	position: absolute
-	margin-top: 50%
-	margin-left: 10px
 
 a#fdbk_tab
 	z-index: 10

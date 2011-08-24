@@ -642,7 +642,10 @@ $(function() {
    this.options.playlistCollection.add(playlistItemModel);
 
    SocketManagerModel.addVideoToPlaylist(videoID, videoModel.get("thumb"), videoModel.get("title"), videoModel.get("duration"), videoModel.get("author").name.$t, videoModel.get("viewCount"));
-  },
+   var cellId = "#search_result_" + videoID;
+	 $(cellId).removeClass("addToPlaylist");
+	 $(cellId).addClass("addToPlaylist-added");
+	},
 
   previewVideo: function() {
    var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
@@ -1035,7 +1038,7 @@ $(function() {
 			SurfStreamApp.fullscreen = true;
 			mpq.track("Fullscreen on", {mp_note:"Fullscreen open (onsofa: __)"});
 			$("#YouTubePlayer").addClass("fully");
-			$("#fullscreen").addClass("fully");		
+			$("#fullscreen").addClass("fully");
 			window.onmousemove = (function() {
 				console.log("movin");
 				if(window.mmTimeoutID) {
@@ -1259,7 +1262,7 @@ $(function() {
    $('#shareTwit').css('background-image', '/images/twitter_small.png');
    $('#shareEmail').css('background-image', '/images/email_small.png');
    $('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
-   $('#copy-button-container').html("<div id=\"copy-button\">Copy</div>");
+   $('#copy-button-container').html("<div id=\"copy-button\">copy link</div>");
    var link = $('input:text').val();
    console.log(link);
    var clip = new ZeroClipboard.Client();
