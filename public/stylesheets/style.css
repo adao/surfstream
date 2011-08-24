@@ -1206,6 +1206,21 @@ background-color: green,
   margin-top: -28px;
   margin-left: 5px;
 }
+<<<<<<< HEAD
+=======
+#fullscreen {
+  position: absolute;
+  margin-left: 2px;
+  z-index: 10000;
+  margin-top: 234px;
+  width: 30px;
+  padding: 3px;
+  cursor: pointer;
+}
+#fullscreen:hover {
+  background-color: #fff;
+}
+>>>>>>> 919590fadda537b073d224593a730fc1119d4e1e
 #fullscreen.fully {
   background: rgba(255,255,255,0.3);
   position: fixed;
