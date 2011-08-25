@@ -1012,7 +1012,8 @@ $(function() {
    becomeDJ.bind("click", this.toggleDJStatus);
 	 becomeDJ.hide();
 	 $("#nowPlayingFull").hide();
-	 $("#fullscreen").bind("click", this.fullscreenToggle);
+	 $("#fullscreen").bind("click", {theatre: this}, this.fullscreenToggle);
+	 $("#fullscreenIcon").bind("click", {theatre: this}, this.fullscreenToggle);
 	 $(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
 	 remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
 	 remotePullup.tipsy({
@@ -1085,32 +1086,33 @@ $(function() {
 		}
 	},
 
-	fullscreenToggle: function() {
-		this.full = !this.full;
-		if (this.full) {
+	fullscreenToggle: function(e) {
+		e.data.theatre.full = !e.data.theatre.full;
+		if (e.data.theatre.full) {
 			SurfStreamApp.fullscreen = true;
 			mpq.track("Fullscreen on", {mp_note:"Fullscreen open (onsofa: __)"});
 			$("#YouTubePlayer").addClass("fully");
-			$("#fullscreen").addClass("fully");
+			$("#fullscreenIcon").addClass("fully");
 			window.onmousemove = (function() {
 				console.log("movin");
 				if(window.mmTimeoutID) {
 					window.clearTimeout(window.mmTimeoutID);
 				}
 				$("#nowPlayingFull").fadeIn(300);
-				$("#fullscreen").fadeIn(300);
+				$("#fullscreenIcon").fadeIn(300);
 				
-				window.mmTimeoutID = setTimeout(function() {$("#nowPlayingFull").fadeOut(300); $("#fullscreen").fadeOut(300);}, 2000)
+				window.mmTimeoutID = setTimeout(function() {$("#nowPlayingFull").fadeOut(300); $("#fullscreenIcon").fadeOut(300);}, 2000)
 			});
 		} else {
 			SurfStreamApp.fullscreen = false;
 			mpq.track("Fullscreen off", {mp_note:"Fullscreen closed (onsofa: __)"});
 			$("#YouTubePlayer").removeClass("fully");
-			$("#fullscreen").removeClass("fully");
+			$("#fullscreenIcon").removeClass("fully");
 			$("#nowPlayingFull").hide();
 			if(window.mmTimeoutID) {
 				window.clearTimeout(window.mmTimeoutID);
 			}
+			$("#fullscreenIcon").css("display", "none");
 			window.onmousemove = null;
 			window.mmTimeoutID = null;
 		}

@@ -432,15 +432,8 @@ div.historyContainer {
   background-color: #373737;
 }
 div.historyContainer .history {
-<<<<<<< HEAD
   height: 251px;
   background: transparent;
-=======
-  position: absolute;
-  height: 250px;
-  width: 300px;
-  background-color: #fff;
->>>>>>> a7bde7dbbe1492ac994b585b6009b4fd0c3156b8
 }
 div.historyContainer .history .historyTitle {
   vertical-align: top;
@@ -470,6 +463,7 @@ div.historyContainer .history .closeHistory {
   height: 20px;
 }
 div.historyContainer .history .closeHistory #close-history {
+  margin-top: -1px;
   float: right;
   border: none;
   background: transparent;
@@ -1351,6 +1345,33 @@ background-color: green,
   margin-right: 1%;
   left: 50%;
   width: 75%;
+}
+#fullscreenIcon {
+  position: absolute;
+  margin-left: 2px;
+  z-index: 10000;
+  margin-top: 234px;
+  width: 30px;
+  padding: 3px;
+  display: none;
+}
+#fullscreenIcon:hover {
+  background-color: #fff;
+}
+#fullscreenIcon.fully {
+  background-color: #fff;
+  background: rgba(255,255,255,0.3);
+  position: fixed;
+  margin-left: 0px;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  margin: 20px;
+  margin-top: 0px;
+}
+#fullscreenIcon.fully:hover {
+  background-color: #34b7fe;
+  background: rgba(255,255,255,0.6);
 }
 #sofa-remote {
   left: 170px;
