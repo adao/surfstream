@@ -105,7 +105,6 @@ $(function() {
 
 	sendUserFBFriends: function(info) {
 		var friendIdList = _.pluck(info.data, "id");
-		console.log(friendIdList);
 		SocketManagerModel.sendUserFBFriends({
 			ssId: window.SurfStreamApp.get('userModel').get("ssId"),
 			fbFriends: friendIdList
@@ -359,6 +358,7 @@ $(function() {
 		if (previouslySelected) {
 			$(playlistCollection.idToPlaylistNameholder[previouslySelected.get("playlistId")].el).removeClass("selected-playlist-nameholder").addClass("unselected-playlist-nameholder");
 		}
+		SocketManagerModel.choosePlaylist(event.data.playlistId);
 		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(event.data.playlistId)});
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.playlist = playlistCollection.get("activePlaylist");
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.resetPlaylist();
@@ -396,6 +396,7 @@ $(function() {
 	},
 	
 	addVideoToPlaylist: function(playlistId, playlistItemModel) {
+		playlistItemModel.set({playlistId: playlistId});
 		this.getPlaylistById(playlistId).addToPlaylist(playlistItemModel);
 		SocketManagerModel.addVideoToPlaylist(playlistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"));
 		if (playlistId == this.get("activePlaylist").get("playlistId")) {
@@ -491,15 +492,15 @@ $(function() {
 	 				if (videoId == playlistArray[i])
 	 					index = i;
 	 			}
-	 			var playlistVideos = window.SurfStreamApp.get("userModel").get("playlistCollection").get("activePlaylist").get("videos");
-	 			var playlistItemModel = ss_modelWithAttribute(playlistVideos, "videoId", videoId);
+	 			var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection").get("activePlaylist");
+	 			var playlistItemModel = ss_modelWithAttribute(playlistCollection.get("videos"), "videoId", videoId);
 	 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
-	 			playlistVideos.remove(playlistItemModel, {silent: true});
-	 			playlistVideos.add(copyPlaylistItemModel, {
+	 			playlistCollection.get("videos").remove(playlistItemModel, {silent: true});
+	 			playlistCollection.get("videos").add(copyPlaylistItemModel, {
 	 		    at: index,
 	 		    silent: true
 	 		   });
-	 		 SocketManagerModel.toIndexInPlaylist(videoId, index);
+	 		 SocketManagerModel.toIndexInPlaylist(playlistCollection.get("playlistId"), videoId, index);
 	 		},
 	 		containment: "#right-side"
 	 });
@@ -512,9 +513,10 @@ $(function() {
      return this;
     },
 
-  addVideo: function(playlistItemModel) {
+  addVideo: function(playlistItemModel, playlistId) {
    var playlistCellView = new PlaylistCellView({
     playlistItemModel: playlistItemModel,
+		playlistId: playlistId,
 		id: playlistItemModel.get("videoId")
    });
    playlistCellView.initializeView();
@@ -523,7 +525,7 @@ $(function() {
 	resetPlaylist : function() {
 		$("#video-list-container.videoListContainer").empty();
 		//_.each(this.playlist.get("videos"), function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
-		this.playlist.get("videos").each(function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
+		this.playlist.get("videos").each(function(playlistItemModel) {this.addVideo(playlistItemModel, this.playlist.get("playlistId"))}, this);
 	}
  });
 
@@ -865,7 +867,8 @@ $(function() {
    //Hack because of nested view bindings part 2 (events get eaten by Sidebar)
    this.render();
    $("#video-list-container").append(this.el);
-   videoID = this.options.playlistItemModel.get("videoId");
+   //do i need this line?
+	 videoID = this.options.playlistItemModel.get("videoId");
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
     videoModel: this.options.playlistItemModel,
@@ -885,7 +888,7 @@ $(function() {
 	 var collectionReference = event.data.playlistCollection;
 	 var playlistModelToRemove = ss_modelWithAttribute(collectionReference, "videoId", event.data.videoModel.get("videoId"));
    collectionReference.remove(playlistModelToRemove);
-   SocketManagerModel.deleteFromPlaylist(event.data.videoModel.get("videoId"));
+   SocketManagerModel.deleteFromPlaylist(event.data.videoModel.get("playlistId"), event.data.videoModel.get("videoId"));
   },
 
   toTheTop: function(event) {
@@ -901,7 +904,7 @@ $(function() {
     at: 0,
     silent: true
    });
-   //SocketManagerModel.toTopOfPlaylist(event.data.videoModel.get("videoId"));
+   SocketManagerModel.toTopOfPlaylist(event.data.videoModel.get("playlistId"), event.data.videoModel.get("videoId"));
    var playlistCellView = new PlaylistCellView({
     playlistItemModel: copyPlaylistItemModel,
 		id: event.data.videoModel.get("videoId")
@@ -1473,11 +1476,11 @@ $(function() {
 			console.log("here");
 			//this could be wrong with addition of multiple playlists
 			$("#video-list-container .videoListCellContainer:first").remove();
-			var playlistCollection = app.get("userModel").get("playlistCollection");
-			var playlistItemModel = playlistCollection.at(0);
+			var playlistModel = app.get("userModel").get("playlistCollection").get("activePlaylist");
+			var playlistItemModel = playlistModel.get("videos").at(0);
 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
-			playlistCollection.remove(playlistItemModel);
-			playlistCollection.add(copyPlaylistItemModel);
+			playlistModel.get("videos").remove(playlistItemModel);
+			app.get("userModel").get("playlistCollection").addVideoToPlaylist(playlistModel.get("playlistId"), copyPlaylistItemModel);
 		}
     if (!window.playerLoaded) {
      var params = {
@@ -1534,20 +1537,13 @@ $(function() {
 	 socket.on("user:profile", function(profile) {
 		if (profile == null) {
 			app.get("userModel").getFBUserData();
+			FB.api('/me/friends', app.get("userModel").sendUserFBFriends);
 		} else {
 			app.get("userModel").set({
 				displayName: profile.first_name + " " + profile.last_name,
 				avatarImage: 'https://graph.facebook.com/' + profile.id + '/picture',
 				ssId: profile.ssId
 			});
-			FB.api('/me/friends', app.get("userModel").sendUserFBFriends);
-			var getPath = function(href) {
-			    var l = document.createElement("a");
-			    l.href = href;
-			    return l.pathname;
-			}
-			console.log("ROUTING ON " + getPath(window.location));
-			Backbone.history.start({pushState: true, silent: (getPath(window.location) == "/") ? true : false});
 		}
 	 });
 
@@ -1556,8 +1552,13 @@ $(function() {
 			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
 		}
 		app.get("userModel").get("playlistCollection").setActivePlaylist({data: {playlistId: 1}});
-		//_.each(videoArray, function(video) {video.id = null}); //To prevent backbone from thinking we need to sync this with the server
-		// app.get("userModel").get("playlistCollection").reset(videoArray);
+		var getPath = function(href) {
+		    var l = document.createElement("a");
+		    l.href = href;
+		    return l.pathname;
+		}
+		console.log("ROUTING ON " + getPath(window.location));
+		Backbone.history.start({pushState: true, silent: (getPath(window.location) == "/") ? true : false});
    });
 
    socket.on('message', function(msg) {
@@ -1681,22 +1682,38 @@ $(function() {
    SocketManagerModel.socket.emit('meter:downvote');
   },
 
-  toTopOfPlaylist: function(vid_id) {
+  toTopOfPlaylist: function(playlistId, vid_id) {
    SocketManagerModel.socket.emit("playlist:moveVideoToTop", {
-    video: vid_id
+		playlistId: playlistId,
+    videoId: vid_id
    });
   },
 
-  deleteFromPlaylist: function(vid_id) {
+  deleteFromPlaylist: function(playlistId, vid_id) {
    SocketManagerModel.socket.emit("playlist:delete", {
-    video: vid_id
+		playlistId: playlistId,
+    videoId: vid_id
    });
   },
 
-	toIndexInPlaylist: function(vid_id, newIndex) {
+	toIndexInPlaylist: function(playlistId, vid_id, newIndex) {
 		SocketManagerModel.socket.emit("playlist:moveVideo", {
-			video: vid_id,
+			playlistId: playlistId,
+			videoId: vid_id,
 			index: newIndex
+		});
+	},
+	
+	choosePlaylist: function(playlistId) {
+		SocketManagerModel.socket.emit("playlists:choosePlaylist", {
+			playlistId: playlistId
+		});
+	},
+	
+	addPlaylist: function(playlistId, playlistName) {
+		SocketManagerModel.socket.emit("playlists:addPlaylist", {
+			playlistId: playlistId,
+			playlistName: playlistName
 		});
 	},
 
