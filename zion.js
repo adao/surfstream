@@ -71,7 +71,7 @@ RoomManager = Backbone.Model.extend({
 				var rooms = [];
 				var friendsRooms = {};
 				for (var index in reply) {
-					friendsRooms[reply[index]] = userManager.ssIdToRoom[reply[index]];
+					friendsRooms[reply[index]] = userManager.fbIdToRoom[reply[index]];
 					console.log(friendsRooms[reply[index]]);
 				}
 				for(var rName in roomManager.roomMap) {
@@ -106,6 +106,7 @@ UserManager = Backbone.Model.extend({
 		//ssId to {user: userModel, roomInfo}
 		this.ssIdToRoom = {};
 		this.ssIdToUserProfile = {};
+		this.fbIdToRoom = {};
 	}
 });
 
@@ -199,8 +200,9 @@ io.sockets.on('connection', function(socket) {
 			roomManager.createRoom(socket, data.rID);
 		} 
 		if(redisClient) {
-			redisClient.sadd("onlineFacebookUsers", data.id);
-			userManager.ssIdToRoom[data.id] = data.rID;
+			redisClient.sadd("onlineFacebookUsers", data.fbId);
+			userManager.fbIdToRoom[data.fbId] = data.rID;
+			userManager.ssIdToRoom[data.ssId] = data.rID;
 		}
 		if(data.currRoom) {
 				console.log('curr room: '+data.currRoom);

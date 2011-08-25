@@ -95,7 +95,6 @@ $(function() {
   getFBUserData: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
-		FB.api('/me/friends', app.get("userModel").sendUserFBFriends);
 		this.getUserPostedVideos();
    }
   },
@@ -1547,6 +1546,7 @@ $(function() {
 				avatarImage: 'https://graph.facebook.com/' + profile.id + '/picture',
 				ssId: profile.ssId
 			});
+			FB.api('/me/friends', app.get("userModel").sendUserFBFriends);
 		}
 	 });
 
@@ -1733,7 +1733,8 @@ $(function() {
 			payload.currRoom = SurfStreamApp.inRoom;
 		}		
 		SurfStreamApp.inRoom = rID;
-		payload.id = window.SurfStreamApp.get("userModel").get("ssId");
+		payload.fbId = window.SurfStreamApp.get("userModel").get("fbId");
+		payload.ssId = window.SurfStreamApp.get("userModel").get("ssId");
 		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
 		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
 		if (window.YTPlayer) {
