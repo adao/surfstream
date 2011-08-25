@@ -683,11 +683,14 @@
 					if (reply != 'undefined' && reply != null) {
 						var userPlaylists = {};
 						for (var i = 1; i <= Object.size(reply); i++) {
-							userPlaylists[i] = JSON.parse(reply[i]);
+							var playlist = JSON.parse(reply[i]);
+							userPlaylists[i] = new models.Playlist({name: playlist[name]});
+							userPlaylists[i].videos.mport(playlist[videos]);
 						}
 						console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
 						userModel.setPlaylist(userPlaylists[1]);
+						userModel.addPlaylistListeners(socket);
 						socket.emit("playlist:initialize", userPlaylists);
 					}
 				}
@@ -695,6 +698,9 @@
 		},
 		
 		addPlaylistListeners: function(socket) {
+			var userId = this.get("userId");
+			var playlists = this.playlists;
+			var thisUser = this;
 			socket.on('playlists:choosePlaylist', function(data) {
 				if (!this.playlists[data.playlistId]) {
 					return;
@@ -720,8 +726,9 @@
 			});
 			
 			socket.on('playlist:addVideo', function(data) {
-				if(this.playlists[data.playlistId].videos.get(data.videoId)) return;
-				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
+				console.log(playlists);
+				if(playlists[data.playlistId].videos.get(data.videoId)) return;
+				playlists[data.playlistId].addVideo(data.video, data.thumb, data.title, data.duration, data.author);
 				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xportTwo()));
 			}); 
 
