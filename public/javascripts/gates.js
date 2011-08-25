@@ -1021,6 +1021,8 @@ $(function() {
 	   });
 	 avatarVAL.css("margin-left", '410px');
 	 avatarVAL.hide();
+	 avatarVAL.data({"sofaML": 410});
+	 avatarVAL.data({"sofaMT": 0});
    $("#up-vote").bind("click", SocketManagerModel.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
@@ -1133,6 +1135,7 @@ $(function() {
 					//take DJ off sofa
 					oldPos = user.data("oldPos");
 					user.animate({"margin-top": Y_COORD + 70}, 500, "bounceout").animate({"margin-left": oldPos.x, "margin-top": oldPos.y}, 600);
+					user.data({"trueY": oldPos.y.replace("px", "")});
 	     	  user.data("isDJ", 0);
 				}
 		 }	
@@ -1166,7 +1169,9 @@ $(function() {
 			user.animate({"margin-left": X_COORDS[dj], "margin-top": Y_COORD + 70}, 400);
 		} 
 			
-		user.animate({"margin-top": Y_COORD}, 500, "bouncein");
+		user.animate({"margin-top": Y_COORD, "margin-left": X_COORDS[dj]}, 500, "bouncein");
+		user.data({"sofaMT": Y_COORD, "sofaML": X_COORDS[dj]}, 500, "bouncein");
+		user.data({"trueY": Y_COORD});
 		 
 		}
 		
@@ -1255,6 +1260,7 @@ $(function() {
 		    fade: 'true',
 		   });
 		$("#avatarWrapper_" + user.id).data("isDJ", "0");
+		console.log("margintop stored, value: "+ user.get('y'))
 		$(this.el).data({"trueX": user.get('x'), "trueY": user.get('y')});
 		$(this.el).animate({"margin-top": user.get('y'), "margin-left": user.get('x') }, 900, 'expoout');
 	},
@@ -1439,6 +1445,8 @@ $(function() {
    /* First set up all listeners */
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
+	console.log('video announced');
+		var remoteX, remoteY,curX, curY, djRemote;
 		SurfStreamApp.curDJ = video.dj;
 		mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
@@ -1493,7 +1501,26 @@ $(function() {
 		playerModel.set({curVid: {curID: video.id, curTitle: video.title, percent: 0.5} });
 		
 		//put remote on appropro DJ
-		//$("#avatarWrapper_" + video.dj).append($("#remote"));
+		djRemote = $("#sofa-remote");
+		curX = parseInt(djRemote.css("left").replace("px", ""));
+		curY = parseInt(djRemote.css("top").replace("px", ""));
+		remoteX = $("#avatarWrapper_" + video.dj).data("sofaML") + 60;
+		remoteY = $("#avatarWrapper_" + video.dj).data("sofaMT") + 50;
+		var bezier_params = {
+		    start: { 
+		      x: curX, 
+		      y: curY, 
+		      angle: (curX > remoteX) ? 30: -30,
+					length: .5
+		    },  
+		    end: { 
+		      x:remoteX,
+		      y:remoteY, 
+		      angle: (curX > remoteX) ? -10: 10
+		    }
+		  }
+
+		djRemote.animate({rotate: "+=2880deg", path : new $.path.bezier(bezier_params)}, 1000);
    });
 
    socket.on('video:stop', function() {
@@ -1546,6 +1573,7 @@ $(function() {
    });
 
    socket.on('djs:announce', function(djArray) {
+		console.log('djs announced');
 		app.get("mainView").theatreView.updateDJs(djArray);
    });
 
@@ -1561,9 +1589,9 @@ $(function() {
 			$("#avatarWrapper_" + fbid + " .default").hide();
 			(function() {
 				var element = $("#avatarWrapper_" + fbid);
-				element.data("animating", true);
-				var marginTop = element.data("trueY");
+				element.data("animating", true);				
 			    (function(){
+						  var marginTop = element.data("trueY");
 							if (element.data("animating") == true) {
 			        element
 			            .animate({ marginTop: marginTop - 6 }, 500)
