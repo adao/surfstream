@@ -170,6 +170,7 @@
 		playVideoFromPlaylist: function(socketId) {
 			var roomName = this.room.get('name');
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
+			this.room.users.get(socketId).saveActivePlaylist();
 			var currDJ = this.room.djs.currDJ.get('userId');
 			videoToPlay.set({ dj: currDJ });
 			if(!videoToPlay) {
@@ -612,6 +613,7 @@
 		},
 		
 		setPlaylist: function(playlistId) {
+			this.playlistId = playlistId;
 			this.playlist = this.playlists[playlistId];
 		},
 		
@@ -671,6 +673,10 @@
 			});
 		},
 		
+		saveActivePlaylist: function() {
+			this.savePlaylist(this.playlistId);
+		},
+		
 		initializeAndSendPlaylists: function(socket) {
 			var userId = this.get('userId');
 			var userModel = this;
@@ -699,25 +705,27 @@
 			var playlists = this.playlists;
 			var thisUser = this;
 			socket.on('playlists:choosePlaylist', function(data) {
-				console.log("ATTEMPTING TO CHANGE PLAYLIST");
 				if (!playlists[data.playlistId] || thisUser.playlist == playlists[data.playlistId]) {
 					return;
 				} else {
-					console.log("CHANGING PLAYLIST TO " + data.playlistId);
-					thisUser.playlist = playlists[data.playlistId];
+					thisUser.setPlaylist(data.playlistId);
 				}
 			});
 			socket.on('playlists:addPlaylist', function(data) {
+				console.log("here1");
 				redisClient.hlen("user:" + userId + ":playlists", function(err, reply) {
 					if (err) {
 						console.log("Error retrieving retrieving length of user's playlists hash for facebook user " + data.fbId);
 					} else {
+						console.log("here2");
 						var numPlaylists = reply;
 						if (numPlaylists != null && numPlaylists != 'undefined' && numPlaylists + 1 == data.playlistId) {
+							console.log("here3");
 							var playlistKey = numPlaylists + 1;
-							var newPlaylist = new models.Playlist({name: data.playlistName, videos: new VideoCollection()});
+							var newPlaylist = new models.Playlist({name: data.playlistName, videos: new models.VideoCollection()});
 							playlists[playlistKey] = newPlaylist;
 							thisUser.savePlaylist(data.playlistId);
+							console.log("here4");
 						}
 					}
 				});

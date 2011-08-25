@@ -906,6 +906,7 @@ background-color: green,
   display: inline-block;
   list-style-type: none;
   background: none repeat scroll;
+  padding: 5px;
 }
 .selected-playlist-nameholder {
   background-color: #fff;
@@ -913,6 +914,7 @@ background-color: green,
   display: inline-block;
   list-style-type: none;
   background: none repeat scroll;
+  padding: 5px;
 }
 #playlist-collection-display {
   height: 90px;

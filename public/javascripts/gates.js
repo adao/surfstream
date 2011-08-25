@@ -437,7 +437,10 @@ $(function() {
 	
 	addPlaylist: function(event) {
 		var playlistName = $("#playlist-collection-input").val();
+		if (playlistName.length == 0)
+			return;
 		var playlistId = event.data.playlistCollectionView.options.playlistCollection.length() + 1;
+		SocketManagerModel.addPlaylist(playlistId, playlistName);
 		event.data.playlistCollectionView.options.playlistCollection.addPlaylist(playlistId, playlistName, new PlaylistItemCollection());
 		$("#playlist-collection-input").val("");
 		return false;
