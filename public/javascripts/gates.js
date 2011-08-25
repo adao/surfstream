@@ -322,16 +322,20 @@ $(function() {
 
  });
 
- window.PlaylistModel = Backbone.Collection.extend({
-	//has a name(name), a playlistId(playlistId), and list of videos(videos)
+ window.PlaylistItemCollection = Backbone.Collection.extend({
 	model: PlaylistItemModel,
+ });
+
+ window.PlaylistModel = Backbone.Model.extend({
+	//has a name(name), a playlistId(playlistId), and list of videos(videos)
 	
 	initialize: function() {
-		console.log("here");
+		console.log("herezzzzzzzzzzzzzz");
+		this.videos = new PlaylistItemCollection();
 	},
 	
 	addToPlaylist: function(playlistItemModel) {
-		this.add(playlistItemModel);
+		this.videos.add(playlistItemModel);
 	},
 	
 	removeFromPlaylist: function() {
@@ -354,7 +358,7 @@ $(function() {
 		var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
 		var previouslySelected = playlistCollection.get("activePlaylist");
 		if (previouslySelected) {
-			$(playlistCollection.idToPlaylistNameholder[previouslySelected.playlistId].el).removeClass("selected-playlist-nameholder").addClass("unselected-playlist-nameholder");
+			$(playlistCollection.idToPlaylistNameholder[previouslySelected.get("playlistId")].el).removeClass("selected-playlist-nameholder").addClass("unselected-playlist-nameholder");
 		}
 		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(event.data.playlistId)});
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.playlist = playlistCollection.get("activePlaylist");
@@ -374,10 +378,13 @@ $(function() {
 		$(playlistNameholderView.el).bind("click", {playlistId: playlistId}, this.setActivePlaylist);
 		this.idToPlaylistNameholder[playlistId] = playlistNameholderView;
 		var playlistModel = new PlaylistModel();
-		playlistModel.playlistId = playlistId;
-		playlistModel.name = name;
-		//playlistModel.videos = videos;
-		//playlistModel.reset(videos);
+		var playlistVideos;
+		// if (!videos) {
+		// 	playlistVideos = new PlaylistItemCollection();
+		// } else {
+		// 	playlistVideos = videos;
+		// }
+		playlistModel.set({playlistId: playlistId, name: name, videos: videos});
 		this.idToPlaylist[playlistId] = playlistModel;
 		//send socket event
 	},
@@ -393,7 +400,7 @@ $(function() {
 	addVideoToPlaylist: function(playlistId, playlistItemModel) {
 		this.getPlaylistById(playlistId).addToPlaylist(playlistItemModel);
 		SocketManagerModel.addVideoToPlaylist(playlistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"));
-		if (playlistId == this.get("activePlaylist").playlistId) {
+		if (playlistId == this.get("activePlaylist").get("playlistId")) {
 			window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.addVideo(playlistItemModel);
 		}
 	}
@@ -486,11 +493,11 @@ $(function() {
 	 				if (videoId == playlistArray[i])
 	 					index = i;
 	 			}
-	 			var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection").get("activePlaylist");
-	 			var playlistItemModel = ss_modelWithAttribute(playlistCollection, "videoId", videoId);
+	 			var playlistVideos = window.SurfStreamApp.get("userModel").get("playlistCollection").get("activePlaylist").videos;
+	 			var playlistItemModel = ss_modelWithAttribute(playlistVideos, "videoId", videoId);
 	 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
-	 			playlistCollection.remove(playlistItemModel, {silent: true});
-	 			playlistCollection.add(copyPlaylistItemModel, {
+	 			playlistVideos.remove(playlistItemModel, {silent: true});
+	 			playlistVideos.add(copyPlaylistItemModel, {
 	 		    at: index,
 	 		    silent: true
 	 		   });
@@ -517,7 +524,7 @@ $(function() {
 
 	resetPlaylist : function() {
 		$("#video-list-container.videoListContainer").empty();
-		this.playlist.each(function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
+		this.playlist.videos.each(function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
 	}
  });
 
@@ -1658,6 +1665,7 @@ $(function() {
 
   addVideoToPlaylist: function(playlistId, videoId, thumb, title, duration, author) {
    SocketManagerModel.socket.emit('playlist:addVideo', {
+		playlistId: playlistId,
     videoId: videoId,
     thumb: thumb,
     title: title,
