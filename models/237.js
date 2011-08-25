@@ -19,8 +19,8 @@
 	models.VAL = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
-			this.userSuggest = new models.Playlist();
-			this.autoPlaylist = new models.Playlist();
+			this.userSuggest = new models.Playlist({videos: new models.VideoCollection()});
+			this.autoPlaylist = new models.Playlist({videos: new models.VideoCollection()});
 			
 			this.isDJ = true;
 			this.takeSuggest = false;
@@ -35,7 +35,7 @@
 				var thisUser = val.room.users.get(socket.id);
 				if(!val.userSuggest.containsVideo(data.video)) {
 					val.userSuggest.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-					val.userSuggest.videos.get(data.video).set({ 'suggestedBy': thisUser.get('name')});
+					val.userSuggest.get("videos").get(data.video).set({ 'suggestedBy': thisUser.get('name')});
 				}
 			});
 			
@@ -356,12 +356,12 @@
 		addSocket: function(socket) {
 			var thisSocket = this;
 			socket.on('disconnect', function() { 
+				console.log("user disconnected");
 				thisSocket.removeSocket(socket);
 			});
 			
 			if(this.room) {
 				this.room.addChatListener(socket);
-				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
 				console.log('['+this.room.get('name')+'][SM] addSocket(): socket is joining channel with name: '+this.room.get('name'));
@@ -391,11 +391,17 @@
 			console.log('['+this.room.get('name')+'][Room] removeSocket(): there are now '+this.room.users.length+ ' users in the room, and dj count: '+this.room.djs.length);
 
 			//save playlist for user
-			var userPlaylist = userToRemove.playlist.xport();
+			var userPlaylists = userToRemove.playlists;
+			for (var i = 1; i <= Object.size(userPlaylists); i++) {
+				redisClient.hset('user:' + userId + ':playlists', i, JSON.stringify(userPlaylists[i]), function(err, reply) {
+					if (err) {
+						console.log(' playlist save was NOT SUCCESSFUL');
+					} else {
+						console.log(' playlist save was successful');
+					}
+				});
+			}
 			//console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
-			redisClient.set('user:'+userId+':playlist', userPlaylist, function() {
-				console.log('...save was successful');
-			});
 			this.announceClients();
 			
 			return userToRemove;
@@ -489,36 +495,33 @@
 	/*************************/
 
 	models.Playlist = Backbone.Model.extend({
-		initialize: function() {
-			this.videos = new models.VideoCollection();
-		},
 
 		addVideo: function(id, thumb, title, duration, author) {
-			if(this.videos.get(id))
+			if(this.get("videos").get(id))
 				return false;
 			var vid = new models.Video();
 			vid.id = id;
 			vid.set({ videoId: id, thumb: thumb, title: title, duration: duration, author: author});
-			this.videos.add(vid);
+			this.get("videos").add(vid);
 		},
 		
 		containsVideo: function(id) {
-			if(this.videos.get(id)) return true;
+			if(this.get("videos").get(id)) return true;
 			return false;
 		},
 		
 		getSize: function() {
-			return this.videos.length;
+			return this.get("videos").length;
 		},
 		
 		moveToIndex: function(videoId, indexToMove) {
-			if(indexToMove < 0 || indexToMove >= this.videos.length) //make sure index is legit
+			if(indexToMove < 0 || indexToMove >= this.get("videos").length) //make sure index is legit
 				return false;
 			
-			var video = this.videos.get(videoId);
+			var video = this.get("videos").get(videoId);
 			if(video) {
-				this.videos.remove(video);
-				this.videos.add(video, { at: indexToMove });
+				this.get("videos").remove(video);
+				this.get("videos").add(video, { at: indexToMove });
 				return true;
 			}
 			return false;
@@ -529,10 +532,10 @@
 		},
 		
 		moveToBottom: function(videoId) {
-			var video = this.videos.get(videoId);
+			var video = this.get("videos").get(videoId);
 			if(video) {
-				this.videos.remove(video);
-				this.videos.add(video);
+				this.get("videos").remove(video);
+				this.get("videos").add(video);
 				return true;
 			}
 			return false;
@@ -541,54 +544,38 @@
 		//returns the first Video, and moves the Video
 		//to the end of the playlist 
 		playFirstVideo: function() {
-			// if(this.videos.length == 0) {
+			// if(this.get("videos").length == 0) {
 			// 				return null;
 			// 			}
-			// 			var first = this.videos.at(0);
-			// 			this.videos.remove(first);
-			// 			this.videos.add(first);	//adds video to the end;
+			// 			var first = this.get("videos").at(0);
+			// 			this.get("videos").remove(first);
+			// 			this.get("videos").add(first);	//adds video to the end;
 			// 			return first;
 			var firstVideo = this.popVideo();
 			if(firstVideo) {
-				this.videos.add(firstVideo);
+				this.get("videos").add(firstVideo);
 			}
 			return firstVideo;
 		},
 		
 		popVideo: function() {
-			if(this.videos.length == 0) return null;
+			if(this.get("videos").length == 0) return null;
 
-			var first = this.videos.at(0);
-			this.videos.remove(first);
+			var first = this.get("videos").at(0);
+			this.get("videos").remove(first);
 			return first;
 		},
 		
 		deleteVideo: function(videoId) {
-			this.videos.remove(videoId);
+			this.get("videos").remove(videoId);
 		},
 		
 		xport: function() {
 			var videoExport = [];
-			this.videos.each(function(video) {
+			this.get("videos").each(function(video) {
 				videoExport.push(video.xport());
 			});
 			return JSON.stringify(videoExport);
-		},
-		
-		/* rawVideoData : array of video objects */
-		mport: function(rawVideoData) {	
-			for(var i= 0; i < rawVideoData.length; i = i+1) {
-				var video = rawVideoData[i];
-				var videoToAdd = new models.Video({ 
-					videoId: video.videoId, 
-					thumb: video.thumb, 
-					title: video.title, 
-					duration: video.duration, 
-					author: video.author 
-				});
-				videoToAdd.id = video.videoId;
-				this.videos.add(videoToAdd);
-			}
 		}
 		
 	});
@@ -684,8 +671,7 @@
 						var userPlaylists = {};
 						for (var i = 1; i <= Object.size(reply); i++) {
 							var playlist = JSON.parse(reply[i]);
-							userPlaylists[i] = new models.Playlist({name: playlist[name]});
-							userPlaylists[i].videos.mport(playlist[videos]);
+							userPlaylists[i] = new models.Playlist({name: playlist.name, videos: new models.VideoCollection(playlist.videos)});
 						}
 						console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
@@ -726,8 +712,7 @@
 			});
 			
 			socket.on('playlist:addVideo', function(data) {
-				console.log(playlists);
-				if(playlists[data.playlistId].videos.get(data.videoId)) return;
+				if(playlists[data.playlistId].get("videos").get(data.videoId)) return;
 				playlists[data.playlistId].addVideo(data.video, data.thumb, data.title, data.duration, data.author);
 				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xportTwo()));
 			}); 
@@ -735,7 +720,7 @@
 			socket.on('playlist:moveVideoToTop', function(data) {
 				var thisUser = userCollect.get(socket.id);
 				
-				if(thisUser.playlist.videos.get(data.video)) {
+				if(thisUser.playlist.get("videos").get(data.video)) {
 					thisUser.playlist.moveToTop(data.video);
 				}
 				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xportTwo()));
@@ -744,7 +729,7 @@
 			socket.on('playlist:delete', function(data) {
 				var thisUser = userCollect.get(socket.id);
 
-				if(thisUser.playlist.videos.get(data.video)) {
+				if(thisUser.playlist.get("videos").get(data.video)) {
 					thisUser.playlist.deleteVideo(data.video);
 				}
 				//console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xportTwo()));
@@ -753,7 +738,7 @@
 			socket.on('playlist:moveVideo', function(data) {
 				var thisUser = userCollect.get(socket.id);
 
-				if(thisUser.playlist.videos.get(data.video)) {
+				if(thisUser.playlist.get("videos").get(data.video)) {
 					thisUser.playlist.moveToIndex(data.video, data.index);
 				}
 			})
@@ -776,6 +761,22 @@
 				x: this.get('xCoord'),
 				y: this.get('yCoord')
 			};
+		},
+		
+		/* rawVideoData : array of video objects */
+		mport: function(rawVideoData) {	
+			for(var i= 0; i < rawVideoData.length; i = i+1) {
+				var video = rawVideoData[i];
+				var videoToAdd = new models.Video({ 
+					videoId: video.videoId, 
+					thumb: video.thumb, 
+					title: video.title, 
+					duration: video.duration, 
+					author: video.author 
+				});
+				videoToAdd.id = video.videoId;
+				this.get("videos").add(videoToAdd);
+			}
 		}
 	});
 

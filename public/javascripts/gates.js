@@ -331,11 +331,10 @@ $(function() {
 	
 	initialize: function() {
 		console.log("herezzzzzzzzzzzzzz");
-		this.videos = new PlaylistItemCollection();
 	},
 	
 	addToPlaylist: function(playlistItemModel) {
-		this.videos.add(playlistItemModel);
+		this.get("videos").add(playlistItemModel);
 	},
 	
 	removeFromPlaylist: function() {
@@ -363,7 +362,6 @@ $(function() {
 		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(event.data.playlistId)});
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.playlist = playlistCollection.get("activePlaylist");
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.resetPlaylist();
-		//this.get("playlistCollection").reset(this.activePlaylist.videos);
 		playlistNameholderView = playlistCollection.idToPlaylistNameholder[event.data.playlistId];
 		$(playlistNameholderView.el).removeClass("unselected-playlist-nameholder").addClass("selected-playlist-nameholder");
 	},
@@ -439,7 +437,7 @@ $(function() {
 	addPlaylist: function(event) {
 		var playlistName = $("#playlist-collection-input").val();
 		var playlistId = event.data.playlistCollectionView.options.playlistCollection.length() + 1;
-		event.data.playlistCollectionView.options.playlistCollection.addPlaylist(playlistId, playlistName, {});
+		event.data.playlistCollectionView.options.playlistCollection.addPlaylist(playlistId, playlistName, new PlaylistItemCollection());
 		$("#playlist-collection-input").val("");
 		return false;
 	},
@@ -493,7 +491,7 @@ $(function() {
 	 				if (videoId == playlistArray[i])
 	 					index = i;
 	 			}
-	 			var playlistVideos = window.SurfStreamApp.get("userModel").get("playlistCollection").get("activePlaylist").videos;
+	 			var playlistVideos = window.SurfStreamApp.get("userModel").get("playlistCollection").get("activePlaylist").get("videos");
 	 			var playlistItemModel = ss_modelWithAttribute(playlistVideos, "videoId", videoId);
 	 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 	 			playlistVideos.remove(playlistItemModel, {silent: true});
@@ -524,7 +522,8 @@ $(function() {
 
 	resetPlaylist : function() {
 		$("#video-list-container.videoListContainer").empty();
-		this.playlist.videos.each(function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
+		//_.each(this.playlist.get("videos"), function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
+		this.playlist.get("videos").each(function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
 	}
  });
 
@@ -1554,7 +1553,7 @@ $(function() {
 
    socket.on('playlist:initialize', function(userPlaylists) {
 		for (var i = 1; i <= Object.size(userPlaylists); i++) {
-			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, userPlaylists[i].videos);
+			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
 		}
 		app.get("userModel").get("playlistCollection").setActivePlaylist({data: {playlistId: 1}});
 		//_.each(videoArray, function(video) {video.id = null}); //To prevent backbone from thinking we need to sync this with the server
