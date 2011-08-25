@@ -900,8 +900,28 @@ background-color: green,
 #top-video-views {
   background-color: #000;
 }
+.unselected-playlist-nameholder {
+  background-color: #000;
+  color: #fff;
+  display: inline-block;
+  list-style-type: none;
+  background: none repeat scroll;
+}
+.selected-playlist-nameholder {
+  background-color: #fff;
+  color: #000;
+  display: inline-block;
+  list-style-type: none;
+  background: none repeat scroll;
+}
+#playlist-collection-display {
+  height: 90px;
+  width: 300px;
+  margin-left: -40px;
+}
 #playlist-collection {
   height: 120px;
+  font-size: 10px;
 }
 #playlist-view {
   height: 259px;
