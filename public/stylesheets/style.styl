@@ -343,7 +343,7 @@ div.chatContainer
 div.historyContainer
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif  
 	font-size: 14px
-	height: 350px
+	height: 270px
 	width: 300px
 	overflow-x: hidden
 	overflow-y: hidden
@@ -365,14 +365,14 @@ div.historyContainer
 		height: 35px
 		font-size: 12px
 	.history
-		height: 290px
+		height: 250px
 		width: 300px
 		background-color: white
 		.historyTitle
 			height: 18px
 			margin-left: 3px
 		.videoHistory
-			height: 272px
+			height: 250px
 			background-color: gray
 			overflow-x: hidden
 			overflow-y: scroll
@@ -380,17 +380,17 @@ div.historyContainer
 //history cell			
 .videoLog
 	width: 285px
-	height: 95px
+	height: 108px
+	background-color: black
 	.thumbContainer
-		float: left
-		width: 58px
-		height: 46px
-		margin-left: 7px
-		margin-top: 7px
+		display: block
+		height: 60px
+		background-color: blue
 	.videoInfo
-		float: right
-		width: 197px
-		height: 75px
+		display: block
+		width: 285px
+		height: 48px
+		background-color: red
 		.title
 			width: 185px
 			height: 17px
@@ -571,8 +571,8 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	z-index: 666
 	
 #remote-container
-	height: 190px!important
-	width: 104px!important
+	height: 245px!important
+	width: 114px!important
 	float: right
 	display: block
 	margin-top: 180px
@@ -588,12 +588,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		margin-left: 38px;
 		cursor: n-resize
 	#remote
-		height: 180px!important
-		width: 104px!important
-		background: url('/images/room/remote.png') 50% 50% no-repeat
+		height: 245px!important
+		width: 114px!important
+		background: url('/images/room/remote2.png') 50% 50% no-repeat
 		.remote-top
-			width: 104px
-			height: 74px
+			width: 114px
+			height: 70px
 			display: block
 			cursor: n-resize
 		.side-button-container
@@ -628,6 +628,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 
 #vol-up, #vol-down
 	font-size: 10px
+#vol-up
+	text-indent: -3px
+
+.vol-container
+	width: 114px
 
 .buttonContainer, .bottombuttonContainer, .bottombuttonContainerwide  
 	border: none
@@ -640,7 +645,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	-moz-border-radius: 20px
 	cursor: pointer
 
-#up-vote, #down-vote, #vol-up, #vol-down, #rooms, #history-button, #mute
+#up-vote, #down-vote, #vol-up, #vol-down, #rooms, #history-button, #mute, #ch-up, #ch-down, #fullscreen
 	background: transparent
 	height: 25px
 	width: 35px
@@ -667,11 +672,14 @@ button.playlist, button.playlist.active, button.search, button.search.active
 
 .bottombuttonContainerwide
 	margin-top: 7px
-	margin-left: 20px
+	margin-left: 26px
 	width: 60px
-	#rooms,#mute, #history-button
+	#rooms,#mute, #history-button, #fullscreen
 		width: 60px
 		background: transparent
+
+#fullscreen
+	text-indent: -4px
 
 #room-modal
 	position: absolute
@@ -1028,21 +1036,9 @@ div#top-video-name
 	font-size: 12px
 	margin-top: -28px
 	margin-left: 5px
-	
-#fullscreen
-	position: absolute
-	margin-left: 2px
-	z-index: 10000
-	margin-top: 234px
-	width: 30px
-	padding: 3px
-	cursor: pointer
-
-#fullscreen:hover
-	background-color: white
-	
+		
 #fullscreen.fully
-	background-color: white
+	background: rgba(255, 255, 255, .3)
 	position: fixed
 	margin-left: 0px
 	bottom: 0
@@ -1052,8 +1048,8 @@ div#top-video-name
 	margin-top: 0px
 		
 #fullscreen.fully:hover
-	background-color: #34b7fe
-	
+	background: rgba(255, 255, 255, .6)
+
 #nowPlayingFull
 	border-radius: 3px
 	border: solid 1px gray
@@ -1103,3 +1099,9 @@ div#top-video-name
 
 a#fdbk_tab
 	z-index: 10
+
+#footer
+	width: 960px
+	height: 40px
+	background-color: black
+	z-index: 500
