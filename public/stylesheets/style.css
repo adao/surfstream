@@ -1,3 +1,6 @@
+button {
+  cursor: pointer;
+}
 button.leftbtn,
 button.rightbtn,
 button.centerbtn,
@@ -226,7 +229,7 @@ body {
   margin-top: 3px;
 }
 #outer #coolshit {
-  height: 700px;
+  height: 684px;
   width: 960px;
   background-color: transparent;
   display: block;
@@ -267,12 +270,21 @@ body {
   -webkit-border-top-left-radius: 2px !important;
   float: left;
 }
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist:hover,
+#outer #coolshit #right-side .sidebarContainer .viewBar .search:hover {
+  -moz-box-shadow: inset 0 0 2px #000;
+  -webkit-box-shadow: inset 0 0 2px #000;
+  box-shadow: inset 0 0 2px #000;
+}
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
   float: right;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .active {
   color: #fff;
   background-color: #34b7fe;
+  -moz-box-shadow: inset 0 0 0px #000 !important;
+  -webkit-box-shadow: inset 0 0 0px #000 !important;
+  box-shadow: inset 0 0 0px #000 !important;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
@@ -297,8 +309,13 @@ body {
   padding: 0;
   border: 0;
   outline: 0;
-  background-color: #e7e7e7;
+  background-color: #373737;
   text-indent: 4px;
+  color: #c0c0c0;
+}
+#outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox input:focus {
+  background-color: #e7e7e7;
+  color: #000;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox #clear-search-container {
   height: 34px;
@@ -396,83 +413,112 @@ div.chatContainer form.inputBox input {
   padding: 0;
   border: 0;
   outline: 0;
-  background-color: #e7e7e7;
+  background-color: #373737;
   text-indent: 4px;
+  color: #c0c0c0;
+}
+div.chatContainer form.inputBox input:focus {
+  background-color: #e7e7e7;
+  color: #000;
 }
 div.historyContainer {
+  position: absolute;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-size: 14px;
-  height: 270px;
+  height: 271px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
-  border: 1px solid #000;
-}
-div.historyContainer .roomInfo {
-  display: block;
-  height: 25px;
-  width: 300px;
-  vertical-align: middle;
-  margin-left: 3px;
-}
-div.historyContainer .roomInfo .createdBy {
-  font-weight: bold;
-}
-div.historyContainer .roomInfo .createdBy span.historyUser {
-  font-weight: 300;
-}
-div.historyContainer .roomDescription {
-  margin-left: 3px;
-  margin-right: 3px;
-  display: block;
-  height: 35px;
-  font-size: 12px;
+  background-color: #373737;
 }
 div.historyContainer .history {
-  height: 250px;
-  width: 300px;
-  background-color: #fff;
+  height: 251px;
+  background: transparent;
 }
 div.historyContainer .history .historyTitle {
+  vertical-align: top;
+  display: block;
+  background-color: #808080;
+  height: 30px;
+  font-size: 16px;
+  color: #fff;
+}
+div.historyContainer .history .historyTitle .history-title-text {
+  font-weight: bold;
+  text-indent: 4px;
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 6px;
   height: 18px;
-  margin-left: 3px;
+  width: 120px;
 }
 div.historyContainer .history .videoHistory {
-  height: 250px;
-  background-color: #808080;
+  height: 221px;
+  background-color: #373737;
   overflow-x: hidden;
   overflow-y: scroll;
 }
+div.historyContainer .history .closeHistory {
+  background-color: #808080;
+  height: 20px;
+}
+div.historyContainer .history .closeHistory #close-history {
+  float: right;
+  border: none;
+  background: transparent;
+  font-size: 10px;
+  color: #000;
+}
 .videoLog {
   width: 285px;
-  height: 108px;
-  background-color: #000;
+  height: 126px;
+  color: #d4d4d4;
 }
 .videoLog .thumbContainer {
   display: block;
-  height: 60px;
-  background-color: #00f;
+  height: 80px;
+  width: 275px;
+  margin-left: 4px;
+  background-color: #000;
 }
 .videoLog .videoInfo {
   display: block;
   width: 285px;
   height: 48px;
-  background-color: #f00;
 }
 .videoLog .videoInfo .title {
-  width: 185px;
-  height: 17px;
-  font-weight: bold;
-  font-size: 15px;
+  width: 285px;
+  height: 15px;
+  font-size: 12px;
+  padding-top: 2px;
+  text-indent: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .videoLog .videoInfo .details {
+  display: inline-block;
+  vertical-align: top;
   height: 33px;
-  font-size: 12px;
+  font-size: 10px;
   width: 185px;
 }
 .videoLog .videoInfo .details .time,
 .videoLog .videoInfo .details .score {
+  text-indent: 8px;
   height: 14px;
+}
+.videoLog .videoInfo .history-cell-button-container {
+  display: inline-block;
+  vertical-align: top;
+  width: 100px;
+  height: 33px;
+}
+.videoLog:nth-child(odd) {
+  background-color: #313131;
+}
+.videoLog:nth-child(even) {
+  background-color: #373737 !important;
 }
 .playlistContainer {
   height: 400px;
@@ -815,11 +861,11 @@ button
   height: 54px;
 }
 #room-modal #searchbar form.roomSearch input {
-  color: #000;
+  color: #c0c0c0;
   text-indent: 10px;
   border: 0 !important;
   margin-left: 10px;
-  background-color: #e7e7e7;
+  background-color: #373737;
   border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -829,6 +875,10 @@ button
   height: 36px;
   border: 0;
   outline: 0;
+}
+#room-modal #searchbar form.roomSearch input:focus {
+  color: #000;
+  background-color: #e7e7e7;
 }
 #room-modal #searchbar #clearSearch {
   display: inline-block;
@@ -916,8 +966,13 @@ button
 }
 #room-modal #create-room #CreateRoomName {
   width: 150px;
-  background-color: #e7e7e7;
+  background-color: #373737;
   text-indent: 3px;
+  color: #c0c0c0;
+}
+#room-modal #create-room #CreateRoomName:focus {
+  color: #000;
+  background-color: #e7e7e7;
 }
 #room-modal #create-room #CreateRoomName,
 #room-modal #create-room #CreateRoom {
@@ -1206,21 +1261,6 @@ background-color: green,
   margin-top: -28px;
   margin-left: 5px;
 }
-<<<<<<< HEAD
-=======
-#fullscreen {
-  position: absolute;
-  margin-left: 2px;
-  z-index: 10000;
-  margin-top: 234px;
-  width: 30px;
-  padding: 3px;
-  cursor: pointer;
-}
-#fullscreen:hover {
-  background-color: #fff;
-}
->>>>>>> 919590fadda537b073d224593a730fc1119d4e1e
 #fullscreen.fully {
   background: rgba(255,255,255,0.3);
   position: fixed;
@@ -1287,8 +1327,30 @@ a#fdbk_tab {
   z-index: 10;
 }
 #footer {
+  position: absolute;
   width: 960px;
-  height: 40px;
-  background-color: #000;
+  height: 200px;
+  background-image: url("/images/room/bgtile_black.png");
   z-index: 500;
+}
+.addToPlaylistHistory,
+.addToPlaylistHistory-added {
+  float: right;
+  background-color: transparent;
+  margin-right: 6px;
+  margin-top: 4px;
+  border: none;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+.addToPlaylistHistory {
+  background: url("/images/room/add.png");
+}
+.addToPlaylistHistory:hover {
+  background: url("/images/room/add_hover.png");
+}
+.addToPlaylistHistory-added {
+  background: url("/images/room/checkbox.png") 50% 50% no-repeat;
 }

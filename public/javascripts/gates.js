@@ -1643,7 +1643,7 @@ $(function() {
 		var vidsPlayed = SurfStreamApp.vidsPlayed;
 		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("fbId"));
 		SurfStreamApp.vidsPlayed = 0;
-		
+		$("#cur-room-name").html(rID); 
 		mpq.track("Room Joined", {wasDJ: isDJ, rID:rID, mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"}); 
 		var payload = {rID: rID};
 		if (create) payload.create = true;

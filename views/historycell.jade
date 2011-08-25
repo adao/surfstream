@@ -1,8 +1,11 @@
 #historyCell-template(style="display:none;")
-	.videoLog
+	.video-history-log
 		img.thumbContainer
 		.videoInfo
 			.title#videoTitle {{ title }}
 			.details
 				.time#videoLength {{ length }}
 				.score#roomVote Room Vote: {{ percent }}%
+			.history-cell-button-container
+				.add-history-cell
+					button.addToPlaylistHistory
