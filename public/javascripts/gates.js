@@ -95,6 +95,7 @@ $(function() {
   getFBUserData: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
+		FB.api('/me/friends', app.get("userModel").sendUserFBFriends);
 		this.getUserPostedVideos();
    }
   },
@@ -1540,7 +1541,6 @@ $(function() {
 	 socket.on("user:profile", function(profile) {
 		if (profile == null) {
 			app.get("userModel").getFBUserData();
-			FB.api('/me/friends', app.get("userModel").sendUserFBFriends);
 		} else {
 			app.get("userModel").set({
 				displayName: profile.first_name + " " + profile.last_name,
