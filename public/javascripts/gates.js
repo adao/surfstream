@@ -1008,18 +1008,19 @@ $(function() {
   el: '#room-container',
 
   initialize: function() {
-   $("#become-dj").bind("click", this.toggleDJStatus);
-	 $("#become-dj").hide();
+	 var becomeDJ = $("#become-dj"), remotePullup = $("#remote-pullup"), avatarVAL = $("#avatarWrapper_VAL");
+   becomeDJ.bind("click", this.toggleDJStatus);
+	 becomeDJ.hide();
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", this.fullscreenToggle);
-	 $(".remote-top").bind("click", this.pullRemoteUp);
-	 $("#remote-pullup").bind("click", this.pullRemoteUp);
-	 $("#remote-pullup").tipsy({
+	 $(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
+	 remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
+	 remotePullup.tipsy({
 	    gravity: 's',
 	    title: function() { return "Pull Up"; }
 	   });
-	 $("#avatarWrapper_VAL").css("margin-left", '410px');
-	 $("#avatarWrapper_VAL").hide();
+	 avatarVAL.css("margin-left", '410px');
+	 avatarVAL.hide();
    $("#up-vote").bind("click", SocketManagerModel.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
@@ -1039,9 +1040,47 @@ $(function() {
   },
 
 	pullRemoteUp : function (e) {
+		
 		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
-				$("#remote-container").animate({"margin-top": 89}, 400);
+			  
+				
+				$("#remote-container").animate({"margin-top": 89}, 300, function() {
+					var remotePullup ,remoteTop, remote;
+					remotePullup = $("#remote-pullup");
+					remoteTop = $(".remote-top"); 
+					remote = $("#remote");
+					remotePullup.unbind("click");
+					remoteTop.unbind("click");
+					remote.bind("click", {remote: e.data.remote}, e.data.remote.pullRemoteDown);
+					remotePullup.bind("click", {remote: e.data.remote}, e.data.remote.pullRemoteDown);
+					remoteTop.addClass("up");
+					remote.addClass("up");
+					remotePullup.addClass("up");
+				});
+				
 			}
+	},
+	
+	pullRemoteDown: function(e) {
+		
+		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
+			
+			
+			$("#remote-container").animate({"margin-top": 180}, 300, function() { 
+				var remotePullup ,remoteTop, remote;			
+				remotePullup = $("#remote-pullup");
+				remoteTop = $(".remote-top"); 
+				remote = $("#remote");
+				remotePullup.unbind("click");
+				remote.unbind("click");
+				remoteTop.bind("click", {remote: e.data.remote}, e.data.remote.pullRemoteUp);
+				remotePullup.bind("click", {remote: e.data.remote}, e.data.remote.pullRemoteUp);
+				remoteTop.removeClass("up");
+				remote.removeClass("up");
+				remotePullup.removeClass("up");
+			});
+			
+		}
 	},
 
 	fullscreenToggle: function() {

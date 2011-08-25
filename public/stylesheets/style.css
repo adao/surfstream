@@ -722,8 +722,17 @@ button.search.active {
   height: 90px;
   text-align: center;
 }
+#remote-container #remote .remote-top.up {
+  cursor: s-resize;
+}
+#remote-container #remote.up {
+  cursor: s-resize;
+}
 #remote-container button#remote-pullup:hover {
   background-color: #34b7fe;
+}
+#remote-container button#remote-pullup.up {
+  cursor: s-resize;
 }
 #vol-up,
 #vol-down {
@@ -1023,10 +1032,10 @@ background-color: green,
 }
 #video-list .videoListCellContainer .thumbContainer {
   float: left;
-  width: 58px;
-  height: 46px;
-  margin-left: 7px;
-  margin-top: 7px;
+  width: 63px;
+  height: 50px;
+  margin-top: 5px;
+  margin-left: 5px;
 }
 #video-list .videoListCellContainer .cellInfo {
   float: right;
