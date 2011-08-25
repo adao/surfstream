@@ -224,8 +224,7 @@ $(function() {
 			author: entry.author[0].name.$t
 		}
 		var playlistItemModel = new PlaylistItemModel(attributes);
-		this.get("playlistCollection").getPlaylistById(2).add(playlistItemModel);
-		SocketManagerModel.addVideoToPlaylist(videoId, attributes.thumb, attributes.title, attributes.duration, attributes.author);
+		this.get("playlistCollection").addVideoToPlaylist(2, playlistItemModel);
 	}
 	
  });
@@ -393,6 +392,7 @@ $(function() {
 	
 	addVideoToPlaylist: function(playlistId, playlistItemModel) {
 		this.getPlaylistById(playlistId).addToPlaylist(playlistItemModel);
+		SocketManagerModel.addVideoToPlaylist(playlistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"));
 		if (playlistId == this.get("activePlaylist").playlistId) {
 			window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.addVideo(playlistItemModel);
 		}
@@ -741,7 +741,6 @@ $(function() {
    var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
    console.log(this.options.video.attributes);
    this.options.playlistCollection.addVideoToPlaylist(selectedPlaylist, playlistItemModel);
-   //SocketManagerModel.addVideoToPlaylist(videoID, this.options.video.get("thumb"), this.options.video.get("title"), this.options.video.get("duration"), this.options.video.get("author").name.$t);
   },
 
   previewVideo: function() {
@@ -1657,7 +1656,7 @@ $(function() {
    SocketManagerModel.socket.emit('dj:quit');
   },
 
-  addVideoToPlaylist: function(videoId, thumb, title, duration, author) {
+  addVideoToPlaylist: function(playlistId, videoId, thumb, title, duration, author) {
    SocketManagerModel.socket.emit('playlist:addVideo', {
     videoId: videoId,
     thumb: thumb,
