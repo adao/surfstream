@@ -293,7 +293,7 @@ body {
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
-  background-color: #808080;
+  background-color: #666;
   width: 300px;
   height: 36px;
   text-indent: 5px;
@@ -344,7 +344,7 @@ div.chatContainer {
 div.chatContainer div.chatHeader {
   width: 300px;
   height: 30px;
-  background-color: #808080;
+  background-color: #666;
 }
 div.chatContainer div.chatHeader img.chatIcon {
   display: inline-block;
@@ -398,7 +398,7 @@ div.chatContainer #messages div.messageContainer:nth-child(odd) {
   background-color: #313131;
 }
 div.chatContainer form.inputBox {
-  background-color: #808080;
+  background-color: #666;
   height: 36px;
   text-indent: 7px;
   font-size: 14px;
@@ -432,20 +432,13 @@ div.historyContainer {
   background-color: #373737;
 }
 div.historyContainer .history {
-<<<<<<< HEAD
   height: 251px;
   background: transparent;
-=======
-  position: absolute;
-  height: 250px;
-  width: 300px;
-  background-color: #fff;
->>>>>>> a7bde7dbbe1492ac994b585b6009b4fd0c3156b8
 }
 div.historyContainer .history .historyTitle {
   vertical-align: top;
   display: block;
-  background-color: #808080;
+  background-color: #666;
   height: 30px;
   font-size: 16px;
   color: #fff;
@@ -466,10 +459,11 @@ div.historyContainer .history .videoHistory {
   overflow-y: scroll;
 }
 div.historyContainer .history .closeHistory {
-  background-color: #808080;
+  background-color: #666;
   height: 20px;
 }
 div.historyContainer .history .closeHistory #close-history {
+  margin-top: -1px;
   float: right;
   border: none;
   background: transparent;
@@ -538,10 +532,10 @@ div.historyContainer .history .closeHistory #close-history {
 }
 .searchCellContainer .thumbContainer {
   float: left;
-  width: 58px;
-  height: 46px;
-  margin-left: 7px;
-  margin-top: 7px;
+  width: 63px;
+  height: 50px;
+  margin-left: 5px;
+  margin-top: 5px;
 }
 .searchCellContainer .cellInfo {
   float: right;
@@ -555,23 +549,13 @@ div.historyContainer .history .closeHistory #close-history {
 }
 .searchCellContainer .cellInfo .videoInfo .title {
   overflow-y: hidden;
-  margin-top: 7px;
+  margin-top: 5px;
   width: 150px;
-  height: 28px;
+  height: 50px;
   font-weight: bold;
   font-size: 11px;
-}
-.searchCellContainer .cellInfo .videoInfo .views {
-  margin-top: 2px;
-  width: 150px;
-  height: 10px;
-  font-size: 9px;
-}
-.searchCellContainer .cellInfo .videoInfo .time {
-  margin-top: 2px;
-  width: 150px;
-  height: 10px;
-  font-size: 9px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .searchCellContainer .cellInfo .cellButtons {
   float: right;
@@ -709,7 +693,7 @@ button.search.active {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   weight: bold;
   font-size: 12px;
-  color: #808080;
+  color: #666;
 }
 .videoView {
   color: #d4d4d4;
@@ -877,7 +861,7 @@ button
   border: 1px solid #eee;
 }
 #room-modal #searchbar {
-  background-color: #808080;
+  background-color: #666;
   display: block;
   height: 54px;
   background-color: #666;
@@ -987,11 +971,12 @@ button
 }
 #room-modal #create-room {
   height: 40px;
-  background-color: #808080;
+  background-color: #666;
   text-align: center;
   vertical-align: middle;
 }
 #room-modal #create-room #CreateRoomName {
+  font-size: 12px;
   width: 150px;
   background-color: #373737;
   text-indent: 3px;
@@ -1124,12 +1109,14 @@ background-color: green,
 }
 #video-list .videoListCellContainer .cellInfo .videoInfo .title {
   overflow-y: hidden;
-  margin-top: 7px;
+  margin-top: 5px;
   width: 150px;
-  height: 28px;
+  height: 50px;
   font-weight: bold;
   font-size: 11px;
   text-wrap: suppress;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #video-list .videoListCellContainer .cellInfo .videoInfo .views {
   margin-top: 2px;
@@ -1194,7 +1181,7 @@ background-color: green,
   width: 100%;
 }
 #preview-container {
-  border: 1px solid #808080;
+  border: 1px solid #666;
   height: 202px;
 }
 #close-preview-player {
@@ -1305,7 +1292,7 @@ background-color: green,
 }
 #nowPlayingFull {
   border-radius: 3px;
-  border: solid 1px #808080;
+  border: solid 1px #666;
   min-height: 60px;
   height: 20%;
   max-height: 100px;
@@ -1315,7 +1302,7 @@ background-color: green,
   color: #fff;
   width: 80%;
   margin-left: 100px;
-  text-shadow: #808080 0.1em 0.1em 0.5em;
+  text-shadow: #666 0.1em 0.1em 0.5em;
   margin-bottom: 20px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   left: 50%;
