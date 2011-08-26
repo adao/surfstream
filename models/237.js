@@ -19,8 +19,8 @@
 	models.VAL = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
-			this.userSuggest = new models.Playlist();
-			this.autoPlaylist = new models.Playlist();
+			this.userSuggest = new models.Playlist({videos: new models.VideoCollection()});
+			this.autoPlaylist = new models.Playlist({videos: new models.VideoCollection()});
 			
 			this.isDJ = true;
 			this.takeSuggest = false;
@@ -35,7 +35,8 @@
 				var thisUser = val.room.users.get(socket.id);
 				if(!val.userSuggest.containsVideo(data.video)) {
 					val.userSuggest.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-					val.userSuggest.videos.get(data.video).set({ 'suggestedBy': thisUser.get('name')});
+					//val.userSuggest.get("videos").get(data.video).set({ 'suggestedBy': thisUser.get('name')});
+					ss_modelWithAttribute(val.userSuggest.get("videos"), "videoId", data.video).set({'suggestedBy': thisUser.get('name')});
 				}
 			});
 			
@@ -169,6 +170,7 @@
 		playVideoFromPlaylist: function(socketId) {
 			var roomName = this.room.get('name');
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
+			this.room.users.get(socketId).saveActivePlaylist();
 			var currDJ = this.room.djs.currDJ.get('userId');
 			videoToPlay.set({ dj: currDJ });
 			if(!videoToPlay) {
@@ -362,7 +364,6 @@
 			
 			if(this.room) {
 				this.room.addChatListener(socket);
-				this.room.users.addPlaylistListeners(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
 				console.log('['+this.room.get('name')+'][SM] addSocket(): socket is joining channel with name: '+this.room.get('name'));
@@ -391,14 +392,7 @@
 			this.room.removeSocket(socket.id);
 			console.log('['+this.room.get('name')+'][Room] removeSocket(): there are now '+this.room.users.length+ ' users in the room, and dj count: '+this.room.djs.length);
 
-
-			//TODO: convert to saving multiple playlists
-			//save playlist for user
-			var userPlaylist = userToRemove.playlist.xport();
 			//console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
-			redisClient.set('user:'+userId+':playlist', userPlaylist, function() {
-				console.log('...save was successful');
-			});
 			this.announceClients();
 			
 			return userToRemove;
@@ -487,63 +481,43 @@
 		model: models.Video,
 	});
 
-
-	models.PlaylistCollection = Backbone.Collection.extend({
-		model: models.Playlist,	//playlists indexed by name
-		
-		addPlaylist: function(name) {
-			if(this.get(name)) return false;
-			var playlist = new models.Playlist({ name: name });
-			playlist.id = name;
-			this.add(playlist);
-			return true;
-		},
-		
-		removePlaylist: function(name) {
-			var playlist = this.get(name);
-			if(!playlist) return false;
-			this.remove(playlist);
-			return true;
-		},
-		
-		
-	})
-
 	/*************************/
 	/*        Playlist       */
 	/*************************/
 
 	models.Playlist = Backbone.Model.extend({
-		initialize: function() {
-			this.videos = new models.VideoCollection();
-		},
 
-		addVideo: function(id, thumb, title, duration, author) {
-			if(this.videos.get(id))
+		addVideo: function(playlistId, videoId, thumb, title, duration, author) {
+			if(this.containsVideo(videoId))
 				return false;
 			var vid = new models.Video();
-			vid.id = id;
-			vid.set({ videoId: id, thumb: thumb, title: title, duration: duration, author: author});
-			this.videos.add(vid);
+			vid.id = videoId;
+			vid.set({ playlistId: playlistId, videoId: videoId, thumb: thumb, title: title, duration: duration, author: author});
+			this.get("videos").add(vid);
+			return true;
 		},
 		
 		containsVideo: function(id) {
-			if(this.videos.get(id)) return true;
+			if(ss_modelWithAttribute(this.get("videos"), "videoId", id)) return true;
 			return false;
 		},
 		
+		getVideo: function(id) {
+			return ss_modelWithAttribute(this.get("videos"), "videoId", id);
+		},
+		
 		getSize: function() {
-			return this.videos.length;
+			return this.get("videos").length;
 		},
 		
 		moveToIndex: function(videoId, indexToMove) {
-			if(indexToMove < 0 || indexToMove >= this.videos.length) //make sure index is legit
+			if(indexToMove < 0 || indexToMove >= this.get("videos").length || !this.containsVideo(videoId)) //make sure index is legit
 				return false;
 			
-			var video = this.videos.get(videoId);
+			var video = this.getVideo(videoId);
 			if(video) {
-				this.videos.remove(video);
-				this.videos.add(video, { at: indexToMove });
+				this.get("videos").remove(video);
+				this.get("videos").add(video, { at: indexToMove });
 				return true;
 			}
 			return false;
@@ -554,10 +528,12 @@
 		},
 		
 		moveToBottom: function(videoId) {
-			var video = this.videos.get(videoId);
+			if (!this.containsVideo(videoId))
+				return false;
+			var video = this.getVideo(videoId);
 			if(video) {
-				this.videos.remove(video);
-				this.videos.add(video);
+				this.get("videos").remove(video);
+				this.get("videos").add(video);
 				return true;
 			}
 			return false;
@@ -566,54 +542,42 @@
 		//returns the first Video, and moves the Video
 		//to the end of the playlist 
 		playFirstVideo: function() {
-			// if(this.videos.length == 0) {
+			// if(this.get("videos").length == 0) {
 			// 				return null;
 			// 			}
-			// 			var first = this.videos.at(0);
-			// 			this.videos.remove(first);
-			// 			this.videos.add(first);	//adds video to the end;
+			// 			var first = this.get("videos").at(0);
+			// 			this.get("videos").remove(first);
+			// 			this.get("videos").add(first);	//adds video to the end;
 			// 			return first;
 			var firstVideo = this.popVideo();
 			if(firstVideo) {
-				this.videos.add(firstVideo);
+				this.get("videos").add(firstVideo);
 			}
 			return firstVideo;
 		},
 		
 		popVideo: function() {
-			if(this.videos.length == 0) return null;
+			if(this.get("videos").length == 0) return null;
 
-			var first = this.videos.at(0);
-			this.videos.remove(first);
+			var first = this.get("videos").at(0);
+			this.get("videos").remove(first);
 			return first;
 		},
 		
 		deleteVideo: function(videoId) {
-			this.videos.remove(videoId);
+			if (this.containsVideo(videoId)) {
+				this.get("videos").remove(this.getVideo(videoId));
+				return true;
+			}
+			return false;
 		},
 		
 		xport: function() {
 			var videoExport = [];
-			this.videos.each(function(video) {
+			this.get("videos").each(function(video) {
 				videoExport.push(video.xport());
 			});
 			return JSON.stringify(videoExport);
-		},
-		
-		/* rawVideoData : array of video objects */
-		mport: function(rawVideoData) {	
-			for(var i= 0; i < rawVideoData.length; i = i+1) {
-				var video = rawVideoData[i];
-				var videoToAdd = new models.Video({ 
-					videoId: video.videoId, 
-					thumb: video.thumb, 
-					title: video.title, 
-					duration: video.duration, 
-					author: video.author 
-				});
-				videoToAdd.id = video.videoId;
-				this.videos.add(videoToAdd);
-			}
 		}
 		
 	});
@@ -639,13 +603,18 @@
 		},
 		
 		initialize: function() {
-			this.id = this.get('socketId');	
-			this.playlist = new models.Playlist();			
+			this.id = this.get('socketId');
 			this.getAvatar();
+			this.playlists = {};
 		},
 		
-		setPlaylist: function(playlist) {
-			this.playlist = playlist;
+		setPlaylists: function(userPlaylists) {
+			this.playlists = userPlaylists;
+		},
+		
+		setPlaylist: function(playlistId) {
+			this.playlistId = playlistId;
+			this.playlist = this.playlists[playlistId];
 		},
 		
 		getAvatar: function() {
@@ -694,6 +663,106 @@
 			if(points > 0) this.set({ points: points-1 });
 		},
 		
+		savePlaylist: function(playlistId) {
+			redisClient.hset('user:' + this.get("userId") + ':playlists', playlistId, JSON.stringify(this.playlists[playlistId]), function(err, reply) {
+				if (err) {
+					console.log(' playlist save was NOT SUCCESSFUL');
+				} else {
+					console.log(' playlist save was successful');
+				}
+			});
+		},
+		
+		saveActivePlaylist: function() {
+			this.savePlaylist(this.playlistId);
+		},
+		
+		initializeAndSendPlaylists: function(socket) {
+			var userId = this.get('userId');
+			var userModel = this;
+			redisClient.hgetall('user:' + userId + ':playlists', function(err, reply) {
+				if(err) {
+					console.log("Error in getting user" + userId + "'s playlists");
+				} else {
+					if (reply != 'undefined' && reply != null) {
+						var userPlaylists = {};
+						for (var i = 1; i <= Object.size(reply); i++) {
+							var playlist = JSON.parse(reply[i]);
+							userPlaylists[i] = new models.Playlist({name: playlist.name, videos: new models.VideoCollection(playlist.videos)});
+						}
+						console.log('getting playlists for user '+userId);
+						userModel.setPlaylists(userPlaylists);
+						userModel.setPlaylist(1);
+						userModel.addPlaylistListeners(socket);
+						socket.emit("playlist:initialize", userPlaylists);
+					}
+				}
+			});
+		},
+		
+		addPlaylistListeners: function(socket) {
+			var userId = this.get("userId");
+			var playlists = this.playlists;
+			var thisUser = this;
+			socket.on('playlists:choosePlaylist', function(data) {
+				if (!playlists[data.playlistId] || thisUser.playlist == playlists[data.playlistId]) {
+					return;
+				} else {
+					thisUser.setPlaylist(data.playlistId);
+				}
+			});
+			socket.on('playlists:addPlaylist', function(data) {
+				console.log("here1");
+				redisClient.hlen("user:" + userId + ":playlists", function(err, reply) {
+					if (err) {
+						console.log("Error retrieving retrieving length of user's playlists hash for facebook user " + data.fbId);
+					} else {
+						console.log("here2");
+						var numPlaylists = reply;
+						if (numPlaylists != null && numPlaylists != 'undefined' && numPlaylists + 1 == data.playlistId) {
+							console.log("here3");
+							var playlistKey = numPlaylists + 1;
+							var newPlaylist = new models.Playlist({name: data.playlistName, videos: new models.VideoCollection()});
+							playlists[playlistKey] = newPlaylist;
+							thisUser.savePlaylist(data.playlistId);
+							console.log("here4");
+						}
+					}
+				});
+			});
+			socket.on('playlists:deletePlaylist', function(data) {
+				
+			});
+			
+			socket.on('playlist:addVideo', function(data) {
+				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author)) {
+					thisUser.savePlaylist(data.playlistId);
+					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+				}
+			}); 
+
+			socket.on('playlist:moveVideoToTop', function(data) {
+				if (playlists[data.playlistId].moveToTop(data.videoId)) {
+					thisUser.savePlaylist(data.playlistId);
+					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+				}
+			});
+
+			socket.on('playlist:delete', function(data) {
+				if (playlists[data.playlistId].deleteVideo(data.videoId)) {
+					thisUser.savePlaylist(data.playlistId);
+					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+				}
+			});
+			
+			socket.on('playlist:moveVideo', function(data) {
+				if (playlists[data.playlistId].moveToIndex(data.videoId, data.index)) {
+					thisUser.savePlaylist(data.playlistId);
+					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+				}
+			})
+		},
+		
 		xport: function() {
 			return { 
 				id: this.get('userId'), 
@@ -729,63 +798,6 @@
 		
 		addUser: function(user) {
 			this.add(user);
-			this.initializeAndSendPlaylist(user.get("socket"));
-		},
-		
-		initializeAndSendPlaylist: function(socket) {
-			var userId = this.get(socket.id).get('userId');
-			var userCollection = this;
-			redisClient.get('user:'+userId+':playlist', function(err, reply) {
-				if(err) {
-					console.log("Error in getting user"+userId+"'s playlist!");
-				} else {
-					var currPlaylist = new models.Playlist();
-					console.log('getting playlist for user '+userId);
-					if(reply != 'undefined' && reply != null) {
-						var playlist = JSON.parse(reply);	
-						currPlaylist.mport(playlist);
-						userCollection.get(socket.id).setPlaylist(currPlaylist);
-						socket.emit("playlist:refresh", playlist);
-					}
-				} 
-			});
-		},
-		
-		addPlaylistListeners: function(socket) {			
-			var userCollect = this;
-			socket.on('playlist:addVideo', function(data) {
-				var thisUser = userCollect.get(socket.id);
-				if(thisUser.playlist.videos.get(data.video)) return;
-				thisUser.playlist.addVideo(data.video, data.thumb, data.title, data.duration, data.author);
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
-			}); 
-
-			socket.on('playlist:moveVideoToTop', function(data) {
-				var thisUser = userCollect.get(socket.id);
-				
-				if(thisUser.playlist.videos.get(data.video)) {
-					thisUser.playlist.moveToTop(data.video);
-				}
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
-			});
-
-			socket.on('playlist:delete', function(data) {
-				var thisUser = userCollect.get(socket.id);
-
-				if(thisUser.playlist.videos.get(data.video)) {
-					thisUser.playlist.deleteVideo(data.video);
-				}
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
-			});
-			
-			socket.on('playlist:moveVideo', function(data) {
-				var thisUser = userCollect.get(socket.id);
-
-				if(thisUser.playlist.videos.get(data.video)) {
-					thisUser.playlist.moveToIndex(data.video, data.index);
-				}
-				console.log('playlist is now: '+JSON.stringify(thisUser.playlist.xport()));
-			})
 		},
 		
 		xport: function() {
@@ -1100,3 +1112,20 @@
 	});
 	
 }) ()
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
+function ss_modelWithAttribute(collection, attribute, valueToMatch) {
+	for (var i = 0; i < collection.length; i++) {
+		if (collection.at(i).get(attribute) == valueToMatch) {
+			return collection.at(i);
+		}
+	}
+	return null;
+}
