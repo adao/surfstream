@@ -1072,42 +1072,67 @@ background-color: green,
 #top-video-views {
   background-color: #000;
 }
-#video-list {
-  height: 379px;
+.unselected-playlist-nameholder {
+  background-color: #000;
+  color: #fff;
+  display: inline-block;
+  list-style-type: none;
+  background: none repeat scroll;
+  padding: 5px;
+}
+.selected-playlist-nameholder {
+  background-color: #fff;
+  color: #000;
+  display: inline-block;
+  list-style-type: none;
+  background: none repeat scroll;
+  padding: 5px;
+}
+#playlist-collection-display {
+  height: 90px;
+  width: 300px;
+  margin-left: -40px;
+}
+#playlist-collection {
+  height: 120px;
+  font-size: 10px;
+}
+#playlist-view {
+  height: 259px;
   max-height: 379px;
   overflow-y: scroll;
   overflow-x: hidden;
   z-index: -1;
 }
-#video-list .videoListCellContainer:nth-child(odd) {
+#playlist-view .videoListCellContainer:nth-child(odd) {
   background-color: #313131;
 }
-#video-list .videoListCellContainer:nth-child(even) {
+#playlist-view .videoListCellContainer:nth-child(even) {
   background-color: #373737;
 }
-#video-list .videoListCellContainer {
+#playlist-view .videoListCellContainer {
   width: 285px;
   height: 60px;
   cursor: move;
 }
-#video-list .videoListCellContainer .thumbContainer {
+#playlist-view .videoListCellContainer .thumbContainer {
   float: left;
   width: 63px;
   height: 50px;
   margin-top: 5px;
   margin-left: 5px;
 }
-#video-list .videoListCellContainer .cellInfo {
+#playlist-view .videoListCellContainer .cellInfo {
   float: right;
   width: 210px;
   height: 60px;
 }
-#video-list .videoListCellContainer .cellInfo .videoInfo {
+#playlist-view .videoListCellContainer .cellInfo .videoInfo {
   float: left;
   width: 180px;
   height: 60px;
 }
-#video-list .videoListCellContainer .cellInfo .videoInfo .title {
+#playlist-view .videoListCellContainer .cellInfo .videoInfo .title {
   overflow-y: hidden;
   margin-top: 5px;
   width: 150px;
@@ -1118,19 +1143,19 @@ background-color: green,
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#video-list .videoListCellContainer .cellInfo .videoInfo .views {
+#playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
   margin-top: 2px;
   width: 150px;
   height: 10px;
   font-size: 9px;
 }
-#video-list .videoListCellContainer .cellInfo .cellButtons {
+#playlist-view .videoListCellContainer .cellInfo .cellButtons {
   width: 30px;
   height: 60px;
   float: right;
 }
-#video-list .videoListCellContainer .cellInfo .cellButtons .remove,
-#video-list .videoListCellContainer .cellInfo .cellButtons .remove:hover {
+#playlist-view .videoListCellContainer .cellInfo .cellButtons .remove,
+#playlist-view .videoListCellContainer .cellInfo .cellButtons .remove:hover {
   margin-top: 10px;
   width: 15px;
   height: 15px;
@@ -1139,11 +1164,11 @@ background-color: green,
   display: block;
   background: url("/images/room/close.png") 50% 50% no-repeat;
 }
-#video-list .videoListCellContainer .cellInfo .cellButtons .remove:hover {
+#playlist-view .videoListCellContainer .cellInfo .cellButtons .remove:hover {
   background: url("/images/room/close_hover.png") 50% 50% no-repeat;
 }
-#video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop,
-#video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
+#playlist-view .videoListCellContainer .cellInfo .cellButtons .toTheTop,
+#playlist-view .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
   margin-top: 8px;
   border: none;
   cursor: pointer;
@@ -1152,7 +1177,7 @@ background-color: green,
   display: block;
   background: url("/images/room/to_the_top.png") 50% 50% no-repeat;
 }
-#video-list .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
+#playlist-view .videoListCellContainer .cellInfo .cellButtons .toTheTop:hover {
   background: url("/images/room/to_the_top_hover.png") 50% 50% no-repeat;
 }
 #YouTubePlayerTwo {
@@ -1338,6 +1363,33 @@ background-color: green,
   margin-right: 1%;
   left: 50%;
   width: 75%;
+}
+#fullscreenIcon {
+  position: absolute;
+  margin-left: 2px;
+  z-index: 10000;
+  margin-top: 234px;
+  width: 30px;
+  padding: 3px;
+  display: none;
+}
+#fullscreenIcon:hover {
+  background-color: #fff;
+}
+#fullscreenIcon.fully {
+  background-color: #fff;
+  background: rgba(255,255,255,0.3);
+  position: fixed;
+  margin-left: 0px;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  margin: 20px;
+  margin-top: 0px;
+}
+#fullscreenIcon.fully:hover {
+  background-color: #34b7fe;
+  background: rgba(255,255,255,0.6);
 }
 #sofa-remote {
   left: 170px;

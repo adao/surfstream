@@ -902,10 +902,35 @@ div#top-video-name
 	display: inline-block
 	background-color: green
 #top-video-views
-	background-color: black 
+	background-color: black
+	
+.unselected-playlist-nameholder
+	background-color: black
+	color: white
+	display: inline-block
+	list-style-type: none
+	background: none repeat scroll
+	padding: 5px
+
+.selected-playlist-nameholder
+	background-color: white
+	color: black
+	display: inline-block
+	list-style-type: none
+	background: none repeat scroll
+	padding: 5px
+	
+#playlist-collection-display
+	height:90px
+	width: 300px
+	margin-left: -40px;
+	
+#playlist-collection
+	height: 120px
+	font-size: 10px
                     
-#video-list
-	height: 379px
+#playlist-view
+	height: 259px
 	max-height: 379px
 	overflow-y: scroll
 	overflow-x: hidden
@@ -1138,6 +1163,33 @@ div#top-video-name
 	margin-right: 1%
 	left: 50%
 	width: 75%
+
+#fullscreenIcon
+	position: absolute
+	margin-left: 2px
+	z-index: 10000
+	margin-top: 234px
+	width: 30px
+	padding: 3px
+	display: none
+
+#fullscreenIcon:hover
+	background-color: white
+
+#fullscreenIcon.fully
+	background-color: white
+	background: rgba(255, 255, 255, .3)
+	position: fixed
+	margin-left: 0px
+	bottom: 0
+	left: 0
+	width: 60px
+	margin: 20px
+	margin-top: 0px
+
+#fullscreenIcon.fully:hover
+	background-color: #34b7fe
+	background: rgba(255, 255, 255, .6)
 
 #sofa-remote
 	left: 170px
