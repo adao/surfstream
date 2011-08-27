@@ -290,11 +290,7 @@ div#outer {
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
-<<<<<<< HEAD
-  background-color: #434343;
-=======
   background-color: #666;
->>>>>>> 6509005a23ac3a693c14a8ed33a466f4b0062c0f
   width: 300px;
   height: 36px;
   text-indent: 5px;
@@ -345,11 +341,7 @@ div.chatContainer {
 div.chatContainer div.chatHeader {
   width: 300px;
   height: 30px;
-<<<<<<< HEAD
-  background-color: #434343;
-=======
   background-color: #666;
->>>>>>> 6509005a23ac3a693c14a8ed33a466f4b0062c0f
 }
 div.chatContainer div.chatHeader img.chatIcon {
   display: inline-block;
@@ -403,11 +395,7 @@ div.chatContainer #messages div.messageContainer:nth-child(odd) {
   background-color: #313131;
 }
 div.chatContainer form.inputBox {
-<<<<<<< HEAD
-  background-color: #434343;
-=======
   background-color: #666;
->>>>>>> 6509005a23ac3a693c14a8ed33a466f4b0062c0f
   height: 36px;
   text-indent: 7px;
   font-size: 14px;
@@ -803,6 +791,13 @@ button.search.active {
   -moz-border-radius: 20px;
   cursor: pointer;
 }
+#skipContainer {
+  width: 80px;
+  position: absolute;
+  margin-top: 90px;
+  margin-left: -3px;
+  z-index: 10;
+}
 #up-vote,
 #down-vote,
 #vol-up,
@@ -821,6 +816,8 @@ button.search.active {
   -moz-border-radius: 20px;
   color: #e5e5e5;
   cursor: pointer;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: bold;
 }
 .buttonContainer {
   margin: 3px;
@@ -870,11 +867,7 @@ button
   border: 1px solid #eee;
 }
 #room-modal #searchbar {
-<<<<<<< HEAD
-  background-color: #434343;
-=======
   background-color: #666;
->>>>>>> 6509005a23ac3a693c14a8ed33a466f4b0062c0f
   display: block;
   height: 54px;
   background-color: #666;
@@ -984,11 +977,7 @@ button
 }
 #room-modal #create-room {
   height: 40px;
-<<<<<<< HEAD
-  background-color: #434343;
-=======
   background-color: #666;
->>>>>>> 6509005a23ac3a693c14a8ed33a466f4b0062c0f
   text-align: center;
   vertical-align: middle;
 }
@@ -1298,9 +1287,9 @@ background-color: green,
   border: solid #000 2px;
   border-radius: 6px;
   font-weight: bold;
-  z-index: 5;
   color: #fff;
   opacity: 0.75;
+  z-index: 30;
 }
 #avatarWrapper_VAL {
   position: absolute;
@@ -1420,6 +1409,16 @@ background-color: green,
   top: 140px;
   z-index: 3;
   position: absolute;
+}
+#skip {
+  background: transparent;
+  height: 25px;
+  width: 80px;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  color: #e5e5e5;
+  cursor: pointer;
 }
 a#fdbk_tab {
   z-index: 10;

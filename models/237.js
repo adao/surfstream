@@ -705,6 +705,7 @@
 			var playlists = this.playlists;
 			var thisUser = this;
 			socket.on('playlists:choosePlaylist', function(data) {
+				console.log("!playlists[data.playlistId] = " + !playlists[data.playlistId] + " ... thisUser.playlist == playlists[data.playlistId]" + (thisUser.playlist == playlists[data.playlistId]))
 				if (!playlists[data.playlistId] || thisUser.playlist == playlists[data.playlistId]) {
 					return;
 				} else {
