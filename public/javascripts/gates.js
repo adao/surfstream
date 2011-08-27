@@ -247,6 +247,7 @@ $(function() {
 	 this.onSofa = false;
 	 this.curDJ = "__none__";
 	 this.sofaUsers = [];
+	 this.rotateRemoteSign = true;
 	 var roomModel, mainView;
 	
 	this.set({
@@ -1106,8 +1107,8 @@ $(function() {
 		},
 	
 		render: function() {
-			var roomListCellModel = this.options.roomListCellModel; 
-			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: roomListCellModel.get("curVidTitle"),
+			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle"); 
+			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + roomListCellModel.get("curVidTitle") : "" ,
 				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("friends").length}));
 			return this;
 		},
@@ -1208,6 +1209,10 @@ $(function() {
 					remoteTop.addClass("up");
 					remote.addClass("up");
 					remotePullup.addClass("up");
+					remotePullup.tipsy({
+					    gravity: 's',
+					    title: function() { return "Pull Down"; }
+					   });
 				});
 				
 			}
@@ -1309,18 +1314,19 @@ $(function() {
 				if (djArray[dj].id == this.options.userModel.get("ssId"))  {
 					user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
 					$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>");
-					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();});
+					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut(); });
 				}
 			} else {
 				newDJ = false;
 			}
-				
-				
+		console.log("Zindex: " + user.css("z-index"))
+		//set the z index so the skip video doesn't cover it
+		user.css("z-index", 1000);
 		if (newDJ) {
 			user.animate({"margin-left": X_COORDS[dj], "margin-top": Y_COORD + 70}, 400);
 		} 
 			
-		user.animate({"margin-top": Y_COORD, "margin-left": X_COORDS[dj]}, 500, "bouncein");
+		user.animate({"margin-top": Y_COORD, "margin-left": X_COORDS[dj]}, 500, "bouncein", function() {$(this).css("z-index", "auto");}); /*restore auto z-index if hopped on couch and became current vj */
 		user.data({"sofaMT": Y_COORD, "sofaML": X_COORDS[dj]}, 500, "bouncein");
 		user.data({"trueY": Y_COORD});
 		 
@@ -1336,18 +1342,15 @@ $(function() {
 		
 		//NEED BOUNDS CHECK HERE TODO
 		$("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + "px");
-    if(!cur_is_dj) $("#become-dj").show();
-	},
+    if(!cur_is_dj) { 
+			$("#become-dj").show();
+		} else {
+			$("#become-dj").hide();
+		}
+	}, 
 
   toggleDJStatus: function() {
-   if ($(this).css("display") == "block") {
-		$(this).hide();
     SocketManagerModel.becomeDJ();
-    if ($("#skip").length == 0) {
-			$("#people-area").append("<button id='skip'> Skip Video </button>");
-			$("#skip").bind("click", skipVideo);
-		} 
-   } 
   },
 
   placeUser: function(user) {	
@@ -1525,9 +1528,13 @@ $(function() {
 		$('#getOff').live('click', function() {
 		  $("#stepDown").remove();
 			$('#getOff').remove();
-			$("#skip").remove();
+			$("#skipContainer").remove();
 			SocketManagerModel.stepDownFromDJ();
 			
+		});
+		
+	 	$("img").live('mousedown', function(){
+		    return false;
 		});
   },
 
@@ -1597,7 +1604,7 @@ $(function() {
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
 	console.log('video announced');
-		var remoteX, remoteY,curX, curY, djRemote;
+		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, isdj, skipX, skipY;
 		SurfStreamApp.curDJ = video.dj;
 		mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
@@ -1652,12 +1659,21 @@ $(function() {
 		}
 		//save the currently playing state
 		playerModel.set({curVid: {curID: video.id, curTitle: video.title, percent: 0.5} });
-		
+		var isdj = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
+		if (isdj && $("#skip").length == 0) {
+			$("#people-area").append("<div id='skipContainer' class='bottombuttonContainerwide'><button id='skip'> Skip Video </button></div>");
+			skipX = $("#avatarWrapper_" + video.dj).data("sofaML");
+			skipY = $("#avatarWrapper_" + video.dj).data("sofaMT") + 100;
+			$("#skipContainer").css({"margin-left": skipX, "margin-top": skipY});
+			$("#skip").bind("click", skipVideo);
+		} else {
+			$("#skipContainer").remove();
+		}
 		//put remote on appropro DJ
 		djRemote = $("#sofa-remote");
 		curX = parseInt(djRemote.css("left").replace("px", ""));
 		curY = parseInt(djRemote.css("top").replace("px", ""));
-		remoteX = $("#avatarWrapper_" + video.dj).data("sofaML") + 60;
+		remoteX = $("#avatarWrapper_" + video.dj).data("sofaML") + 50;
 		remoteY = $("#avatarWrapper_" + video.dj).data("sofaMT") + 50;
 		var bezier_params = {
 		    start: { 
@@ -1673,7 +1689,14 @@ $(function() {
 		    }
 		  }
 
-		djRemote.animate({rotate: "+=2880deg", path : new $.path.bezier(bezier_params)}, 1000);
+		this.rotateRemoteSign = !this.rotateRemoteSign
+		rotationDegs = "=2880deg"
+		if (this.rotateRemoteSign) {
+			rotationDegs = "+" + rotationDegs;
+		} else {
+			rotationDegs = "-" + rotationDegs;
+		}
+		djRemote.animate({rotate: rotationDegs, path : new $.path.bezier(bezier_params)}, 1000);
    });
 
    socket.on('video:stop', function() {
@@ -1733,6 +1756,8 @@ $(function() {
 		console.log('djs announced');
 		app.get("mainView").theatreView.updateDJs(djArray);
    });
+
+	
 
    //.upvoteset maps userids who up to true, .down, .up totals
    socket.on("meter:announce", function(meterStats) {
@@ -1890,7 +1915,7 @@ $(function() {
 	
 	joinRoom: function(rID, create) {
 		var vidsPlayed = SurfStreamApp.vidsPlayed;
-		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("fbId"));
+		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		SurfStreamApp.vidsPlayed = 0;
 		$("#cur-room-name").html(rID); 
 		mpq.track("Room Joined", {wasDJ: isDJ, rID:rID, mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"}); 
