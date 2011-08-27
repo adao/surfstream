@@ -1,3 +1,5 @@
+body
+	background-color: #141414
 button
 	cursor: pointer
 button.leftbtn, button.rightbtn, button.centerbtn, button.normalbtn
@@ -10,18 +12,18 @@ button.leftbtn, button.rightbtn, button.centerbtn, button.normalbtn
 	cursor: pointer
 	outline: none
 	color: #000
-	border: 1px solid #bbb
+	border: 1px solid #434343 
 	-webkit-border-radius: 3px
 	-moz-border-radius: 3px
 	border-radius: 3px
-	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e3e3e3))
+	background: -webkit-gradient(linear, left top, left bottom, from(#666666), to(#434343))
 	background: -moz-linear-gradient(top, #f9f9f9, #e3e3e3)
-	border-top-color: #ccc
-	border-bottom-color: #a0a0a0
+	border-top-color: #666666
+	border-bottom-color: #434343
 button.leftbtn:hover, button.centerbtn:hover, button.rightbtn:hover, button.normalbtn:hover 
-	border: 1px solid #636363       
+	border: 1px solid #434343     
 button.leftbtn:active, button.centerbtn:active, button.rightbtn:active, button.normalbtn:active
-	background: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#f9f9f9))  
+	background: -webkit-gradient(linear, left top, left bottom, from(#666666), to(#434343))  
 .leftbtn, .rightbtn, .centerbtn, .normalbtn
 	width: 48px
 	height: 22px 
@@ -211,10 +213,6 @@ div#outer
 						border-top-right-radius: 2px!important
 						-moz-border-top-right-radius: 2px!important
 						-webkit-border-top-right-radius: 2px!important
-					.playlist
-						border-top-left-radius: 2px!important
-						-moz-border-top-left-radius: 2px!important
-						-webkit-border-top-left-radius: 2px!important
 						float: left
 					.playlist:hover, .search:hover
 						-moz-box-shadow:inset 0 0 2px #000000;
@@ -239,7 +237,7 @@ div#outer
 						width: 300px
 					#searchBar
 						.inputBox
-							background-color: #666
+							background-color: #585858
 							width: 300px
 							height: 36px
 							text-indent: 5px
@@ -287,7 +285,7 @@ div.chatContainer
 	div.chatHeader
 		width: 300px
 		height: 30px
-		background-color: #666
+		background-color: #585858
 		img.chatIcon
 			display: inline-block
 			width: 27px
@@ -333,10 +331,11 @@ div.chatContainer
 		div.messageContainer:nth-child(odd)
 					background-color: #313131
 	form.inputBox
-		background-color: #666
+		background-color: #585858
 		height: 36px
 		text-indent: 7px
 		font-size: 14px
+		-webkit-border-bottom-right-radius: 2px
 		input
 			border-radius: 4px
 			-webkit-border-radius: 4px
@@ -370,7 +369,7 @@ div.historyContainer
 		.historyTitle
 			vertical-align: top
 			display: block
-			background-color: #666
+			background-color: #585858
 			height: 30px
 			font-size: 16px
 			color: white
@@ -388,7 +387,7 @@ div.historyContainer
 			overflow-x: hidden
 			overflow-y: scroll
 		.closeHistory
-			background-color: #666
+			background-color: #585858
 			height: 20px
 			#close-history
 				margin-top: -1px
@@ -517,6 +516,7 @@ div.historyContainer
 		height: 400px
 		background-color: red
 	#people-area
+		-webkit-border-bottom-left-radius: 2px
 		display: block
 		width: 660px
 		height: 270px
@@ -570,7 +570,7 @@ img.share-email-image
 	color: black
 	margin-left: 6px
 	.share
-		color: #eee
+		color: #B2B2B2
 		font-size: 16px
 		font-weight: bold
 		width: 54px
@@ -586,7 +586,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	weight: bold
 	font-size: 12px
-	color: #666
+	color: #585858
 	
 .videoView
 	color: #D4D4D4
@@ -615,7 +615,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		background: url('/images/room/pullup.png') 50% 50% no-repeat
 		position: absolute;
 		margin-top: 2px;
-		margin-left: 38px;
+		margin-left: 42px;
 		cursor: n-resize
 	#remote
 		height: 245px!important
@@ -734,10 +734,10 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	z-index: 10000
 	border: 1px solid #eee
 	#searchbar
-		background-color: #666
+		background-color: #585858
 		display: block
 		height: 54px
-		background-color: #666
+		background-color: #585858
 		form.roomSearch
 			display: inline-block
 			width: 600px
@@ -789,13 +789,13 @@ button.playlist, button.playlist.active, button.search, button.search.active
 					width: 50px
 					padding: 6px
 				th.room-name-hd, th.room-friends-hd, th.viewers-hd
-					border-right: 1px solid #666;    
+					border-right: 1px solid #585858;    
 			tr.room-row
 				color: white
 				height: 60px
 				cursor: pointer
 				td
-					border-right: 1px solid #666
+					border-right: 1px solid #585858
 					.num-viewers, .num-djs
 						font-weight: bold
 						text-align: center
@@ -821,7 +821,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				background-color: #373737    
 	#create-room
 		height: 40px
-		background-color: #666
+		background-color: #585858
 		text-align: center
 		vertical-align: middle
 		#CreateRoomName
@@ -859,6 +859,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			background: transparent
 		
 #video-div
+	-webkit-border-top-left-radius: 2px
 	width: 660px
 	height: 413px
 	background: url('/images/room/tv.png') 50% 50% no-repeat
@@ -911,34 +912,60 @@ div#top-video-name
 #top-video-views
 	background-color: black
 	
-.unselected-playlist-nameholder
-	background-color: black
-	color: white
+.unselected-playlist-nameholder,.selected-playlist-nameholder 
+	text-indent: 6px
+	margin: 0 2px 6px 2px
 	display: inline-block
-	list-style-type: none
-	background: none repeat scroll
-	padding: 5px
+	position: relative
+	line-height: 18px
+	-webkit-border-radius: 9px
+	border: 1px solid #CAD8F3
+	background: #DEE7F8
+	color: black
+	padding-right: 15px
+	cursour: default
 
 .selected-playlist-nameholder
-	background-color: white
-	color: black
-	display: inline-block
-	list-style-type: none
-	background: none repeat scroll
-	padding: 5px
+	border-color: #598BEC
+	background: #598BEC
+	color: white
 	
 #playlist-collection-display
-	height:90px
-	width: 300px
-	margin-left: -40px;
+	margin-left: -36px;
+	display: inline-block
 	
 #playlist-collection
 	height: 120px
 	font-size: 10px
-                    
+	background-color: #585858
+	overflow-y: scroll
+	overflow-x: hidden  
+	
+#playlist-collection-form
+	width: 0px
+	border: none
+	padding: 0
+	margin: 0
+	display: block
+	
+#playlist-collection-input
+	font-size: 10px
+	background: transparent
+	width: 66px
+	margin: 0 2px
+	display: inline-block
+	-webkit-border-radius: 9px
+	border: 1px solid #CAD8F3
+	background: #DEE7F8
+	color: black
+	cursour: default
+	height: 16px
+#playlist-collection-input
+	outline: none
+	                  
 #playlist-view
-	height: 259px
-	max-height: 379px
+	height: 100%
+	max-height: 327px
 	overflow-y: scroll
 	overflow-x: hidden
 	z-index: -1
@@ -1027,7 +1054,7 @@ div#top-video-name
 		width: 100%
 	
 #preview-container
-	border: 1px solid #666
+	border: 1px solid #585858
 	height: 202px                     
 #close-preview-player 
 	float: right
@@ -1133,7 +1160,7 @@ div#top-video-name
 
 #nowPlayingFull
 	border-radius: 3px
-	border: solid 1px #666
+	border: solid 1px #585858
 	min-height: 60px
 	height: 20%
 	max-height: 100px 
@@ -1143,7 +1170,7 @@ div#top-video-name
 	color: white
 	width: 80%
 	margin-left: 100px
-	text-shadow: #666 0.1em 0.1em 0.5em
+	text-shadow: #585858 0.1em 0.1em 0.5em
 	margin-bottom: 20px
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	left: 50%;
@@ -1228,7 +1255,7 @@ a#fdbk_tab
 	position: absolute
 	width: 960px
 	height: 200px
-	background-color: black
+	background-color: #141414
 	z-index: 500
 
 .addToPlaylistHistory, .addToPlaylistHistory-added

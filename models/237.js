@@ -359,7 +359,9 @@
 		addSocket: function(socket) {
 			var thisSocket = this;
 			socket.on('disconnect', function() { 
-				thisSocket.removeSocket(socket);
+				var roomName = thisSocket.room.get('name');
+				console.log('['+roomName+'] [socket][:disconnect]: user '+thisSocket.room.users.get(socket.id).get('name') + ' is disconnecting');
+				thisSocket.removeSocket(socket, true);
 			});
 			
 			if(this.room) {
@@ -378,11 +380,12 @@
 			//this.announceRoomHistory();
 		},
 
-		removeSocket: function(socket) {
+		removeSocket: function(socket, trueDisconnect) {
 			if(!this.room || !this.room.users || this.room.users == undefined) return;
 			if(!this.room.users.get(socket.id)) return;
 			
-			socket.leave(this.room.get('name'));
+			var roomName = this.room.get('name');
+			if(!trueDisconnect) socket.leave(this.room.get('name'));
 			
 			this.stripListeners(socket);
 			
@@ -390,11 +393,9 @@
 			var userId = userToRemove.get('userId');
 			redisClient.set('user:'+userId+':points', userToRemove.get('points'));	//save points for user
 			this.room.removeSocket(socket.id);
-			console.log('['+this.room.get('name')+'][Room] removeSocket(): there are now '+this.room.users.length+ ' users in the room, and dj count: '+this.room.djs.length);
+			console.log('['+this.room.get('name')+'][SockM] removeSocket(): <# users, # sockets, # djs> : <'+this.room.users.length+ ','+io.sockets.clients(roomName).length+','+this.room.djs.length+'>');
 
-			//console.log('Saving playlist for user '+userId+': '+userPlaylist);	//not working, results in undefined
-			this.announceClients();
-			
+			this.announceClients();			
 			return userToRemove;
 		},
 		

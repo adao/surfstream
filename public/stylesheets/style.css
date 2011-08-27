@@ -1,3 +1,6 @@
+body {
+  background-color: #141414;
+}
 button {
   cursor: pointer;
 }
@@ -14,26 +17,26 @@ button.normalbtn {
   cursor: pointer;
   outline: none;
   color: #000;
-  border: 1px solid #bbb;
+  border: 1px solid #434343;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#e3e3e3));
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   background: -moz-linear-gradient(top, #f9f9f9, #e3e3e3);
-  border-top-color: #ccc;
-  border-bottom-color: #a0a0a0;
+  border-top-color: #666;
+  border-bottom-color: #434343;
 }
 button.leftbtn:hover,
 button.centerbtn:hover,
 button.rightbtn:hover,
 button.normalbtn:hover {
-  border: 1px solid #636363;
+  border: 1px solid #434343;
 }
 button.leftbtn:active,
 button.centerbtn:active,
 button.rightbtn:active,
 button.normalbtn:active {
-  background: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#f9f9f9));
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
 }
 .leftbtn,
 .rightbtn,
@@ -260,11 +263,6 @@ div#outer {
   border-top-right-radius: 2px !important;
   -moz-border-top-right-radius: 2px !important;
   -webkit-border-top-right-radius: 2px !important;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
-  border-top-left-radius: 2px !important;
-  -moz-border-top-left-radius: 2px !important;
-  -webkit-border-top-left-radius: 2px !important;
   float: left;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist:hover,
@@ -290,7 +288,7 @@ div#outer {
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
-  background-color: #666;
+  background-color: #585858;
   width: 300px;
   height: 36px;
   text-indent: 5px;
@@ -341,7 +339,7 @@ div.chatContainer {
 div.chatContainer div.chatHeader {
   width: 300px;
   height: 30px;
-  background-color: #666;
+  background-color: #585858;
 }
 div.chatContainer div.chatHeader img.chatIcon {
   display: inline-block;
@@ -395,10 +393,11 @@ div.chatContainer #messages div.messageContainer:nth-child(odd) {
   background-color: #313131;
 }
 div.chatContainer form.inputBox {
-  background-color: #666;
+  background-color: #585858;
   height: 36px;
   text-indent: 7px;
   font-size: 14px;
+  -webkit-border-bottom-right-radius: 2px;
 }
 div.chatContainer form.inputBox input {
   border-radius: 4px;
@@ -435,7 +434,7 @@ div.historyContainer .history {
 div.historyContainer .history .historyTitle {
   vertical-align: top;
   display: block;
-  background-color: #666;
+  background-color: #585858;
   height: 30px;
   font-size: 16px;
   color: #fff;
@@ -456,7 +455,7 @@ div.historyContainer .history .videoHistory {
   overflow-y: scroll;
 }
 div.historyContainer .history .closeHistory {
-  background-color: #666;
+  background-color: #585858;
   height: 20px;
 }
 div.historyContainer .history .closeHistory #close-history {
@@ -607,6 +606,7 @@ div.historyContainer .history .closeHistory #close-history {
   background-color: #f00;
 }
 #room-container #people-area {
+  -webkit-border-bottom-left-radius: 2px;
   display: block;
   width: 660px;
   height: 270px;
@@ -669,7 +669,7 @@ width: 48px {
 }
 #share .share,
 #shareBar .share {
-  color: #eee;
+  color: #b2b2b2;
   font-size: 16px;
   font-weight: bold;
   width: 54px;
@@ -690,7 +690,7 @@ button.search.active {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   weight: bold;
   font-size: 12px;
-  color: #666;
+  color: #585858;
 }
 .videoView {
   color: #d4d4d4;
@@ -719,7 +719,7 @@ button.search.active {
   background: url("/images/room/pullup.png") 50% 50% no-repeat;
   position: absolute;
   margin-top: 2px;
-  margin-left: 38px;
+  margin-left: 42px;
   cursor: n-resize;
 }
 #remote-container #remote {
@@ -867,10 +867,10 @@ button
   border: 1px solid #eee;
 }
 #room-modal #searchbar {
-  background-color: #666;
+  background-color: #585858;
   display: block;
   height: 54px;
-  background-color: #666;
+  background-color: #585858;
 }
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
@@ -933,7 +933,7 @@ button
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-name-hd,
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-friends-hd,
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.viewers-hd {
-  border-right: 1px solid #666;
+  border-right: 1px solid #585858;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row {
   color: #fff;
@@ -941,7 +941,7 @@ button
   cursor: pointer;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
-  border-right: 1px solid #666;
+  border-right: 1px solid #585858;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .num-viewers,
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .num-djs {
@@ -977,7 +977,7 @@ button
 }
 #room-modal #create-room {
   height: 40px;
-  background-color: #666;
+  background-color: #585858;
   text-align: center;
   vertical-align: middle;
 }
@@ -1021,6 +1021,7 @@ button
   background: transparent;
 }
 #video-div {
+  -webkit-border-top-left-radius: 2px;
   width: 660px;
   height: 413px;
   background: url("/images/room/tv.png") 50% 50% no-repeat;
@@ -1078,34 +1079,62 @@ background-color: green,
 #top-video-views {
   background-color: #000;
 }
-.unselected-playlist-nameholder {
-  background-color: #000;
-  color: #fff;
+.unselected-playlist-nameholder,
+.selected-playlist-nameholder {
+  text-indent: 6px;
+  margin: 0 2px 6px 2px;
   display: inline-block;
-  list-style-type: none;
-  background: none repeat scroll;
-  padding: 5px;
+  position: relative;
+  line-height: 18px;
+  -webkit-border-radius: 9px;
+  border: 1px solid #cad8f3;
+  background: #dee7f8;
+  color: #000;
+  padding-right: 15px;
+  cursour: default;
 }
 .selected-playlist-nameholder {
-  background-color: #fff;
-  color: #000;
-  display: inline-block;
-  list-style-type: none;
-  background: none repeat scroll;
-  padding: 5px;
+  border-color: #598bec;
+  background: #598bec;
+  color: #fff;
 }
 #playlist-collection-display {
-  height: 90px;
-  width: 300px;
-  margin-left: -40px;
+  margin-left: -36px;
+  display: inline-block;
 }
 #playlist-collection {
   height: 120px;
   font-size: 10px;
+  background-color: #585858;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#playlist-collection-form {
+  width: 0px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+}
+#playlist-collection-input {
+  font-size: 10px;
+  background: transparent;
+  width: 66px;
+  margin: 0 2px;
+  display: inline-block;
+  -webkit-border-radius: 9px;
+  border: 1px solid #cad8f3;
+  background: #dee7f8;
+  color: #000;
+  cursour: default;
+  height: 16px;
+}
+#playlist-collection-input {
+  outline: none;
 }
 #playlist-view {
-  height: 259px;
-  max-height: 379px;
+  height: 100%;
+  max-height: 327px;
   overflow-y: scroll;
   overflow-x: hidden;
   z-index: -1;
@@ -1212,7 +1241,7 @@ background-color: green,
   width: 100%;
 }
 #preview-container {
-  border: 1px solid #666;
+  border: 1px solid #585858;
   height: 202px;
 }
 #close-preview-player {
@@ -1330,7 +1359,7 @@ background-color: green,
 }
 #nowPlayingFull {
   border-radius: 3px;
-  border: solid 1px #666;
+  border: solid 1px #585858;
   min-height: 60px;
   height: 20%;
   max-height: 100px;
@@ -1340,7 +1369,7 @@ background-color: green,
   color: #fff;
   width: 80%;
   margin-left: 100px;
-  text-shadow: #666 0.1em 0.1em 0.5em;
+  text-shadow: #585858 0.1em 0.1em 0.5em;
   margin-bottom: 20px;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   left: 50%;
@@ -1427,7 +1456,7 @@ a#fdbk_tab {
   position: absolute;
   width: 960px;
   height: 200px;
-  background-color: #000;
+  background-color: #141414;
   z-index: 500;
 }
 .addToPlaylistHistory,
