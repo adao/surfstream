@@ -58,12 +58,22 @@ RoomManager = Backbone.Model.extend({
 	initialize: function() {
 		
 		this.roomMap = {};
+		
+		var roomMgr = this;
+		redisClient.lrange('rooms',0,-1, function(err, rooms) {
+			if(rooms) { 
+				_.each(rooms, function(roomId) {
+					console.log('fetching room from redis, name: '+roomId)
+					roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
+					roomMgr.roomMap[roomId].set({ name: roomId });
+				});
+			}
+		});
 	},
 	
 	sendRoomsInfo: function(socket, id) {
 		if (redisClient) {
 			redisClient.sinter("user:" + id + ":fb_friends", "onlineFacebookUsers", function(err, reply) {
-				console.log("WTF");
 				console.log(reply);
 				var rooms = [];
 				var friendsRooms = {};
@@ -205,7 +215,7 @@ io.sockets.on('connection', function(socket) {
 			userManager.ssIdToRoom[data.ssId] = data.rID;
 		}
 		if(data.currRoom && roomManager.roomMap[data.currRoom]) {
-				var user = roomManager.roomMap[data.currRoom].sockM.removeSocket(socket);
+				var user = roomManager.roomMap[data.currRoom].sockM.removeSocket(socket, false);
 				if(user) {
 					console.log('user '+user.get('name')+'is already in a room, leaving the room: '+data.currRoom);
 					if(roomManager.roomMap[data.rID])
