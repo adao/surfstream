@@ -247,6 +247,7 @@ $(function() {
 	 this.onSofa = false;
 	 this.curDJ = "__none__";
 	 this.sofaUsers = [];
+	 this.rotateRemoteSign = true;
 	 var roomModel, mainView;
 	
 	this.set({
@@ -1106,8 +1107,8 @@ $(function() {
 		},
 	
 		render: function() {
-			var roomListCellModel = this.options.roomListCellModel; 
-			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: roomListCellModel.get("curVidTitle"),
+			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle"); 
+			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + roomListCellModel.get("curVidTitle") : "" ,
 				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("friends").length}));
 			return this;
 		},
@@ -1309,7 +1310,7 @@ $(function() {
 				if (djArray[dj].id == this.options.userModel.get("ssId"))  {
 					user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
 					$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>");
-					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut();});
+					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut(); });
 				}
 			} else {
 				newDJ = false;
@@ -1597,7 +1598,7 @@ $(function() {
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
 	console.log('video announced');
-		var remoteX, remoteY,curX, curY, djRemote;
+		var remoteX, remoteY,curX, curY, djRemote, rotationDegs;
 		SurfStreamApp.curDJ = video.dj;
 		mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
@@ -1656,7 +1657,7 @@ $(function() {
 		djRemote = $("#sofa-remote");
 		curX = parseInt(djRemote.css("left").replace("px", ""));
 		curY = parseInt(djRemote.css("top").replace("px", ""));
-		remoteX = $("#avatarWrapper_" + video.dj).data("sofaML") + 60;
+		remoteX = $("#avatarWrapper_" + video.dj).data("sofaML") + 50;
 		remoteY = $("#avatarWrapper_" + video.dj).data("sofaMT") + 50;
 		var bezier_params = {
 		    start: { 
@@ -1672,7 +1673,14 @@ $(function() {
 		    }
 		  }
 
-		djRemote.animate({rotate: "+=2880deg", path : new $.path.bezier(bezier_params)}, 1000);
+		this.rotateRemoteSign = !this.rotateRemoteSign
+		rotationDegs = "=2880deg"
+		if (this.rotateRemoteSign) {
+			rotationDegs = "+" + rotationDegs;
+		} else {
+			rotationDegs = "-" + rotationDegs;
+		}
+		djRemote.animate({rotate: rotationDegs, path : new $.path.bezier(bezier_params)}, 1000);
    });
 
    socket.on('video:stop', function() {

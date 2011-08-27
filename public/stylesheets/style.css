@@ -1278,12 +1278,19 @@ background-color: green,
 .getOff {
   cursor: s-resize;
   position: absolute;
-  background: #34c9ff;
+  background: #000;
   font-size: 14px;
   padding: 3px;
   text-align: center;
-  width: 82px;
+  width: 85px;
   margin-top: 40px;
+  margin-left: -6px;
+  border: solid #000 2px;
+  border-radius: 6px;
+  font-weight: bold;
+  z-index: 5;
+  color: #fff;
+  opacity: 0.75;
 }
 #avatarWrapper_VAL {
   position: absolute;
