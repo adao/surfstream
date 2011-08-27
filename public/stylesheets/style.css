@@ -1094,7 +1094,7 @@ background-color: green,
   display: inline-block;
 }
 #playlist-collection {
-  height: 120px;
+  max-height: 120px;
   font-size: 10px;
   background-color: #585858;
   overflow-y: scroll;
@@ -1108,10 +1108,12 @@ background-color: green,
   display: block;
 }
 #playlist-collection-input {
+  text-indent: 4px;
   font-size: 10px;
   background: transparent;
   width: 66px;
-  margin: 0 2px;
+  margin: 0 2px 6px 4px;
+  padding-right: 4px;
   display: inline-block;
   -webkit-border-radius: 9px;
   border: 1px solid #cad8f3;
