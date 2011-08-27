@@ -791,6 +791,13 @@ button.search.active {
   -moz-border-radius: 20px;
   cursor: pointer;
 }
+#skipContainer {
+  width: 80px;
+  position: absolute;
+  margin-top: 90px;
+  margin-left: -3px;
+  z-index: 10;
+}
 #up-vote,
 #down-vote,
 #vol-up,
@@ -809,6 +816,8 @@ button.search.active {
   -moz-border-radius: 20px;
   color: #e5e5e5;
   cursor: pointer;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: bold;
 }
 .buttonContainer {
   margin: 3px;
@@ -1299,12 +1308,19 @@ background-color: green,
 .getOff {
   cursor: s-resize;
   position: absolute;
-  background: #34c9ff;
+  background: #000;
   font-size: 14px;
   padding: 3px;
   text-align: center;
-  width: 82px;
+  width: 85px;
   margin-top: 40px;
+  margin-left: -6px;
+  border: solid #000 2px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #fff;
+  opacity: 0.75;
+  z-index: 30;
 }
 #avatarWrapper_VAL {
   position: absolute;
@@ -1424,6 +1440,16 @@ background-color: green,
   top: 140px;
   z-index: 3;
   position: absolute;
+}
+#skip {
+  background: transparent;
+  height: 25px;
+  width: 80px;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  color: #e5e5e5;
+  cursor: pointer;
 }
 a#fdbk_tab {
   z-index: 10;

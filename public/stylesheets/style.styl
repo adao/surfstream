@@ -674,6 +674,13 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	-webkit-border-radius: 20px
 	-moz-border-radius: 20px
 	cursor: pointer
+	
+#skipContainer
+	width:80px
+	position: absolute;
+	margin-top: 90px;
+	margin-left: -3px;
+	z-index: 10
 
 #up-vote, #down-vote, #vol-up, #vol-down, #rooms, #history-button, #mute, #ch-up, #ch-down, #fullscreen
 	background: transparent
@@ -684,6 +691,8 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	-moz-border-radius: 20px
 	color: #e5e5e5  
 	cursor: pointer
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
+	font-weight: bold
 	
 .buttonContainer
 	margin: 3px
@@ -1100,12 +1109,19 @@ div#top-video-name
 .getOff
 	cursor: s-resize
 	position: absolute
-	background: #34C9FF
+	background: black
 	font-size: 14px
 	padding: 3px
 	text-align: center
-	width: 82px
+	width: 85px
 	margin-top: 40px
+	margin-left: -6px
+	border: solid black 2px
+	border-radius: 6px
+	font-weight: bold
+	color: white
+	opacity: .75
+	z-index: 30
 
 #avatarWrapper_VAL
 	position:absolute;
@@ -1222,8 +1238,18 @@ div#top-video-name
 	left: 170px
 	top: 140px
 	z-index:3
-	position: absolute;
+	position: absolute
 
+#skip
+	background: transparent;
+	height: 25px;
+	width: 80px;
+	border-radius: 20px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	color: #E5E5E5;
+	cursor: pointer;
+	
 a#fdbk_tab
 	z-index: 10
 
