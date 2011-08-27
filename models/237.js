@@ -713,7 +713,6 @@
 				}
 			});
 			socket.on('playlists:addPlaylist', function(data) {
-				console.log("here1");
 				redisClient.hlen("user:" + userId + ":playlists", function(err, reply) {
 					if (err) {
 						console.log("Error retrieving retrieving length of user's playlists hash for facebook user " + data.fbId);
