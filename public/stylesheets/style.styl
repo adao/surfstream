@@ -155,8 +155,6 @@ div#frontdoor
 	display: none
 div#outer
 	display: none
-body
-	background-image: url('/images/room/bgtile_black.png')
 //skeleton
 #outer
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
@@ -241,7 +239,7 @@ body
 						width: 300px
 					#searchBar
 						.inputBox
-							background-color: #434343
+							background-color: #666
 							width: 300px
 							height: 36px
 							text-indent: 5px
@@ -289,7 +287,7 @@ div.chatContainer
 	div.chatHeader
 		width: 300px
 		height: 30px
-		background-color: #434343
+		background-color: #666
 		img.chatIcon
 			display: inline-block
 			width: 27px
@@ -335,7 +333,7 @@ div.chatContainer
 		div.messageContainer:nth-child(odd)
 					background-color: #313131
 	form.inputBox
-		background-color: #434343
+		background-color: #666
 		height: 36px
 		text-indent: 7px
 		font-size: 14px
@@ -372,7 +370,7 @@ div.historyContainer
 		.historyTitle
 			vertical-align: top
 			display: block
-			background-color: gray
+			background-color: #666
 			height: 30px
 			font-size: 16px
 			color: white
@@ -390,7 +388,7 @@ div.historyContainer
 			overflow-x: hidden
 			overflow-y: scroll
 		.closeHistory
-			background-color: gray
+			background-color: #666
 			height: 20px
 			#close-history
 				margin-top: -1px
@@ -455,10 +453,10 @@ div.historyContainer
 	height: 60px
 	.thumbContainer
 		float: left
-		width: 58px
-		height: 46px
-		margin-left: 7px
-		margin-top: 7px
+		width: 63px
+		height: 50px
+		margin-left: 5px
+		margin-top: 5px
 	.cellInfo
 		float: right
 		width: 210px
@@ -469,21 +467,13 @@ div.historyContainer
 			height: 60px
 			.title
 				overflow-y: hidden
-				margin-top: 7px
+				margin-top: 5px
 				width: 150px
-				height: 28px
+				height: 50px
 				font-weight: bold
 				font-size: 11px
-			.views
-				margin-top: 2px
-				width: 150px
-				height: 10px
-				font-size: 9px
-			.time
-				margin-top: 2px
-				width: 150px
-				height: 10px
-				font-size: 9px
+				overflow: hidden
+				text-overflow: ellipsis
 		.cellButtons
 			float: right
 			width: 30px
@@ -596,7 +586,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	weight: bold
 	font-size: 12px
-	color: gray
+	color: #666
 	
 .videoView
 	color: #D4D4D4
@@ -735,7 +725,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	z-index: 10000
 	border: 1px solid #eee
 	#searchbar
-		background-color: #434343
+		background-color: #666
 		display: block
 		height: 54px
 		background-color: #666
@@ -822,10 +812,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				background-color: #373737    
 	#create-room
 		height: 40px
-		background-color: #434343
+		background-color: #666
 		text-align: center
 		vertical-align: middle
 		#CreateRoomName
+			font-size: 12px
 			width: 150px
 			background-color: #373737
 			text-indent: 3px
@@ -966,12 +957,14 @@ div#top-video-name
 				height: 60px
 				.title
 					overflow-y: hidden
-					margin-top: 7px
+					margin-top: 5px
 					width: 150px
-					height: 28px
+					height: 50px
 					font-weight: bold
 					font-size: 11px
 					text-wrap: suppress
+					overflow: hidden
+					text-overflow: ellipsis
 				.views
 					margin-top: 2px
 					width: 150px
@@ -1025,7 +1018,7 @@ div#top-video-name
 		width: 100%
 	
 #preview-container
-	border: 1px solid gray
+	border: 1px solid #666
 	height: 202px                     
 #close-preview-player 
 	float: right
@@ -1131,7 +1124,7 @@ div#top-video-name
 
 #nowPlayingFull
 	border-radius: 3px
-	border: solid 1px gray
+	border: solid 1px #666
 	min-height: 60px
 	height: 20%
 	max-height: 100px 
@@ -1141,7 +1134,7 @@ div#top-video-name
 	color: white
 	width: 80%
 	margin-left: 100px
-	text-shadow: gray 0.1em 0.1em 0.5em
+	text-shadow: #666 0.1em 0.1em 0.5em
 	margin-bottom: 20px
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	left: 50%;
@@ -1216,7 +1209,7 @@ a#fdbk_tab
 	position: absolute
 	width: 960px
 	height: 200px
-	background-image: url('/images/room/bgtile_black.png') 
+	background-color: black
 	z-index: 500
 
 .addToPlaylistHistory, .addToPlaylistHistory-added
