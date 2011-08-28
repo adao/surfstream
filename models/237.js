@@ -10,7 +10,14 @@
 	permSockEvents['room:join'] = true;
 	permSockEvents['rooms:load'] = true;
 	permSockEvents['user:sendFBId'] = true;
-	permSockEvents['user:sendUserFBFriends'] = true;
+	permSockEvents['user:sendUserFBFriends'] = true;       
+	permSockEvents['playlists:choosePlaylist'] = true;
+	permSockEvents['playlists:addPlaylist'] = true;
+	permSockEvents['playlists:deletePlaylist'] = true;
+	permSockEvents['playlist:addVideo'] = true;
+	permSockEvents['playlist:moveVideoToTop'] = true;
+	permSockEvents['playlist:delete'] = true;
+	permSockEvents['playlist:moveVideo'] = true;
 
 
 	/*************************/
