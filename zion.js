@@ -139,7 +139,8 @@ io.sockets.on('connection', function(socket) {
 						var currUser = new models.User({
 							name: name, 
 							socketId: socket.id, 
-							userId: ssUser.ssId, 
+							userId: ssUser.ssId,
+							fbId: ssUser.id, 
 							socket: socket
 					  });
 						currUser.initializeAndSendPlaylists(socket);
@@ -173,7 +174,8 @@ io.sockets.on('connection', function(socket) {
 				var currUser = new models.User({
 					name: ssUser.name, 
 					socketId: socket.id, 
-					userId: ssUser.ssId, 
+					userId: ssUser.ssId,
+					fbId: ssUser.fbId, 
 					socket: socket
 			  });
 				StagingUsers[socket.id] = currUser;
