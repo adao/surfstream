@@ -472,6 +472,7 @@ div.historyContainer .history .closeHistory #close-history {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: bold;
 }
 .videoLog .videoInfo .details {
   display: inline-block;
@@ -1331,6 +1332,9 @@ background-color: green,
 .nametip {
   width: 70px;
   height: 100px;
+}
+.chattip {
+  margin-left: 35px;
 }
 #nowPlayingFull {
   border-radius: 3px;

@@ -1167,9 +1167,9 @@ $(function() {
 	 $("#fullscreenIcon").bind("click", {theatre: this}, this.fullscreenToggle);
 	 $(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
 	 remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
+	 remotePullup.attr("title", "Pull Up")
 	 remotePullup.tipsy({
 	    gravity: 's',
-	    title: function() { return "Pull Up"; }
 	   });
 	 avatarVAL.css("margin-left", '410px');
 	 avatarVAL.hide();
@@ -1197,10 +1197,12 @@ $(function() {
 		
 		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
 			  
-				
 				$("#remote-container").animate({"margin-top": -17}, 300, function() {
 					var remotePullup ,remoteTop, remote;
+					
 					remotePullup = $("#remote-pullup");
+					//if(e.srcElement.id == "remote-pullup") remotePullup.tipsy("hide");
+					
 					remoteTop = $(".remote-top"); 
 					remote = $("#remote");
 					remotePullup.unbind("click");
@@ -1210,10 +1212,7 @@ $(function() {
 					remoteTop.addClass("up");
 					remote.addClass("up");
 					remotePullup.addClass("up");
-					remotePullup.tipsy({
-					    gravity: 's',
-					    title: function() { return "Pull Down"; }
-					   });
+					remotePullup.attr("title", "Pull Down")
 				});
 				
 			}
@@ -1227,6 +1226,7 @@ $(function() {
 			$("#remote-container").animate({"margin-top": 130}, 300, function() { 
 				var remotePullup ,remoteTop, remote;			
 				remotePullup = $("#remote-pullup");
+				remotePullup.attr("title", "Pull Up")
 				remoteTop = $(".remote-top"); 
 				remote = $("#remote");
 				remotePullup.unbind("click");
@@ -1368,12 +1368,12 @@ $(function() {
  }, { /* Class properties */
 
   tipsyChat: function(text, fbid) {
-   var userPic = $("#avatarWrapper_" + fbid);
+   var userPic = $("#avatarChat_" + fbid);
 	 var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
    setTimeout(function() {
-	  if($("#avatarWrapper_" + fbID).length > 0) userPic.tipsy("hide");
+	  if($("#avatarChat_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
 
@@ -1389,9 +1389,10 @@ $(function() {
 		avatarImgSrc = this.getAvatarSrc(avatarId);
 		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc })
 		nameDiv = this.make('div', {id:'nameDiv_' + user.id, class:"nametip", style: 'position:absolute;', title: user.get('name') })
+		chatDiv = this.make('div', {id:'avatarChat_' + user.id, class: "chattip" });
 		avatarMouth = this.make('img', {class: 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
 		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
-		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
+		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv).append(chatDiv);
 		//put off stage
 		if (user.get('x') < 290) {
 			stageX = -80;
@@ -1401,7 +1402,7 @@ $(function() {
 		
 		$(this.el).css("margin-left", stageX).css("margin-top", 280).css("position", 'absolute');
 		$("#people-area").prepend(this.el);
-	  $("#avatarWrapper_" + user.id).tipsy({
+	  $("#avatarChat_" + user.id).tipsy({
 	    gravity: 'sw',
 	    fade: 'true',
 	    delayOut: 3000,
