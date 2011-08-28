@@ -86,10 +86,6 @@ button.normalbtn:active {
   border-left: 0 !important;
   float: clear !important;
 }
-.rightbtn:hover {
-  padding: 2px 6px 2px 5px !important;
-  border: 1px solid #636363 !important;
-}
 .hidden {
   display: none;
 }
@@ -266,7 +262,7 @@ div#outer {
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
-  background-color: #585858;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   width: 300px;
   height: 36px;
   text-indent: 5px;
@@ -317,7 +313,7 @@ div.chatContainer {
 div.chatContainer div.chatHeader {
   width: 300px;
   height: 30px;
-  background-color: #585858;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
 }
 div.chatContainer div.chatHeader img.chatIcon {
   display: inline-block;
@@ -351,7 +347,7 @@ div.chatContainer #messages div.messageContainer {
   height: auto;
   overflow-x: hidden;
   overflow-y: visible;
-  width: 274px;
+  width: 276px;
   max-width: 274px;
   font-size: 14px;
   color: #d4d4d4;
@@ -371,7 +367,7 @@ div.chatContainer #messages div.messageContainer:nth-child(odd) {
   background-color: #313131;
 }
 div.chatContainer form.inputBox {
-  background-color: #585858;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   height: 36px;
   text-indent: 7px;
   font-size: 14px;
@@ -413,7 +409,7 @@ div.historyContainer .history {
 div.historyContainer .history .historyTitle {
   vertical-align: top;
   display: block;
-  background-color: #585858;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   height: 30px;
   font-size: 16px;
   color: #fff;
@@ -434,7 +430,7 @@ div.historyContainer .history .videoHistory {
   overflow-y: scroll;
 }
 div.historyContainer .history .closeHistory {
-  background-color: #585858;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   height: 20px;
 }
 div.historyContainer .history .closeHistory #close-history {
@@ -576,6 +572,9 @@ div.historyContainer .history .closeHistory #close-history {
 .searchCellContainer:nth-child(odd) {
   background-color: #313131;
 }
+.searchCellContainer:hover {
+  background-color: #666;
+}
 #room-container {
   width: 660px;
   height: 620px;
@@ -606,6 +605,7 @@ div.historyContainer .history .closeHistory #close-history {
   margin-top: 3px;
 }
 .share-image-container {
+  vertical-align: top;
   height: 16px;
   width: 29px;
   background: transparent;
@@ -625,13 +625,15 @@ width: 48px {
 #share,
 #shareBar {
   float: right;
-  width: 254px;
+  width: 216px;
   height: 40px;
   color: #000;
   margin-left: 6px;
 }
 #share .share,
 #shareBar .share {
+  margin-top: 6px;
+  vertical-align: top;
   color: #b2b2b2;
   font-size: 16px;
   font-weight: bold;
@@ -642,8 +644,8 @@ width: 48px {
 #share #social,
 #shareBar #social {
   display: inline-block;
-  margin-top: 3px;
-  width: 200px;
+  margin-top: 1px;
+  width: 162px;
   height: 40px;
 }
 button.playlist,
@@ -837,10 +839,9 @@ button
   border: 1px solid #eee;
 }
 #room-modal #searchbar {
-  background-color: #585858;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   display: block;
   height: 54px;
-  background-color: #585858;
 }
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
@@ -946,7 +947,7 @@ button
 }
 #room-modal #create-room {
   height: 40px;
-  background-color: #585858;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   text-align: center;
   vertical-align: middle;
 }
@@ -1075,7 +1076,7 @@ background-color: green,
 #playlist-collection {
   max-height: 120px;
   font-size: 10px;
-  background-color: #585858;
+  background-color: #434343;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -1116,6 +1117,9 @@ background-color: green,
 }
 #playlist-view .videoListCellContainer:nth-child(even) {
   background-color: #373737;
+}
+#playlist-view .videoListCellContainer:hover {
+  background-color: #666;
 }
 #playlist-view .videoListCellContainer {
   width: 285px;
@@ -1437,6 +1441,20 @@ a#fdbk_tab {
   height: 200px;
   background-color: #141414;
   z-index: 1001;
+  text-align: center;
+  font-size: 12px;
+  padding: 8px;
+}
+#footer a,
+#footer span {
+  margin: 0px 10px 0 0px;
+  text-decoration: none;
+  color: #666;
+}
+#footer a:link,
+#footer a:visited,
+#footer a:active. a:hover {
+  text-decoration: none;
 }
 .addToPlaylistHistory,
 .addToPlaylistHistory-added {
@@ -1458,4 +1476,44 @@ a#fdbk_tab {
 }
 .addToPlaylistHistory-added {
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAMCAQAAAAXSy9vAAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAJdnBBZwAAAA8AAAAMAEgxQNAAAADeSURBVBjTZcmtSoNRAIDh55zv7AtewxCbN2CwaRBRQYtFsMkGFsuKxQuwDA2CRTAYBIPBaDM7TMKKcRYxyIKI+34Mmz/gW97wBH/qjdcwsmfetpD+YTLScix61w49iGo1gkyho6tSyF3FCQZhgge6SpXcwGmSKU0bepMUDu0rkAws60elWQ8u5QonP/hkQV8KvUUXmrjxoqVQa3i04lmmTHY1fUo2UKHh3ppXmZJoy7lcpVSqJHeWvpEo2HEmqdWSW6uG4hjnRGTajiTJtXUfomqMJLVK0jFlxqYg/CJf1GNJn+JqkhQAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTEtMDgtMjJUMDI6NDM6MzktMDQ6MDBO8tieAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDExLTA4LTIyVDAyOjQzOjM5LTA0OjAwP69gIgAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAASUVORK5CYII=") 50% 50% no-repeat;
+}
+.playlistDropdownContainer {
+  float: right;
+}
+.social {
+  height: 32px;
+  width: 32px;
+  border: none;
+  background: transparent;
+  float: right;
+}
+#shareFB {
+  background: url("/images/room/new-icons/facebook.png") 50% 50% no-repeat;
+}
+#shareFB:hover {
+  background: url("/images/room/new-icons/fb.png") 50% 50% no-repeat;
+}
+#shareTwit {
+  background: url("/images/room/new-icons/twitter.png") 50% 50% no-repeat;
+}
+#shareTwit:hover {
+  background: url("/images/room/new-icons/twitter-color.png") 50% 50% no-repeat;
+}
+#shareEmail {
+  background: url("/images/room/new-icons/email.png") 50% 50% no-repeat;
+}
+#shareEmail:hover {
+  background: url("/images/room/new-icons/email-color.png") 50% 50% no-repeat;
+}
+#shareG {
+  background: url("/images/room/new-icons/g.png") 50% 50% no-repeat;
+}
+#shareG:hover {
+  background: url("/images/room/new-icons/g-color.png") 50% 50% no-repeat;
+}
+#copy-button-container {
+  background: url("/images/room/new-icons/copy.png") 50% 50% no-repeat;
+}
+#copy-button-container:hover {
+  background: url("/images/room/new-icons/copy-color.png") 50% 50% no-repeat;
 }

@@ -1475,7 +1475,7 @@ $(function() {
    $('#shareTwit').css('background-image', '/images/twitter_small.png');
    $('#shareEmail').css('background-image', '/images/email_small.png');
    $('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
-   $('#copy-button-container').html("<div id=\"copy-button\">copy link</div>");
+   $('#copy-button-container').html("<div id=\"copy-button\"></div>");
    var link = $('input:text').val();
    console.log(link);
    var clip = new ZeroClipboard.Client();
@@ -2032,8 +2032,10 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 }
 
 function updateTime() {
-	$("#countdownFull").html("Time Remaining: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
-	$("#cur-video-time").html("Time Remaining: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+	$("#countdownFull").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+	if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
+	 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
+	}
 }
 
 function skipVideo() {
