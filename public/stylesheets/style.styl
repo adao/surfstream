@@ -84,7 +84,7 @@ button.leftbtn:active, button.centerbtn:active, button.rightbtn:active, button.n
 		color: #B2B2B2
 		font-size: 20px
 		display: inline-block
-		width: 260px
+		max-width: 260px
 		height: 40px
 	#cur-video-info
 		margin-left: 10px
@@ -170,7 +170,7 @@ div#outer
 		width: 960px
 		display: block
 	#coolshit
-		height: 684px
+		height: 634px
 		width: 960px
 		background-color: transparent
 		display: block
@@ -347,6 +347,7 @@ div.historyContainer
 	overflow-x: hidden
 	overflow-y: hidden
 	background-color: #373737
+	z-index: 500
 	.history
 		height: 251px
 		background: transparent
@@ -393,6 +394,7 @@ div.historyContainer
 		width: 275px
 		margin-left: 4px
 		background-color: black
+		overflow: hidden
 	.videoInfo
 		display: block
 		width: 285px
@@ -406,6 +408,7 @@ div.historyContainer
 			overflow: hidden
 			text-overflow: ellipsis
 			white-space: nowrap
+			font-weight: bold
 		.details
 			display: inline-block
 			vertical-align: top
@@ -567,15 +570,22 @@ button.playlist, button.playlist.active, button.search, button.search.active
 //chat bubbles
 .tipsy-inner
 	z-index: 666
-	
+
+.HDprev
+	width: 285px;
+	margin-top: -50px;
+
 #remote-container
 	height: 245px!important
 	width: 114px!important
 	float: right
 	display: block
-	margin-top: 180px
+	margin-top: 130px
 	margin-right: 5px
 	text-align: center
+	z-index: 1000
+	position: absolute
+	margin-left: 540px
 	button#remote-pullup
 		border: none
 		height: 10px
@@ -845,7 +855,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	left: 0
 	padding-left: 0
 	position: fixed
-	
+	z-index: 9999
 #top-video-cell
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
 	font-size: 12px 
@@ -1094,7 +1104,7 @@ div#top-video-name
 	position:absolute;
 
 #tvglowimg
-	margin-top: 164px
+	margin-top: 114px
 	margin-left: 120px
 	position: absolute
 
@@ -1229,7 +1239,7 @@ a#fdbk_tab
 	width: 960px
 	height: 200px
 	background-color: #141414
-	z-index: 500
+	z-index: 1001
 
 .addToPlaylistHistory, .addToPlaylistHistory-added
 	float: right

@@ -107,7 +107,7 @@ button.normalbtn:active {
   color: #b2b2b2;
   font-size: 20px;
   display: inline-block;
-  width: 260px;
+  max-width: 260px;
   height: 40px;
 }
 #header #cur-video-info {
@@ -207,7 +207,7 @@ div#outer {
   display: block;
 }
 #outer #coolshit {
-  height: 684px;
+  height: 634px;
   width: 960px;
   background-color: transparent;
   display: block;
@@ -404,6 +404,7 @@ div.historyContainer {
   overflow-x: hidden;
   overflow-y: hidden;
   background-color: #373737;
+  z-index: 500;
 }
 div.historyContainer .history {
   height: 251px;
@@ -455,6 +456,7 @@ div.historyContainer .history .closeHistory #close-history {
   width: 275px;
   margin-left: 4px;
   background-color: #000;
+  overflow: hidden;
 }
 .videoLog .videoInfo {
   display: block;
@@ -663,14 +665,21 @@ button.search.active {
 .tipsy-inner {
   z-index: 666;
 }
+.HDprev {
+  width: 285px;
+  margin-top: -50px;
+}
 #remote-container {
   height: 245px !important;
   width: 114px !important;
   float: right;
   display: block;
-  margin-top: 180px;
+  margin-top: 130px;
   margin-right: 5px;
   text-align: center;
+  z-index: 1000;
+  position: absolute;
+  margin-left: 540px;
 }
 #remote-container button#remote-pullup {
   border: none;
@@ -999,6 +1008,7 @@ button
   left: 0;
   padding-left: 0;
   position: fixed;
+  z-index: 9999;
 }
 #top-video-cell {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -1285,7 +1295,7 @@ background-color: green,
   position: absolute;
 }
 #tvglowimg {
-  margin-top: 164px;
+  margin-top: 114px;
   margin-left: 120px;
   position: absolute;
 }
@@ -1422,7 +1432,7 @@ a#fdbk_tab {
   width: 960px;
   height: 200px;
   background-color: #141414;
-  z-index: 500;
+  z-index: 1001;
 }
 .addToPlaylistHistory,
 .addToPlaylistHistory-added {

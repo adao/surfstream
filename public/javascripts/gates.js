@@ -586,7 +586,7 @@ $(function() {
 	render: function() {
 		var historyItem = this.options.room;
 		$(this.el).html(this.roomHistoryItemViewTemplate({title: historyItem.get("title"), length: ss_formatSeconds(historyItem.get("length")), percent: historyItem.get("percent")}));
-		this.$(".thumbContainer").attr("src", ss_idToImg(historyItem.get("videoId")));
+		this.$(".thumbContainer > img").attr("src", ss_idToHDImg(historyItem.get("videoId")));
 		return this;
 	}
  });
@@ -1198,7 +1198,7 @@ $(function() {
 		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
 			  
 				
-				$("#remote-container").animate({"margin-top": 27}, 300, function() {
+				$("#remote-container").animate({"margin-top": -17}, 300, function() {
 					var remotePullup ,remoteTop, remote;
 					remotePullup = $("#remote-pullup");
 					remoteTop = $(".remote-top"); 
@@ -1224,7 +1224,7 @@ $(function() {
 		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
 			
 			
-			$("#remote-container").animate({"margin-top": 180}, 300, function() { 
+			$("#remote-container").animate({"margin-top": 130}, 300, function() { 
 				var remotePullup ,remoteTop, remote;			
 				remotePullup = $("#remote-pullup");
 				remoteTop = $(".remote-top"); 
@@ -1680,18 +1680,18 @@ $(function() {
 		    start: { 
 		      x: curX, 
 		      y: curY, 
-		      angle: (curX > remoteX) ? 30: -30,
-					length: .5
+		      angle: (curX > remoteX) ? 50: -50,
+					length: .8
 		    },  
 		    end: { 
 		      x:remoteX,
 		      y:remoteY, 
-		      angle: (curX > remoteX) ? -10: 10
+		      angle: (curX > remoteX) ? -50: 50
 		    }
 		  }
 
 		this.rotateRemoteSign = !this.rotateRemoteSign
-		rotationDegs = "=2880deg"
+		rotationDegs = "=1800deg"
 		if (this.rotateRemoteSign) {
 			rotationDegs = "+" + rotationDegs;
 		} else {
@@ -2015,6 +2015,10 @@ function ss_formatSeconds(time) {
 
 function ss_idToImg(id) {
 	return "http://img.youtube.com/vi/"+id+"/0.jpg";
+}
+
+function ss_idToHDImg(id) {
+	return "http://i1.ytimg.com/vi/" + id + "/hqdefault.jpg"
 }
 
 function ss_modelWithAttribute(collection, attribute, valueToMatch) {
