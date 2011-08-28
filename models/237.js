@@ -423,8 +423,8 @@
 		
 		announceClients: function() {
 			var allUsers = this.room.users.xport();
-			console.log("["+this.room.get('name')+"] 'announceClients' fired to all sockets, client count: "+allUsers.length);
 			io.sockets.in(this.room.get('name')).emit('users:announce', allUsers);
+			console.log("["+this.room.get('name')+"] 'announceClients' fired to all sockets, client count: "+allUsers.length);
 		},
 		
 		announceMeter: function() {
