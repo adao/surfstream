@@ -713,6 +713,7 @@
 					thisUser.setPlaylist(data.playlistId);
 				}
 			});
+			
 			socket.on('playlists:addPlaylist', function(data) {
 				redisClient.hlen("user:" + userId + ":playlists", function(err, reply) {
 					if (err) {
@@ -731,6 +732,7 @@
 					}
 				});
 			});
+			
 			socket.on('playlists:deletePlaylist', function(data) {
 				
 			});
