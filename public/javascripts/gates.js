@@ -696,7 +696,6 @@ $(function() {
    event.preventDefault();
    var query = $($('input[name=search]')[0]).val();
    $("#searchContainer").empty();
-	 $("#youtubeInput").autocomplete("close");
    event.data.searchView.options.searchBarModel.executeSearch(query);
    return false;
   },
@@ -711,6 +710,7 @@ $(function() {
 	getSuggestions: function(event) {
 		if (event.keyCode == 13) {
 			$("#youtubeInput").autocomplete("option", "disabled", true);
+			$("#youtubeInput").autocomplete("close");
 			return;
 		}
 		$("#youtubeInput").autocomplete( "option", "disabled", false);
@@ -1130,6 +1130,7 @@ $(function() {
   className: "messageContainer",
   initialize: function() {
    $("#messages").append(this.render().el);
+	 soundPlay("THUD.WAV");
   },
 
   render: function() {
@@ -2032,6 +2033,30 @@ function updateTime() {
 
 function skipVideo() {
  socket_init.emit("video:skip");
+}
+
+var soundEmbed = null;
+
+function soundPlay(which) {
+    if (!soundEmbed)
+        {
+        soundEmbed = document.createElement("embed");
+        soundEmbed.setAttribute("src", "/sounds/" + which);
+        soundEmbed.setAttribute("hidden", true);
+        soundEmbed.setAttribute("autostart", true);
+        }
+    else
+        {
+        document.body.removeChild(soundEmbed);
+        soundEmbed.removed = true;
+        soundEmbed = null;
+        soundEmbed = document.createElement("embed");
+        soundEmbed.setAttribute("src", "/sounds/" + which);
+        soundEmbed.setAttribute("hidden", true);
+        soundEmbed.setAttribute("autostart", true);
+        }
+    soundEmbed.removed = false;
+    document.body.appendChild(soundEmbed);
 }
 
 Object.size = function(obj) {

@@ -1357,6 +1357,10 @@ background-color: green,
 #fullscreen.fully:hover {
   background: rgba(255,255,255,0.6);
 }
+.nametip {
+  width: 70px;
+  height: 100px;
+}
 #nowPlayingFull {
   border-radius: 3px;
   border: solid 1px #585858;
