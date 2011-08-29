@@ -330,7 +330,7 @@ $(function() {
  });
 
  window.PlaylistItemCollection = Backbone.Collection.extend({
-	model: PlaylistItemModel,
+	model: PlaylistItemModel
  });
 
  window.PlaylistModel = Backbone.Model.extend({
@@ -360,18 +360,24 @@ $(function() {
 		this.idToPlaylistNameholder = {};
   },
 
-	setActivePlaylist: function(event) {
+	setActivePlaylist: function(playlistId) {
 		var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
 		var previouslySelected = playlistCollection.get("activePlaylist");
 		if (previouslySelected) {
 			$(playlistCollection.idToPlaylistNameholder[previouslySelected.get("playlistId")].el).removeClass("selected-playlist-nameholder").addClass("unselected-playlist-nameholder");
 		}
-		SocketManagerModel.choosePlaylist(event.data.playlistId);
-		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(event.data.playlistId)});
+		SocketManagerModel.choosePlaylist(playlistId);
+		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(playlistId)});
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.playlist = playlistCollection.get("activePlaylist");
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.resetPlaylist();
-		playlistNameholderView = playlistCollection.idToPlaylistNameholder[event.data.playlistId];
+		playlistNameholderView = playlistCollection.idToPlaylistNameholder[playlistId];
 		$(playlistNameholderView.el).removeClass("unselected-playlist-nameholder").addClass("selected-playlist-nameholder");
+	},
+	
+	deletePlaylist: function(playlistId) {
+		delete this.idToPlaylist[playlistId];
+		delete this.idToPlaylistNameholder[playlistId];
+		SocketManagerModel.deletePlaylist(playlistId);
 	},
 
 	getPlaylistById: function(playlistId) {
@@ -380,8 +386,7 @@ $(function() {
 	
 	addPlaylist: function(playlistId, name, videos) {
 		new PlaylistDropdownCellView({dropdown_value: playlistId, dropdown_name: name});
-		var playlistNameholderView = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name});
-		$(playlistNameholderView.el).bind("click", {playlistId: playlistId}, this.setActivePlaylist);
+		var playlistNameholderView = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name, playlistCollection: this});
 		this.idToPlaylistNameholder[playlistId] = playlistNameholderView;
 		var playlistModel = new PlaylistModel();
 		var playlistVideos;
@@ -401,6 +406,16 @@ $(function() {
 	
 	length: function() {
 		return Object.size(this.idToPlaylist);
+	},
+	
+	newPlaylistId: function() {
+		var largestPlaylistId = 0;
+		for (var id in this.idToPlaylist) {
+			if( this.idToPlaylist.hasOwnProperty(id) && parseInt(id) > largestPlaylistId) {
+				largestPlaylistId = parseInt(id);
+			}
+		}
+		return largestPlaylistId + 1;
 	},
 	
 	addVideoToPlaylist: function(playlistId, playlistItemModel) {
@@ -440,18 +455,20 @@ $(function() {
 	initialize: function() {
 		this.render();
 		this.playlistView = new PlaylistView();
-		$("#playlist-collection-form").bind("submit", {playlistCollectionView: this}, this.addPlaylist);
+		$("#playlist-collection-input").bind("keyup", {playlistCollectionView: this}, this.addPlaylist);
 	},
 	
 	addPlaylist: function(event) {
+		if (event.keyCode != 13) {
+			return;
+		}
 		var playlistName = $("#playlist-collection-input").val();
 		if (playlistName.length == 0)
 			return;
-		var playlistId = event.data.playlistCollectionView.options.playlistCollection.length() + 1;
+		var playlistId = event.data.playlistCollectionView.options.playlistCollection.newPlaylistId();
 		SocketManagerModel.addPlaylist(playlistId, playlistName);
 		event.data.playlistCollectionView.options.playlistCollection.addPlaylist(playlistId, playlistName, new PlaylistItemCollection());
 		$("#playlist-collection-input").val("");
-		return false;
 	},
 	
 	hide: function() {
@@ -470,19 +487,40 @@ $(function() {
  });
 
  window.PlaylistNameholderView = Backbone.View.extend({
-	className: "unselected-playlist-nameholder",
+	className: "unselected-playlist-nameholder playlist-nameholder",
 	
 	tagName: "li",
 	
+	playlistNameholderTemplate: _.template($("#playlist-nameholder-template").html()),
+	
+	events: {
+		"click .delete-nameholder": "removeNameholder",
+		"click .playlist-nameholder-name": "setActivePlaylistTwo"
+	},
+	
 	initialize: function() {
 		this.render();
+		this.clickDeletePlaylist = 0;
 	},
 	
 	render: function() {
-		$(this.el).text(this.options.playlist_nameholder_name);
+		$(this.el).append(this.playlistNameholderTemplate({playlist_name: this.options.playlist_nameholder_name}));
 		$(this.el).val(this.options.playlist_nameholder_value);
-	  $("#playlist-collection-display").append(this.el);
+	  $("#playlist-collection-display").prepend(this.el);
 	  return this;
+	},
+	
+	printSomething: function() {
+		console.log("works");
+	},
+	
+	setActivePlaylistTwo: function() {
+		this.options.playlistCollection.setActivePlaylist(this.options.playlist_nameholder_value);
+	},
+	
+	removeNameholder: function() {
+		$(this.el).remove();
+		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
 	}
  });
 
@@ -838,7 +876,7 @@ $(function() {
   previewTemplate: _.template($('#search-preview-template').html()),
 
   events: {
-   "click #close-preview-player": "hidePreviewPlayer",
+   "click #close-preview-player": "hidePreviewPlayer"
   },
 
   initialize: function() {
@@ -891,7 +929,7 @@ $(function() {
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
     videoModel: this.options.playlistItemModel,
-		playlistCollection: this.options.playlistItemModel.collection,
+		playlistCollection: this.options.playlistItemModel.collection
    }, this.removeFromPlaylist);
    buttonToTop = $("#send_to_top_" + videoID);
    buttonToTop.bind("click", {
@@ -1413,7 +1451,7 @@ $(function() {
 	   });
 		$("#nameDiv_" + user.id).tipsy({
 		    gravity: 'n',
-		    fade: 'true',
+		    fade: 'true'
 		   });
 		$("#avatarWrapper_" + user.id).data("isDJ", "0");
 		console.log("margintop stored, value: "+ user.get('y'))
@@ -1725,7 +1763,7 @@ $(function() {
 		for (var i = 1; i <= Object.size(userPlaylists); i++) {
 			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
 		}
-		app.get("userModel").get("playlistCollection").setActivePlaylist({data: {playlistId: 1}});
+		app.get("userModel").get("playlistCollection").setActivePlaylist(1);
 		var getPath = function(href) {
 		    var l = document.createElement("a");
 		    l.href = href;
@@ -1906,6 +1944,13 @@ $(function() {
 		SocketManagerModel.socket.emit("playlists:addPlaylist", {
 			playlistId: playlistId,
 			playlistName: playlistName
+		});
+	},
+	
+	deletePlaylist: function(playlistId) {
+		console.log(playlistId);
+		SocketManagerModel.socket.emit("playlists:deletePlaylist", {
+			playlistId: playlistId
 		});
 	},
 

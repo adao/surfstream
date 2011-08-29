@@ -1050,8 +1050,16 @@ background-color: green,
 #top-video-views {
   background-color: #000;
 }
+.delete-nameholder {
+  cursor: pointer;
+  height: 10px;
+  margin-left: 6px;
+  margin-right: -6px;
+  margin-top: 6px;
+}
 .unselected-playlist-nameholder,
-.selected-playlist-nameholder {
+.selected-playlist-nameholder,
+.nameholder-input {
   text-indent: 6px;
   margin: 0 2px 6px 2px;
   display: inline-block;
@@ -1101,8 +1109,6 @@ background-color: green,
   color: #000;
   cursour: default;
   height: 16px;
-}
-#playlist-collection-input {
   outline: none;
 }
 #playlist-view {
