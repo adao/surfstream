@@ -147,6 +147,12 @@
 			  });
 			
 				res.on('end', function() {
+					if(room.currVideo != null) {
+						console.log('['+roomName+'][VAL] fetchYouTubeVideo(): VAL just finished the request for fetching vid '+
+							', but there\'s another video playing! Someone must have gotten back on the couch...ending this request');
+						return;
+					}
+					
 					videoData = JSON.parse(videoData);
 					var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
 											
@@ -156,7 +162,7 @@
 					var videoTitle = videoEntry['media$group']['media$title']['$t'];
 					var videoThumb = videoEntry['media$group']['media$thumbnail'][0]['url'];
 					var videoAuthor = videoEntry['author'][0]['name']['$t'];
-	
+
 					console.log('['+room.get('name')+']'+"[VAL] fetchYouTubeVideo(): got related vids, index "+randIndex+"/4 with videoid: "+videoToPlayId+" and title: "+videoTitle);
 					var videoToPlay = new models.Video({
 						videoId: videoToPlayId,
