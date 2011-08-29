@@ -89,6 +89,7 @@ button {
   background-color: #f00;
 }
 #become-dj {
+  cursor: n-resize;
   position: absolute;
   width: 57px;
   height: 68px;
