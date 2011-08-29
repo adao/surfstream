@@ -586,7 +586,7 @@ $(function() {
 	render: function() {
 		var historyItem = this.options.room;
 		$(this.el).html(this.roomHistoryItemViewTemplate({title: historyItem.get("title"), length: ss_formatSeconds(historyItem.get("length")), percent: historyItem.get("percent")}));
-		this.$(".thumbContainer").attr("src", ss_idToImg(historyItem.get("videoId")));
+		this.$(".thumbContainer > img").attr("src", ss_idToHDImg(historyItem.get("videoId")));
 		return this;
 	}
  });
@@ -696,7 +696,6 @@ $(function() {
    event.preventDefault();
    var query = $($('input[name=search]')[0]).val();
    $("#searchContainer").empty();
-	 $("#youtubeInput").autocomplete("close");
    event.data.searchView.options.searchBarModel.executeSearch(query);
    return false;
   },
@@ -711,6 +710,7 @@ $(function() {
 	getSuggestions: function(event) {
 		if (event.keyCode == 13) {
 			$("#youtubeInput").autocomplete("option", "disabled", true);
+			$("#youtubeInput").autocomplete("close");
 			return;
 		}
 		$("#youtubeInput").autocomplete( "option", "disabled", false);
@@ -1130,6 +1130,7 @@ $(function() {
   className: "messageContainer",
   initialize: function() {
    $("#messages").append(this.render().el);
+	 soundPlay("THUD.WAV");
   },
 
   render: function() {
@@ -1166,9 +1167,9 @@ $(function() {
 	 $("#fullscreenIcon").bind("click", {theatre: this}, this.fullscreenToggle);
 	 $(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
 	 remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
+	 remotePullup.attr("title", "Pull Up")
 	 remotePullup.tipsy({
 	    gravity: 's',
-	    title: function() { return "Pull Up"; }
 	   });
 	 avatarVAL.css("margin-left", '410px');
 	 avatarVAL.hide();
@@ -1196,10 +1197,12 @@ $(function() {
 		
 		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
 			  
-				
-				$("#remote-container").animate({"margin-top": 27}, 300, function() {
+				$("#remote-container").animate({"margin-top": -17}, 300, function() {
 					var remotePullup ,remoteTop, remote;
+					
 					remotePullup = $("#remote-pullup");
+					//if(e.srcElement.id == "remote-pullup") remotePullup.tipsy("hide");
+					
 					remoteTop = $(".remote-top"); 
 					remote = $("#remote");
 					remotePullup.unbind("click");
@@ -1209,10 +1212,7 @@ $(function() {
 					remoteTop.addClass("up");
 					remote.addClass("up");
 					remotePullup.addClass("up");
-					remotePullup.tipsy({
-					    gravity: 's',
-					    title: function() { return "Pull Down"; }
-					   });
+					remotePullup.attr("title", "Pull Down")
 				});
 				
 			}
@@ -1223,9 +1223,10 @@ $(function() {
 		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
 			
 			
-			$("#remote-container").animate({"margin-top": 180}, 300, function() { 
+			$("#remote-container").animate({"margin-top": 130}, 300, function() { 
 				var remotePullup ,remoteTop, remote;			
 				remotePullup = $("#remote-pullup");
+				remotePullup.attr("title", "Pull Up")
 				remoteTop = $(".remote-top"); 
 				remote = $("#remote");
 				remotePullup.unbind("click");
@@ -1367,12 +1368,12 @@ $(function() {
  }, { /* Class properties */
 
   tipsyChat: function(text, fbid) {
-   var userPic = $("#avatarWrapper_" + fbid);
+   var userPic = $("#avatarChat_" + fbid);
 	 var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
    setTimeout(function() {
-	  if($("#avatarWrapper_" + fbID).length > 0) userPic.tipsy("hide");
+	  if($("#avatarChat_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
 
@@ -1388,9 +1389,10 @@ $(function() {
 		avatarImgSrc = this.getAvatarSrc(avatarId);
 		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc })
 		nameDiv = this.make('div', {id:'nameDiv_' + user.id, class:"nametip", style: 'position:absolute;', title: user.get('name') })
+		chatDiv = this.make('div', {id:'avatarChat_' + user.id, class: "chattip" });
 		avatarMouth = this.make('img', {class: 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
 		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
-		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv);
+		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv).append(chatDiv);
 		//put off stage
 		if (user.get('x') < 290) {
 			stageX = -80;
@@ -1400,7 +1402,7 @@ $(function() {
 		
 		$(this.el).css("margin-left", stageX).css("margin-top", 280).css("position", 'absolute');
 		$("#people-area").prepend(this.el);
-	  $("#avatarWrapper_" + user.id).tipsy({
+	  $("#avatarChat_" + user.id).tipsy({
 	    gravity: 'sw',
 	    fade: 'true',
 	    delayOut: 3000,
@@ -1473,7 +1475,7 @@ $(function() {
    $('#shareTwit').css('background-image', '/images/twitter_small.png');
    $('#shareEmail').css('background-image', '/images/email_small.png');
    $('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
-   $('#copy-button-container').html("<div id=\"copy-button\">copy link</div>");
+   $('#copy-button-container').html("<div id=\"copy-button\"></div>");
    var link = $('input:text').val();
    console.log(link);
    var clip = new ZeroClipboard.Client();
@@ -1679,18 +1681,18 @@ $(function() {
 		    start: { 
 		      x: curX, 
 		      y: curY, 
-		      angle: (curX > remoteX) ? 30: -30,
-					length: .5
+		      angle: (curX > remoteX) ? 50: -50,
+					length: .8
 		    },  
 		    end: { 
 		      x:remoteX,
 		      y:remoteY, 
-		      angle: (curX > remoteX) ? -10: 10
+		      angle: (curX > remoteX) ? -50: 50
 		    }
 		  }
 
 		this.rotateRemoteSign = !this.rotateRemoteSign
-		rotationDegs = "=2880deg"
+		rotationDegs = "=1800deg"
 		if (this.rotateRemoteSign) {
 			rotationDegs = "+" + rotationDegs;
 		} else {
@@ -2016,6 +2018,10 @@ function ss_idToImg(id) {
 	return "http://img.youtube.com/vi/"+id+"/0.jpg";
 }
 
+function ss_idToHDImg(id) {
+	return "http://i1.ytimg.com/vi/" + id + "/hqdefault.jpg"
+}
+
 function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 	for (var i = 0; i < collection.length; i++) {
 		if (collection.at(i).get(attribute) == valueToMatch) {
@@ -2026,12 +2032,38 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 }
 
 function updateTime() {
-	$("#countdownFull").html("Time Remaining: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
-	$("#cur-video-time").html("Time Remaining: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+	$("#countdownFull").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+	if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
+	 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
+	}
 }
 
 function skipVideo() {
  socket_init.emit("video:skip");
+}
+
+var soundEmbed = null;
+
+function soundPlay(which) {
+    if (!soundEmbed)
+        {
+        soundEmbed = document.createElement("embed");
+        soundEmbed.setAttribute("src", "/sounds/" + which);
+        soundEmbed.setAttribute("hidden", true);
+        soundEmbed.setAttribute("autostart", true);
+        }
+    else
+        {
+        document.body.removeChild(soundEmbed);
+        soundEmbed.removed = true;
+        soundEmbed = null;
+        soundEmbed = document.createElement("embed");
+        soundEmbed.setAttribute("src", "/sounds/" + which);
+        soundEmbed.setAttribute("hidden", true);
+        soundEmbed.setAttribute("autostart", true);
+        }
+    soundEmbed.removed = false;
+    document.body.appendChild(soundEmbed);
 }
 
 Object.size = function(obj) {
