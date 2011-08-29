@@ -702,6 +702,19 @@
 			this.savePlaylist(this.playlistId);
 		},
 		
+		hasPlaylist: function(playlistName) {
+			for(var id in this.playlists) {
+				console.log(this.playlists[id].get("name"));
+				if(this.playlists.hasOwnProperty(id)) {
+					if (this.playlists[id].get("name") == playlistName) {
+						console.log("Tried to add playlist with a name that already existed. UH UH!");
+						return true;
+					}
+				}
+			}
+			return false;
+		},
+		
 		initializeAndSendPlaylists: function(socket) {
 			var userId = this.get('userId');
 			var userModel = this;
@@ -711,9 +724,12 @@
 				} else {
 					if (reply != 'undefined' && reply != null) {
 						var userPlaylists = {};
-						for (var i = 1; i <= Object.size(reply); i++) {
-							var playlist = JSON.parse(reply[i]);
-							userPlaylists[i] = new models.Playlist({name: playlist.name, videos: new models.VideoCollection(playlist.videos)});
+						for(var id in reply) {
+							if(reply.hasOwnProperty(id) && reply[id]) {
+								console.log(reply[id]);
+								var playlist = JSON.parse(reply[id]);
+								userPlaylists[id] = new models.Playlist({name: playlist.name, videos: new models.VideoCollection(playlist.videos)});
+							}
 						}
 						console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
@@ -738,26 +754,28 @@
 				}
 			});
 			socket.on('playlists:addPlaylist', function(data) {
-				console.log("here1");
-				redisClient.hlen("user:" + userId + ":playlists", function(err, reply) {
-					if (err) {
-						console.log("Error retrieving retrieving length of user's playlists hash for facebook user " + data.fbId);
-					} else {
-						console.log("here2");
-						var numPlaylists = reply;
-						if (numPlaylists != null && numPlaylists != 'undefined' && numPlaylists + 1 == data.playlistId) {
-							console.log("here3");
-							var playlistKey = numPlaylists + 1;
-							var newPlaylist = new models.Playlist({name: data.playlistName, videos: new models.VideoCollection()});
-							playlists[playlistKey] = newPlaylist;
-							thisUser.savePlaylist(data.playlistId);
-							console.log("here4");
-						}
-					}
-				});
+				if (!thisUser.hasPlaylist(data.playlistName)) {
+					var newPlaylist = new models.Playlist({name: data.playlistName, videos: new models.VideoCollection()});
+					playlists[data.playlistId] = newPlaylist;
+					thisUser.savePlaylist(data.playlistId);
+				}
 			});
 			socket.on('playlists:deletePlaylist', function(data) {
+				redisClient.hdel("user:" + userId + ":playlists", data.playlistId, function(err, reply) {
+					if (err) {
+						console.log("Error deleting user " + userId + "playlist with id " + data.playlistId);
+					} else {
+						console.log("Success deleting user " + userId + "playlist with id " + data.playlistId);
+						console.log(reply);
+						console.log(playlists);
+						delete playlists[data.playlistId];
+						console.log(playlists);
+					}
+				})
 				
+				var newPlaylist = new models.Playlist({name: data.playlistName, videos: new models.VideoCollection()});
+				playlists[data.playlistId] = newPlaylist;
+				thisUser.savePlaylist(data.playlistId);
 			});
 			
 			socket.on('playlist:addVideo', function(data) {
