@@ -689,9 +689,11 @@
 		hasPlaylist: function(playlistName) {
 			for(var id in this.playlists) {
 				console.log(this.playlists[id].get("name"));
-				if(this.playlists.hasOwnProperty(id) && this.playlists[id].get("name") == playlistName) {
-					console.log("Tried to add playlist with a name that already existed. UH UH!");
-					return true;
+				if(this.playlists.hasOwnProperty(id)) {
+					if (this.playlists[id].get("name") == playlistName) {
+						console.log("Tried to add playlist with a name that already existed. UH UH!");
+						return true;
+					}
 				}
 			}
 			return false;
@@ -707,7 +709,8 @@
 					if (reply != 'undefined' && reply != null) {
 						var userPlaylists = {};
 						for(var id in reply) {
-							if(reply.hasOwnProperty(id)) {
+							if(reply.hasOwnProperty(id) && reply[id]) {
+								console.log(reply[id]);
 								var playlist = JSON.parse(reply[id]);
 								userPlaylists[id] = new models.Playlist({name: playlist.name, videos: new models.VideoCollection(playlist.videos)});
 							}
@@ -747,7 +750,10 @@
 						console.log("Error deleting user " + userId + "playlist with id " + data.playlistId);
 					} else {
 						console.log("Success deleting user " + userId + "playlist with id " + data.playlistId);
+						console.log(reply);
+						console.log(playlists);
 						delete playlists[data.playlistId];
+						console.log(playlists);
 					}
 				})
 				

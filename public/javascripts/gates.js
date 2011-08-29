@@ -358,6 +358,7 @@ $(function() {
   initialize: function() {
 		this.idToPlaylist = {};
 		this.idToPlaylistNameholder = {};
+		this.idToPlaylistDropdown = {};
   },
 
 	setActivePlaylist: function(playlistId) {
@@ -385,9 +386,8 @@ $(function() {
 	},
 	
 	addPlaylist: function(playlistId, name, videos) {
-		new PlaylistDropdownCellView({dropdown_value: playlistId, dropdown_name: name});
-		var playlistNameholderView = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name, playlistCollection: this});
-		this.idToPlaylistNameholder[playlistId] = playlistNameholderView;
+		this.idToPlaylistDropdown[playlistId] = new PlaylistDropdownCellView({dropdown_value: playlistId, dropdown_name: name});
+		this.idToPlaylistNameholder[playlistId] = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name, playlistCollection: this});
 		var playlistModel = new PlaylistModel();
 		var playlistVideos;
 		// if (!videos) {
@@ -406,6 +406,17 @@ $(function() {
 	
 	length: function() {
 		return Object.size(this.idToPlaylist);
+	},
+	
+	hasPlaylistName: function(playlistName) {
+		for (var id in this.idToPlaylist) {
+			if (this.idToPlaylist.hasOwnProperty(id)) {
+				if (this.idToPlaylist[id].get("name") == playlistName) {
+					return true;
+				}
+			}
+		}
+		return false;
 	},
 	
 	newPlaylistId: function() {
@@ -462,7 +473,11 @@ $(function() {
 		if (event.keyCode != 13) {
 			return;
 		}
+		
 		var playlistName = $("#playlist-collection-input").val();
+		if (event.data.playlistCollectionView.options.playlistCollection.hasPlaylistName(playlistName)) {
+			return;
+		}
 		if (playlistName.length == 0)
 			return;
 		var playlistId = event.data.playlistCollectionView.options.playlistCollection.newPlaylistId();
@@ -520,6 +535,7 @@ $(function() {
 	
 	removeNameholder: function() {
 		$(this.el).remove();
+		$(this.options.playlistCollection.idToPlaylistDropdown[this.options.playlist_nameholder_value].el).remove();
 		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
 	}
  });
