@@ -679,7 +679,10 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	height: 404px
 	background-color: black
 	z-index: 10000
-	border: 1px solid #eee
+	border: 1px solid #666
+	border-radius: 2px
+	-moz-border-radius: 2px
+	-webkit-border-radius: 2px
 	#searchbar
 		background-color: #666
 		background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
@@ -687,6 +690,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		background-image: -o-linear-gradient(top, #666, #434343)
 		display: block
 		height: 54px
+		border-top-right-radius: 2px
+		-moz-border-top-right-radius: 2px
+		-webkit-border-top-right-radius: 2px
+		border-top-left-radius: 2px
+		-moz-border-top-left-radius: 2px
+		-webkit-border-top-left-radius: 2px
 		form.roomSearch
 			display: inline-block
 			width: 600px
@@ -774,6 +783,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		background-image: -o-linear-gradient(top, #666, #434343)
 		text-align: center
 		vertical-align: middle
+		border-bottom-right-radius: 2px
+		-moz-border-bottom-right-radius: 2px
+		-webkit-border-bottom-right-radius: 2px
+		border-bottom-left-radius: 2px
+		-moz-border-bottom-left-radius: 2px
+		-webkit-border-bottom-left-radius: 2px
 		#CreateRoomName
 			font-size: 12px
 			width: 150px
@@ -874,7 +889,7 @@ div#top-video-name
 	border: none
 	background: url('/images/room/newicons/delete-playlist.png') 50% 50% no-repeat
 	float: right
-	margin-top: 4px
+	margin-top: 5.5px
 	margin-left: 4px
 .delete-nameholder:hover
 	background: url('/images/room/newicons/delete-playlist-hover.png') 50% 50% no-repeat
@@ -889,7 +904,6 @@ div#top-video-name
 	margin: 0 2px 6px 2px
 	display: inline-block
 	position: relative
-	line-height: 18px
 	-webkit-border-radius: 9px
 	-moz-border-radius: 9px
 	border-radius: 9px
@@ -899,7 +913,8 @@ div#top-video-name
 	background-image: -o-linear-gradient(top, silver, #8D8D8D)
 	color: black
 	padding-right: 6px
-	cursor: default
+	cursor: pointer
+	height: 20px
 	
 .nameholder-input
 	vertical-align: top
@@ -909,6 +924,7 @@ div#top-video-name
 .playlist-nameholder-name, .delete-nameholder, .playlist-collection-input
 	font-family: 'Lucida Grande', Verdana
 	vertical-align: middle
+	line-height: 20px
 
 .selected-playlist-nameholder
 	border-color: #008AB8
@@ -955,8 +971,9 @@ div#top-video-name
 	background-image: -o-linear-gradient(top, #eee, #dcdcdc) 
 	color: black
 	cursour: default
-	height: 17px
+	height: 20px
 	outline: none
+	padding: 0px
 	
 #playlist-collection-input:hover
 	-moz-box-shadow:inset 0 0 1px #000000;
@@ -1256,9 +1273,7 @@ div#top-video-name
 	-moz-border-radius: 20px;
 	color: #E5E5E5;
 	cursor: pointer;
-	
-a#fdbk_tab
-	z-index: 10
+
 
 .dropdown-title, #playlistDropdown
 	float: right
