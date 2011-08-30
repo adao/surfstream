@@ -73,7 +73,7 @@ $(function() {
      videoUrl: entry.id.$t,
      duration: entry.media$group.yt$duration.seconds,
      viewCount: entry.yt$statistics.viewCount,
-     author: entry.author[0]
+     author: entry.author[0].name.$t
     };
     buildup.push(videoResult);
    }
@@ -295,7 +295,7 @@ $(function() {
 	 mainView.initializeRoomHistoryView(roomModel.get("roomHistoryCollection"));
 	 mainView.initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"));
 	 mainView.initializeChatView(roomModel.get("chatCollection"), this.get("userModel"));
-	
+	 mainView.initializeSounds();
   }
  });
 
@@ -357,9 +357,11 @@ $(function() {
  window.PlaylistCollection = Backbone.Model.extend({
 
   initialize: function() {
+		this.playlists = [];
 		this.idToPlaylist = {};
 		this.idToPlaylistNameholder = {};
 		this.idToPlaylistDropdown = {};
+		this.idToPlaylistViews = {};
   },
 
 	setActivePlaylist: function(playlistId) {
@@ -377,8 +379,13 @@ $(function() {
 	},
 	
 	deletePlaylist: function(playlistId) {
+		this.idToPlaylistDropdown[playlistId].el.remove();
+		for (var i = 0; i < this.idToPlaylistViews[playlistId].length; i++) {
+			this.idToPlaylistViews[playlistId][i].remove();
+		}
 		delete this.idToPlaylist[playlistId];
 		delete this.idToPlaylistNameholder[playlistId];
+		delete this.idToPlaylistDropdown[playlistId];
 		SocketManagerModel.deletePlaylist(playlistId);
 	},
 
@@ -387,7 +394,9 @@ $(function() {
 	},
 	
 	addPlaylist: function(playlistId, name, videos) {
-		this.idToPlaylistDropdown[playlistId] = new PlaylistDropdownCellView({dropdown_value: playlistId, dropdown_name: name});
+		var playlistDropdownCellView = new PlaylistDropdownCellView({dropdown_value: playlistId, dropdown_name: name});
+		$("#playlistDropdown .playlistDropdownContainer").append(playlistDropdownCellView.el);
+		this.idToPlaylistDropdown[playlistId] = playlistDropdownCellView;
 		this.idToPlaylistNameholder[playlistId] = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name, playlistCollection: this});
 		var playlistModel = new PlaylistModel();
 		var playlistVideos;
@@ -398,6 +407,8 @@ $(function() {
 		// }
 		playlistModel.set({playlistId: playlistId, name: name, videos: videos});
 		this.idToPlaylist[playlistId] = playlistModel;
+		this.playlists.push(playlistModel);
+		this.idToPlaylistViews[playlistId] = [];
 		//send socket event
 	},
 	
@@ -540,7 +551,6 @@ $(function() {
 		var pcHeight = $("#playlist-collection").outerHeight(true);
 		var viewHeight = $("#myplaylist").outerHeight(true);
 		this.calculatePlaylistHeight();
-		$(this.options.playlistCollection.idToPlaylistDropdown[this.options.playlist_nameholder_value].el).remove();
 		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
 	},
 	
@@ -645,15 +655,50 @@ $(function() {
 	
 	roomHistoryItemViewTemplate: _.template($('#historyCell-template').html()),
 	
+	events: {
+		"mousedown .addToPlaylistFromHistory": "addPlaylistDropdown"
+	},
+
 	initialize: function() {
 		$($(".videoHistory")[0]).prepend(this.render().el);
+		this.populatedDropdown = false;
 	},
 	
 	render: function() {
 		var historyItem = this.options.room;
-		$(this.el).html(this.roomHistoryItemViewTemplate({title: historyItem.get("title"), length: ss_formatSeconds(historyItem.get("length")), percent: historyItem.get("percent")}));
+		$(this.el).html(this.roomHistoryItemViewTemplate({
+			title: historyItem.get("title"),
+			duration: ss_formatSeconds(historyItem.get("duration")),
+			percent: historyItem.get("percent")}));
 		this.$(".thumbContainer > img").attr("src", ss_idToHDImg(historyItem.get("videoId")));
 		return this;
+	},
+	
+	addPlaylistDropdown: function() {
+		if (this.populatedDropdown)
+			return;
+		var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
+		var playlists = playlistCollection.playlists;
+		for (var i = 0; i < playlists.length; i++) {
+			var playlistDropdownView = new PlaylistDropdownCellView({dropdown_value: playlists[i].get("playlistId"), dropdown_name: playlists[i].get("name")});
+			$(this.el).find(".addToPlaylistFromHistory").append(playlistDropdownView.el);
+			playlistCollection.idToPlaylistViews[playlists[i].get("playlistId")].push(playlistDropdownView.el);
+		}
+		$(this.el).find(".addToPlaylistFromHistory").bind("change", {playlistCollection: window.SurfStreamApp.get("userModel").get("playlistCollection"), historyItem: this}, this.addToPlaylist);
+		this.populatedDropdown = true;
+	},
+	
+	addToPlaylist: function(event) {
+		var selectedPlaylistId = $(event.data.historyItem.el).find(".addToPlaylistFromHistory").val();
+		var historyItem = event.data.historyItem.options.room;
+		var attributes = {
+			title: historyItem.get("title"),
+			thumb: ss_idToImg(historyItem.get("videoId")),
+			videoId: historyItem.get("videoId"),
+			duration: historyItem.get("duration")
+		}
+		var playlistItemModel = new PlaylistItemModel(attributes);
+		event.data.playlistCollection.addVideoToPlaylist(selectedPlaylistId, playlistItemModel);
 	}
  });
 
@@ -864,7 +909,10 @@ $(function() {
    $(this.el).html(this.searchCellTemplate({
     thumb: this.options.video.get("thumb"),
     title: this.options.video.get("title"),
-    vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "")
+    vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", ""),
+		duration: ss_formatSeconds(this.options.video.get("duration")),
+		viewCount: this.options.video.get("viewCount") + " views",
+		author: "from " + this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
    return this;
@@ -1017,7 +1065,8 @@ $(function() {
   render: function() {
    $(this.el).html(this.playlistCellTemplate({
     title: this.options.playlistItemModel.get('title'),
-    vid_id: this.options.playlistItemModel.get("videoId")
+    vid_id: this.options.playlistItemModel.get("videoId"),
+		duration: ss_formatSeconds(this.options.playlistItemModel.get("duration"))
    }));
    this.$(".thumbContainer").attr("src", this.options.playlistItemModel.get("thumb"));
    return this;
@@ -1046,9 +1095,9 @@ $(function() {
 	
 	tagName: "option",
 	
-	initialize: function() {
+	initialize: function(options) {
 		this.render();
-		$("#playlistDropdown .playlistDropdownContainer").append(this.el);
+		//$("#playlistDropdown .playlistDropdownContainer").append(this.el);
 	},
 	
 	render: function() {
@@ -1203,7 +1252,7 @@ $(function() {
   className: "messageContainer",
   initialize: function() {
    $("#messages").append(this.render().el);
-	 soundPlay("THUD.WAV");
+	 window.SurfStreamApp.get("mainView").playSound("chat_message_sound");
   },
 
   render: function() {
@@ -1608,6 +1657,8 @@ $(function() {
 
  window.MainView = Backbone.View.extend({
   el: 'body',
+	
+	soundTemplate: _.template($('#audio-tag-template').html()),
 
   initialize: function() {
 		$('#getOff').live('click', function() {
@@ -1615,12 +1666,13 @@ $(function() {
 			$('#getOff').remove();
 			$("#skipContainer").remove();
 			SocketManagerModel.stepDownFromDJ();
-			
 		});
 		
 	 	$("img").live('mousedown', function(){
 		    return false;
 		});
+		
+		this.maxAudioChannels = 15;
   },
 
   initializeTopBarView: function() {
@@ -1664,6 +1716,30 @@ $(function() {
 	
 	initializeRoomHistoryView: function(roomHistoryCollection) {
 		this.roomHistoryView = new RoomHistoryView({roomHistoryCollection: roomHistoryCollection});
+	},
+	
+	initializeSounds: function() {
+		this.audioChannels = new Array();
+		for (var i = 0; i < this.maxAudioChannels; i++) {
+			this.audioChannels[i] = new Array();
+			this.audioChannels[i]['channel'] = new Audio();
+			this.audioChannels[i]['finished'] = -1;
+			
+		}
+		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_message_sound", audio_src: "/sounds/click1.wav"}));
+	},
+	
+	playSound: function(audioTagId) {
+		for (var i = 0; i < this.maxAudioChannels; i++) {
+			var currentTime = new Date();
+			if (this.audioChannels[i]['finished'] < currentTime.getTime()) {
+				this.audioChannels[i]['finished'] = currentTime.getTime() + document.getElementById(audioTagId).duration * 1000;
+				this.audioChannels[i]['channel'].src = document.getElementById(audioTagId).src;
+				this.audioChannels[i]['channel'].load();
+				this.audioChannels[i]['channel'].play();
+				break;
+			}
+		}
 	}
 
  });
@@ -1699,7 +1775,6 @@ $(function() {
 		var curvid, curLen, roomModel, playerModel;
 		if (video.dj == app.get("userModel").get("ssId")) {
 			console.log("here");
-			//this could be wrong with addition of multiple playlists
 			$("#video-list-container .videoListCellContainer:first").remove();
 			var playlistModel = app.get("userModel").get("playlistCollection").get("activePlaylist");
 			var playlistItemModel = playlistModel.get("videos").at(0);
@@ -1739,11 +1814,10 @@ $(function() {
 		playerModel = roomModel.get("playerModel");
 		curvid =  playerModel.get("curVid");
 		if (curvid) {
-			curLen = YTPlayer.getDuration();
-			app.get("mainView").roomHistoryView.addToRoomHistory(new RoomHistoryItemModel({title: curvid.curTitle, length: curLen, percent: curvid.percent, videoId: curvid.curID}));
+			app.get("mainView").roomHistoryView.addToRoomHistory(new RoomHistoryItemModel({title: curvid.title, duration: curvid.duration, percent: curvid.percent, videoId: curvid.videoId}));
 		}
 		//save the currently playing state
-		playerModel.set({curVid: {curID: video.id, curTitle: video.title, percent: 0.5} });
+		playerModel.set({curVid: {videoId: video.id, title: video.title, duration: video.duration, percent: 0.5} });
 		var isdj = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		if (isdj && $("#skip").length == 0) {
 			$("#people-area").append("<div id='skipContainer' class='bottombuttonContainerwide'><button id='skip'> Skip Video </button></div>");
@@ -2139,25 +2213,7 @@ function skipVideo() {
 var soundEmbed = null;
 
 function soundPlay(which) {
-    if (!soundEmbed)
-        {
-        soundEmbed = document.createElement("embed");
-        soundEmbed.setAttribute("src", "/sounds/" + which);
-        soundEmbed.setAttribute("hidden", true);
-        soundEmbed.setAttribute("autostart", true);
-        }
-    else
-        {
-        document.body.removeChild(soundEmbed);
-        soundEmbed.removed = true;
-        soundEmbed = null;
-        soundEmbed = document.createElement("embed");
-        soundEmbed.setAttribute("src", "/sounds/" + which);
-        soundEmbed.setAttribute("hidden", true);
-        soundEmbed.setAttribute("autostart", true);
-        }
-    soundEmbed.removed = false;
-    document.body.appendChild(soundEmbed);
+	document.getElementById(which).play();
 }
 
 Object.size = function(obj) {

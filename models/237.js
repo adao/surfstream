@@ -322,7 +322,8 @@
 					id: this.currVideo.get('videoId'), 
 					time: Math.ceil(timeDiff), 
 					title: this.currVideo.get('title'),
-					dj: this.currVideo.get('dj')
+					dj: this.currVideo.get('dj'),
+					duration: this.currVideo.get('duration')
 				});
 			}
 		},
@@ -417,7 +418,7 @@
 		},
 
 		announceVideo: function(videoId, duration, title, dj) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title, dj: dj });
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title, dj: dj, duration: duration });
 		},
 		
 		announceClients: function() {
@@ -742,7 +743,7 @@
 						}
 						console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
-						userModel.setPlaylist(1);
+						userModel.setPlaylist(2);
 						userModel.addPlaylistListeners(socket);
 						socket.emit("playlist:initialize", userPlaylists);
 					}
