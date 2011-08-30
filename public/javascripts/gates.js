@@ -1531,10 +1531,12 @@ $(function() {
    $('#shareTwit').css('background-image', '/images/twitter_small.png');
    $('#shareEmail').css('background-image', '/images/email_small.png');
    $('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
-   $('#copy-button-container').html("<div id=\"copy-button\"></div>");
-   var link = $('input:text').val();
+   $('#copy-button-container').html("<div id=\"copy-button\" style=\"position:relative\"></div>");
+   var link = document.URL;
+	 console.log("linkkkkkkk");
    console.log(link);
    var clip = new ZeroClipboard.Client();
+	 clip.setHandCursor(true);
    clip.setText(link);
    clip.glue('copy-button', 'copy-button-container');
   },
