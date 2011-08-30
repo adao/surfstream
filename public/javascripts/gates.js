@@ -913,7 +913,7 @@ $(function() {
     vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", ""),
 		duration: ss_formatSeconds(this.options.video.get("duration")),
 		viewCount: this.options.video.get("viewCount") + " views",
-		author: "from " + this.options.video.get("author")
+		author: this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
    return this;
