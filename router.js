@@ -11,11 +11,11 @@ function setupRoutes(app) {
 	});
 	
 	app.get('/', function(req, res){
-		res.render('skeleton', {locals: { title: "surfstream.tv"}});
+		res.render('skeleton', {locals: { title: "surfstream.tv", production: app.enabled("production") }});
 	});
 	
 	app.get('/:rID', function(req, res) {
-		res.render('skeleton', { layout: false});
+		res.render('skeleton', {locals: { title: "surfstream.tv", production: app.enabled("production") }});
 	});
 	
 	

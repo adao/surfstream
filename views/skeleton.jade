@@ -2,9 +2,10 @@
 html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.facebook.com/2008/fbml")
 	head
 		title surfstream.tv
-		script
-			var mpq=[];mpq.push(["init","699a892300e44163ea0b51a69665e63c"]);
-			(function(){var b,a,e,d,c;b=document.createElement("script");b.type="text/javascript";b.async=true;b.src=(document.location.protocol==="https:"?"https:":"http:")+"//api.mixpanel.com/site_media/js/api/mixpanel.js";a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(b,a);e=function(f){return function(){mpq.push([f].concat(Array.prototype.slice.call(arguments,0)))}};d=["init","track","track_links","track_forms","register","register_once","identify","name_tag","set_config"];for(c=0;c<d.length;c++){mpq[d[c]]=e(d[c])}})();	
+		- if (production)
+			script
+				var mpq=[];mpq.push(["init","699a892300e44163ea0b51a69665e63c"]);
+				(function(){var b,a,e,d,c;b=document.createElement("script");b.type="text/javascript";b.async=true;b.src=(document.location.protocol==="https:"?"https:":"http:")+"//api.mixpanel.com/site_media/js/api/mixpanel.js";a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(b,a);e=function(f){return function(){mpq.push([f].concat(Array.prototype.slice.call(arguments,0)))}};d=["init","track","track_links","track_forms","register","register_once","identify","name_tag","set_config"];for(c=0;c<d.length;c++){mpq[d[c]]=e(d[c])}})();	
 		script(type="text/javascript", src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js")
 		script(type="text/javascript", src="/javascripts/underscore.js")
 		script(type="text/javascript", src="/javascripts/backbone.js")
@@ -52,9 +53,10 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 					#chat
 			#footer
 				span © 2011 surfstream.tv
-				a(href='#') Terms of Service
-				a(href='#') Privacy Policy
-				a(href='#') Copyright
+				a Terms of Service
+				a Privacy Policy
+				a Copyright
+				a(id="feedbackSpan") Tell Us What You Think
 		#nowPlayingFull
 			div#fullTitle 
 			div#countdownFull 
@@ -87,7 +89,13 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 			var feedback_widget_options = {};
 			feedback_widget_options.display = "overlay";  
 			feedback_widget_options.company = "surfstreamtv";
-			feedback_widget_options.placement = "left";
+			feedback_widget_options.placement = "hidden";
 			feedback_widget_options.color = "#222";
 			feedback_widget_options.style = "idea";
 			var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+		- if (production)
+			script 
+				var _gaq = _gaq || [];
+				_gaq.push(['_setAccount', 'UA-22323718-3']);
+				_gaq.push(['_trackPageview']);
+				(function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();

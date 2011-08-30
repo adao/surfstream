@@ -623,8 +623,8 @@
 	/*         User          */
 	/*************************/
 	
-	var X_MAX = 590;
-	var Y_MAX = 150;
+	var X_MAX = 470;
+	var Y_MAX = 145;
 	var Y_MIN = 20;
 	
 	models.User = Backbone.Model.extend({
@@ -677,9 +677,8 @@
 		randLoc: function() {
 			var thisX = Math.random()*X_MAX;
 			var thisY = Math.random()*Y_MAX;
-			if (thisY < 90 && thisX > 100 && thisX < 510) { //avoid the sofa
-				thisX = thisX % 180;
-				if (thisX > 100) thisX = thisX + 410;
+			if (thisY < 90 && thisX > 100) { //avoid the sofa
+				thisY = 105 + thisY % 40;
 			} //TODO: More logic to avoid remote
 			this.set({ xCoord: thisX, yCoord: thisY});
 			return { x: thisX, y: thisY };
