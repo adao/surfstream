@@ -1454,6 +1454,7 @@ background-color: green,
   -moz-border-radius: 20px;
   color: #e5e5e5;
   cursor: pointer;
+  vertical-align: top;
 }
 .dropdown-title,
 #playlistDropdown {
@@ -1481,6 +1482,10 @@ background-color: green,
   margin: 0px 10px 0 0px;
   text-decoration: none;
   color: #666;
+}
+#footer a:hover {
+  color: #fff;
+  cursor: pointer;
 }
 #footer a:link,
 #footer a:visited,
