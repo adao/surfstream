@@ -1532,12 +1532,10 @@ $(function() {
    $('#shareEmail').css('background-image', '/images/email_small.png');
    $('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
    $('#copy-button-container').html("<div id=\"copy-button\" style=\"position:relative\"></div>");
-   var link = document.URL;
-	 console.log("linkkkkkkk");
-   console.log(link);
+   this.link = document.URL;
    var clip = new ZeroClipboard.Client();
 	 clip.setHandCursor(true);
-   clip.setText(link);
+   clip.setText(this.link);
    clip.glue('copy-button', 'copy-button-container');
   },
 
@@ -1548,20 +1546,23 @@ $(function() {
   },
 
   fbDialog: function() {
-   FB.ui({
+   FB.ui(
+  {
     method: 'feed',
-    name: 'Just watched on SurfStream.tv',
-    url: 'www.youtube.com',
-    caption: 'Join your friends and watch videos online!',
-    description: 'SurfStream.tv lets you explore new video content on the web. Very similar to turntable.fm' // ,
-    // picture: '/images/logo.png'
-   }, function(response) {
+		display: 'popup',
+    name: 'Surfstreaming',
+		link: this.link,
+    caption: 'StreamSurfin all day',
+    description: 'Streamsurfin'
+  },
+  function(response) {
     if (response && response.post_id) {
-     alert('Post was published.');
+      alert('Post was published.');
     } else {
-     alert('Post was not published.');
+      alert('Post was not published.');
     }
-   });
+  }
+);
   },
 
   tweetDialog: function() {
@@ -1569,7 +1570,7 @@ $(function() {
        height = 400,
        left = ($(window).width() - width) / 2,
        top = ($(window).height() - height) / 2,
-       url = "http://twitter.com/share?text=Check%20out%20this%20awesome%20brooooooom!",
+       url = "http://twitter.com/share?text=Check%20out%20this%20awesome%20room!",
        opts = 'status=1' + ',width=' + width + ',height=' + height + ',top=' + top + ',left=' + left;
 
    window.open(url, 'twitter', opts);
