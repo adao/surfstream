@@ -248,6 +248,7 @@ $(function() {
 	 this.curDJ = "__none__";
 	 this.sofaUsers = [];
 	 this.rotateRemoteSign = true;
+	 this.gotRoomList = false;
 	 var roomModel, mainView;
 	
 	this.set({
@@ -1120,6 +1121,7 @@ $(function() {
 		show : function() {
 			$("#room-modal").show();
 			$("#modalBG").show();
+			SurfStreamApp.showModalOnLoad = true;
 			SocketManagerModel.loadRoomsInfo();
 		},
 	
@@ -1146,6 +1148,9 @@ $(function() {
 		addRooms: function (roomListCollection) {
 			this.render();
 			roomListCollection.each(function(roomListCellModel) { new RoomListCellView({roomListCellModel: roomListCellModel}) });
+			if (!SurfStreamApp.showModalOnLoad) {
+				SurfStreamApp.get("mainView").roomModal.hide();
+			}
 		}
  });
 	
@@ -1231,6 +1236,12 @@ $(function() {
 	 avatarVAL.hide();
 	 avatarVAL.data({"sofaML": 410});
 	 avatarVAL.data({"sofaMT": 0});
+	 avatarVAL.append(this.make('div', {id:'valtipsy', title: "<div style='color: #CAEDFA; font-family: \"Courier New\", Courier, monospace' >VAL, the Video Robot</div>", style:"z-index: 2; width: 70px; height: 40px; margin-top: 50px; position: absolute;" }));
+	 $("#valtipsy").tipsy({
+	    gravity: 'n',
+	    fade: 'true',
+			html: true
+	   });
    $("#up-vote").bind("click", SocketManagerModel.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
@@ -1416,8 +1427,9 @@ $(function() {
 
   removeUser: function(user) {
 	 var avatar = this.$("#avatarWrapper_" + user.id);
+   var chat = $("#avatarChat_" + user.id);
 	 avatar.data("animating", false);
-	 avatar.tipsy('hide');
+	 chat.tipsy('hide');
    avatar.remove();
   }
 
@@ -1789,19 +1801,19 @@ $(function() {
 		}
 		console.log("ROUTING ON " + getPath(window.location));
 		
-		var noRoom = (getPath(window.location) == "/");
-		Backbone.history.start({pushState: true, silent: noRoom ? true : false});
-		if (!noRoom) {
+		SurfStreamApp.showModalOnLoad = (getPath(window.location) == "/");
+		Backbone.history.start({pushState: true, silent: SurfStreamApp.showModalOnLoad});
+		if (!SurfStreamApp.showModalOnLoad && SurfStreamApp.gotRoomList) {
 			app.get("mainView").roomModal.hide();
 		}
    });
 
    socket.on('message', function(msg) {
     app.get("roomModel").get("chatCollection").add({
-     username: msg.data.name,
-     msg: msg.data.text
+     username: strip(msg.data.name),
+     msg: strip(msg.data.text)
     });
-    TheatreView.tipsyChat(msg.data.text, msg.data.id);
+    TheatreView.tipsyChat(strip(msg.data.text), msg.data.id);
    });
 
    socket.on('users:announce', function(userJSONArray) {
@@ -1850,6 +1862,7 @@ $(function() {
    });
 
 	socket.on("rooms:announce", function(roomList) {
+		SurfStreamApp.gotRoomList = true;
 		var roomlistCollection = app.get("roomModel").get("roomListCollection");
 		roomlistCollection.reset();
 		for (var i = 0; i < roomList.rooms.length; i++) {
@@ -1992,6 +2005,8 @@ $(function() {
 		SurfStreamApp.inRoom = rID;
 		payload.fbId = window.SurfStreamApp.get("userModel").get("fbId");
 		payload.ssId = window.SurfStreamApp.get("userModel").get("ssId");
+		$("#sofa-remote").css({left: "170px", top: "140px"});
+		$("#skipContainer").remove();
 		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
 		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
 		if (window.YTPlayer) {
@@ -2136,3 +2151,10 @@ Object.size = function(obj) {
     }
     return size;
 };
+
+function strip(html)
+{
+   var tmp = document.createElement("DIV");
+   tmp.innerHTML = html;
+   return tmp.textContent||tmp.innerText;
+}

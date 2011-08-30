@@ -326,6 +326,10 @@
 			this.users.addUser(user);
 			this.sockM.addSocket(user.get("socket"));
 			user.randLoc();
+			
+			//this.sockM.sendRoomState(user.get("socket"));
+			this.sockM.sendRoomState();
+			
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
@@ -339,9 +343,7 @@
 					title: this.currVideo.get('title'),
 					dj: this.currVideo.get('dj')
 				});
-			}	
-			//this.sockM.sendRoomState(user.get("socket"));
-			this.sockM.sendRoomState();
+			}
 		},
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
