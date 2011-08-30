@@ -145,6 +145,7 @@ div#outer {
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist,
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
+  vertical-align: top;
   background-color: #c0c0c0;
   background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
   background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
@@ -1455,6 +1456,9 @@ background-color: green,
   color: #e5e5e5;
   cursor: pointer;
   vertical-align: top;
+}
+a#fdbk_tab {
+  z-index: 10;
 }
 .dropdown-title,
 #playlistDropdown {
