@@ -504,7 +504,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	
 .videoView
 	color: #D4D4D4
-	height: 379px
+	height: 378px
 	width: 300px
 	overflow-x: hidden 
 	overflow-y: hidden
@@ -838,29 +838,51 @@ div#top-video-name
 .delete-nameholder
 	cursor: pointer;
 	height: 10px;
-	margin-left: 6px;
-	margin-right: -6px;
-	margin-top: 6px;
+	width: 10px
+	border: none
+	background: url('/images/room/newicons/delete-playlist.png') 50% 50% no-repeat
+	float: right
+	margin-top: 4px
+	margin-left: 4px
+.delete-nameholder:hover
+	background: url('/images/room/newicons/delete-playlist-hover.png') 50% 50% no-repeat
 	
-.unselected-playlist-nameholder,.selected-playlist-nameholder,.nameholder-input
+.unselected-playlist-nameholder:hover
+	-moz-box-shadow:inset 0 0 1px #000000;
+	-webkit-box-shadow:inset 0 0 1px #000000;
+	box-shadow:inset 0 0 1px #000000;     
+	
+.unselected-playlist-nameholder,.selected-playlist-nameholder
 	text-indent: 6px
 	margin: 0 2px 6px 2px
 	display: inline-block
 	position: relative
 	line-height: 18px
 	-webkit-border-radius: 9px
-	border: 1px solid #CAD8F3
-	background: #DEE7F8
+	border: 1px solid #8D8D8D
+	background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#8D8D8D))
 	color: black
-	padding-right: 15px
-	cursour: default
+	padding-right: 6px
+	cursor: default
+	
+.nameholder-input
+	vertical-align: top
+	display: inline-block
+	height: 20px
+
+.playlist-nameholder-name, .delete-nameholder, .playlist-collection-input
+	font-family: 'Lucida Grande', Verdana
+	vertical-align: middle
 
 .selected-playlist-nameholder
-	border-color: #598BEC
-	background: #598BEC
+	border-color: #008AB8
+	background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
 	color: white
+	vertical-align: top
 	
 #playlist-collection-display
+	border: none
+	background: transparent
 	margin-left: -36px;
 	display: inline-block
 	
@@ -879,24 +901,22 @@ div#top-video-name
 	display: block
 	
 #playlist-collection-input
-	text-indent: 4px
+	text-indent: 6px
 	font-size: 10px
 	background: transparent
-	width: 66px
+	width: 72px
 	margin: 0 2px 6px 4px
-	padding-right: 4px   
 	display: inline-block
 	-webkit-border-radius: 9px
-	border: 1px solid #CAD8F3
-	background: #DEE7F8
+	border: none
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#dcdcdc)) 
 	color: black
 	cursour: default
-	height: 16px
+	height: 17px
 	outline: none
+	
 	                  
 #playlist-view
-	height: 100%
-	max-height: 327px
 	overflow-y: scroll
 	overflow-x: hidden
 	z-index: -1
