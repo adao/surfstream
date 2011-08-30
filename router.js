@@ -15,11 +15,7 @@ function setupRoutes(app) {
 	});
 	
 	app.get('/:rID', function(req, res) {
-		res.render('skeleton', { locals: { title: "surfstream.tv"}});
-	});
-	
-	app.get('/index', function(req, res) {
-		res.render('skeleton', { locals: { title: "surfstream.tv"}});
+		res.render('skeleton', { layout: false});
 	});
 	
 	
