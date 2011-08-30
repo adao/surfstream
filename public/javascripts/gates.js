@@ -1275,7 +1275,7 @@ $(function() {
 
 	pullRemoteUp : function (e) {
 		
-		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
+		if((e.srcElement && (e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")) || (e.target && (e.target.localName != "button" || e.target.id == "remote-pullup")) )	{
 			  
 				$("#remote-container").animate({"margin-top": -17}, 300, function() {
 					var remotePullup ,remoteTop, remote;
@@ -1300,8 +1300,7 @@ $(function() {
 	
 	pullRemoteDown: function(e) {
 		
-		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
-			
+		if((e.srcElement && (e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")) || (e.target && (e.target.localName != "button" || e.target.id == "remote-pullup")) )	{			
 			
 			$("#remote-container").animate({"margin-top": 130}, 300, function() { 
 				var remotePullup ,remoteTop, remote;			
@@ -1806,7 +1805,7 @@ $(function() {
 		for (var i = 1; i <= Object.size(userPlaylists); i++) {
 			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
 		}
-		app.get("userModel").get("playlistCollection").setActivePlaylist(1);
+		app.get("userModel").get("playlistCollection").setActivePlaylist(2);
 		var getPath = function(href) {
 		    var l = document.createElement("a");
 		    l.href = href;

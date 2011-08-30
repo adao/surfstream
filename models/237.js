@@ -741,7 +741,7 @@
 						}
 						console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
-						userModel.setPlaylist(1);
+						userModel.setPlaylist(2);
 						userModel.addPlaylistListeners(socket);
 						socket.emit("playlist:initialize", userPlaylists);
 					}
