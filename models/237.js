@@ -512,14 +512,11 @@
 			this.room.redisClient.lrange('room:'+roomName+':history', 0, HIST_NUM_RECENT, function(err, reply) {
 				if(err) return;
 				
+				console.log('pulling videos for this room\'s history from redis...');
 				for(var video in reply) {
-					hist.recentVids.add(new models.Video({
-						id: reply.id,
-						videoId: reply.videoId,
-						title: reply.title,
-						author: reply.author,
-						duration: reply.duration
-					}));
+					console.log('video: '+video)
+					var videoModel = JSON.parse(video);
+					hist.recentVids.add(videoModel);
 				}
 			});
 		},
@@ -575,6 +572,7 @@
 			this.recentVids.remove(this.recentVids.at(HIST_NUM_RECENT-1)); //remove the oldest video
 			this.recentVids.add(video, { at: 0 });
 			var roomName = this.room.get('name');
+			console.log('adding video to history, storing in redis as : '+JSON.stringify(video))
 			this.room.redisClient.lpush('room:'+roomName+':history', JSON.stringify(video));
 			this.size = this.size + 1;
 		}
