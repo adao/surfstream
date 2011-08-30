@@ -1086,6 +1086,7 @@ $(function() {
 
   sendMessage: function(event) {
    var userMessage = this.$('input[name=message]').val();
+	 if (userMessage == "") return false;
    this.$('input[name=message]').val('');
    SocketManagerModel.sendMsg({
     name: this.options.userModel.get("displayName"),
