@@ -516,11 +516,12 @@ $(function() {
 	
 	initialize: function() {
 		this.render();
+		this.calculatePlaylistHeight(); 
 		this.clickDeletePlaylist = 0;
 	},
 	
 	render: function() {
-		$(this.el).append(this.playlistNameholderTemplate({playlist_name: this.options.playlist_nameholder_name}));
+		$(this.el).prepend(this.playlistNameholderTemplate({playlist_name: this.options.playlist_nameholder_name}));
 		$(this.el).val(this.options.playlist_nameholder_value);
 	  $("#playlist-collection-display").prepend(this.el);
 	  return this;
@@ -536,9 +537,19 @@ $(function() {
 	
 	removeNameholder: function() {
 		$(this.el).remove();
+		var pcHeight = $("#playlist-collection").outerHeight(true);
+		var viewHeight = $("#myplaylist").outerHeight(true);
+		this.calculatePlaylistHeight();
 		$(this.options.playlistCollection.idToPlaylistDropdown[this.options.playlist_nameholder_value].el).remove();
 		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
+	},
+	
+	calculatePlaylistHeight: function() {
+		var pcHeight = $("#playlist-collection").outerHeight(true);
+		var viewHeight = $("#myplaylist").outerHeight(true);
+		$("#playlist-view").css('height', viewHeight - pcHeight);
 	}
+	
  });
 
  window.PlaylistView = Backbone.View.extend({
