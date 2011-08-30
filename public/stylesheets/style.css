@@ -1458,6 +1458,9 @@ background-color: green,
   cursor: pointer;
   vertical-align: top;
 }
+a#fdbk_tab {
+  z-index: 10;
+}
 .dropdown-title,
 #playlistDropdown {
   float: right;

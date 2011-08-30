@@ -380,9 +380,9 @@ $(function() {
 	},
 	
 	deletePlaylist: function(playlistId) {
-		this.idToPlaylistDropdown[playlistId].el.remove();
+		$(this.idToPlaylistDropdown[playlistId].el).remove();
 		for (var i = 0; i < this.idToPlaylistViews[playlistId].length; i++) {
-			this.idToPlaylistViews[playlistId][i].remove();
+			$(this.idToPlaylistViews[playlistId][i]).remove();
 		}
 		delete this.idToPlaylist[playlistId];
 		delete this.idToPlaylistNameholder[playlistId];
