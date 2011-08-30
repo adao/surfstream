@@ -54,6 +54,8 @@
 		
 		playVideo: function() {
 			var roomName = this.room.get('name');
+			var room = this.room;
+			var VAL = this;
 			console.log('['+roomName+'][VAL] playVideo(): num users --> '+this.room.users.length);
 			if(this.room.users.length == 0) return;
 
@@ -313,6 +315,10 @@
 			this.users.addUser(user);
 			this.sockM.addSocket(user.get("socket"));
 			user.randLoc();
+			
+			//this.sockM.sendRoomState(user.get("socket"));
+			this.sockM.sendRoomState();
+			
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
@@ -326,9 +332,7 @@
 					title: this.currVideo.get('title'),
 					dj: this.currVideo.get('dj')
 				});
-			}	
-			//this.sockM.sendRoomState(user.get("socket"));
-			this.sockM.sendRoomState();
+			}
 		},
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
@@ -344,6 +348,7 @@
 			roomData.rID = this.get('name');
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
+			roomData.history = this.history;
 			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
 			//console.log("Here's the roomdata: " + roomData.rID);
 			return roomData;
