@@ -144,7 +144,6 @@
 						
 						var currVideoId = videoData['feed']['entry'][i]['media$group']['yt$videoid']['$t'];
 						if(!room.history.checkIfPlayedRecently(currVideoId)) {
-							console.log('adding '+currVideoId+ ' with title '+videoData['feed']['entry'][i]['media$group']['media$title']['$t'])
 							unplayedVideos.push(videoData['feed']['entry'][i]);
 							unplayedCount = unplayedCount + 1;
 						}
@@ -154,11 +153,9 @@
 					if(unplayedVideos.length >= 1) { 
 						var randIndex = Math.floor(Math.random()*unplayedVideos.length);
 						videoEntry = unplayedVideos[randIndex];
-						console.log('choosing a video from unplayed videos! ')
 					} else {
 						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
 						videoEntry = videoData['feed']['entry'][randIndex];
-						console.log('choosing a video according to the old way')
 					}
 											
 					var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
@@ -529,7 +526,7 @@
 					console.log('['+roomName+'] [Hist] initialize(): Error in getting history length: '+err)
 					return;
 				}
-				console.log('setting size of room history for room '+roomName+', size is '+len);
+				//console.log('setting size of room history for room '+roomName+', size is '+len);
 				hist.size = len;
 			});
 		},
@@ -538,18 +535,15 @@
  			var len = this.recentVids.length;
 			var videoArray = [];
 			
-			console.log('trying to get a good video');
 			for(var i=0; i < lookBackNum && i < len; i++) {
 				var currVideo = this.recentVids.at(len - (i+1));
 				if(currVideo.get('percent') >= 50) {
 					videoArray.push(currVideo);
-					console.log('adding as a candidate video: '+currVideo.get('videoId')+' with percent '+currVideo.get('percent'))
 				}
 			}
 			
 			if(videoArray.length >= 1) {
 				var randInt = Math.floor(Math.random()*videoArray.length);	//0 <= x < videoArray.length
-				console.log('choosing video with rand index '+randInt+' : video id '+videoArray[randInt].get('videoId'));
 				return videoArray[randInt];
 			} else {
 				console.log('all those failed, reverting to old school')
@@ -738,10 +732,10 @@
 			redisClient.get('user:'+userId+':avatar', function(err, reply) {
 				var avatarData, newAvatar;
 				if(err) {
-					console.log("Error in getting user "+userId+"'s avatar!");
+					console.log("\n\nERROR in getting user "+userId+"'s avatar!\n");
 				} else {
 					avatarData = reply;
-					console.log('getting avatar for user '+userId+', reply: '+reply);
+					//console.log('getting avatar for user '+userId+', reply: '+reply);
 					if(reply != 'undefined' && reply != null) {
 						userObj.set({avatar: avatarData});
 					} else { //give them a random first default
@@ -779,7 +773,7 @@
 		},
 		
 		savePlaylist: function(playlistId) {
-			redisClient.hset('user:' + this.get("userId") + ':playlists', playlistId, JSON.stringify(this.playlists[playlistId]), 			function(err, reply) {
+			redisClient.hset('user:'+this.get("userId")+':playlists', playlistId, JSON.stringify(this.playlists[playlistId]), function(err, reply) {
 				if (err) {
 					console.log(' playlist save was NOT SUCCESSFUL');
 				}
@@ -792,7 +786,7 @@
 		
 		hasPlaylist: function(playlistName) {
 			for(var id in this.playlists) {
-				console.log(this.playlists[id].get("name"));
+				//console.log(this.playlists[id].get("name"));
 				if(this.playlists.hasOwnProperty(id)) {
 					if (this.playlists[id].get("name") == playlistName) {
 						console.log("Tried to add playlist with a name that already existed. UH UH!");
@@ -814,12 +808,12 @@
 						var userPlaylists = {};
 						for(var id in reply) {
 							if(reply.hasOwnProperty(id) && reply[id]) {
-								console.log(reply[id]);
+								//console.log(reply[id]);
 								var playlist = JSON.parse(reply[id]);
 								userPlaylists[id] = new models.Playlist({name: playlist.name, videos: new models.VideoCollection(playlist.videos)});
 							}
 						}
-						console.log('getting playlists for user '+userId);
+						//console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
 						userModel.setPlaylist(1);
 						userModel.addPlaylistListeners(socket);
@@ -834,7 +828,7 @@
 			var playlists = this.playlists;
 			var thisUser = this;
 			socket.on('playlists:choosePlaylist', function(data) {
-				console.log("!playlists[data.playlistId] = " + !playlists[data.playlistId] + " ... thisUser.playlist == playlists[data.playlistId]" + (thisUser.playlist == playlists[data.playlistId]))
+				//console.log("!playlists[data.playlistId] = " + !playlists[data.playlistId] + " ... thisUser.playlist == playlists[data.playlistId]" + (thisUser.playlist == playlists[data.playlistId]))
 				if (!playlists[data.playlistId] || thisUser.playlist == playlists[data.playlistId]) {
 					return;
 				} else {
@@ -854,10 +848,10 @@
 						console.log("Error deleting user " + userId + "playlist with id " + data.playlistId);
 					} else {
 						console.log("Success deleting user " + userId + "playlist with id " + data.playlistId);
-						console.log(reply);
-						console.log(playlists);
+						//console.log(reply);
+						//console.log(playlists);
 						delete playlists[data.playlistId];
-						console.log(playlists);
+						//console.log(playlists);
 					}
 				})
 				
@@ -869,28 +863,28 @@
 			socket.on('playlist:addVideo', function(data) {
 				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
 				if (playlists[data.playlistId].moveToTop(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 
 			socket.on('playlist:delete', function(data) {
 				if (playlists[data.playlistId].deleteVideo(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 			
 			socket.on('playlist:moveVideo', function(data) {
 				if (playlists[data.playlistId].moveToIndex(data.videoId, data.index)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			})
 		},
