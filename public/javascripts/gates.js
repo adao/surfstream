@@ -1455,11 +1455,11 @@ $(function() {
 		this.el.id = "avatarWrapper_" + user.id;
 		avatarId = user.get("avatar");
 		avatarImgSrc = this.getAvatarSrc(avatarId);
-		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc })
-		nameDiv = this.make('div', {id:'nameDiv_' + user.id, class:"nametip", style: 'position:absolute;', title: user.get('name') })
-		chatDiv = this.make('div', {id:'avatarChat_' + user.id, class: "chattip" });
-		avatarMouth = this.make('img', {class: 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
-		avatarSmile = this.make('img', {class: 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
+		avatarBody = this.make('img', {id:'avatarBody_' + user.id, style: 'position:absolute;', src: avatarImgSrc });
+		nameDiv = this.make('div', {id:'nameDiv_' + user.id, "class":"nametip", style: 'position:absolute;', title: user.get('name') });
+		chatDiv = this.make('div', {id:'avatarChat_' + user.id, "class": "chattip" });
+		avatarMouth = this.make('img', {"class": 'defaultSmile' + avatarId + " default", src: this.defaultMouthSrc });
+		avatarSmile = this.make('img', {"class": 'defaultSmile'+ avatarId + " smiley", src:this.getSmileSrc(avatarId)});
 		$(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv).append(chatDiv);
 		//put off stage
 		if (user.get('x') < 290) {
@@ -2020,20 +2020,21 @@ $(function() {
 
  });
 
-	window.RaRouter = Backbone.Router.extend({ 
-		routes: {
-			":rID":	"joinRoom"
-		},
+ window.RaRouter = Backbone.Router.extend({ 
+	routes: {
+		":rID":	"joinRoom"
+	},
 		
-		joinRoom: function(rID) {
-			SocketManagerModel.joinRoom(rID, false);
-		}
-	});
+	joinRoom: function(rID) {
+		SocketManagerModel.joinRoom(rID, false);
+	}
+ });
+	
  window.playerLoaded = false;
 
 });
 
-setSuggestions = function(suggestions) {
+function setSuggestions(suggestions) {
 	var suggestionSource = _.pluck(suggestions[1], 0);
 	window.SurfStreamApp.get("mainView").sideBarView.searchView.suggestionHash[suggestions[0]] = suggestionSource;
 	$( "#youtubeInput" ).autocomplete( "option", "source", suggestionSource);
