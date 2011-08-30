@@ -44,10 +44,19 @@ button {
   font-size: 14px;
 }
 #header #cur-video-info #cur-video-time {
-  display: block;
+  display: inline-block;
   height: 13px;
   text-align: left;
   font-size: 12px;
+  width: 100px;
+  vertical-align: top;
+  margin-left: 4px;
+  margin-top: -1px;
+}
+#header #cur-video-info #clock {
+  width: 12px;
+  height: 13px;
+  vertical-align: top;
 }
 #now-playing-container {
   height: 100px !important;
@@ -1198,9 +1207,9 @@ background-color: green,
   overflow-y: hidden;
   margin-top: 5px;
   width: 150px;
-  height: 15px;
+  height: 50px;
   font-weight: bold;
-  font-size: 11px;
+  font-size: 10px;
   text-wrap: suppress;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1208,7 +1217,7 @@ background-color: green,
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .duration {
   position: relative;
   margin-left: -70px;
-  margin-top: 23px;
+  margin-top: 48px;
   width: 63px;
   text-align: left;
   text-indent: 1px;
