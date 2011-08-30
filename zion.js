@@ -53,6 +53,7 @@ app.configure('development', function(){
 
 app.configure('production', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+	app.enable("production");
 });
 
 require('./router.js').setupRoutes(app);
