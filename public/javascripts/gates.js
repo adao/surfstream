@@ -1354,7 +1354,7 @@ $(function() {
 
 	updateDJs : function(djArray) {
 		var oldPos, user;
-		var X_COORDS = [200,260,320]; 
+		var X_COORDS = [200,275,348]; 
 		var Y_COORD = 25;
 		var cur_is_dj = false;
 		var numOnSofa = 0;
@@ -2125,7 +2125,7 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 }
 
 function updateTime() {
-	$("#countdownFull").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+	$("#countdownFull").html("Time: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
 	if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
 	 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
 	}

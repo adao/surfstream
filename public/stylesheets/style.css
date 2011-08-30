@@ -787,7 +787,10 @@ button
   height: 404px;
   background-color: #000;
   z-index: 10000;
-  border: 1px solid #eee;
+  border: 1px solid #666;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
 }
 #room-modal #searchbar {
   background-color: #666;
@@ -796,6 +799,12 @@ button
   background-image: -o-linear-gradient(top, #666, #434343);
   display: block;
   height: 54px;
+  border-top-right-radius: 2px;
+  -moz-border-top-right-radius: 2px;
+  -webkit-border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+  -moz-border-top-left-radius: 2px;
+  -webkit-border-top-left-radius: 2px;
 }
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
@@ -906,6 +915,12 @@ button
   background-image: -o-linear-gradient(top, #666, #434343);
   text-align: center;
   vertical-align: middle;
+  border-bottom-right-radius: 2px;
+  -moz-border-bottom-right-radius: 2px;
+  -webkit-border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+  -moz-border-bottom-left-radius: 2px;
+  -webkit-border-bottom-left-radius: 2px;
 }
 #room-modal #create-room #CreateRoomName {
   font-size: 12px;
@@ -1018,7 +1033,7 @@ background-color: green,
   border: none;
   background: url("/images/room/newicons/delete-playlist.png") 50% 50% no-repeat;
   float: right;
-  margin-top: 4px;
+  margin-top: 5.5px;
   margin-left: 4px;
 }
 .delete-nameholder:hover {
@@ -1035,7 +1050,6 @@ background-color: green,
   margin: 0 2px 6px 2px;
   display: inline-block;
   position: relative;
-  line-height: 18px;
   -webkit-border-radius: 9px;
   -moz-border-radius: 9px;
   border-radius: 9px;
@@ -1045,7 +1059,8 @@ background-color: green,
   background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
   color: #000;
   padding-right: 6px;
-  cursor: default;
+  cursor: pointer;
+  height: 20px;
 }
 .nameholder-input {
   vertical-align: top;
@@ -1057,6 +1072,7 @@ background-color: green,
 .playlist-collection-input {
   font-family: "Lucida Grande", Verdana;
   vertical-align: middle;
+  line-height: 20px;
 }
 .selected-playlist-nameholder {
   border-color: #008ab8;
@@ -1103,8 +1119,9 @@ background-color: green,
   background-image: -o-linear-gradient(top, #eee, #dcdcdc);
   color: #000;
   cursour: default;
-  height: 17px;
+  height: 20px;
   outline: none;
+  padding: 0px;
 }
 #playlist-collection-input:hover {
   -moz-box-shadow: inset 0 0 1px #000;
@@ -1438,9 +1455,6 @@ background-color: green,
   color: #e5e5e5;
   cursor: pointer;
   vertical-align: top;
-}
-a#fdbk_tab {
-  z-index: 10;
 }
 .dropdown-title,
 #playlistDropdown {
