@@ -102,6 +102,7 @@
 			// 				return;
 			// 			}
 			var lookBackNum = this.room.djs.length;
+			if(lookBackNum == 0) lookBackNum = 3;
 			var recentVideo = this.room.history.getGoodVideo(lookBackNum);
 			if(!recentVideo) {
 				console.log('error! recentVid is '+recentVideo+', returning')
@@ -1226,10 +1227,15 @@
 				numDown = this.down,
 				numUsers = this.room.users.length,
 				basePercent = 50;
-				
-			var percentUp = ((1.0 * numUp) / numUsers) * (100 - basePercent);
-			var percentDown = ((1.0 * numDown) / numUsers) * (100 - basePercent);
-		
+			
+			var percentUp, percentDown;
+			if(numUsers == 0) {
+				percentUp = (1.0 * numUp) * (100 - basePercent);
+				percentDown = (1.0 * numDown) * (100 - basePercent);
+			} else {
+				percentUp = ((1.0 * numUp) / numUsers) * (100 - basePercent);
+				percentDown = ((1.0 * numDown) / numUsers) * (100 - basePercent);
+			}
 			var videoScore = basePercent + percentUp - percentDown;
 			console.log('['+this.room.get('name')+'][MET] calculatePercent(): percent for video is '+videoScore+' with up: '+numUp+' and down: '+numDown+' and numUsers: '+numUsers);
 			return videoScore;
