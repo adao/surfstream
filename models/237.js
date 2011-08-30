@@ -102,7 +102,7 @@
 			// 				return;
 			// 			}
 			var lookBackNum = this.room.djs.length;
-			if(lookBackNum == 0) lookBackNum = 3;
+			if(lookBackNum <= 0) lookBackNum = 3;
 			var recentVideo = this.room.history.getGoodVideo(lookBackNum);
 			if(!recentVideo) {
 				console.log('error! recentVid is '+recentVideo+', returning')
@@ -538,8 +538,9 @@
 			var videoArray = [];
 			
 			for(var i=0; i < lookBackNum && i < len; i++) {
-				var currVideo = this.recentVids.at(len - (i+1));
+				var currVideo = this.recentVids.at(i);
 				if(currVideo.get('percent') >= 50) {
+					console.log('pushing on good video '+currVideo.get('title'));
 					videoArray.push(currVideo);
 				}
 			}
@@ -552,7 +553,7 @@
 				var lookBackNum = 3;
 				if (this.recentVids.length < lookBackNum) lookBackNum = this.recentVids.length;
 				var randInt = Math.floor(Math.random()*lookBackNum);	//0 <= randInt < lookBackNum
-				var recentVideo = this.recentVids.at(this.room.history.length - randInt);
+				var recentVideo = this.recentVids.at(randInt);
 				return recentVideo;
 			}
 		},
