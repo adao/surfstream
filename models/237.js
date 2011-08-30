@@ -101,8 +101,12 @@
 			// 				console.log("ERROR No video found. You should never see this message! ");
 			// 				return;
 			// 			}
-			var lookBackNum = this.room.djs.numDJs;
+			var lookBackNum = this.room.djs.length;
 			var recentVideo = this.room.history.getGoodVideo(lookBackNum);
+			if(!recentVideo) {
+				console.log('error! recentVid is '+recentVideo+', returning')
+				return;
+			}
 			var videoId = recentVideo.get('videoId');
 			
 			var roomName = this.room.get('name');
@@ -131,9 +135,32 @@
 					}
 					
 					videoData = JSON.parse(videoData);
-					var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
+					
+					//make sure the candidate videos are unplayed
+					var unplayedVideos = [];
+					var unplayedCount = 0;
+					for(var i = 0; i < videoData['feed']['entry'].length; i++) {
+						if(unplayedCount > 4) break;
+						
+						var currVideoId = videoData['feed']['entry'][i]['media$group']['yt$videoid']['$t'];
+						if(!room.history.checkIfPlayedRecently(currVideoId)) {
+							console.log('adding '+currVideoId+ ' with title '+videoData['feed']['entry'][i]['media$group']['media$title']['$t'])
+							unplayedVideos.push(videoData['feed']['entry'][i]);
+							unplayedCount = unplayedCount + 1;
+						}
+					}
+					
+					var videoEntry;
+					if(unplayedVideos.length >= 1) { 
+						var randIndex = Math.floor(Math.random()*unplayedVideos.length);
+						videoEntry = unplayedVideos[randIndex];
+						console.log('choosing a video from unplayed videos! ')
+					} else {
+						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
+						videoEntry = videoData['feed']['entry'][randIndex];
+						console.log('choosing a video according to the old way')
+					}
 											
-					var videoEntry = videoData['feed']['entry'][randIndex];
 					var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
 					var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
 					var videoTitle = videoEntry['media$group']['media$title']['$t'];
@@ -494,7 +521,6 @@
 		},
 		
 		setSize: function() {
-			//TODO: retrieve playlist length from redis using llen
 			if(!this.room.redisClient) return;
 			var hist = this;
 			var roomName = this.room.get('name');
@@ -512,6 +538,7 @@
  			var len = this.recentVids.length;
 			var videoArray = [];
 			
+			console.log('trying to get a good video');
 			for(var i=0; i < lookBackNum && i < len; i++) {
 				var currVideo = this.recentVids.at(len - (i+1));
 				if(currVideo.get('percent') >= 50) {
@@ -545,23 +572,21 @@
 				percent: percent,
 			});
 			
-			console.log('adding video to history: '+JSON.stringify(videoToAdd));
-			console.log('adding video to history, new size: '+ this.size)
-			
 			if(this.recentVids.length >= HIST_NUM_RECENT)
 				this.recentVids.remove(this.recentVids.at(HIST_NUM_RECENT-1)); //remove the oldest video
 			this.recentVids.add(videoToAdd, { at: 0 });
 			this.room.redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
-			if(this.size) { 
-				this.size = this.size + 1;
-				console.log('adding video to history, new size: '+this.size);
-			}
+
+			// if(this.size >= 0) { 			//not working, figure out why llen above in setSize doesn't work
+			// 	this.size = this.size + 1;
+			// }
 		},
 		
-		checkIfPlayedRecently: function(videoId, lookBackNum) {
+		checkIfPlayedRecently: function(videoId) {
 			var len = this.recentVids.length;
-			for(var i = len - 1; i >= len - lookBackNum && i >= 0; i--) {
-				if(this.recentVids.at(i).videoId == videoId) return true;
+			for(var i = 0; i < len; i++) {
+				if(this.recentVids.at(i).get('videoId') == videoId) 
+					return true;
 			}
 			return false;
 		},
