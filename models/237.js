@@ -89,22 +89,24 @@
 		},
 		
 		fetchYouTubeVideo: function() {
-			if(this.room.history.length == 0) return;
-			
-			//choose video to base it on
-			var lookBackNum = 3;
-			if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
-			var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
-			
-			var recentVideo = this.room.history.at(this.room.history.length - randInt);
-			if(!recentVideo) {
-				console.log("ERROR No video found. You should never see this message! ");
-				return;
-			}
-			var videoId = recentVideo.get('videoId');
+			var histSize = this.room.history.getSize();
+			if(histSize == 0) return;
+		
+			// choose video to base it on
+			// 			var lookBackNum = 3;
+			// 			if (histSize < lookBackNum) lookBackNum = histSize;
+			// 			var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
+			// 			
+			// 			var recentVideo = this.room.history.videos.at(histSize - randInt);
+			// 			if(!recentVideo) {
+			// 				console.log("ERROR No video found. You should never see this message! ");
+			// 				return;
+			// 			}
+			var recentVideo = this.room.history.getGoodVideo(3);
+			var videoId = recentVideo['videoId'];
 			
 			var roomName = this.room.get('name');
-			console.log('['+roomName+'][VAL] fetchYouTubeVideo(): basing recommendation off of video '+recentVideo.get('title')+", the "+randInt + "/"+lookBackNum+" most recently played video");
+			console.log('['+roomName+'][VAL] fetchYouTubeVideo(): basing recommendation off of video '+recentVideo.get('title'));
 			
 			var options = { 
 				host: 'gdata.youtube.com',
@@ -129,10 +131,14 @@
 					}
 					
 					videoData = JSON.parse(videoData);
-					var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
-											
-					var videoEntry = videoData['feed']['entry'][randIndex];
-					var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
+					
+					while(true) {
+						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4					
+						var videoEntry = videoData['feed']['entry'][randIndex];
+						var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
+						
+						
+					}
 					var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
 					var videoTitle = videoEntry['media$group']['media$title']['$t'];
 					var videoThumb = videoEntry['media$group']['media$thumbnail'][0]['url'];
@@ -156,8 +162,11 @@
 			  console.log('['+roomName+'][VAL] playVideo(): *** ERROR *** ' + e.message);
 			});
 			req.end();
-		}
+		},
 		
+		issueYTRequest: function(recentVideo) {
+			
+		}
 	});
 	
 	/*************************/
@@ -224,12 +233,11 @@
 					videoId: this.room.currVideo.get('videoId'), 
 					percent: this.room.meter.calculatePercent(),
 					title: this.room.currVideo.get('title'),
-					length: this.room.currVideo.get('duration'),
+					duration: this.room.currVideo.get('duration'),
 					dj: this.room.currVideo.get('dj')
 				});
 							
-				redisClient.rpush('room:'+this.room.get("name")+':history', JSON.stringify(videoFinished));
-				this.room.history.add(videoFinished);
+				this.room.history.addVideo(videoFinished);
 				this.room.clearVideo();
 			}
 		
@@ -288,7 +296,7 @@
 			this.meter.setRoom(this);
 			
 			this.currVideo = null;
-			this.history = new models.VideoCollection();
+			this.history = new models.History(this);
 			this.sockM = new models.SocketManager(this);
 		},
 		
@@ -443,7 +451,7 @@
 		},
 		
 		announceRoomHistory: function() {
-			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.toJSON());
+//			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.toJSON());
 		}
 	});
 
@@ -484,31 +492,86 @@
 		model: models.Video,
 	});
 	
+	var HIST_NUM_RECENT = 10;
 	models.History = Backbone.Model.extend({
-		initialize: function() {
-			this.videos = new models.VideoCollection();
+		initialize: function(room) {
+			this.room = room;
+			this.recentVids = new models.VideoCollection();	
+			this.initializeRecVideos();
+			this.setSizeFromRedis();
 		},
 		
-		getGoodVideo: function() {
- 			var len = this.videos.length;
-			var videoArray = [];
+		initializeRecVideos: function() {
+			var hist = this;
+			var roomName = this.room.get('name');
+			this.room.redisClient.lrange('room:'+roomName+':history', 0, HIST_NUM_RECENT, function(err, reply) {
+				if(err) return;
+				
+				for(var video in reply) {
+					hist.recentVids.add(new models.Video({
+						id: reply.id,
+						videoId: reply.videoId,
+						title: reply.title,
+						author: reply.author,
+						duration: reply.duration
+					}));
+				}
+			});
+		},
+		
+		getGoodVideo: function(lookBackNum) {
+ 			var len = this.recentVids.length;
 			
-			for(var i=0; i < lookBackNum && i < len; i++) {
-				var currVideo = this.videos.at(len - (i+1));
+			var goodVids = [];
+			for(var i = 1; i <= lookBackNum && i <= len; i++) {
+				var currVideo = this.recentVids.at(len - i);
 				if(currVideo.get('percent') >= 50)
-					videoArray.push(currVideo);
+					goodVids.push(currVideo);
 			}
-			
-			if(videoArray.length >= 1) {
-				var randInt = Math.floor(Math.random()*videoArray.length);	//0 <= x < videoArray.length
-				return videoArray[randInt];
+
+			if(goodVids.length >= 1) {
+				var randInt = Math.floor(Math.random()*goodVids.length);	//0 <= x < videoArray.length
+				return goodVids[randInt];
 			} else {
-				var lookBackNum = 3;
-				if (this.videos.length < lookBackNum) lookBackNum = this.videos.length;
+				if (videos.length < lookBackNum) lookBackNum = videos.length;
 				var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
-				var recentVideo = this.videos.at(this.room.history.length - randInt);
-				return recentVideo;
+				var recentVideo = JSON.parse(videos[this.room.history.size - randInt]);
+				
+				return recentVideo; 
 			}
+		},
+		
+		checkIfPlayedRecently: function(videoId, lookBackNum) {
+			var len = this.recentVids.length;
+			for(var i = len - 1; i >= len - lookBackNum && i >= 0; i--) {
+				if(this.recentVids.at(i).videoId == videoId) return true;
+			}
+			return false;
+		},
+		
+		getSize: function() { 
+			return this.size;
+		},
+		
+		setSizeFromRedis: function() {
+			if(!this.room.redisClient) return;
+			var hist = this;
+			var roomName = this.room.get('name');
+		 	this.room.redisClient.llen('room:'+roomName+':history', function(err, len) {
+				if(err) {
+					console.log('['+roomName+'] [Hist] initialize(): Error in getting history length: '+err)
+					return;
+				}
+				hist.size = len;
+			});
+		},
+		
+		addVideo: function(video) {
+			this.recentVids.remove(this.recentVids.at(HIST_NUM_RECENT-1)); //remove the oldest video
+			this.recentVids.add(video, { at: 0 });
+			var roomName = this.room.get('name');
+			this.room.redisClient.lpush('room:'+roomName+':history', JSON.stringify(video));
+			this.size = this.size + 1;
 		}
 	});
 
