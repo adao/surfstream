@@ -1,5 +1,5 @@
 $(function() {
- 
+
  _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
  };
@@ -48,7 +48,7 @@ $(function() {
  window.SearchBarModel = Backbone.Model.extend({
 
   executeSearch: function(searchQuery) {
-	 mpq.track("Search", {mp_note: "Searched for " + searchQuery});
+	 if (typeof(mpq) !== 'undefined') mpq.track("Search", {mp_note: "Searched for " + searchQuery});
    this.set({
     searchTerm: searchQuery
    });
@@ -249,6 +249,7 @@ $(function() {
 	 this.sofaUsers = [];
 	 this.rotateRemoteSign = true;
 	 this.gotRoomList = false;
+	 $("#feedbackSpan").click(function() {feedback_widget.show();})
 	 var roomModel, mainView;
 	
 	this.set({
@@ -637,7 +638,7 @@ $(function() {
 	toggleVisibility: function() {
 		var history = $($(".historyContainer")[0]);
 		history.toggle();
-		mpq.track("History Toggled", {mp_note: "History was toggled " + (history.css("display") == "none" ? "off" : "on")});
+		if (typeof(mpq) !== 'undefined') mpq.track("History Toggled", {mp_note: "History was toggled " + (history.css("display") == "none" ? "off" : "on")});
 	},
 	
 	resetRoomHistory: function() {
@@ -1373,7 +1374,7 @@ $(function() {
 		e.data.theatre.full = !e.data.theatre.full;
 		if (e.data.theatre.full) {
 			SurfStreamApp.fullscreen = true;
-			mpq.track("Fullscreen on", {mp_note:"Fullscreen open (onsofa: __)"});
+			if (typeof(mpq) !== 'undefined') mpq.track("Fullscreen on", {mp_note:"Fullscreen open (onsofa: __)"});
 			$("#YouTubePlayer").addClass("fully");
 			$("#fullscreenIcon").addClass("fully");
 			window.onmousemove = (function() {
@@ -1388,7 +1389,7 @@ $(function() {
 			});
 		} else {
 			SurfStreamApp.fullscreen = false;
-			mpq.track("Fullscreen off", {mp_note:"Fullscreen closed (onsofa: __)"});
+			if (typeof(mpq) !== 'undefined') mpq.track("Fullscreen off", {mp_note:"Fullscreen closed (onsofa: __)"});
 			$("#YouTubePlayer").removeClass("fully");
 			$("#fullscreenIcon").removeClass("fully");
 			$("#nowPlayingFull").hide();
@@ -1403,7 +1404,7 @@ $(function() {
 
 	updateDJs : function(djArray) {
 		var oldPos, user;
-		var X_COORDS = [200,260,320]; 
+		var X_COORDS = [200,275,348]; 
 		var Y_COORD = 25;
 		var cur_is_dj = false;
 		var numOnSofa = 0;
@@ -1767,7 +1768,7 @@ $(function() {
 	console.log('video announced');
 		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, isdj, skipX, skipY;
 		SurfStreamApp.curDJ = video.dj;
-		mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
+		if (typeof(mpq) !== 'undefined') mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
 		$("#fullTitle").html(video.title);
@@ -1985,7 +1986,7 @@ $(function() {
 
 	sendFBUser: function(user) {
 		SocketManagerModel.socket.emit("user:sendFBData", user);
-		mpq.name_tag(user.name);
+		if (typeof(mpq) !== 'undefined') mpq.name_tag(user.name);
 	},
 	
 	sendUserFBFriends: function(friendIdList) {
@@ -1999,7 +2000,7 @@ $(function() {
   becomeDJ: function() {
 	 var valplay = (SurfStreamApp.curDJ == "VAL" ? true : false );
 	 var numOnSofa = SurfStreamApp.sofaUsers.length;
-	 mpq.track("Sofa Join", {VAL_Playing: valplay, mp_note: "Stepped onto sofa ("+ numOnSofa +" people on sofa, __ friends in room, val playing: " + valplay + ")"});
+	 if (typeof(mpq) !== 'undefined') mpq.track("Sofa Join", {VAL_Playing: valplay, mp_note: "Stepped onto sofa ("+ numOnSofa +" people on sofa, __ friends in room, val playing: " + valplay + ")"});
    SocketManagerModel.socket.emit('dj:join');
   },
 
@@ -2007,7 +2008,7 @@ $(function() {
 	 var valplay = (SurfStreamApp.curDJ == "VAL" ? true : false );
 	 var isdj = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("fbId"));
 	 var numOnSofa = SurfStreamApp.sofaUsers.length
-	 mpq.track("Sofa Leave", {VAL_playing: valplay, mid_play: isdj,mp_note: "Stepped off of sofa ("+ numOnSofa +" people on sofa, __ friends in room, val playing: "+ valplay  +", midPlay: "+ isdj +")"});
+	 if (typeof(mpq) !== 'undefined') mpq.track("Sofa Leave", {VAL_playing: valplay, mid_play: isdj,mp_note: "Stepped off of sofa ("+ numOnSofa +" people on sofa, __ friends in room, val playing: "+ valplay  +", midPlay: "+ isdj +")"});
    SocketManagerModel.socket.emit('dj:quit');
   },
 
@@ -2023,12 +2024,12 @@ $(function() {
   },
 
   voteUp: function() {
-	 mpq.track("Vote up", {mp_note: "Video was voted up (fronthalf: ___)"});
+	 if (typeof(mpq) !== 'undefined') mpq.track("Vote up", {mp_note: "Video was voted up (fronthalf: ___)"});
    SocketManagerModel.socket.emit('meter:upvote');
   },
 
   voteDown: function() {
-	 mpq.track("Vote down", {mp_note: "Video was voted down (fronthalf: ___)"});
+	 if (typeof(mpq) !== 'undefined') mpq.track("Vote down", {mp_note: "Video was voted down (fronthalf: ___)"});
    SocketManagerModel.socket.emit('meter:downvote');
   },
 
@@ -2085,7 +2086,9 @@ $(function() {
 		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		SurfStreamApp.vidsPlayed = 0;
 		$("#cur-room-name").html(rID); 
-		mpq.track("Room Joined", {wasDJ: isDJ, rID:rID, mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"}); 
+		if (typeof(mpq) !== 'undefined'){
+			mpq.track("Room Joined", {wasDJ: isDJ, rID:rID, mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"}); 
+		}
 		var payload = {rID: rID};
 		if (create) payload.create = true;
 		if (SurfStreamApp.inRoom) {
@@ -2160,10 +2163,10 @@ function setVideoVolume(event) {
 function mute(event) {
  if (window.YTPlayer.isMuted()) {
   window.YTPlayer.unMute();
-	mpq.track("Mute toggled", {mp_note: "Volume was toggled on"}); 
+	if (typeof(mpq) !== 'undefined') mpq.track("Mute toggled", {mp_note: "Volume was toggled on"}); 
  } else {
   window.YTPlayer.mute();
- 	mpq.track("Mute toggled", {mp_note: "Volume was toggled off"});
+ 	if (typeof(mpq) !== 'undefined') mpq.track("Mute toggled", {mp_note: "Volume was toggled off"});
  }
 }
 
@@ -2200,7 +2203,7 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 }
 
 function updateTime() {
-	$("#countdownFull").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+	$("#countdownFull").html("Time: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
 	if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
 	 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
 	}
