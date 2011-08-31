@@ -1634,3 +1634,25 @@ a#fdbk_tab {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
 }
+.videoChatCell {
+  width: 285px;
+  height: 60px;
+}
+.videoChatCell .videoChatImg {
+  float: left;
+  width: 63px;
+  height: 50px;
+  margin-top: 2px;
+}
+.videoChatCell .videoChatInfo {
+  float: right;
+  margin-left: 2px;
+  width: 208px;
+  height: 50px;
+}
+.videoChatCell .videoChatInfo .videoChatNowPlaying {
+  font-weight: bold;
+}
+.videoChatCell .videoChatInfo .videoChatCellText {
+  display: inline;
+}

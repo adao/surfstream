@@ -1315,15 +1315,34 @@ $(function() {
   className: "messageContainer",
   initialize: function() {
    $("#messages").append(this.render().el);
-	 window.SurfStreamApp.get("mainView").playSound("chat_message_sound");
+		window.SurfStreamApp.get("mainView").playSound("chat_message_sound");	 
   },
 
-  render: function() {
-   $(this.el).html(this.chatCellTemplate({
-    username: this.options.username,
-    msg: this.options.msg
-   }));
-   return this;
+  render: function(nowPlayingMsg) {
+		$(this.el).html(this.chatCellTemplate({
+	    username: this.options.username,
+	    msg: this.options.msg
+	   }));
+		return this;
+  }
+ });
+
+ window.ChatCellVideoView = Backbone.View.extend({
+
+  chatCellVideoTemplate: _.template($('#chatcellVideo-template').html()),
+
+  className: "messageContainer",
+  initialize: function() {
+   $("#messages").append(this.render().el);
+		window.SurfStreamApp.get("mainView").playSound("chat_video_sound");	 
+  },
+
+  render: function(nowPlayingMsg) {
+		$(this.el).html(this.chatCellVideoTemplate({
+			videoSrc: ss_idToImg(this.options.videoID),
+			title: this.options.videoTitle
+		}));
+		return this;
   }
  });
 
@@ -1514,7 +1533,6 @@ $(function() {
 					$("#sofa-remote").animate({"left": X_COORDS[dj] + 50, "top": Y_COORD[dj] + 50 });
 					$("#skipContainer").animate({"margin-left": X_COORDS[dj], "margin-top":  Y_COORD + 100});
 				}
-				
 			}
 		console.log("Zindex: " + user.css("z-index"))
 		//set the z index so the skip video doesn't cover it
@@ -1796,6 +1814,7 @@ $(function() {
 			
 		}
 		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_message_sound", audio_src: "/sounds/chat.wav"}));
+		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_video_sound", audio_src: "/sounds/click1.wav"}));
 	},
 	
 	playSound: function(audioTagId) {
@@ -1862,12 +1881,14 @@ $(function() {
      };
      swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
      window.video_ID = video.id;
+		 window.video_title = video.title;
 		 setInterval(updateTime, 1000);
     } else {
      window.YTPlayer.loadVideoById(video.id, video.time);
-     new ChatCellView({
+     new ChatCellVideoView({
       username: "Now Playing: ",
-      msg: video.title
+			videoID: video.id,
+			videoTitle: video.title
      });
      app.get("mainView").chatView.chatContainer.activeScroll();
     }
@@ -2155,7 +2176,7 @@ $(function() {
 		var vidsPlayed = SurfStreamApp.vidsPlayed;
 		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		SurfStreamApp.vidsPlayed = 0;
-		$("#cur-room-name").html(rID);
+		$("#cur-room-name").html("<span style='font-weight:normal'>Channel:</span> " + rID);
 		$("#cur-video-name").hide();
 		$("#cur-video-time").hide();
 		
@@ -2220,6 +2241,11 @@ function onYouTubePlayerReady(playerId) {
   window.playerLoaded = true;
   if (window.video_ID) {
    window.YTPlayer.loadVideoById(window.video_ID, window.secs);
+	 	new ChatCellVideoView({
+     username: "Now Playing: ",
+			videoID: window.video_ID,
+			videoTitle: window.video_title
+    });
   }
  }
 }
