@@ -54,8 +54,6 @@
 		
 		playVideo: function() {
 			var roomName = this.room.get('name');
-			var room = this.room;
-			var VAL = this;
 			console.log('['+roomName+'][VAL] playVideo(): num users --> '+this.room.users.length);
 			if(this.room.users.length == 0) return;
 
@@ -94,19 +92,26 @@
 			if(this.room.history.length == 0) return;
 			
 			//choose video to base it on
-			var lookBackNum = 3;
-			if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
-			var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
-			
-			var recentVideo = this.room.history.at(this.room.history.length - randInt);
+			// var lookBackNum = 3;
+			// 			if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
+			// 			var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
+			// 			
+			// 			var recentVideo = this.room.history.at(this.room.history.length - randInt);
+			// 			if(!recentVideo) {
+			// 				console.log("ERROR No video found. You should never see this message! ");
+			// 				return;
+			// 			}
+			var lookBackNum = this.room.djs.length;
+			if(lookBackNum <= 0) lookBackNum = 3;
+			var recentVideo = this.room.history.getGoodVideo(lookBackNum);
 			if(!recentVideo) {
-				console.log("ERROR No video found. You should never see this message! ");
+				console.log('error! recentVid is '+recentVideo+', returning')
 				return;
 			}
 			var videoId = recentVideo.get('videoId');
 			
 			var roomName = this.room.get('name');
-			console.log('['+roomName+'][VAL] fetchYouTubeVideo(): basing recommendation off of video '+recentVideo.get('title')+", the "+randInt + "/"+lookBackNum+" most recently played video");
+			console.log('['+roomName+'][VAL] fetchYouTubeVideo(): basing recommendation off of video '+recentVideo.get('title'));
 			
 			var options = { 
 				host: 'gdata.youtube.com',
@@ -131,9 +136,29 @@
 					}
 					
 					videoData = JSON.parse(videoData);
-					var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
+					
+					//make sure the candidate videos are unplayed
+					var unplayedVideos = [];
+					var unplayedCount = 0;
+					for(var i = 0; i < videoData['feed']['entry'].length; i++) {
+						if(unplayedCount > 4) break;
+						
+						var currVideoId = videoData['feed']['entry'][i]['media$group']['yt$videoid']['$t'];
+						if(!room.history.checkIfPlayedRecently(currVideoId)) {
+							unplayedVideos.push(videoData['feed']['entry'][i]);
+							unplayedCount = unplayedCount + 1;
+						}
+					}
+					
+					var videoEntry;
+					if(unplayedVideos.length >= 1) { 
+						var randIndex = Math.floor(Math.random()*unplayedVideos.length);
+						videoEntry = unplayedVideos[randIndex];
+					} else {
+						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
+						videoEntry = videoData['feed']['entry'][randIndex];
+					}
 											
-					var videoEntry = videoData['feed']['entry'][randIndex];
 					var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
 					var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
 					var videoTitle = videoEntry['media$group']['media$title']['$t'];
@@ -221,17 +246,14 @@
 					this.room.djs.currDJ.playlist.moveToBottom(this.room.currVideo.get('videoId'));	
 				}
 				
-				var videoFinished = new models.Video({
-					id: (new Date()).getTime(),
-					videoId: this.room.currVideo.get('videoId'), 
-					percent: this.room.meter.calculatePercent(),
-					title: this.room.currVideo.get('title'),
-					length: this.room.currVideo.get('duration'),
-					dj: this.room.currVideo.get('dj')
-				});
+				var videoId = this.room.currVideo.get('videoId'), 
+					percent = this.room.meter.calculatePercent(),
+					title = this.room.currVideo.get('title'),
+					duration = this.room.currVideo.get('duration'),
+					thumb = this.room.currVideo.get('thumb');
+					dj = this.room.currVideo.get('dj');
 							
-				redisClient.rpush('room:'+this.room.get("name")+':history', JSON.stringify(videoFinished));
-				this.room.history.add(videoFinished);
+				this.room.history.addVideo(videoId, title, duration, thumb, dj, percent);
 				this.room.clearVideo();
 			}
 		
@@ -290,7 +312,7 @@
 			this.meter.setRoom(this);
 			
 			this.currVideo = null;
-			this.history = new models.VideoCollection();
+			this.history = new models.History(this);
 			this.sockM = new models.SocketManager(this);
 		},
 		
@@ -307,10 +329,6 @@
 			this.users.addUser(user);
 			this.sockM.addSocket(user.get("socket"));
 			user.randLoc();
-			
-			//this.sockM.sendRoomState(user.get("socket"));
-			this.sockM.sendRoomState();
-			
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
@@ -322,9 +340,12 @@
 					id: this.currVideo.get('videoId'), 
 					time: Math.ceil(timeDiff), 
 					title: this.currVideo.get('title'),
-					dj: this.currVideo.get('dj')
+					dj: this.currVideo.get('dj'),
+					duration: this.currVideo.get('duration')
 				});
-			}
+			}	
+			//this.sockM.sendRoomState(user.get("socket"));
+			this.sockM.sendRoomState();
 		},
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
@@ -340,7 +361,6 @@
 			roomData.rID = this.get('name');
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
-			roomData.history = this.history;
 			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
 			//console.log("Here's the roomdata: " + roomData.rID);
 			return roomData;
@@ -417,7 +437,7 @@
 		},
 
 		announceVideo: function(videoId, duration, title, dj) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title, dj: dj });
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title, dj: dj, duration: duration });
 		},
 		
 		announceClients: function() {
@@ -448,7 +468,7 @@
 		},
 		
 		announceRoomHistory: function() {
-			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.toJSON());
+//			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.toJSON());
 		}
 	});
 
@@ -489,32 +509,88 @@
 		model: models.Video,
 	});
 	
+	var HIST_NUM_RECENT = 10;
 	models.History = Backbone.Model.extend({
-		initialize: function() {
-			this.videos = new models.VideoCollection();
+		initialize: function(room) {
+			this.room = room;
+			this.recentVids = new models.VideoCollection();
+			this.size = -1;	//to signify no redis read
+			this.setSize();
+			//TODO: initialize this.recentVids from redis history
 		},
 		
-		getGoodVideo: function() {
- 			var len = this.videos.length;
+		setSize: function() {
+			if(!this.room.redisClient) return;
+			var hist = this;
+			var roomName = this.room.get('name');
+		 	this.room.redisClient.llen('room:'+roomName+':history', function(err, len) {
+				if(err) {
+					console.log('['+roomName+'] [Hist] initialize(): Error in getting history length: '+err)
+					return;
+				}
+				//console.log('setting size of room history for room '+roomName+', size is '+len);
+				hist.size = len;
+			});
+		},
+		
+		getGoodVideo: function(lookBackNum) {
+ 			var len = this.recentVids.length;
 			var videoArray = [];
 			
 			for(var i=0; i < lookBackNum && i < len; i++) {
-				var currVideo = this.videos.at(len - (i+1));
-				if(currVideo.get('percent') >= 50)
+				var currVideo = this.recentVids.at(i);
+				if(currVideo.get('percent') >= 50) {
+					console.log('pushing on good video '+currVideo.get('title'));
 					videoArray.push(currVideo);
+				}
 			}
 			
 			if(videoArray.length >= 1) {
 				var randInt = Math.floor(Math.random()*videoArray.length);	//0 <= x < videoArray.length
 				return videoArray[randInt];
 			} else {
+				console.log('all those failed, reverting to old school')
 				var lookBackNum = 3;
-				if (this.videos.length < lookBackNum) lookBackNum = this.videos.length;
-				var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
-				var recentVideo = this.videos.at(this.room.history.length - randInt);
+				if (this.recentVids.length < lookBackNum) lookBackNum = this.recentVids.length;
+				var randInt = Math.floor(Math.random()*lookBackNum);	//0 <= randInt < lookBackNum
+				var recentVideo = this.recentVids.at(randInt);
 				return recentVideo;
 			}
-		}
+		},
+		
+		addVideo: function(videoId, title, duration, thumb, dj, percent) {
+			var videoToAdd = new models.Video({ 
+				id: (new Date()).getTime(),
+				videoId: videoId,
+				title: title,
+				duration: duration,
+				thumb: thumb,
+				dj: dj,
+				percent: percent,
+			});
+			
+			if(this.recentVids.length >= HIST_NUM_RECENT)
+				this.recentVids.remove(this.recentVids.at(HIST_NUM_RECENT-1)); //remove the oldest video
+			this.recentVids.add(videoToAdd, { at: 0 });
+			this.room.redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
+
+			// if(this.size >= 0) { 			//not working, figure out why llen above in setSize doesn't work
+			// 	this.size = this.size + 1;
+			// }
+		},
+		
+		checkIfPlayedRecently: function(videoId) {
+			var len = this.recentVids.length;
+			for(var i = 0; i < len; i++) {
+				if(this.recentVids.at(i).get('videoId') == videoId) 
+					return true;
+			}
+			return false;
+		},
+
+		getSize: function() { 
+			return this.size;
+		},
 	});
 
 	/*************************/
@@ -659,10 +735,10 @@
 			redisClient.get('user:'+userId+':avatar', function(err, reply) {
 				var avatarData, newAvatar;
 				if(err) {
-					console.log("Error in getting user "+userId+"'s avatar!");
+					console.log("\n\nERROR in getting user "+userId+"'s avatar!\n");
 				} else {
 					avatarData = reply;
-					console.log('getting avatar for user '+userId+', reply: '+reply);
+					//console.log('getting avatar for user '+userId+', reply: '+reply);
 					if(reply != 'undefined' && reply != null) {
 						userObj.set({avatar: avatarData});
 					} else { //give them a random first default
@@ -699,7 +775,7 @@
 		},
 		
 		savePlaylist: function(playlistId) {
-			redisClient.hset('user:' + this.get("userId") + ':playlists', playlistId, JSON.stringify(this.playlists[playlistId]), 			function(err, reply) {
+			redisClient.hset('user:'+this.get("userId")+':playlists', playlistId, JSON.stringify(this.playlists[playlistId]), function(err, reply) {
 				if (err) {
 					console.log(' playlist save was NOT SUCCESSFUL');
 				}
@@ -712,7 +788,7 @@
 		
 		hasPlaylist: function(playlistName) {
 			for(var id in this.playlists) {
-				console.log(this.playlists[id].get("name"));
+				//console.log(this.playlists[id].get("name"));
 				if(this.playlists.hasOwnProperty(id)) {
 					if (this.playlists[id].get("name") == playlistName) {
 						console.log("Tried to add playlist with a name that already existed. UH UH!");
@@ -734,12 +810,12 @@
 						var userPlaylists = {};
 						for(var id in reply) {
 							if(reply.hasOwnProperty(id) && reply[id]) {
-								console.log(reply[id]);
+								//console.log(reply[id]);
 								var playlist = JSON.parse(reply[id]);
 								userPlaylists[id] = new models.Playlist({name: playlist.name, videos: new models.VideoCollection(playlist.videos)});
 							}
 						}
-						console.log('getting playlists for user '+userId);
+						//console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
 						userModel.setPlaylist(2);
 						userModel.addPlaylistListeners(socket);
@@ -754,7 +830,7 @@
 			var playlists = this.playlists;
 			var thisUser = this;
 			socket.on('playlists:choosePlaylist', function(data) {
-				console.log("!playlists[data.playlistId] = " + !playlists[data.playlistId] + " ... thisUser.playlist == playlists[data.playlistId]" + (thisUser.playlist == playlists[data.playlistId]))
+				//console.log("!playlists[data.playlistId] = " + !playlists[data.playlistId] + " ... thisUser.playlist == playlists[data.playlistId]" + (thisUser.playlist == playlists[data.playlistId]))
 				if (!playlists[data.playlistId] || thisUser.playlist == playlists[data.playlistId]) {
 					return;
 				} else {
@@ -774,10 +850,10 @@
 						console.log("Error deleting user " + userId + "playlist with id " + data.playlistId);
 					} else {
 						console.log("Success deleting user " + userId + "playlist with id " + data.playlistId);
-						console.log(reply);
-						console.log(playlists);
+						//console.log(reply);
+						//console.log(playlists);
 						delete playlists[data.playlistId];
-						console.log(playlists);
+						//console.log(playlists);
 					}
 				})
 				
@@ -789,28 +865,28 @@
 			socket.on('playlist:addVideo', function(data) {
 				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
 				if (playlists[data.playlistId].moveToTop(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 
 			socket.on('playlist:delete', function(data) {
 				if (playlists[data.playlistId].deleteVideo(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 			
 			socket.on('playlist:moveVideo', function(data) {
 				if (playlists[data.playlistId].moveToIndex(data.videoId, data.index)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			})
 		},
@@ -1152,10 +1228,15 @@
 				numDown = this.down,
 				numUsers = this.room.users.length,
 				basePercent = 50;
-				
-			var percentUp = ((1.0 * numUp) / numUsers) * (100 - basePercent);
-			var percentDown = ((1.0 * numDown) / numUsers) * (100 - basePercent);
-		
+			
+			var percentUp, percentDown;
+			if(numUsers == 0) {
+				percentUp = (1.0 * numUp) * (100 - basePercent);
+				percentDown = (1.0 * numDown) * (100 - basePercent);
+			} else {
+				percentUp = ((1.0 * numUp) / numUsers) * (100 - basePercent);
+				percentDown = ((1.0 * numDown) / numUsers) * (100 - basePercent);
+			}
 			var videoScore = basePercent + percentUp - percentDown;
 			console.log('['+this.room.get('name')+'][MET] calculatePercent(): percent for video is '+videoScore+' with up: '+numUp+' and down: '+numDown+' and numUsers: '+numUsers);
 			return videoScore;
