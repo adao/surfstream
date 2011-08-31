@@ -1887,6 +1887,9 @@ $(function() {
 		}
 		//save the currently playing state
 		playerModel.set({curVid: {videoId: video.id, title: video.title, duration: video.duration, percent: 0.5} });
+		$("#clock").show(); 
+		$("#cur-video-name").show(); 
+		$("#cur-video-time").show(); 
 		var isdj = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		if (isdj && $("#skip").length == 0) {
 			$("#people-area").append("<div id='skipContainer' class='bottombuttonContainerwide'><button id='skip'> Skip Video </button></div>");
@@ -2152,7 +2155,13 @@ $(function() {
 		var vidsPlayed = SurfStreamApp.vidsPlayed;
 		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		SurfStreamApp.vidsPlayed = 0;
-		$("#cur-room-name").html(rID); 
+		$("#cur-room-name").html(rID);
+		$("#cur-video-name").hide();
+		$("#cur-video-time").hide();
+		
+		$("#cur-video-info").css("max-width", 415 - $("#cur-room-name").css("width").replace("px",''));
+		
+		$("#clock").hide(); 
 		if (typeof(mpq) !== 'undefined'){
 			mpq.track("Room Joined", {wasDJ: isDJ, rID:rID, mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"}); 
 		}
