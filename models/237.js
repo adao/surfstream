@@ -101,8 +101,13 @@
 			// 				console.log("ERROR No video found. You should never see this message! ");
 			// 				return;
 			// 			}
-			var lookBackNum = this.room.djs.numDJs;
+			var lookBackNum = this.room.djs.length;
+			if(lookBackNum <= 0) lookBackNum = 3;
 			var recentVideo = this.room.history.getGoodVideo(lookBackNum);
+			if(!recentVideo) {
+				console.log('error! recentVid is '+recentVideo+', returning')
+				return;
+			}
 			var videoId = recentVideo.get('videoId');
 			
 			var roomName = this.room.get('name');
@@ -131,9 +136,29 @@
 					}
 					
 					videoData = JSON.parse(videoData);
-					var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
+					
+					//make sure the candidate videos are unplayed
+					var unplayedVideos = [];
+					var unplayedCount = 0;
+					for(var i = 0; i < videoData['feed']['entry'].length; i++) {
+						if(unplayedCount > 4) break;
+						
+						var currVideoId = videoData['feed']['entry'][i]['media$group']['yt$videoid']['$t'];
+						if(!room.history.checkIfPlayedRecently(currVideoId)) {
+							unplayedVideos.push(videoData['feed']['entry'][i]);
+							unplayedCount = unplayedCount + 1;
+						}
+					}
+					
+					var videoEntry;
+					if(unplayedVideos.length >= 1) { 
+						var randIndex = Math.floor(Math.random()*unplayedVideos.length);
+						videoEntry = unplayedVideos[randIndex];
+					} else {
+						var randIndex = Math.floor(Math.random()*4);	//picks one at random from top 4
+						videoEntry = videoData['feed']['entry'][randIndex];
+					}
 											
-					var videoEntry = videoData['feed']['entry'][randIndex];
 					var videoToPlayId = videoEntry['media$group']['yt$videoid']['$t'];
 					var videoDuration = videoEntry['media$group']['yt$duration']['seconds'];
 					var videoTitle = videoEntry['media$group']['media$title']['$t'];
@@ -304,6 +329,8 @@
 			this.users.addUser(user);
 			this.sockM.addSocket(user.get("socket"));
 			user.randLoc();
+			//this.sockM.sendRoomState(user.get("socket"));
+			this.sockM.sendRoomState();
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
@@ -315,11 +342,10 @@
 					id: this.currVideo.get('videoId'), 
 					time: Math.ceil(timeDiff), 
 					title: this.currVideo.get('title'),
-					dj: this.currVideo.get('dj')
+					dj: this.currVideo.get('dj'),
+					duration: this.currVideo.get('duration')
 				});
-			}	
-			//this.sockM.sendRoomState(user.get("socket"));
-			this.sockM.sendRoomState();
+			}
 		},
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
@@ -411,7 +437,7 @@
 		},
 
 		announceVideo: function(videoId, duration, title, dj) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title, dj: dj });
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title, dj: dj, duration: duration });
 		},
 		
 		announceClients: function() {
@@ -494,7 +520,6 @@
 		},
 		
 		setSize: function() {
-			//TODO: retrieve playlist length from redis using llen
 			if(!this.room.redisClient) return;
 			var hist = this;
 			var roomName = this.room.get('name');
@@ -503,7 +528,7 @@
 					console.log('['+roomName+'] [Hist] initialize(): Error in getting history length: '+err)
 					return;
 				}
-				console.log('setting size of room history for room '+roomName+', size is '+len);
+				//console.log('setting size of room history for room '+roomName+', size is '+len);
 				hist.size = len;
 			});
 		},
@@ -513,23 +538,22 @@
 			var videoArray = [];
 			
 			for(var i=0; i < lookBackNum && i < len; i++) {
-				var currVideo = this.recentVids.at(len - (i+1));
+				var currVideo = this.recentVids.at(i);
 				if(currVideo.get('percent') >= 50) {
+					console.log('pushing on good video '+currVideo.get('title'));
 					videoArray.push(currVideo);
-					console.log('adding as a candidate video: '+currVideo.get('videoId')+' with percent '+currVideo.get('percent'))
 				}
 			}
 			
 			if(videoArray.length >= 1) {
 				var randInt = Math.floor(Math.random()*videoArray.length);	//0 <= x < videoArray.length
-				console.log('choosing video with rand index '+randInt+' : video id '+videoArray[randInt].get('videoId'));
 				return videoArray[randInt];
 			} else {
 				console.log('all those failed, reverting to old school')
 				var lookBackNum = 3;
 				if (this.recentVids.length < lookBackNum) lookBackNum = this.recentVids.length;
 				var randInt = Math.floor(Math.random()*lookBackNum);	//0 <= randInt < lookBackNum
-				var recentVideo = this.recentVids.at(this.room.history.length - randInt);
+				var recentVideo = this.recentVids.at(randInt);
 				return recentVideo;
 			}
 		},
@@ -545,23 +569,21 @@
 				percent: percent,
 			});
 			
-			console.log('adding video to history: '+JSON.stringify(videoToAdd));
-			console.log('adding video to history, new size: '+ this.size)
-			
 			if(this.recentVids.length >= HIST_NUM_RECENT)
 				this.recentVids.remove(this.recentVids.at(HIST_NUM_RECENT-1)); //remove the oldest video
 			this.recentVids.add(videoToAdd, { at: 0 });
 			this.room.redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
-			if(this.size) { 
-				this.size = this.size + 1;
-				console.log('adding video to history, new size: '+this.size);
-			}
+
+			// if(this.size >= 0) { 			//not working, figure out why llen above in setSize doesn't work
+			// 	this.size = this.size + 1;
+			// }
 		},
 		
-		checkIfPlayedRecently: function(videoId, lookBackNum) {
+		checkIfPlayedRecently: function(videoId) {
 			var len = this.recentVids.length;
-			for(var i = len - 1; i >= len - lookBackNum && i >= 0; i--) {
-				if(this.recentVids.at(i).videoId == videoId) return true;
+			for(var i = 0; i < len; i++) {
+				if(this.recentVids.at(i).get('videoId') == videoId) 
+					return true;
 			}
 			return false;
 		},
@@ -677,8 +699,8 @@
 	/*         User          */
 	/*************************/
 	
-	var X_MAX = 590;
-	var Y_MAX = 150;
+	var X_MAX = 470;
+	var Y_MAX = 145;
 	var Y_MIN = 20;
 	
 	models.User = Backbone.Model.extend({
@@ -705,6 +727,14 @@
 		setPlaylist: function(playlistId) {
 			this.playlistId = playlistId;
 			this.playlist = this.playlists[playlistId];
+			var userId = this.get("userId");
+			redisClient.set("user:" + userId + ":activePlaylist", playlistId, function(err, reply) {
+				if (err) {
+					console.log("error setting user " + userId + "'s active playlist");
+				} else {
+					
+				}
+			});
 		},
 		
 		getAvatar: function() {
@@ -713,10 +743,10 @@
 			redisClient.get('user:'+userId+':avatar', function(err, reply) {
 				var avatarData, newAvatar;
 				if(err) {
-					console.log("Error in getting user "+userId+"'s avatar!");
+					console.log("\n\nERROR in getting user "+userId+"'s avatar!\n");
 				} else {
 					avatarData = reply;
-					console.log('getting avatar for user '+userId+', reply: '+reply);
+					//console.log('getting avatar for user '+userId+', reply: '+reply);
 					if(reply != 'undefined' && reply != null) {
 						userObj.set({avatar: avatarData});
 					} else { //give them a random first default
@@ -731,9 +761,8 @@
 		randLoc: function() {
 			var thisX = Math.random()*X_MAX;
 			var thisY = Math.random()*Y_MAX;
-			if (thisY < 90 && thisX > 100 && thisX < 510) { //avoid the sofa
-				thisX = thisX % 180;
-				if (thisX > 100) thisX = thisX + 410;
+			if (thisY < 90 && thisX > 100) { //avoid the sofa
+				thisY = 105 + thisY % 40;
 			} //TODO: More logic to avoid remote
 			this.set({ xCoord: thisX, yCoord: thisY});
 			return { x: thisX, y: thisY };
@@ -754,7 +783,7 @@
 		},
 		
 		savePlaylist: function(playlistId) {
-			redisClient.hset('user:' + this.get("userId") + ':playlists', playlistId, JSON.stringify(this.playlists[playlistId]), 			function(err, reply) {
+			redisClient.hset('user:'+this.get("userId")+':playlists', playlistId, JSON.stringify(this.playlists[playlistId]), function(err, reply) {
 				if (err) {
 					console.log(' playlist save was NOT SUCCESSFUL');
 				}
@@ -767,7 +796,7 @@
 		
 		hasPlaylist: function(playlistName) {
 			for(var id in this.playlists) {
-				console.log(this.playlists[id].get("name"));
+				//console.log(this.playlists[id].get("name"));
 				if(this.playlists.hasOwnProperty(id)) {
 					if (this.playlists[id].get("name") == playlistName) {
 						console.log("Tried to add playlist with a name that already existed. UH UH!");
@@ -789,16 +818,22 @@
 						var userPlaylists = {};
 						for(var id in reply) {
 							if(reply.hasOwnProperty(id) && reply[id]) {
-								console.log(reply[id]);
+								//console.log(reply[id]);
 								var playlist = JSON.parse(reply[id]);
 								userPlaylists[id] = new models.Playlist({name: playlist.name, videos: new models.VideoCollection(playlist.videos)});
 							}
 						}
-						console.log('getting playlists for user '+userId);
+						//console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
-						userModel.setPlaylist(1);
 						userModel.addPlaylistListeners(socket);
-						socket.emit("playlist:initialize", userPlaylists);
+						//socket.emit("playlist:initialize", userPlaylists);
+						redisClient.get("user:" + userId + ":activePlaylist", function(err, reply) {
+							if (err) {
+								console.log("Error getting user " + userId + "'s active playlist");
+							} else {
+								socket.emit("playlist:initialize", {userPlaylists: userPlaylists, activePlaylistId: reply});
+							}
+						});
 					}
 				}
 			});
@@ -809,7 +844,7 @@
 			var playlists = this.playlists;
 			var thisUser = this;
 			socket.on('playlists:choosePlaylist', function(data) {
-				console.log("!playlists[data.playlistId] = " + !playlists[data.playlistId] + " ... thisUser.playlist == playlists[data.playlistId]" + (thisUser.playlist == playlists[data.playlistId]))
+				//console.log("!playlists[data.playlistId] = " + !playlists[data.playlistId] + " ... thisUser.playlist == playlists[data.playlistId]" + (thisUser.playlist == playlists[data.playlistId]))
 				if (!playlists[data.playlistId] || thisUser.playlist == playlists[data.playlistId]) {
 					return;
 				} else {
@@ -829,10 +864,10 @@
 						console.log("Error deleting user " + userId + "playlist with id " + data.playlistId);
 					} else {
 						console.log("Success deleting user " + userId + "playlist with id " + data.playlistId);
-						console.log(reply);
-						console.log(playlists);
+						//console.log(reply);
+						//console.log(playlists);
 						delete playlists[data.playlistId];
-						console.log(playlists);
+						//console.log(playlists);
 					}
 				})
 				
@@ -844,28 +879,28 @@
 			socket.on('playlist:addVideo', function(data) {
 				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
 				if (playlists[data.playlistId].moveToTop(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 
 			socket.on('playlist:delete', function(data) {
 				if (playlists[data.playlistId].deleteVideo(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 			
 			socket.on('playlist:moveVideo', function(data) {
 				if (playlists[data.playlistId].moveToIndex(data.videoId, data.index)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			})
 		},
@@ -1207,10 +1242,15 @@
 				numDown = this.down,
 				numUsers = this.room.users.length,
 				basePercent = 50;
-				
-			var percentUp = ((1.0 * numUp) / numUsers) * (100 - basePercent);
-			var percentDown = ((1.0 * numDown) / numUsers) * (100 - basePercent);
-		
+			
+			var percentUp, percentDown;
+			if(numUsers == 0) {
+				percentUp = (1.0 * numUp) * (100 - basePercent);
+				percentDown = (1.0 * numDown) * (100 - basePercent);
+			} else {
+				percentUp = ((1.0 * numUp) / numUsers) * (100 - basePercent);
+				percentDown = ((1.0 * numDown) / numUsers) * (100 - basePercent);
+			}
 			var videoScore = basePercent + percentUp - percentDown;
 			console.log('['+this.room.get('name')+'][MET] calculatePercent(): percent for video is '+videoScore+' with up: '+numUp+' and down: '+numDown+' and numUsers: '+numUsers);
 			return videoScore;

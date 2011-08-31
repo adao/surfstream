@@ -53,6 +53,7 @@ app.configure('development', function(){
 
 app.configure('production', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+	app.enable("production");
 });
 
 require('./router.js').setupRoutes(app);
@@ -65,8 +66,9 @@ RoomManager = Backbone.Model.extend({
 		var roomMgr = this;
 		redisClient.lrange('rooms',0,-1, function(err, rooms) {
 			if(rooms) { 
+				console.log('[   zion    ][RoomManager] initialize(): fetching rooms from redis...')
 				_.each(rooms, function(roomId) {
-					console.log('fetching room from redis, name: '+roomId)
+					console.log('\t\t\t...'+roomId)
 					roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
 					roomMgr.roomMap[roomId].set({ name: roomId });
 				});
@@ -77,12 +79,10 @@ RoomManager = Backbone.Model.extend({
 	sendRoomsInfo: function(socket, id) {
 		if (redisClient) {
 			redisClient.sinter("user:" + id + ":fb_friends", "onlineFacebookUsers", function(err, reply) {
-				console.log(reply);
 				var rooms = [];
 				var friendsRooms = {};
 				for (var index in reply) {
 					friendsRooms[reply[index]] = userManager.fbIdToRoom[reply[index]];
-					console.log(friendsRooms[reply[index]]);
 				}
 				for(var rName in roomManager.roomMap) {
 					if(roomManager.roomMap.hasOwnProperty(rName)) {
@@ -128,10 +128,9 @@ io.sockets.on('connection', function(socket) {
 	
 	socket.on("user:sendFBId", function(fbId) {
 		if (redisClient) {
-			//redisClient.get("user:" + fbId + ":fb_info", function(err, reply) {
 			redisClient.get("user:fb_id:" + fbId + ":profile", function(err, reply) {
 				if (err) {
-					console.log("Error trying to fetch user by Facebook id on initial login");
+					console.log("[   zion   ] [socket][user:sendFBId]: Error trying to fetch user by Facebook id on initial login");
 				} else {
 					var ssUser = JSON.parse(reply);
 					if (ssUser == null || ssUser == 'undefined') {
@@ -148,7 +147,8 @@ io.sockets.on('connection', function(socket) {
 					  });
 						currUser.initializeAndSendPlaylists(socket);
 						StagingUsers[socket.id] = currUser; 
-						console.log(ssUser.ssId);
+						console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
+							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>')
 					}
 					socket.emit("user:profile", ssUser);
 				}
@@ -181,14 +181,23 @@ io.sockets.on('connection', function(socket) {
 					fbId: ssUser.fbId, 
 					socket: socket
 			  });
+				console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
+					+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
+					
 				StagingUsers[socket.id] = currUser;
 				var defaultPlaylist = new models.Playlist({name: "Favorites", videos: new models.VideoCollection()});
 				var facebookPlaylist = new models.Playlist({name: "Facebook Shares", videos: new models.VideoCollection()});
-				redisClient.hmset("user:" + reply + ":playlists", 1, JSON.stringify(defaultPlaylist), 2, JSON.stringify(facebookPlaylist), function(err, reply) {
+				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 1, JSON.stringify(defaultPlaylist), 2, JSON.stringify(facebookPlaylist), function(err, reply) {
 					if (err) {
 						console.log("Error writing ss user's default playlists " + ssUser.ssId + " to Redis");
 					} else {
-						currUser.initializeAndSendPlaylists(socket);
+						redisClient.set("user:" + ssUser.ssId + ":activePlaylist", 2, function(err, reply) {
+							if (err) {
+								console.log("error setting user " + ssUser.ssId + "'s active playlist");
+							} else {
+								currUser.initializeAndSendPlaylists(socket);
+							}
+						});
 					}
 				});
 			});
