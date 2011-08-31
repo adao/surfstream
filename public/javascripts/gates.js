@@ -377,6 +377,7 @@ $(function() {
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.resetPlaylist();
 		playlistNameholderView = playlistCollection.idToPlaylistNameholder[playlistId];
 		$(playlistNameholderView.el).removeClass("unselected-playlist-nameholder").addClass("selected-playlist-nameholder");
+		$("#playlist-dropdown").val(playlistId);
 	},
 	
 	deletePlaylist: function(playlistId) {
@@ -663,6 +664,9 @@ $(function() {
 	initialize: function() {
 		$($(".videoHistory")[0]).prepend(this.render().el);
 		this.populatedDropdown = false;
+		//this.addPlaylistDropdown();
+		//$(this.el).find(".addToPlaylistFromHistory").selectbox();
+		//$(this.el).find(".addToPlaylistFromHistory:first").bind("change", {playlistCollection: window.SurfStreamApp.get("userModel").get("playlistCollection"), historyItem: this}, this.addToPlaylist);
 	},
 	
 	render: function() {
@@ -685,12 +689,15 @@ $(function() {
 			$(this.el).find(".addToPlaylistFromHistory").append(playlistDropdownView.el);
 			playlistCollection.idToPlaylistViews[playlists[i].get("playlistId")].push(playlistDropdownView.el);
 		}
-		$(this.el).find(".addToPlaylistFromHistory").bind("change", {playlistCollection: window.SurfStreamApp.get("userModel").get("playlistCollection"), historyItem: this}, this.addToPlaylist);
+		$(this.el).find(".addToPlaylistFromHistory:first").bind("change", {playlistCollection: window.SurfStreamApp.get("userModel").get("playlistCollection"), historyItem: this}, this.addToPlaylist);
 		this.populatedDropdown = true;
 	},
 	
 	addToPlaylist: function(event) {
+		console.log("ABOOGA BOOGA");
 		var selectedPlaylistId = $(event.data.historyItem.el).find(".addToPlaylistFromHistory").val();
+		if (selectedPlaylistId == 0)
+			return;
 		var historyItem = event.data.historyItem.options.room;
 		var attributes = {
 			title: historyItem.get("title"),
@@ -1895,11 +1902,13 @@ $(function() {
 		}
 	 });
 
-   socket.on('playlist:initialize', function(userPlaylists) {
+   socket.on('playlist:initialize', function(data) {
+		var userPlaylists = data.userPlaylists;
+		var playlistCollection = app.get("userModel").get("playlistCollection");
 		for (var i = 1; i <= Object.size(userPlaylists); i++) {
-			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
+			playlistCollection.addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
 		}
-		app.get("userModel").get("playlistCollection").setActivePlaylist(2);
+		playlistCollection.setActivePlaylist(data.activePlaylistId);
 		var getPath = function(href) {
 		    var l = document.createElement("a");
 		    l.href = href;
