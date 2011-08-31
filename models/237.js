@@ -727,6 +727,14 @@
 		setPlaylist: function(playlistId) {
 			this.playlistId = playlistId;
 			this.playlist = this.playlists[playlistId];
+			var userId = this.get("userId");
+			redisClient.set("user:" + userId + ":activePlaylist", playlistId, function(err, reply) {
+				if (err) {
+					console.log("error setting user " + userId + "'s active playlist");
+				} else {
+					
+				}
+			});
 		},
 		
 		getAvatar: function() {
@@ -817,9 +825,15 @@
 						}
 						//console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
-						userModel.setPlaylist(2);
 						userModel.addPlaylistListeners(socket);
-						socket.emit("playlist:initialize", userPlaylists);
+						//socket.emit("playlist:initialize", userPlaylists);
+						redisClient.get("user:" + userId + ":activePlaylist", function(err, reply) {
+							if (err) {
+								console.log("Error getting user " + userId + "'s active playlist");
+							} else {
+								socket.emit("playlist:initialize", {userPlaylists: userPlaylists, activePlaylistId: reply});
+							}
+						});
 					}
 				}
 			});

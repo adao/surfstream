@@ -187,11 +187,17 @@ io.sockets.on('connection', function(socket) {
 				StagingUsers[socket.id] = currUser;
 				var defaultPlaylist = new models.Playlist({name: "Favorites", videos: new models.VideoCollection()});
 				var facebookPlaylist = new models.Playlist({name: "Facebook Shares", videos: new models.VideoCollection()});
-				redisClient.hmset("user:" + reply + ":playlists", 1, JSON.stringify(defaultPlaylist), 2, JSON.stringify(facebookPlaylist), function(err, reply) {
+				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 1, JSON.stringify(defaultPlaylist), 2, JSON.stringify(facebookPlaylist), function(err, reply) {
 					if (err) {
 						console.log("Error writing ss user's default playlists " + ssUser.ssId + " to Redis");
 					} else {
-						currUser.initializeAndSendPlaylists(socket);
+						redisClient.set("user:" + ssUser.ssId + ":activePlaylist", 2, function(err, reply) {
+							if (err) {
+								console.log("error setting user " + ssUser.ssId + "'s active playlist");
+							} else {
+								currUser.initializeAndSendPlaylists(socket);
+							}
+						});
 					}
 				});
 			});
