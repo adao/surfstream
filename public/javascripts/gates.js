@@ -1298,12 +1298,12 @@ $(function() {
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", {theatre: this}, this.fullscreenToggle);
 	 $("#fullscreenIcon").bind("click", {theatre: this}, this.fullscreenToggle);
-	 $(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
-	 remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
-	 remotePullup.attr("title", "Pull Up")
-	 remotePullup.tipsy({
-	    gravity: 's',
-	   });
+	 //$(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
+	 //remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
+	 //remotePullup.attr("title", "Pull Up")
+	 //remotePullup.tipsy({
+	 //   gravity: 's',
+	 //  });
 	 avatarVAL.css("margin-left", '410px');
 	 avatarVAL.hide();
 	 avatarVAL.data({"sofaML": 410});
@@ -1412,7 +1412,7 @@ $(function() {
 	},
 
 	updateDJs : function(djArray) {
-		var oldPos, user;
+		var oldPosX, oldPosY, user;
 		var X_COORDS = [200,275,348]; 
 		var Y_COORD = 25;
 		var cur_is_dj = false;
@@ -1428,9 +1428,10 @@ $(function() {
 				//If there are not any DJ ID's that match the current ID of the user we're looking at
 				if(!_.any(_.pluck(djArray, 'id'), function(el) {return (''+ el) == ('' + userModel.get("id"))})) {
 					//take DJ off sofa
-					oldPos = user.data("oldPos");
-					user.animate({"margin-top": Y_COORD + 70}, 500, "bounceout").animate({"margin-left": oldPos.x, "margin-top": oldPos.y}, 600);
-					user.data({"trueY": oldPos.y.replace("px", "")});
+					oldPosX = user.data("roomX");
+					oldPosY = user.data("roomY");
+					user.animate({"margin-top": Y_COORD + 70}, 500, "bounceout").animate({"margin-left": oldPosX, "margin-top": oldPosY}, 600);
+					user.data({"trueY": oldPosY});
 	     	  user.data("isDJ", 0);
 				}
 		 }	
@@ -1447,7 +1448,6 @@ $(function() {
 			}
 			
 			if(user.data("isDJ") == "0") {				
-				user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
 				user.data("isDJ", "1");
 				newDJ = true;
 				if (djArray[dj].id == this.options.userModel.get("ssId"))  {
@@ -1457,6 +1457,12 @@ $(function() {
 				}
 			} else {
 				newDJ = false;
+				//if this dj has remote, slide their shit down as well
+				if (SurfStreamApp.curDJ == djArray[dj].id){
+					$("#sofa-remote").animate({"left": X_COORDS[dj] + 50, "top": Y_COORD[dj] + 50 });
+					$("#skipContainer").animate({"margin-left": X_COORDS[dj], "margin-top":  Y_COORD + 100});
+				}
+				
 			}
 		console.log("Zindex: " + user.css("z-index"))
 		//set the z index so the skip video doesn't cover it
@@ -1466,7 +1472,8 @@ $(function() {
 		} 
 			
 		user.animate({"margin-top": Y_COORD, "margin-left": X_COORDS[dj]}, 500, "bouncein", function() {$(this).css("z-index", "auto");}); /*restore auto z-index if hopped on couch and became current vj */
-		user.data({"sofaMT": Y_COORD, "sofaML": X_COORDS[dj]}, 500, "bouncein");
+		
+		user.data({"sofaMT": Y_COORD, "sofaML": X_COORDS[dj]});
 		user.data({"trueY": Y_COORD});
 		 
 		}
@@ -1556,7 +1563,7 @@ $(function() {
 		   });
 		$("#avatarWrapper_" + user.id).data("isDJ", "0");
 		console.log("margintop stored, value: "+ user.get('y'))
-		$(this.el).data({"trueX": user.get('x'), "trueY": user.get('y')});
+		$(this.el).data({"roomX": user.get('x'), "roomY": user.get('y'), "trueY": user.get('y') });
 		$(this.el).animate({"margin-top": user.get('y'), "margin-left": user.get('x') }, 900, 'expoout');
 	},
 	
