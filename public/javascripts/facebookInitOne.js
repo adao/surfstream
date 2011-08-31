@@ -7,7 +7,7 @@ window.fbAsyncInit = function() {
 		
 	button = document.getElementById('fb-auth');
 	button.onclick = function() {
-		FB.login(function(response) {}, {scope:'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence,read_friendlists,offline_access,create_event,friends_relationshipsZ'});
+		FB.login(function(response) {}, {scope:'email,read_stream,user_about_me,read_friendlists'});
 	};
 	
 	function proceed_to_site(response) {
