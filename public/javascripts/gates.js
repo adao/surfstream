@@ -913,7 +913,7 @@ $(function() {
     vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", ""),
 		duration: ss_formatSeconds(this.options.video.get("duration")),
 		viewCount: this.options.video.get("viewCount") + " views",
-		author: "from " + this.options.video.get("author")
+		author: this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
    return this;
@@ -1770,7 +1770,7 @@ $(function() {
 		SurfStreamApp.curDJ = video.dj;
 		if (typeof(mpq) !== 'undefined') mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
-		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id);	//debugging
+		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title);	//debugging
 		$("#fullTitle").html(video.title);
 		$("#cur-video-name").html(video.title);
 		var curvid, curLen, roomModel, playerModel;
