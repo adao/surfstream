@@ -464,6 +464,10 @@ div.historyContainer .history .videoHistory {
   padding: 14px 0px 0px 66px;
   font-size: 18px;
 }
+#noResultsContainer .noResultsText {
+  padding: 14px 0px 0px 75px;
+  font-size: 18px;
+}
 .searchCellContainer {
   width: 285px;
   height: 60px;
@@ -505,7 +509,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -70px;
   margin-top: 23px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   width: 63px;
   text-align: left;
   text-indent: 1px;
@@ -1229,7 +1233,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
   margin-top: 2px;
@@ -1400,7 +1404,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1410,7 +1414,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 .nametip {
   width: 70px;
@@ -1436,7 +1440,7 @@ background-color: green,
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   left: 50%;
   margin-left: -40%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.70);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1482,7 +1486,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1493,7 +1497,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 #sofa-remote {
   left: 170px;

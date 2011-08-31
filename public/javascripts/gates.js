@@ -59,6 +59,7 @@ $(function() {
     searchTerm: searchQuery
    });
 	 this.startIndex = 1;
+	 this.divToRemove = null;
    $.ajax({
     url: "http://gdata.youtube.com/feeds/api/videos?max-results=" + this.maxResults + "&start-index=" + this.startIndex + "&v=2&format=5&alt=jsonc&q=" + searchQuery,
     success: $.proxy(this.processResults, this)
@@ -69,6 +70,10 @@ $(function() {
    console.log(data);
    var ytData, items, resultsCollection, buildup;
    ytData = data.data ? data.data : jQuery.parseJSON(data).data;
+	 if (ytData.totalItems == 0) {
+		new NoResultsView();
+		return;
+	 }
 	 items = ytData.items;
    resultsCollection = this.get("searchResultsCollection");
    buildup = [];
@@ -79,15 +84,19 @@ $(function() {
      thumb: ss_idToImg(item.id),
 		 videoId: item.id,
      duration: item.duration,
-     viewCount: item.viewCount,
+     viewCount: item.viewCount ? item.viewCount : 0,
      author: item.uploader
     };
     buildup.push(videoResult);
    }
    resultsCollection.add(buildup);
+	 if (this.divToRemove) {
+		$(this.divToRemove).remove();
+	 }
   },
 	
-	executeSearchMoreResults: function() {
+	executeSearchMoreResults: function(selector) {
+		this.divToRemove = selector;
 		var searchQuery = this.get("searchTerm");
 		this.startIndex += 10;
 		$.ajax({
@@ -995,9 +1004,24 @@ $(function() {
   },
 	
 	moreResults: function(event) {
-		$("#viewMoreCellContainer").remove();
-		this.options.searchBarModel.executeSearchMoreResults();
+		this.options.searchBarModel.executeSearchMoreResults("#viewMoreCellContainer");
+		//$("#viewMoreCellContainer").remove();
 	}
+ });
+ 
+ window.NoResultsView = Backbone.View.extend({
+	noResultsTemplate: _.template($('#no-results-template').html()),
+
+  id: "noResultsContainer",
+
+  initialize: function() {
+   $("#searchContainer").append(this.render());
+  },
+
+  render: function() {
+	 $(this.el).html(this.noResultsTemplate());
+   return this.el;
+  }
  });
 
  window.PreviewPlayerView = Backbone.View.extend({
