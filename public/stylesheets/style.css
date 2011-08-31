@@ -1387,6 +1387,7 @@ background-color: green,
   margin-left: 120px;
   position: absolute;
   pointer-events: none;
+  z-index: 3;
 }
 #modalBG {
   background: #000;

@@ -700,7 +700,7 @@
 	/*************************/
 	
 	var X_MAX = 470;
-	var Y_MAX = 145;
+	var Y_MAX = 125;
 	var Y_MIN = 20;
 	
 	models.User = Backbone.Model.extend({

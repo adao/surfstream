@@ -1598,7 +1598,7 @@ $(function() {
 			stageX = 680;
 		}
 		
-		$(this.el).css("margin-left", stageX).css("margin-top", 280).css("position", 'absolute');
+		$(this.el).css("margin-left", stageX).css("margin-top", 280).css("position", 'absolute').css("z-index", 2);
 		$("#people-area").prepend(this.el);
 	  $("#avatarChat_" + user.id).tipsy({
 	    gravity: 'sw',
@@ -2036,12 +2036,9 @@ $(function() {
 		}
 		roomlistCollection.sort();
 	});
-	
-	/* WE ARE OVERLOADING THIS TO CLEAR THE CHAT, ASSUMING THIS ONLY HAPPENS ON NEW ROOM JOIN */
+
 	socket.on("room:history", function(roomHistory) {
 		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
-		/* OVERLOADED RESET */
-		//app.get("roomModel").get("chatCollection").reset();
 	});
 	
  }
@@ -2167,7 +2164,8 @@ $(function() {
 		SurfStreamApp.inRoom = rID;
 		payload.fbId = window.SurfStreamApp.get("userModel").get("fbId");
 		payload.ssId = window.SurfStreamApp.get("userModel").get("ssId");
-		$("#sofa-remote").css({left: "170px", top: "140px"});
+		SurfStreamApp.get("roomModel").get("chatCollection").reset();
+		$("#sofa-remote").css({left: "170px", top: "140px", "z-index": 1});
 		$("#skipContainer").remove();
 		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
 		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
