@@ -46,39 +46,55 @@ $(function() {
  });
 
  window.SearchBarModel = Backbone.Model.extend({
+	
+	initialize: function() {
+		this.startIndex = 1;
+		this.maxResults = 10;
+	},
 
   executeSearch: function(searchQuery) {
+	 this.get("searchResultsCollection").reset();
 	 if (typeof(mpq) !== 'undefined') mpq.track("Search", {mp_note: "Searched for " + searchQuery});
    this.set({
     searchTerm: searchQuery
    });
+	 this.startIndex = 1;
    $.ajax({
-    url: "http://gdata.youtube.com/feeds/api/videos?max-results=10&format=5&alt=json&q=" + searchQuery,
+    url: "http://gdata.youtube.com/feeds/api/videos?max-results=" + this.maxResults + "&start-index=" + this.startIndex + "&v=2&format=5&alt=jsonc&q=" + searchQuery,
     success: $.proxy(this.processResults, this)
    });
   },
 
   processResults: function(data) {
    console.log(data);
-   var feed, entries, resultsCollection, buildup;
-   feed = data.feed ? data.feed : jQuery.parseJSON(data).feed;
-   entries = feed.entry || [];
+   var ytData, items, resultsCollection, buildup;
+   ytData = data.data ? data.data : jQuery.parseJSON(data).data;
+	 items = ytData.items;
    resultsCollection = this.get("searchResultsCollection");
    buildup = [];
-   for (var i = 0; i < entries.length; i++) {
-    var entry = entries[i];
+   for (var i = 0; i < items.length; i++) {
+    var item = items[i];
     var videoResult = {
-     title: entry.title.$t,
-     thumb: entry.media$group.media$thumbnail[0].url,
-     videoUrl: entry.id.$t,
-     duration: entry.media$group.yt$duration.seconds,
-     viewCount: entry.yt$statistics.viewCount,
-     author: entry.author[0].name.$t
+     title: item.title,
+     thumb: ss_idToImg(item.id),
+		 videoId: item.id,
+     duration: item.duration,
+     viewCount: item.viewCount,
+     author: item.uploader
     };
     buildup.push(videoResult);
    }
    resultsCollection.add(buildup);
-  }
+  },
+	
+	executeSearchMoreResults: function() {
+		var searchQuery = this.get("searchTerm");
+		this.startIndex += 10;
+		$.ajax({
+			url: "http://gdata.youtube.com/feeds/api/videos?max-results=" + this.maxResults + "&start-index=" + this.startIndex + "&v=2&format=5&alt=jsonc&q=" + searchQuery,
+			success: $.proxy(this.processResults, this)
+   });
+	}
  });
 
  window.ShareModel = Backbone.Model.extend({
@@ -765,6 +781,8 @@ $(function() {
  window.SearchView = Backbone.View.extend({
   //has searchBarModel
   searchViewTemplate: _.template($('#searchView-template').html()),
+	
+	viewMoreTemplate: _.template($('#view-more-cell-template').html()),
 
   id: "search-view",
 
@@ -823,7 +841,10 @@ $(function() {
    new SearchCellView({
     video: model,
     playlistCollection: this.options.playlistCollection
-   })
+   });
+	 if (model.collection.length % this.options.searchBarModel.maxResults == 0) {
+		new ViewMoreCellView({searchBarModel: this.options.searchBarModel});
+	 }
   },
 
 	getSuggestions: function(event) {
@@ -870,7 +891,7 @@ $(function() {
 
   addToPlaylist: function() {
 	 var selectedPlaylist = $("#playlistDropdown .playlistDropdownContainer").val();
-   var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
+   var videoID = this.options.video.get("videoId");
    if (ss_modelWithAttribute(this.options.playlistCollection.getPlaylistById(selectedPlaylist).get("videos"), "videoId", videoID)) {
        return;
    }
@@ -889,7 +910,7 @@ $(function() {
 	 // $(cellId).addClass("addToPlaylist-added");
 
   previewVideo: function() {
-   var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
+   var videoID = this.options.video.get("videoId");
    if (!window.playerTwoLoaded) {
     if (!window.YTPlayerTwo) {
      window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
@@ -917,7 +938,7 @@ $(function() {
    $(this.el).html(this.searchCellTemplate({
     thumb: this.options.video.get("thumb"),
     title: this.options.video.get("title"),
-    vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", ""),
+    vid_id: this.options.video.get("videoId"),
 		duration: ss_formatSeconds(this.options.video.get("duration")),
 		viewCount: this.options.video.get("viewCount") + " views",
 		author: this.options.video.get("author")
@@ -953,6 +974,30 @@ $(function() {
 		}
   }
 
+ });
+ 
+ window.ViewMoreCellView = Backbone.View.extend({
+	viewMoreCellTemplate: _.template($('#view-more-cell-template').html()),
+
+  id: "viewMoreCellContainer",
+	
+	events: {
+		"click": "moreResults"
+	},
+
+  initialize: function() {
+   $("#searchContainer").append(this.render());
+  },
+
+  render: function() {
+	 $(this.el).html(this.viewMoreCellTemplate());
+   return this.el;
+  },
+	
+	moreResults: function(event) {
+		$("#viewMoreCellContainer").remove();
+		this.options.searchBarModel.executeSearchMoreResults();
+	}
  });
 
  window.PreviewPlayerView = Backbone.View.extend({
