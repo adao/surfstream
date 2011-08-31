@@ -1194,17 +1194,27 @@ $(function() {
 		},
 	
 	  bindButtonEvents : function() {
-			$("#CreateRoom").bind("click", {modal: this}, function(e) { 
-				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true);
-				window.SurfStreamApp.get("mainRouter").navigate("/" + $("#CreateRoomName").val(), false);
-				e.data.modal.hide();
+			$("#CreateRoom").bind("click", {modal: this}, this.submitNewRoom);
+			$("#CreateRoomName").bind("submit", this.submitNewRoom);
+			$("#CreateRoomName").keypress({modal: this}, function(press){
+				if (press.which == 13) {
+					press.data.modal.submitNewRoom(press);
+				}
 			});
-			$("#CreateRoomName").bind("submit", function() { return false });
 			$("#hideRoomsList").bind("click", this.hide);
 			$("#modalBG").click({modal: this}, function(e) {
 				console.log("FUCK")
 				e.data.modal.hide();
 			});
+		},
+		
+		submitNewRoom: function(e) {
+			var roomName = $("#CreateRoomName").val();
+			if (roomName == "") return false;
+			SocketManagerModel.joinRoom(roomName , true);
+			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
+			e.data.modal.hide();
+			return false;
 		},
 	
 		addRooms: function (roomListCollection) {
@@ -1726,7 +1736,7 @@ $(function() {
 			this.audioChannels[i]['finished'] = -1;
 			
 		}
-		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_message_sound", audio_src: "/sounds/click1.wav"}));
+		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_message_sound", audio_src: "/sounds/chat.wav"}));
 	},
 	
 	playSound: function(audioTagId) {
