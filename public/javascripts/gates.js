@@ -564,6 +564,9 @@ $(function() {
 	 			var fromVideoId = $(ui.draggable).attr('id');
 				var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
 	 			var fromPlaylist = playlistCollection.get("activePlaylist");
+				if (fromPlaylist.get("playlistId") == $(this).val()) {
+					return;
+				}
 	 			var playlistItemModel = ss_modelWithAttribute(fromPlaylist.get("videos"), "videoId", fromVideoId);
 	 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 				fromPlaylist.removeFromPlaylist(fromVideoId);
@@ -674,9 +677,13 @@ $(function() {
 				}
 			},
 			stop: function(event, ui) {
+				var playlistOffset = $("#video-list-container").offset();
+				$(ui.helper).css("height", 60).css("width", 285);
+				$(ui.helper).removeClass("shrunken-playlist-cell");
+				$(ui.helper).offset({top: playlistOffset.top, left: playlistOffset.left});
+				$(ui.helper).css("margin-top", 0);
 				$("#video-list-container").sortable("option", "axis", "y");
 				$("#video-list-container").sortable("option", "alreadyShrunk", false);
-				
 			},
 			
 			beforeStop: function(event, ui) {
