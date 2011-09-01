@@ -894,7 +894,7 @@ $(function() {
 		$("#youtubeInput").autocomplete("close");
 	 });
 
-	 $(".videoInfo, .thumbContainer").live("mouseover mouseout", function(cell) {
+	 $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
 	  if ( event.type == "mouseover" ) {
 			if(cell.currentTarget.className == "videoInfo") {
 				$(cell.currentTarget.parentNode.parentNode.children[1]).show();
