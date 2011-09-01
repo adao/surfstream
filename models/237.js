@@ -332,7 +332,7 @@
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
-				console.log('['+this.get('name')+'][Room] sending current video to socket, title: '+this.currVideo.get('title'));
+				console.log('['+this.get('name')+'][Room] sending current video to socket, title: '+this.currVideo.get('title')+ ' and time to start: '+Math.ceil(timeDiff));
 
 				var dj = this.currVideo.get('dj');
 				console.log("...the current dj is "+dj);
@@ -362,7 +362,18 @@
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
 			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
-			//console.log("Here's the roomdata: " + roomData.rID);
+			
+			var recentVids = [];
+			if(this.history.recentVids && this.history.recentVids.length > 0) {
+				for(var i=0; i < this.history.recentVids.length && i < 3; i++) {
+					var currVid = this.history.recentVids.at(i);
+					var vidToAdd = { title: currVid.get('title'), thumb: currVid.get('thumb') };
+					recentVids.push(vidToAdd);
+				}
+				recentVids = recentVids.reverse();
+			
+				roomData.recentVids = recentVids;
+			}
 			return roomData;
 		}
 		
@@ -540,7 +551,7 @@
 			for(var i=0; i < lookBackNum && i < len; i++) {
 				var currVideo = this.recentVids.at(i);
 				if(currVideo.get('percent') >= 50) {
-					console.log('pushing on good video '+currVideo.get('title'));
+					//console.log('pushing on good video '+currVideo.get('title'));
 					videoArray.push(currVideo);
 				}
 			}
@@ -549,7 +560,7 @@
 				var randInt = Math.floor(Math.random()*videoArray.length);	//0 <= x < videoArray.length
 				return videoArray[randInt];
 			} else {
-				console.log('all those failed, reverting to old school')
+				//console.log('all those failed, reverting to old school')
 				var lookBackNum = 3;
 				if (this.recentVids.length < lookBackNum) lookBackNum = this.recentVids.length;
 				var randInt = Math.floor(Math.random()*lookBackNum);	//0 <= randInt < lookBackNum
