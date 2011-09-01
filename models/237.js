@@ -329,6 +329,8 @@
 			this.users.addUser(user);
 			this.sockM.addSocket(user.get("socket"));
 			user.randLoc();
+			//this.sockM.sendRoomState(user.get("socket"));
+			this.sockM.sendRoomState();
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
@@ -343,9 +345,7 @@
 					dj: this.currVideo.get('dj'),
 					duration: this.currVideo.get('duration')
 				});
-			}	
-			//this.sockM.sendRoomState(user.get("socket"));
-			this.sockM.sendRoomState();
+			}
 		},
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
@@ -738,6 +738,14 @@
 		setPlaylist: function(playlistId) {
 			this.playlistId = playlistId;
 			this.playlist = this.playlists[playlistId];
+			var userId = this.get("userId");
+			redisClient.set("user:" + userId + ":activePlaylist", playlistId, function(err, reply) {
+				if (err) {
+					console.log("error setting user " + userId + "'s active playlist");
+				} else {
+					
+				}
+			});
 		},
 		
 		getAvatar: function() {
@@ -828,9 +836,15 @@
 						}
 						//console.log('getting playlists for user '+userId);
 						userModel.setPlaylists(userPlaylists);
-						userModel.setPlaylist(2);
 						userModel.addPlaylistListeners(socket);
-						socket.emit("playlist:initialize", userPlaylists);
+						//socket.emit("playlist:initialize", userPlaylists);
+						redisClient.get("user:" + userId + ":activePlaylist", function(err, reply) {
+							if (err) {
+								console.log("Error getting user " + userId + "'s active playlist");
+							} else {
+								socket.emit("playlist:initialize", {userPlaylists: userPlaylists, activePlaylistId: reply});
+							}
+						});
 					}
 				}
 			});

@@ -13,6 +13,7 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		script(type="text/javascript", src="/javascripts/AutoScroll.js")
 		script(type="text/javascript", src="/javascripts/jquery.tipsy.js")
 		script(type="text/javascript", src="/javascripts/jquery-ui-1.8.15.custom.min.js")
+		script(type="text/javascript", src="/javascripts/jquery.selectbox-0.5.js")
 		script(type="text/javascript", src="/javascripts/gates.js")
 		script(type="text/javascript", src="/javascripts/jquery.easing.1.3.js")
 		script(type="text/javascript", src="/javascripts/jquery.easing.compatibility.js")
@@ -24,6 +25,7 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		link(rel='stylesheet', href='/stylesheets/login.css')
 		link(rel='stylesheet', href='/stylesheets/tipsy.css')
+		link(rel='stylesheet', href='/stylesheets/selectbox.css')
 		link(rel='icon', href='/images/room/favicon.ico')
 	body
 		#loadingScreen
@@ -41,6 +43,7 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 				#cur-room-name 
 				#cur-video-info
 					#cur-video-name
+					img(src="/images/room/newicons/clock.png", id="clock")
 					#cur-video-time
 				#shareBar
 			#coolshit
@@ -54,13 +57,14 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 				a Privacy Policy
 				a Copyright
 				a(id="feedbackSpan") Tell Us What You Think
-		#nowPlayingFull
+		#nowPlayingFull(style="display: none")
 			div#fullTitle 
 			div#countdownFull 
 		#roomsList
 		include audiotag
 		include chat
 		include chatcell
+		include noresults
 		include sidebar
 		include roominfo
 		include share
@@ -78,6 +82,7 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		include playlistsnameholder
 		include playlist
 		include playlistmember
+		include viewmorecell
 		#getOff(display="none")
 		script
 			var is_ssl = ("https:" == document.location.protocol);

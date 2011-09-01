@@ -46,39 +46,64 @@ $(function() {
  });
 
  window.SearchBarModel = Backbone.Model.extend({
+	
+	initialize: function() {
+		this.startIndex = 1;
+		this.maxResults = 10;
+	},
 
   executeSearch: function(searchQuery) {
+	 this.get("searchResultsCollection").reset();
 	 if (typeof(mpq) !== 'undefined') mpq.track("Search", {mp_note: "Searched for " + searchQuery});
    this.set({
     searchTerm: searchQuery
    });
+	 this.startIndex = 1;
+	 this.divToRemove = null;
    $.ajax({
-    url: "http://gdata.youtube.com/feeds/api/videos?max-results=10&format=5&alt=json&q=" + searchQuery,
+    url: "http://gdata.youtube.com/feeds/api/videos?max-results=" + this.maxResults + "&start-index=" + this.startIndex + "&v=2&format=5&alt=jsonc&q=" + searchQuery,
     success: $.proxy(this.processResults, this)
    });
   },
 
   processResults: function(data) {
    console.log(data);
-   var feed, entries, resultsCollection, buildup;
-   feed = data.feed ? data.feed : jQuery.parseJSON(data).feed;
-   entries = feed.entry || [];
+   var ytData, items, resultsCollection, buildup;
+   ytData = data.data ? data.data : jQuery.parseJSON(data).data;
+	 if (ytData.totalItems == 0) {
+		new NoResultsView();
+		return;
+	 }
+	 items = ytData.items;
    resultsCollection = this.get("searchResultsCollection");
    buildup = [];
-   for (var i = 0; i < entries.length; i++) {
-    var entry = entries[i];
+   for (var i = 0; i < items.length; i++) {
+    var item = items[i];
     var videoResult = {
-     title: entry.title.$t,
-     thumb: entry.media$group.media$thumbnail[0].url,
-     videoUrl: entry.id.$t,
-     duration: entry.media$group.yt$duration.seconds,
-     viewCount: entry.yt$statistics.viewCount,
-     author: entry.author[0].name.$t
+     title: item.title,
+     thumb: ss_idToImg(item.id),
+		 videoId: item.id,
+     duration: item.duration,
+     viewCount: item.viewCount ? item.viewCount : 0,
+     author: item.uploader
     };
     buildup.push(videoResult);
    }
    resultsCollection.add(buildup);
-  }
+	 if (this.divToRemove) {
+		$(this.divToRemove).remove();
+	 }
+  },
+	
+	executeSearchMoreResults: function(selector) {
+		this.divToRemove = selector;
+		var searchQuery = this.get("searchTerm");
+		this.startIndex += 10;
+		$.ajax({
+			url: "http://gdata.youtube.com/feeds/api/videos?max-results=" + this.maxResults + "&start-index=" + this.startIndex + "&v=2&format=5&alt=jsonc&q=" + searchQuery,
+			success: $.proxy(this.processResults, this)
+   });
+	}
  });
 
  window.ShareModel = Backbone.Model.extend({
@@ -377,6 +402,7 @@ $(function() {
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.resetPlaylist();
 		playlistNameholderView = playlistCollection.idToPlaylistNameholder[playlistId];
 		$(playlistNameholderView.el).removeClass("unselected-playlist-nameholder").addClass("selected-playlist-nameholder");
+		$("#playlist-dropdown").val(playlistId);
 	},
 	
 	deletePlaylist: function(playlistId) {
@@ -663,6 +689,9 @@ $(function() {
 	initialize: function() {
 		$($(".videoHistory")[0]).prepend(this.render().el);
 		this.populatedDropdown = false;
+		//this.addPlaylistDropdown();
+		//$(this.el).find(".addToPlaylistFromHistory").selectbox();
+		//$(this.el).find(".addToPlaylistFromHistory:first").bind("change", {playlistCollection: window.SurfStreamApp.get("userModel").get("playlistCollection"), historyItem: this}, this.addToPlaylist);
 	},
 	
 	render: function() {
@@ -685,12 +714,15 @@ $(function() {
 			$(this.el).find(".addToPlaylistFromHistory").append(playlistDropdownView.el);
 			playlistCollection.idToPlaylistViews[playlists[i].get("playlistId")].push(playlistDropdownView.el);
 		}
-		$(this.el).find(".addToPlaylistFromHistory").bind("change", {playlistCollection: window.SurfStreamApp.get("userModel").get("playlistCollection"), historyItem: this}, this.addToPlaylist);
+		$(this.el).find(".addToPlaylistFromHistory:first").bind("change", {playlistCollection: window.SurfStreamApp.get("userModel").get("playlistCollection"), historyItem: this}, this.addToPlaylist);
 		this.populatedDropdown = true;
 	},
 	
 	addToPlaylist: function(event) {
+		console.log("ABOOGA BOOGA");
 		var selectedPlaylistId = $(event.data.historyItem.el).find(".addToPlaylistFromHistory").val();
+		if (selectedPlaylistId == 0)
+			return;
 		var historyItem = event.data.historyItem.options.room;
 		var attributes = {
 			title: historyItem.get("title"),
@@ -758,6 +790,8 @@ $(function() {
  window.SearchView = Backbone.View.extend({
   //has searchBarModel
   searchViewTemplate: _.template($('#searchView-template').html()),
+	
+	viewMoreTemplate: _.template($('#view-more-cell-template').html()),
 
   id: "search-view",
 
@@ -816,7 +850,10 @@ $(function() {
    new SearchCellView({
     video: model,
     playlistCollection: this.options.playlistCollection
-   })
+   });
+	 if (model.collection.length % this.options.searchBarModel.maxResults == 0) {
+		new ViewMoreCellView({searchBarModel: this.options.searchBarModel});
+	 }
   },
 
 	getSuggestions: function(event) {
@@ -863,7 +900,7 @@ $(function() {
 
   addToPlaylist: function() {
 	 var selectedPlaylist = $("#playlistDropdown .playlistDropdownContainer").val();
-   var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
+   var videoID = this.options.video.get("videoId");
    if (ss_modelWithAttribute(this.options.playlistCollection.getPlaylistById(selectedPlaylist).get("videos"), "videoId", videoID)) {
        return;
    }
@@ -882,7 +919,7 @@ $(function() {
 	 // $(cellId).addClass("addToPlaylist-added");
 
   previewVideo: function() {
-   var videoID = this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", "");
+   var videoID = this.options.video.get("videoId");
    if (!window.playerTwoLoaded) {
     if (!window.YTPlayerTwo) {
      window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
@@ -910,10 +947,10 @@ $(function() {
    $(this.el).html(this.searchCellTemplate({
     thumb: this.options.video.get("thumb"),
     title: this.options.video.get("title"),
-    vid_id: this.options.video.get("videoUrl").replace("http://gdata.youtube.com/feeds/api/videos/", ""),
+    vid_id: this.options.video.get("videoId"),
 		duration: ss_formatSeconds(this.options.video.get("duration")),
 		viewCount: this.options.video.get("viewCount") + " views",
-		author: "from " + this.options.video.get("author")
+		author: this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
    return this;
@@ -946,6 +983,45 @@ $(function() {
 		}
   }
 
+ });
+ 
+ window.ViewMoreCellView = Backbone.View.extend({
+	viewMoreCellTemplate: _.template($('#view-more-cell-template').html()),
+
+  id: "viewMoreCellContainer",
+	
+	events: {
+		"click": "moreResults"
+	},
+
+  initialize: function() {
+   $("#searchContainer").append(this.render());
+  },
+
+  render: function() {
+	 $(this.el).html(this.viewMoreCellTemplate());
+   return this.el;
+  },
+	
+	moreResults: function(event) {
+		this.options.searchBarModel.executeSearchMoreResults("#viewMoreCellContainer");
+		//$("#viewMoreCellContainer").remove();
+	}
+ });
+ 
+ window.NoResultsView = Backbone.View.extend({
+	noResultsTemplate: _.template($('#no-results-template').html()),
+
+  id: "noResultsContainer",
+
+  initialize: function() {
+   $("#searchContainer").append(this.render());
+  },
+
+  render: function() {
+	 $(this.el).html(this.noResultsTemplate());
+   return this.el;
+  }
  });
 
  window.PreviewPlayerView = Backbone.View.extend({
@@ -1194,17 +1270,27 @@ $(function() {
 		},
 	
 	  bindButtonEvents : function() {
-			$("#CreateRoom").bind("click", {modal: this}, function(e) { 
-				SocketManagerModel.joinRoom($("#CreateRoomName").val(), true);
-				window.SurfStreamApp.get("mainRouter").navigate("/" + $("#CreateRoomName").val(), false);
-				e.data.modal.hide();
+			$("#CreateRoom").bind("click", {modal: this}, this.submitNewRoom);
+			$("#CreateRoomName").bind("submit", this.submitNewRoom);
+			$("#CreateRoomName").keypress({modal: this}, function(press){
+				if (press.which == 13) {
+					press.data.modal.submitNewRoom(press);
+				}
 			});
-			$("#CreateRoomName").bind("submit", function() { return false });
 			$("#hideRoomsList").bind("click", this.hide);
 			$("#modalBG").click({modal: this}, function(e) {
 				console.log("FUCK")
 				e.data.modal.hide();
 			});
+		},
+		
+		submitNewRoom: function(e) {
+			var roomName = $("#CreateRoomName").val();
+			if (roomName == "") return false;
+			SocketManagerModel.joinRoom(roomName , true);
+			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
+			e.data.modal.hide();
+			return false;
 		},
 	
 		addRooms: function (roomListCollection) {
@@ -1288,12 +1374,12 @@ $(function() {
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", {theatre: this}, this.fullscreenToggle);
 	 $("#fullscreenIcon").bind("click", {theatre: this}, this.fullscreenToggle);
-	 $(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
-	 remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
-	 remotePullup.attr("title", "Pull Up")
-	 remotePullup.tipsy({
-	    gravity: 's',
-	   });
+	 //$(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
+	 //remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
+	 //remotePullup.attr("title", "Pull Up")
+	 //remotePullup.tipsy({
+	 //   gravity: 's',
+	 //  });
 	 avatarVAL.css("margin-left", '410px');
 	 avatarVAL.hide();
 	 avatarVAL.data({"sofaML": 410});
@@ -1324,7 +1410,7 @@ $(function() {
 
 	pullRemoteUp : function (e) {
 		
-		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
+		if((e.srcElement && (e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")) || (e.target && (e.target.localName != "button" || e.target.id == "remote-pullup")) )	{
 			  
 				$("#remote-container").animate({"margin-top": -17}, 300, function() {
 					var remotePullup ,remoteTop, remote;
@@ -1349,8 +1435,7 @@ $(function() {
 	
 	pullRemoteDown: function(e) {
 		
-		if(e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")	{
-			
+		if((e.srcElement && (e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")) || (e.target && (e.target.localName != "button" || e.target.id == "remote-pullup")) )	{			
 			
 			$("#remote-container").animate({"margin-top": 130}, 300, function() { 
 				var remotePullup ,remoteTop, remote;			
@@ -1403,7 +1488,7 @@ $(function() {
 	},
 
 	updateDJs : function(djArray) {
-		var oldPos, user;
+		var oldPosX, oldPosY, user;
 		var X_COORDS = [200,275,348]; 
 		var Y_COORD = 25;
 		var cur_is_dj = false;
@@ -1419,9 +1504,10 @@ $(function() {
 				//If there are not any DJ ID's that match the current ID of the user we're looking at
 				if(!_.any(_.pluck(djArray, 'id'), function(el) {return (''+ el) == ('' + userModel.get("id"))})) {
 					//take DJ off sofa
-					oldPos = user.data("oldPos");
-					user.animate({"margin-top": Y_COORD + 70}, 500, "bounceout").animate({"margin-left": oldPos.x, "margin-top": oldPos.y}, 600);
-					user.data({"trueY": oldPos.y.replace("px", "")});
+					oldPosX = user.data("roomX");
+					oldPosY = user.data("roomY");
+					user.animate({"margin-top": Y_COORD + 70}, 500, "bounceout").animate({"margin-left": oldPosX, "margin-top": oldPosY}, 600);
+					user.data({"trueY": oldPosY});
 	     	  user.data("isDJ", 0);
 				}
 		 }	
@@ -1438,7 +1524,6 @@ $(function() {
 			}
 			
 			if(user.data("isDJ") == "0") {				
-				user.data("oldPos", {x: user.css("margin-left"), y: user.css("margin-top")})
 				user.data("isDJ", "1");
 				newDJ = true;
 				if (djArray[dj].id == this.options.userModel.get("ssId"))  {
@@ -1448,6 +1533,12 @@ $(function() {
 				}
 			} else {
 				newDJ = false;
+				//if this dj has remote, slide their shit down as well
+				if (SurfStreamApp.curDJ == djArray[dj].id){
+					$("#sofa-remote").animate({"left": X_COORDS[dj] + 50, "top": Y_COORD[dj] + 50 });
+					$("#skipContainer").animate({"margin-left": X_COORDS[dj], "margin-top":  Y_COORD + 100});
+				}
+				
 			}
 		console.log("Zindex: " + user.css("z-index"))
 		//set the z index so the skip video doesn't cover it
@@ -1457,7 +1548,8 @@ $(function() {
 		} 
 			
 		user.animate({"margin-top": Y_COORD, "margin-left": X_COORDS[dj]}, 500, "bouncein", function() {$(this).css("z-index", "auto");}); /*restore auto z-index if hopped on couch and became current vj */
-		user.data({"sofaMT": Y_COORD, "sofaML": X_COORDS[dj]}, 500, "bouncein");
+		
+		user.data({"sofaMT": Y_COORD, "sofaML": X_COORDS[dj]});
 		user.data({"trueY": Y_COORD});
 		 
 		}
@@ -1547,7 +1639,7 @@ $(function() {
 		   });
 		$("#avatarWrapper_" + user.id).data("isDJ", "0");
 		console.log("margintop stored, value: "+ user.get('y'))
-		$(this.el).data({"trueX": user.get('x'), "trueY": user.get('y')});
+		$(this.el).data({"roomX": user.get('x'), "roomY": user.get('y'), "trueY": user.get('y') });
 		$(this.el).animate({"margin-top": user.get('y'), "margin-left": user.get('x') }, 900, 'expoout');
 	},
 	
@@ -1727,7 +1819,7 @@ $(function() {
 			this.audioChannels[i]['finished'] = -1;
 			
 		}
-		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_message_sound", audio_src: "/sounds/click1.wav"}));
+		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_message_sound", audio_src: "/sounds/chat.wav"}));
 	},
 	
 	playSound: function(audioTagId) {
@@ -1880,11 +1972,13 @@ $(function() {
 		}
 	 });
 
-   socket.on('playlist:initialize', function(userPlaylists) {
+   socket.on('playlist:initialize', function(data) {
+		var userPlaylists = data.userPlaylists;
+		var playlistCollection = app.get("userModel").get("playlistCollection");
 		for (var i = 1; i <= Object.size(userPlaylists); i++) {
-			app.get("userModel").get("playlistCollection").addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
+			playlistCollection.addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
 		}
-		app.get("userModel").get("playlistCollection").setActivePlaylist(1);
+		playlistCollection.setActivePlaylist(data.activePlaylistId);
 		var getPath = function(href) {
 		    var l = document.createElement("a");
 		    l.href = href;
