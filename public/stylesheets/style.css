@@ -117,7 +117,7 @@ div#outer {
   display: none;
 }
 #outer {
-  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   weight: bold;
   font-size: 25px;
   margin: auto;
@@ -242,7 +242,7 @@ div#outer {
   background: url("/images/room/clearsearch.png") 50% 50% no-repeat;
 }
 div.chatContainer {
-  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   width: 300px;
   height: 220px;
   max-width: 300px;
@@ -341,7 +341,7 @@ div.chatContainer form.inputBox input:focus {
 }
 div.historyContainer {
   position: absolute;
-  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   font-size: 14px;
   max-height: 530px;
   width: 340px;
@@ -471,6 +471,7 @@ div.historyContainer .history .videoHistory {
   background: url("/images/room/add.png");
 }
 #viewMoreCellContainer {
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   width: 285px;
   height: 60px;
 }
@@ -687,12 +688,13 @@ button.playlist,
 button.playlist.active,
 button.search,
 button.search.active {
-  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   weight: bold;
   font-size: 12px;
   color: #585858;
 }
 .videoView {
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   color: #d4d4d4;
   height: 378px;
   width: 300px;
@@ -826,7 +828,7 @@ button.search.active {
   -moz-border-radius: 20px;
   color: #e5e5e5;
   cursor: pointer;
-  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   font-weight: bold;
   vertical-align: top;
 }
@@ -868,7 +870,7 @@ button
   top: 40px;
   left: 50%;
   margin-left: -430px;
-  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   overflow-y: none;
   overflow-x: none;
   width: 860px;
@@ -1077,7 +1079,7 @@ button
   z-index: 9999;
 }
 #top-video-cell {
-  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   font-size: 12px;
   height: 200px;
   width: 285px;
@@ -1406,7 +1408,6 @@ background-color: green,
   height: 30px;
 }
 .ui-autocomplete {
-  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   list-style-type: none;
   width: 250px;
   margin-top: 5px;
@@ -1532,7 +1533,7 @@ background-color: green,
   position: absolute;
   font-size: 12px;
   margin-top: 37px;
-  margin-left: 6px;
+  margin-left: 8px;
   font-weight: bold;
 }
 #fullscreen.fully {
@@ -1569,7 +1570,7 @@ background-color: green,
   margin-left: 100px;
   text-shadow: #585858 0.1em 0.1em 0.5em;
   margin-bottom: 20px;
-  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -40%;
   background: rgba(0,0,0,0.7);
