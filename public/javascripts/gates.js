@@ -1113,7 +1113,8 @@ $(function() {
     var params = {
       wmode: "opaque",
 			allowScriptAccess: "always",
-			modestbranding: 1
+			modestbranding: 1,
+			iv_load_policy: 3
     };                           
     var atts = {
      id: "YouTubePlayer"
@@ -1184,8 +1185,8 @@ $(function() {
      allowScriptAccess: "always",
      wmode: "opaque",
 		 allowFullScreen: 'false',
-		 flashvars : "apiId=:gvideo",
-		 autohide: 1
+		 autohide: 1,
+		 iv_load_policy: 3
     };
     var atts = {
      id: "YouTubePlayerTwo",
@@ -1203,8 +1204,8 @@ $(function() {
    // $("#preview-container").css('display', 'none');
    // });
 	 window.YTPlayerTwo.stopVideo();
-   $("#searchContainer").animate({'height': 320, "margin-top":0}, 600);
-	 $("#previewContainer").animate({'top': -187}, 800);
+   $("#searchContainer").animate({'height': 320, "margin-top":0}, 500);
+	 $("#previewContainer").animate({'top': -187}, 500);
    // $("#searchContainer").animate({
    // height: 360
    // }, "slow");
@@ -2043,6 +2044,7 @@ $(function() {
       allowScriptAccess: "always",
      	wmode: "opaque",
 			modestbranding: 1,
+			iv_load_policy: 3
 		 };
      var atts = {
       id: "YouTubePlayer"
