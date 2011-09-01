@@ -1770,12 +1770,12 @@ $(function() {
 		SurfStreamApp.curDJ = video.dj;
 		if (typeof(mpq) !== 'undefined') mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
-		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title);	//debugging
+		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title+' and time start: '+video.time);	//debugging
 		$("#fullTitle").html(video.title);
 		$("#cur-video-name").html(video.title);
 		var curvid, curLen, roomModel, playerModel;
 		if (video.dj == app.get("userModel").get("ssId")) {
-			console.log("here");
+		  console.log("here");
 			$("#video-list-container .videoListCellContainer:first").remove();
 			var playlistModel = app.get("userModel").get("playlistCollection").get("activePlaylist");
 			var playlistItemModel = playlistModel.get("videos").at(0);
@@ -1784,31 +1784,32 @@ $(function() {
 			app.get("userModel").get("playlistCollection").addVideoToPlaylist(playlistModel.get("playlistId"), copyPlaylistItemModel);
 		}
     if (!window.playerLoaded) {
-     var params = {
-      allowScriptAccess: "always",
-     	wmode: "opaque",
-			modestbranding: 1
-		 };
-     var atts = {
-      id: "YouTubePlayer"
-     };
-     swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
-     window.video_ID = video.id;
-		 setInterval(updateTime, 1000);
+			var params = {
+      	allowScriptAccess: "always",
+     		wmode: "opaque",
+				modestbranding: 1
+		 	};
+     	var atts = {
+      	id: "YouTubePlayer"
+     	};
+     	swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
+     	window.video_ID = video.id;
+		 	setInterval(updateTime, 1000);
     } else {
-     window.YTPlayer.loadVideoById(video.id, video.time);
-     new ChatCellView({
-      username: "Now Playing: ",
-      msg: video.title
-     });
-     app.get("mainView").chatView.chatContainer.activeScroll();
+			console.log('player loaded, playing video at time '+video.time)
+     	window.YTPlayer.loadVideoById(video.id, video.time);
+     	new ChatCellView({
+      	username: "Now Playing: ",
+      	msg: video.title
+     	});
+     	app.get("mainView").chatView.chatContainer.activeScroll();
     }
     //HACK
     $("#room-name").html(video.title)
     app.get("roomModel").get("userCollection").forEach(function(userModel) {
-		 $("#avatarWrapper_" + userModel.get("id")).data("animating", false);
-     $("#avatarWrapper_" + userModel.get("id")+ " .smiley").hide();
-     $("#avatarWrapper_" + userModel.get("id")+ " .default").show();
+	  	$("#avatarWrapper_" + userModel.get("id")).data("animating", false);
+     	$("#avatarWrapper_" + userModel.get("id")+ " .smiley").hide();
+     	$("#avatarWrapper_" + userModel.get("id")+ " .default").show();
     });
     //ENDHACK
 		roomModel = app.get("roomModel")
