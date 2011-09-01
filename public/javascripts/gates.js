@@ -973,13 +973,9 @@ $(function() {
    var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
    console.log(this.options.video.attributes);
    this.options.playlistCollection.addVideoToPlaylist(selectedPlaylist, playlistItemModel);
-	 var cellId = "#search_result_" + videoID; 
-	 $($(cellId)[0]).addClass("added"); 
-  },
-
-	 //    var cellId = "#search_result_" + videoID;
-	 // $(cellId).removeClass("addToPlaylist");
-	 // $(cellId).addClass("addToPlaylist-added");
+	 var cellId = "#search_result_" + videoID;
+	 $(cellId).addClass("added");
+  },  
 
   previewVideo: function() {
    var videoID = this.options.video.get("videoId");
@@ -1400,15 +1396,34 @@ $(function() {
   className: "messageContainer",
   initialize: function() {
    $("#messages").append(this.render().el);
-	 window.SurfStreamApp.get("mainView").playSound("chat_message_sound");
+		window.SurfStreamApp.get("mainView").playSound("chat_message_sound");	 
   },
 
-  render: function() {
-   $(this.el).html(this.chatCellTemplate({
-    username: this.options.username,
-    msg: this.options.msg
-   }));
-   return this;
+  render: function(nowPlayingMsg) {
+		$(this.el).html(this.chatCellTemplate({
+	    username: this.options.username,
+	    msg: this.options.msg
+	   }));
+		return this;
+  }
+ });
+
+ window.ChatCellVideoView = Backbone.View.extend({
+
+  chatCellVideoTemplate: _.template($('#chatcellVideo-template').html()),
+
+  className: "messageContainer",
+  initialize: function() {
+   $("#messages").append(this.render().el);
+		window.SurfStreamApp.get("mainView").playSound("chat_video_sound");	 
+  },
+
+  render: function(nowPlayingMsg) {
+		$(this.el).html(this.chatCellVideoTemplate({
+			videoSrc: ss_idToImg(this.options.videoID),
+			title: this.options.videoTitle
+		}));
+		return this;
   }
  });
 
@@ -1599,7 +1614,6 @@ $(function() {
 					$("#sofa-remote").animate({"left": X_COORDS[dj] + 50, "top": Y_COORD[dj] + 50 });
 					$("#skipContainer").animate({"margin-left": X_COORDS[dj], "margin-top":  Y_COORD + 100});
 				}
-				
 			}
 		console.log("Zindex: " + user.css("z-index"))
 		//set the z index so the skip video doesn't cover it
@@ -1683,7 +1697,7 @@ $(function() {
 			stageX = 680;
 		}
 		
-		$(this.el).css("margin-left", stageX).css("margin-top", 280).css("position", 'absolute');
+		$(this.el).css("margin-left", stageX).css("margin-top", 280).css("position", 'absolute').css("z-index", 2);
 		$("#people-area").prepend(this.el);
 	  $("#avatarChat_" + user.id).tipsy({
 	    gravity: 'sw',
@@ -1826,6 +1840,10 @@ $(function() {
 		    return false;
 		});
 		
+		$("#contactButton").click(function() {
+			window.open("mailto:contact@surfstream.tv", '_parent');
+		});
+		
 		this.maxAudioChannels = 15;
   },
 
@@ -1881,6 +1899,7 @@ $(function() {
 			
 		}
 		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_message_sound", audio_src: "/sounds/chat.wav"}));
+		$(document.body).append(this.soundTemplate({audio_tag_id: "chat_video_sound", audio_src: "/sounds/click1.wav"}));
 	},
 	
 	playSound: function(audioTagId) {
@@ -1947,12 +1966,14 @@ $(function() {
      };
      swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
      window.video_ID = video.id;
+		 window.video_title = video.title;
 		 setInterval(updateTime, 1000);
     } else {
      window.YTPlayer.loadVideoById(video.id, video.time);
-     new ChatCellView({
+     new ChatCellVideoView({
       username: "Now Playing: ",
-      msg: video.title
+			videoID: video.id,
+			videoTitle: video.title
      });
      app.get("mainView").chatView.chatContainer.activeScroll();
     }
@@ -1972,6 +1993,9 @@ $(function() {
 		}
 		//save the currently playing state
 		playerModel.set({curVid: {videoId: video.id, title: video.title, duration: video.duration, percent: 0.5} });
+		$("#clock").show(); 
+		$("#cur-video-name").show(); 
+		$("#cur-video-time").show(); 
 		var isdj = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		if (isdj && $("#skip").length == 0) {
 			$("#people-area").append("<div id='skipContainer' class='bottombuttonContainerwide'><button id='skip'> Skip Video </button></div>");
@@ -2121,12 +2145,9 @@ $(function() {
 		}
 		roomlistCollection.sort();
 	});
-	
-	/* WE ARE OVERLOADING THIS TO CLEAR THE CHAT, ASSUMING THIS ONLY HAPPENS ON NEW ROOM JOIN */
+
 	socket.on("room:history", function(roomHistory) {
 		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
-		/* OVERLOADED RESET */
-		//app.get("roomModel").get("chatCollection").reset();
 	});
 	
  }
@@ -2240,7 +2261,13 @@ $(function() {
 		var vidsPlayed = SurfStreamApp.vidsPlayed;
 		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		SurfStreamApp.vidsPlayed = 0;
-		$("#cur-room-name").html(rID); 
+		$("#cur-room-name").html("<span style='font-weight:normal'>Channel:</span> " + rID);
+		$("#cur-video-name").hide();
+		$("#cur-video-time").hide();
+		
+		$("#cur-video-info").css("max-width", 415 - $("#cur-room-name").css("width").replace("px",''));
+		
+		$("#clock").hide(); 
 		if (typeof(mpq) !== 'undefined'){
 			mpq.track("Room Joined", {wasDJ: isDJ, rID:rID, mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"}); 
 		}
@@ -2252,7 +2279,8 @@ $(function() {
 		SurfStreamApp.inRoom = rID;
 		payload.fbId = window.SurfStreamApp.get("userModel").get("fbId");
 		payload.ssId = window.SurfStreamApp.get("userModel").get("ssId");
-		$("#sofa-remote").css({left: "170px", top: "140px"});
+		SurfStreamApp.get("roomModel").get("chatCollection").reset();
+		$("#sofa-remote").css({left: "170px", top: "140px", "z-index": 1});
 		$("#skipContainer").remove();
 		window.SurfStreamApp.get("roomModel").updateDisplayedUsers([]);
 		window.SurfStreamApp.get("roomModel").get("userCollection").reset();
@@ -2298,6 +2326,11 @@ function onYouTubePlayerReady(playerId) {
   window.playerLoaded = true;
   if (window.video_ID) {
    window.YTPlayer.loadVideoById(window.video_ID, window.secs);
+	 	new ChatCellVideoView({
+     username: "Now Playing: ",
+			videoID: window.video_ID,
+			videoTitle: window.video_title
+    });
   }
  }
 }
@@ -2358,10 +2391,12 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 }
 
 function updateTime() {
-	$("#countdownFull").html("Time: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
-	if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
-	 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
-	}
+	if(window.YTPlayer){
+		$("#countdownFull").html("Time: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+		if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
+		 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
+		}
+	}	
 }
 
 function skipVideo() {
@@ -2388,3 +2423,4 @@ function strip(html)
    tmp.innerHTML = html;
    return tmp.textContent||tmp.innerText;
 }
+

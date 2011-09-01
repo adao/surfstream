@@ -700,8 +700,8 @@
 	/*************************/
 	
 	var X_MAX = 470;
-	var Y_MAX = 145;
-	var Y_MIN = 20;
+	var Y_MAX = 125;
+	var Y_MIN = 10;
 	
 	models.User = Backbone.Model.extend({
 		defaults: {
@@ -760,7 +760,8 @@
 		
 		randLoc: function() {
 			var thisX = Math.random()*X_MAX;
-			var thisY = Math.random()*Y_MAX;
+			var thisY = Math.random()*(Y_MAX-Y_MIN);
+			thisY = thisY + Y_MIN;
 			if (thisY < 90 && thisX > 100) { //avoid the sofa
 				thisY = 105 + thisY % 40;
 			} //TODO: More logic to avoid remote

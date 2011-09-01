@@ -27,7 +27,6 @@ button {
 #header #cur-video-info {
   margin-left: 25px;
   height: 40px;
-  width: 230px;
   vertical-align: top;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -165,6 +164,7 @@ div#outer {
   text-align: center !important;
   width: 150px !important;
   height: 36px !important;
+  box-shadow: inset 0 0 2px #000;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
   border-top-right-radius: 2px !important;
@@ -176,7 +176,7 @@ div#outer {
 #outer #coolshit #right-side .sidebarContainer .viewBar .search:hover {
   -moz-box-shadow: inset 0 0 2px #000;
   -webkit-box-shadow: inset 0 0 2px #000;
-  box-shadow: inset 0 0 2px #000;
+  box-shadow: inset 0 0 4px #000;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
   float: right;
@@ -456,6 +456,18 @@ div.historyContainer .history .videoHistory {
   width: 300px;
   border: 1px solid #000;
 }
+.addToPlaylistFromHistory,
+.addToPlaylistFromHistory-added {
+  float: right;
+  background-color: transparent;
+  margin-right: 6px;
+  margin-top: 4px;
+  border: none;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background: url("/images/room/add.png");
+}
 #viewMoreCellContainer {
   width: 285px;
   height: 60px;
@@ -513,7 +525,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -70px;
   margin-top: 23px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 63px;
   text-align: left;
   text-indent: 1px;
@@ -626,7 +638,7 @@ width: 48px {
 #share,
 #shareBar {
   float: right;
-  width: 216px;
+  width: 184px;
   height: 40px;
   color: #000;
   margin-left: 6px;
@@ -646,7 +658,7 @@ width: 48px {
 #shareBar #social {
   display: inline-block;
   margin-top: 1px;
-  width: 162px;
+  width: 130px;
   height: 40px;
 }
 button.playlist,
@@ -1236,12 +1248,12 @@ background-color: green,
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .duration {
   position: relative;
   margin-left: -70px;
-  margin-top: -11px;
+  margin-top: -12px;
   width: 63px;
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1480,6 +1492,7 @@ background-color: green,
   margin-left: 120px;
   position: absolute;
   pointer-events: none;
+  z-index: 3;
 }
 #modalBG {
   background: #000;
@@ -1499,7 +1512,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1509,7 +1522,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -1535,7 +1548,7 @@ background-color: green,
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   left: 50%;
   margin-left: -40%;
-  background: rgba(0,0,0,0.70);
+  background: rgba(0,0,0,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1581,7 +1594,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1592,7 +1605,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 #sofa-remote {
   left: 170px;
@@ -1726,4 +1739,26 @@ a#fdbk_tab {
   border-radius: 4px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
+}
+.videoChatCell {
+  width: 285px;
+  height: 60px;
+}
+.videoChatCell .videoChatImg {
+  float: left;
+  width: 63px;
+  height: 50px;
+  margin-top: 2px;
+}
+.videoChatCell .videoChatInfo {
+  float: right;
+  margin-left: 2px;
+  width: 208px;
+  height: 50px;
+}
+.videoChatCell .videoChatInfo .videoChatNowPlaying {
+  font-weight: bold;
+}
+.videoChatCell .videoChatInfo .videoChatCellText {
+  display: inline;
 }
