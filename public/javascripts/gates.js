@@ -910,13 +910,9 @@ $(function() {
    var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
    console.log(this.options.video.attributes);
    this.options.playlistCollection.addVideoToPlaylist(selectedPlaylist, playlistItemModel);
-	 var cellId = "#search_result_" + videoID; 
-	 $($(cellId)[0]).addClass("added"); 
-  },
-
-	 //    var cellId = "#search_result_" + videoID;
-	 // $(cellId).removeClass("addToPlaylist");
-	 // $(cellId).addClass("addToPlaylist-added");
+	 var cellId = "#search_result_" + videoID;
+	 $(cellId).addClass("added");
+  },  
 
   previewVideo: function() {
    var videoID = this.options.video.get("videoId");
