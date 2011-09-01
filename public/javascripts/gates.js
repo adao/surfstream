@@ -551,7 +551,7 @@ $(function() {
 	playlistNameholderTemplate: _.template($("#playlist-nameholder-template").html()),
 	
 	events: {
-		"click .delete-nameholder": "removeNameholder",
+		"click .delete-nameholder": "presentDialog",
 		"click .playlist-nameholder-name": "setActivePlaylistTwo"
 	},
 	
@@ -594,6 +594,36 @@ $(function() {
 		this.options.playlistCollection.setActivePlaylist(this.options.playlist_nameholder_value);
 	},
 	
+	presentDialog: function() {
+		new DeleteConfirmationView({
+			playlistTitle: this.options.playlist_nameholder_name,
+			nameholderView: this
+		});
+/*		$("#playlist-delete-modal").dialog("destroy");
+		$("#playlist-delete-modal").dialog({
+			resizable: false,
+			height: 140,
+			width: 300,
+			zIndex: 10000,
+			dialogClass: "playlist-delete-confirmation",
+			closeText: "hide",
+			buttons: {
+				"Delete playlist": function () {
+					$(this).dialog("close");
+				},
+				Cancel: function() {
+					$(this).dialog("close");
+				}
+			},
+			close: function(event, ui) {
+				$("#modalBG").hide();
+			},
+			open: function(event, ui) {
+				$(".playlist-delete-confirmation").offset({top: 110})
+			}
+		});*/
+	},
+	
 	removeNameholder: function() {
 		$(this.el).remove();
 		this.calculatePlaylistHeight();
@@ -606,6 +636,42 @@ $(function() {
 		$("#playlist-view").css('height', viewHeight - pcHeight);
 	}
 	
+ });
+ 
+ window.DeleteConfirmationView = Backbone.View.extend({
+	el: "#playlist-delete-modal",
+	
+	deleteConfirmTemplate: _.template($('#playlist-delete-confirmation-template').html()),
+	
+	events: {
+		"click .cancelDelete": "cancelDelete",
+		"click .deletePlaylist": "deletePlaylist"
+	},
+	
+	initialize: function() {
+		$("#modalBG").show();
+		$("#modalBG").click({modal: this.el}, function(e) {
+				console.log("FUCK")
+				$(e.data.modal).hide();
+			});
+		this.render();
+		$(this.el).show();
+	},
+	
+	render: function() {
+		$(this.el).html(this.deleteConfirmTemplate({playlist_title: this.options.playlistTitle}));
+	},
+	
+	cancelDelete: function() {
+		$(this.el).hide();
+		$("#modalBG").hide();
+	},
+	
+	deletePlaylist: function() {
+		this.options.nameholderView.removeNameholder();
+		$(this.el).hide();
+		$("#modalBG").hide();
+	}
  });
 
  window.PlaylistView = Backbone.View.extend({
