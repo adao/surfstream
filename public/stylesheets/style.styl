@@ -23,7 +23,6 @@ button
 	#cur-video-info
 		margin-left: 25px
 		height: 40px
-		width: 230px
 		vertical-align: top
 		overflow: hidden
 		text-overflow: ellipsis
@@ -141,6 +140,7 @@ div#outer
 						text-align: center!important
 						width: 150px!important
 						height: 36px!important
+						box-shadow: inset 0 0 2px #000000;
 					.search
 						border-top-right-radius: 2px!important
 						-moz-border-top-right-radius: 2px!important
@@ -149,7 +149,7 @@ div#outer
 					.playlist:hover, .search:hover
 						-moz-box-shadow:inset 0 0 2px #000000;
 						-webkit-box-shadow:inset 0 0 2px #000000;
-						box-shadow:inset 0 0 2px #000000; 
+						box-shadow:inset 0 0 4px #000000; 
 					.search
 						float: right
 					.active
@@ -1221,6 +1221,7 @@ div#top-video-name
 	margin-left: 120px
 	position: absolute
 	pointer-events: none
+	z-index:3
 
 #modalBG
 	background: #000
@@ -1440,3 +1441,22 @@ a#fdbk_tab
 	border-radius: 4px
 	-webkit-border-radius: 4px
 	-moz-border-radius: 4px
+	
+.videoChatCell
+	width: 285px; 
+	height: 60px;
+	.videoChatImg
+		float:left; 
+		width: 63px;
+		height:50px;
+		margin-top: 2px;
+	.videoChatInfo
+		float:right; 
+		margin-left: 2px;
+		width: 208px; 
+		height: 50px;
+		.videoChatNowPlaying
+			font-weight: bold
+		.videoChatCellText
+			display: inline
+		
