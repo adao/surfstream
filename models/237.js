@@ -68,12 +68,12 @@
 				if(val.room.currVideo) return;
 				if(err) {
 					console.log('['+roomName+'][VAL] playVideo() | rc.lpop : ERROR! '+err);
-					this.autoplay = false;
+					val.autoplay = false;
 					val.fetchYouTubeVideo();
 					return;
 				}
 				if(reply) {
-					this.autoplay = true;
+					val.autoplay = true;
 					var rawVideo = JSON.parse(reply);
 					var videoToPlay = new models.Video({
 						videoId: rawVideo['id'],
@@ -88,7 +88,7 @@
 					val.room.vm.play(videoToPlay);
 				} else {
 					console.log('['+roomName+'][VAL] playVideo(): no videos in the autoplaylist, fetching one from YouTube');
-					this.autoplay = false;
+					val.autoplay = false;
 					val.fetchYouTubeVideo();
 				}
 			});
@@ -1005,7 +1005,7 @@
 
 					djs.room.sockM.announceDJs(); 
 
-					if(djs.length == 1 && !djs.room.val.autoplay) { //this user is the only human dj
+					if(djs.length == 1 && !djs.room.VAL.autoplay) { //this user is the only human dj
 						if(djs.room.currVideo) {	//VAL is playing a video, need to clear it
 							console.log('['+roomName+'][socket] [dj:join] -- clearing the timeout for VAL\'s video'+djs.room.currVideo.get('timeoutId'));
 							clearTimeout(djs.room.currVideo.get('timeoutId'));
