@@ -371,8 +371,11 @@ $(function() {
 		this.get("videos").add(playlistItemModel);
 	},
 	
-	removeFromPlaylist: function() {
-		
+	removeFromPlaylist: function(videoId) {
+		var playlistItemModel = ss_modelWithAttribute(this.get("videos"), "videoId", videoId);
+	 	var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
+	 	this.get("videos").remove(playlistItemModel);
+		SocketManagerModel.deleteFromPlaylist(this.get("playlistId"), videoId);
 	},
 	
 	moveToIndexInPlaylist: function() {
@@ -554,6 +557,24 @@ $(function() {
 	
 	initialize: function() {
 		this.render();
+		$(this.el).droppable({
+			accept: "#video-list-container div",
+			hoverClass: "playlist-hover-highlight",
+			drop: function(event, ui) {
+	 			var fromVideoId = $(ui.draggable).attr('id');
+				var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
+	 			var fromPlaylist = playlistCollection.get("activePlaylist");
+				if (fromPlaylist.get("playlistId") == $(this).val()) {
+					return;
+				}
+	 			var playlistItemModel = ss_modelWithAttribute(fromPlaylist.get("videos"), "videoId", fromVideoId);
+	 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
+				fromPlaylist.removeFromPlaylist(fromVideoId);
+				
+				playlistCollection.addVideoToPlaylist($(this).val(), copyPlaylistItemModel);
+				ui.draggable.remove();
+			}
+		});
 		this.calculatePlaylistHeight(); 
 		this.clickDeletePlaylist = 0;
 	},
@@ -575,8 +596,6 @@ $(function() {
 	
 	removeNameholder: function() {
 		$(this.el).remove();
-		var pcHeight = $("#playlist-collection").outerHeight(true);
-		var viewHeight = $("#myplaylist").outerHeight(true);
 		this.calculatePlaylistHeight();
 		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
 	},
@@ -598,6 +617,11 @@ $(function() {
 	 this.render();
 	 $("#video-list-container").sortable({
 	 		update: function(event, ui) {
+				var yThreshold = $("#playlist-collection").offset().top + $("#playlist-collection").outerHeight() - ui.item.height() * 3 / 4;
+				var yPosition = ui.position.top;
+				if (yPosition < yThreshold) {
+					$("#video-list-container").sortable("cancel");
+				}
 	 			var i;
 	 			var videoId = $(ui.item).attr('id');
 	 			var index;
@@ -608,6 +632,10 @@ $(function() {
 	 			}
 	 			var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection").get("activePlaylist");
 	 			var playlistItemModel = ss_modelWithAttribute(playlistCollection.get("videos"), "videoId", videoId);
+				if (playlistItemModel == null) {
+					ui.item.remove();
+					return;
+				}
 	 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 	 			playlistCollection.get("videos").remove(playlistItemModel, {silent: true});
 	 			playlistCollection.get("videos").add(copyPlaylistItemModel, {
@@ -616,7 +644,50 @@ $(function() {
 	 		   });
 	 		 SocketManagerModel.toIndexInPlaylist(playlistCollection.get("playlistId"), videoId, index);
 	 		},
-	 		containment: "#right-side"
+			cursorAt: {bottom: 30, left: 142},
+			axis: "y",
+			helper: "clone",
+			forceHelperSize: true,
+			alreadyShrunk: false,
+			opacity: 0.6,
+			sort: function(event, ui) {
+				var yThreshold = $("#playlist-collection").offset().top + $("#playlist-collection").outerHeight() - ui.item.height() * 3 / 4;
+				var yPosition = ui.position.top;
+				if (yPosition < yThreshold && !$("#video-list-container").sortable("option", "alreadyShrunk")) {
+					var videoId = $(ui.item).attr('id');
+					$("#video-list-container").sortable("option", "axis", false);
+					$(ui.helper).addClass("shrunken-playlist-cell");
+					$(ui.helper).css("height", 30).css("width", 142);
+					$(ui.helper).css("margin-left", 100).css("margin-top", -45);
+					$(ui.helper).animate({rotate: -70}, 500, function() {
+					});
+					$("#video-list-container").sortable("option", "alreadyShrunk", true);
+				} else if (yPosition > yThreshold && $("#video-list-container").sortable("option", "alreadyShrunk")) {
+					$("#video-list-container").sortable("option", "appendTo", "parent");
+					$(ui.helper).animate({rotate: 0}, 500, function() {
+						var playlistOffset = $("#video-list-container").offset();
+						$(ui.helper).css("height", 60).css("width", 285);
+						$(ui.helper).removeClass("shrunken-playlist-cell");
+						$(ui.helper).offset({top: playlistOffset.top, left: playlistOffset.left});
+						$(ui.helper).css("margin-top", 0);
+						$("#video-list-container").sortable("option", "axis", "y");
+						$("#video-list-container").sortable("option", "alreadyShrunk", false);
+					});
+					$("#video-list-container").sortable("option", "alreadyShrunk", false);
+				}
+			},
+			stop: function(event, ui) {
+				var playlistOffset = $("#video-list-container").offset();
+				$(ui.helper).css("height", 60).css("width", 285);
+				$(ui.helper).removeClass("shrunken-playlist-cell");
+				$(ui.helper).offset({top: playlistOffset.top, left: playlistOffset.left});
+				$(ui.helper).css("margin-top", 0);
+				$("#video-list-container").sortable("option", "axis", "y");
+				$("#video-list-container").sortable("option", "alreadyShrunk", false);
+			},
+			
+			beforeStop: function(event, ui) {
+			}
 	 });
 	 $("#video-list-container").disableSelection();
   },
@@ -638,7 +709,6 @@ $(function() {
 
 	resetPlaylist : function() {
 		$("#video-list-container.videoListContainer").empty();
-		//_.each(this.playlist.get("videos"), function(playlistItemModel) {this.addVideo(playlistItemModel)}, this);
 		this.playlist.get("videos").each(function(playlistItemModel) {this.addVideo(playlistItemModel, this.playlist.get("playlistId"))}, this);
 	}
  });
@@ -928,9 +998,9 @@ $(function() {
    var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
    console.log(this.options.video.attributes);
    this.options.playlistCollection.addVideoToPlaylist(selectedPlaylist, playlistItemModel);
-	 var cellId = "#search_result_" + videoID; 
-	 $($(cellId)[0]).addClass("added"); 
-  },
+	 var cellId = "#search_result_" + videoID;
+	 $(cellId).addClass("added");
+  },  
 
   previewVideo: function(e) {
    var videoID = e.data.cell.video.get("videoId");
@@ -1112,10 +1182,8 @@ $(function() {
 
   removeFromPlaylist: function(event) {
 	 $(this).parent().parent().parent().remove();
-	 var collectionReference = event.data.playlistCollection;
-	 var playlistModelToRemove = ss_modelWithAttribute(collectionReference, "videoId", event.data.videoModel.get("videoId"));
-   collectionReference.remove(playlistModelToRemove);
-   SocketManagerModel.deleteFromPlaylist(event.data.videoModel.get("playlistId"), event.data.videoModel.get("videoId"));
+	 var playlistFrom = window.SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylist[event.data.videoModel.get("playlistId")];
+	 playlistFrom.removeFromPlaylist(event.data.videoModel.get("videoId"));
   },
 
   toTheTop: function(event) {

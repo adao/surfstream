@@ -880,28 +880,28 @@
 			socket.on('playlist:addVideo', function(data) {
 				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author)) {
 					thisUser.savePlaylist(data.playlistId);
-					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
 				if (playlists[data.playlistId].moveToTop(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 
 			socket.on('playlist:delete', function(data) {
 				if (playlists[data.playlistId].deleteVideo(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 			
 			socket.on('playlist:moveVideo', function(data) {
 				if (playlists[data.playlistId].moveToIndex(data.videoId, data.index)) {
 					thisUser.savePlaylist(data.playlistId);
-					//console.log('playlist is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			})
 		},
