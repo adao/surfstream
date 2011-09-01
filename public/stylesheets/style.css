@@ -1401,6 +1401,33 @@ background-color: green,
   margin-top: 0px;
   margin-left: -1px;
 }
+#playlist-delete-modal {
+  display: none;
+  background-color: #313131;
+  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  color: #fff;
+  position: absolute;
+  top: 110px;
+  left: 50%;
+  margin-left: -150px;
+  font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+  overflow-y: none;
+  overflow-x: none;
+  width: 300px;
+  height: 140px;
+  z-index: 10000;
+}
+#playlist-delete-modal .dialog-titlebar {
+  background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
+  background: -moz-linear-gradient(top, #34c8ff, #008ab8);
+  background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
+}
+#playlist-delete-modal .dialog-body button,
+#playlist-delete-modal .dialog-buttons button {
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
+  background: -moz-linear-gradient(top, #666, #434343);
+  background-image: -o-linear-gradient(top, #666, #434343);
+}
 .ui-sortable-placeholder {
   width: 50px;
   height: 30px;
