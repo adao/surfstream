@@ -122,7 +122,7 @@
 			var options = { 
 				host: 'gdata.youtube.com',
 				port: 80,
-				path: '/feeds/api/videos/'+videoId+'/related?alt=json&start-index=1&max-results=25&v=2',
+				path: '/feeds/api/videos/'+videoId+'/related?alt=json&format=5&start-index=1&max-results=25&v=2',
 			};
 			
 			var room = this.room;
