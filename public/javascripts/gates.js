@@ -905,7 +905,8 @@ $(function() {
    this.$(".playlist").addClass("active");
    this.$(".search").removeClass("active");
    this.searchView.hide();
-   this.playlistCollectionView.show();
+	 this.playlistCollectionView.show();
+	 this.searchView.previewPlayerView.hidePreviewPlayer();  
   },
 
   activateSearch: function() {
@@ -1202,7 +1203,10 @@ $(function() {
    // }, "slow", null, function() {
    // $("#preview-container").css('display', 'none');
    // });
-	 window.YTPlayerTwo.stopVideo();
+		if(typeof(window.YTPlayerTwo.stopVideo) != "undefined") {
+	          window.YTPlayerTwo.stopVideo();
+	      }
+	
    $("#searchContainer").animate({'height': 320, "margin-top":0}, 500);
 	 $("#previewContainer").animate({'top': -187}, 500);
    // $("#searchContainer").animate({
