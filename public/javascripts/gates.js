@@ -1783,6 +1783,10 @@ $(function() {
 		    return false;
 		});
 		
+		$("#contactButton").click(function() {
+			window.open("mailto:contact@surfstream.tv", '_parent');
+		});
+		
 		this.maxAudioChannels = 15;
   },
 
@@ -2330,10 +2334,12 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 }
 
 function updateTime() {
-	$("#countdownFull").html("Time: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
-	if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
-	 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
-	}
+	if(window.YTPlayer){
+		$("#countdownFull").html("Time: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+		if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
+		 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
+		}
+	}	
 }
 
 function skipVideo() {
@@ -2360,3 +2366,4 @@ function strip(html)
    tmp.innerHTML = html;
    return tmp.textContent||tmp.innerText;
 }
+
