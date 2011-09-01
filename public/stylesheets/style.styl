@@ -256,7 +256,7 @@ div.chatContainer
 			min-height: 20px
 			height: auto
 			overflow-x: hidden
-			overflow-y: visible;
+			overflow-y: hidden;
 			width: 276px
 			max-width: 274px
 			font-size: 14px
@@ -767,14 +767,14 @@ button.playlist, button.playlist.active, button.search, button.search.active
 
 #room-modal
 	position: absolute
-	top: 200px
+	top: 40px
 	left: 50%
-	margin-left: -300px
+	margin-left: -430px
 	font-family: FontFamily
 	overflow-y: none
 	overflow-x: none
-	width: 600px
-	height: 404px
+	width: 860px
+	height: 637px
 	background-color: black
 	z-index: 10000
 	border: 1px solid #666
@@ -796,7 +796,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		-webkit-border-top-left-radius: 2px
 		form.roomSearch
 			display: inline-block
-			width: 600px
+			width: 860px
 			height: 54px
 			input
 				color: silver
@@ -809,7 +809,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				-moz-border-radius: 6px
 				font-size: 16px
 				margin-top: 9px
-				width: 580px
+				width: 800px
 				height: 36px
 				border: 0
 				outline: 0
@@ -826,12 +826,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			background-color: transparent
 	#roomsWrapper
 		background-color: #313131
-		width: 600px
-		height: 310px
+		width: 860px
+		height: 543px
 		overflow-y: scroll
 		overflow-x: hidden
 		table#roomsTable
-			width: 590px
+			width: 844px
 			border-collapse: collapse
 			tr.table-header
 				background-color: black
@@ -1282,17 +1282,19 @@ div#top-video-name
 		width: 100%
 	
 #preview-container
-	border: 1px solid #585858
-	height: 202px                     
-#close-preview-player 
-	float: right
-	background: transparent
-	button.hidePlayer
+	height: 214px!important                     
+	#close-preview-player 
+		float: right
 		background: transparent
-		border: none
-		color: #D4D4D4
-	button.hidePlayer:hover
-		color: #E7E7E7
+		height: 15px
+		button.hidePlayer
+			vertical-align: top
+			margin-top: -4px
+			background: transparent
+			border: none
+			color: #D4D4D4
+		button.hidePlayer:hover
+			color: #E7E7E7
 
 .default
 	position: absolute
@@ -1583,18 +1585,26 @@ a#fdbk_tab
 .videoChatCell
 	width: 285px; 
 	height: 60px;
+	font-size: 12px
 	.videoChatImg
 		float:left; 
 		width: 63px;
 		height:50px;
-		margin-top: 2px;
+		margin: 2px 0 2px 2px
 	.videoChatInfo
 		float:right; 
-		margin-left: 2px;
-		width: 208px; 
+		margin: 2px 0 0 7px
+		width: 202px; 
 		height: 50px;
+		padding: 0!important
 		.videoChatNowPlaying
+			padding: 0!important
 			font-weight: bold
+			display: block!important
+			font-size: 13px
 		.videoChatCellText
+			padding: 0!important 
 			display: inline
+		
+
 		
