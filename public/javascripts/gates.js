@@ -719,7 +719,6 @@ $(function() {
 	},
 	
 	addToPlaylist: function(event) {
-		console.log("ABOOGA BOOGA");
 		var selectedPlaylistId = $(event.data.historyItem.el).find(".addToPlaylistFromHistory").val();
 		if (selectedPlaylistId == 0)
 			return;
@@ -1899,27 +1898,6 @@ $(function() {
 			app.get("userModel").get("playlistCollection").addVideoToPlaylist(playlistModel.get("playlistId"), copyPlaylistItemModel);
 		}
     if (!window.playerLoaded) {
-<<<<<<< HEAD
-			var params = {
-      	allowScriptAccess: "always",
-     		wmode: "opaque",
-				modestbranding: 1
-		 	};
-     	var atts = {
-      	id: "YouTubePlayer"
-     	};
-     	swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
-     	window.video_ID = video.id;
-		 	setInterval(updateTime, 1000);
-    } else {
-			console.log('player loaded, playing video at time '+video.time)
-     	window.YTPlayer.loadVideoById(video.id, video.time);
-     	new ChatCellView({
-      	username: "Now Playing: ",
-      	msg: video.title
-     	});
-     	app.get("mainView").chatView.chatContainer.activeScroll();
-=======
      var params = {
       allowScriptAccess: "always",
      	wmode: "opaque",
@@ -1940,7 +1918,6 @@ $(function() {
 			videoTitle: video.title
      });
      app.get("mainView").chatView.chatContainer.activeScroll();
->>>>>>> 9b86e162a0c02eac70f87bfade603e9a94883100
     }
     //HACK
     $("#room-name").html(video.title)

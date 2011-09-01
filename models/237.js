@@ -31,6 +31,8 @@
 			
 			this.isDJ = true;
 			this.takeSuggest = false;
+			
+			this.autoplay = false;
 		},
 		
 		addValListeners: function(socket) {
@@ -55,7 +57,7 @@
 		playVideo: function() {
 			var roomName = this.room.get('name');
 			console.log('['+roomName+'][VAL] playVideo(): num users --> '+this.room.users.length);
-			if(this.room.users.length == 0) return;
+			if(this.room.users.length == 0 && !this.autoplay) return;
 
 			var rc = this.room.redisClient;
 			var roomName = this.room.get('name');
@@ -66,23 +68,27 @@
 				if(val.room.currVideo) return;
 				if(err) {
 					console.log('['+roomName+'][VAL] playVideo() | rc.lpop : ERROR! '+err);
+					this.autoplay = false;
 					val.fetchYouTubeVideo();
 					return;
 				}
 				if(reply) {
-					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
+					this.autoplay = true;
+					var rawVideo = JSON.parse(reply);
 					var videoToPlay = new models.Video({
-						videoId: reply.videoId,
-						duration: reply.duration,
-						title: reply.title,
-						thumb: reply.thumb,
-						author: reply.author,
+						videoId: rawVideo['id'],
+						duration: rawVideo['duration'],
+						title: rawVideo['title'],
+						thumb: rawVideo['thumb'],
+						author: rawVideo['author'],
 						dj: 'VAL'
 					});
-					
+
+					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
 					val.room.vm.play(videoToPlay);
 				} else {
 					console.log('['+roomName+'][VAL] playVideo(): no videos in the autoplaylist, fetching one from YouTube');
+					this.autoplay = false;
 					val.fetchYouTubeVideo();
 				}
 			});
@@ -581,7 +587,7 @@
 			});
 			
 			if(this.recentVids.length >= HIST_NUM_RECENT)
-				this.recentVids.remove(this.recentVids.at(HIST_NUM_RECENT-1)); //remove the oldest video
+				this.recentVids.remove(this.recentVids.at(this.recentVids.length-1)); //remove the oldest video
 			this.recentVids.add(videoToAdd, { at: 0 });
 			this.room.redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
 
@@ -999,7 +1005,7 @@
 
 					djs.room.sockM.announceDJs(); 
 
-					if(djs.length == 1) { //this user is the only human dj
+					if(djs.length == 1 && !djs.room.val.autoplay) { //this user is the only human dj
 						if(djs.room.currVideo) {	//VAL is playing a video, need to clear it
 							console.log('['+roomName+'][socket] [dj:join] -- clearing the timeout for VAL\'s video'+djs.room.currVideo.get('timeoutId'));
 							clearTimeout(djs.room.currVideo.get('timeoutId'));
