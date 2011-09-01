@@ -1,4 +1,4 @@
-FontFamily = Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
+FontFamily = "Segoe UI",Candara,"Bitstream Vera Sans","DejaVu Sans","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
 
 body
 	background-color: #141414
@@ -91,9 +91,6 @@ button
 	width: 57px
 	height: 68px
 
-div #preview-container
-	display: none
-	height: 195
 div#loadingScreen
 	background-color: color
 div#frontdoor
@@ -173,7 +170,10 @@ div#outer
 						height: 320px
 						width: 300px
 					#searchBar
+						height: 64px;
 						.inputBox
+							z-index: 5
+							position: absolute;
 							background-color: #666
 							background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
 							background: -moz-linear-gradient(top,  #666,  #434343)
@@ -216,7 +216,7 @@ div#outer
 
 //Chat Box
 div.chatContainer
-	font-family: FontFamily
+	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
 	width: 300px
 	height: 220px
 	max-width: 300px
@@ -256,7 +256,7 @@ div.chatContainer
 			min-height: 20px
 			height: auto
 			overflow-x: hidden
-			overflow-y: visible;
+			overflow-y: hidden;
 			width: 276px
 			max-width: 274px
 			font-size: 14px
@@ -434,6 +434,7 @@ div.historyContainer
                
 	
 #viewMoreCellContainer
+	font-family: FontFamily   
 	width: 285px
 	height: 60px
 	.viewMoreCellText
@@ -626,6 +627,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	color: #585858
 	
 .videoView
+	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
 	color: #D4D4D4
 	height: 378px
 	width: 300px
@@ -763,18 +765,18 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		background: transparent
 
 #fullscreen
-	text-indent: -4px
+	text-indent: -2px
 
 #room-modal
 	position: absolute
-	top: 200px
+	top: 40px
 	left: 50%
-	margin-left: -300px
+	margin-left: -430px
 	font-family: FontFamily
 	overflow-y: none
 	overflow-x: none
-	width: 600px
-	height: 404px
+	width: 860px
+	height: 637px
 	background-color: black
 	z-index: 10000
 	border: 1px solid #666
@@ -796,7 +798,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		-webkit-border-top-left-radius: 2px
 		form.roomSearch
 			display: inline-block
-			width: 600px
+			width: 860px
 			height: 54px
 			input
 				color: silver
@@ -809,7 +811,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				-moz-border-radius: 6px
 				font-size: 16px
 				margin-top: 9px
-				width: 580px
+				width: 800px
 				height: 36px
 				border: 0
 				outline: 0
@@ -826,12 +828,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			background-color: transparent
 	#roomsWrapper
 		background-color: #313131
-		width: 600px
-		height: 310px
+		width: 860px
+		height: 543px
 		overflow-y: scroll
 		overflow-x: hidden
 		table#roomsTable
-			width: 590px
+			width: 844px
 			border-collapse: collapse
 			tr.table-header
 				background-color: black
@@ -1231,14 +1233,40 @@ div#top-video-name
 
 #YouTubePlayerTwo
 	margin-top: 0px
-	margin-left: -1px
+	margin-left: 0px
+	height: 187px
 	
+#playlist-delete-modal
+	display: none
+	background-color: #313131
+	font-family: FontFamily
+	color: white
+	position: absolute
+	top: 110px
+	left: 50%
+	margin-left: -150px
+	font-family: FontFamily
+	overflow-y: none
+	overflow-x: none
+	width: 300px
+	height: 140px
+	z-index: 10000
+	.dialog-titlebar
+		background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
+		background: -moz-linear-gradient(top,  #34C8FF,  #008AB8)
+		background-image: -o-linear-gradient(top, #34C8FF, #008AB8)
+	.dialog-body
+	.dialog-buttons
+		button
+			background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
+			background: -moz-linear-gradient(top,  #666,  #434343)
+			background-image: -o-linear-gradient(top, #666, #434343)
+			
 .ui-sortable-placeholder
 	width: 50px
 	height: 30px
 
 .ui-autocomplete
-	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
 	list-style-type: none
 	width: 250px
 	margin-top: 5px
@@ -1254,20 +1282,31 @@ div#top-video-name
 		background-color: #3C6EC7
 		color: white
 		width: 100%
-	
-#preview-container
-	border: 1px solid #585858
-	height: 202px                     
+	                 
 #close-preview-player 
-	float: right
-	background: transparent
+	margin-top: -32px;
+	position: absolute;
+	margin-left: 88px;
+	height: 24px;
+	width: 207px;
+	background: -webkit-gradient(linear, left top, left bottom, from(rgb(39,39,39)), to(rgb(15,15,15)))
+	background: -moz-linear-gradient(top,  rgb(39,39,39),  rgb(15,15,15))
+	background-image: -o-linear-gradient(top, rgb(39,39,39), rgb(15,15,15))
+	border-top: 1px solid rgb(72,70,70)
 	button.hidePlayer
 		background: transparent
 		border: none
 		color: #D4D4D4
+		font-weight: bold
+		float: right
 	button.hidePlayer:hover
 		color: #E7E7E7
-
+	
+#previewContainer
+	height: 213px
+	position: relative;
+	top: -187px;
+	
 .default
 	position: absolute
 
@@ -1347,7 +1386,7 @@ div#top-video-name
 	position: absolute
 	font-size: 12px
 	margin-top: 37px
-	margin-left: 6px
+	margin-left: 8px
 	font-weight: bold
 		
 #fullscreen.fully
@@ -1463,11 +1502,15 @@ a#fdbk_tab
 	z-index: 10
 
 .dropdown-title
-	margin-right: 2px
+	margin-left: 6px
+	margin-top: 7px
 #playlistDropdown
 	font-size: 12px
-	margin-right: 3px
-	float: right
+	z-index: 2;
+	position: absolute;
+	margin-top: 35px;
+	background-color: #373737;
+	width: 300px
 #footer
 	position: absolute
 	width: 960px
@@ -1557,18 +1600,26 @@ a#fdbk_tab
 .videoChatCell
 	width: 285px; 
 	height: 60px;
+	font-size: 12px
 	.videoChatImg
 		float:left; 
 		width: 63px;
 		height:50px;
-		margin-top: 2px;
+		margin: 2px 0 2px 2px
 	.videoChatInfo
 		float:right; 
-		margin-left: 2px;
-		width: 208px; 
+		margin: 2px 0 0 7px
+		width: 202px; 
 		height: 50px;
+		padding: 0!important
 		.videoChatNowPlaying
+			padding: 0!important
 			font-weight: bold
+			display: block!important
+			font-size: 13px
 		.videoChatCellText
+			padding: 0!important 
 			display: inline
+		
+
 		
