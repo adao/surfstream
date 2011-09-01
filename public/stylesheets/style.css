@@ -289,7 +289,7 @@ div.chatContainer #messages div.messageContainer {
   min-height: 20px;
   height: auto;
   overflow-x: hidden;
-  overflow-y: visible;
+  overflow-y: hidden;
   width: 276px;
   max-width: 274px;
   font-size: 14px;
@@ -865,14 +865,14 @@ button
 }
 #room-modal {
   position: absolute;
-  top: 200px;
+  top: 40px;
   left: 50%;
-  margin-left: -300px;
+  margin-left: -430px;
   font-family: Lucida Grande, Lucida Sans Unicode, Trebuchet MS, Helvetica, Arial, Verdana, sans-serif;
   overflow-y: none;
   overflow-x: none;
-  width: 600px;
-  height: 404px;
+  width: 860px;
+  height: 637px;
   background-color: #000;
   z-index: 10000;
   border: 1px solid #666;
@@ -896,7 +896,7 @@ button
 }
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
-  width: 600px;
+  width: 860px;
   height: 54px;
 }
 #room-modal #searchbar form.roomSearch input {
@@ -910,7 +910,7 @@ button
   -moz-border-radius: 6px;
   font-size: 16px;
   margin-top: 9px;
-  width: 580px;
+  width: 800px;
   height: 36px;
   border: 0;
   outline: 0;
@@ -930,13 +930,13 @@ button
 }
 #room-modal #roomsWrapper {
   background-color: #313131;
-  width: 600px;
-  height: 310px;
+  width: 860px;
+  height: 543px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
 #room-modal #roomsWrapper table#roomsTable {
-  width: 590px;
+  width: 844px;
   border-collapse: collapse;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header {
@@ -1357,7 +1357,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1427,19 +1427,21 @@ background-color: green,
   width: 100%;
 }
 #preview-container {
-  border: 1px solid #585858;
-  height: 202px;
+  height: 214px !important;
 }
-#close-preview-player {
+#preview-container #close-preview-player {
   float: right;
   background: transparent;
+  height: 15px;
 }
-#close-preview-player button.hidePlayer {
+#preview-container #close-preview-player button.hidePlayer {
+  vertical-align: top;
+  margin-top: -4px;
   background: transparent;
   border: none;
   color: #d4d4d4;
 }
-#close-preview-player button.hidePlayer:hover {
+#preview-container #close-preview-player button.hidePlayer:hover {
   color: #e7e7e7;
 }
 .default {
@@ -1766,22 +1768,28 @@ a#fdbk_tab {
 .videoChatCell {
   width: 285px;
   height: 60px;
+  font-size: 12px;
 }
 .videoChatCell .videoChatImg {
   float: left;
   width: 63px;
   height: 50px;
-  margin-top: 2px;
+  margin: 2px 0 2px 2px;
 }
 .videoChatCell .videoChatInfo {
   float: right;
-  margin-left: 2px;
-  width: 208px;
+  margin: 2px 0 0 7px;
+  width: 202px;
   height: 50px;
+  padding: 0 !important;
 }
 .videoChatCell .videoChatInfo .videoChatNowPlaying {
+  padding: 0 !important;
   font-weight: bold;
+  display: block !important;
+  font-size: 13px;
 }
 .videoChatCell .videoChatInfo .videoChatCellText {
+  padding: 0 !important;
   display: inline;
 }
