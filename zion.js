@@ -23,7 +23,7 @@ require('jade');
 	
 /* Custom Modules */
 var facebook = require('./facebook'),
-	m = require('./models/237');
+	models = require('./models/237');
 
 io.configure(function () {
 	io.set('log level', 2); 
@@ -58,6 +58,22 @@ app.configure('production', function(){
 
 require('./router.js').setupRoutes(app);
 
+var adminSUB = redis.createClient();
+
+adminSUB.on('ready', function() {
+	console.log('subscribing to admin');
+	adminSUB.subscribe('admin');
+})
+
+adminSUB.on('message', function(channel, message) {
+	console.log('received message from channel: '+channel+' with message: '+message)
+	message = JSON.parse(message)
+	
+	if(message.type == 'room:delete') {
+		
+	}
+})
+
 RoomManager = Backbone.Model.extend({
 	initialize: function() {
 		
@@ -66,9 +82,8 @@ RoomManager = Backbone.Model.extend({
 		var roomMgr = this;
 		redisClient.lrange('rooms',0,-1, function(err, rooms) {
 			if(rooms) { 
-				console.log('[   zion    ][RoomManager] initialize(): fetching rooms from redis...')
+				console.log('[   zion    ][RoomManager] initialize(): fetching rooms from redis...'+rooms)
 				_.each(rooms, function(roomId) {
-					console.log('\t\t\t...'+roomId)
 					roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
 					roomMgr.roomMap[roomId].set({ name: roomId });
 				});
