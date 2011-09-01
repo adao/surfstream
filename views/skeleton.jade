@@ -31,15 +31,15 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		#loadingScreen
 		#frontdoor
 			#logo
-				img(src='/images/room/surfstream-logo-large.png')
+				img(src='/images/room/final-logo-first-launch2.png')
 			#instructions
 				h1 Watch Videos Together
 				#fb-root
 				script(type="text/javascript", src="/javascripts/facebookInitOne.js")
-				button#fb-auth Login with Facebook
+				button#fb-auth
 		#outer
 			#header 
-				img(src="/images/room/final-logo-72-web.png", id="logo")
+				img(src="/images/room/final-logo-room.png", id="logo")
 				#cur-room-name 
 				#cur-video-info
 					#cur-video-name
@@ -53,9 +53,10 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 					#chat
 			#footer
 				span © 2011 surfstream.tv
+				a(id="contactButton") Contact Us
 				a Terms of Service
 				a Privacy Policy
-				a Copyright
+				a Copyright			
 				a(id="feedbackSpan") Tell Us What You Think
 		#nowPlayingFull(style="display: none")
 			div#fullTitle 
@@ -64,6 +65,7 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		include audiotag
 		include chat
 		include chatcell
+		include noresults
 		include sidebar
 		include roominfo
 		include share
@@ -82,6 +84,7 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		include playlist
 		include playlistmember
 		include viewmorecell
+		include nowplayingChat
 		#getOff(display="none")
 		script
 			var is_ssl = ("https:" == document.location.protocol);
