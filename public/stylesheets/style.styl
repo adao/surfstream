@@ -198,8 +198,8 @@ div#outer
 						-webkit-border-top-right-radius: 2px!important
 						float: left
 					.playlist:hover, .search:hover
-						-moz-box-shadow:inset 0 0 2px #000000;
-						-webkit-box-shadow:inset 0 0 2px #000000;
+						-moz-box-shadow:inset 0 0 4px #000000;
+						-webkit-box-shadow:inset 0 0 4px #000000;
 						box-shadow:inset 0 0 4px #000000; 
 					.search
 						float: right
@@ -897,12 +897,16 @@ button.playlist, button.playlist.active, button.search, button.search.active
 					-moz-border-radius: 0px!important
 					width: 50px
 					padding: 6px
-				th.room-name-hd, th.room-friends-hd, th.viewers-hd
+				th.room-name-hd
+					width: 245px
+				th.room-name-hd, th.room-friends-hd, th.viewers-hd, th.room-history-hd
 					border-right: 1px solid #585858;    
 			tr.room-row
 				color: white
 				height: 60px
 				cursor: pointer
+				.room-friends
+					text-indent: 8px
 				td
 					border-right: 1px solid #585858
 					.num-viewers, .num-djs
@@ -923,7 +927,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						.listed-room-name
 							font-size: 16px 
 						.listed-video-name
-							font-size: 12px
+							font-size: 14px
 			tr.room-row:nth-child(odd)
 				background-color: #313131
 			tr.room-row:nth-child(odd)
@@ -1140,6 +1144,14 @@ div#top-video-name
 	overflow-y: scroll
 	overflow-x: hidden
 	z-index: -1
+	#playlist-notification-container
+		width: 285px
+		height: 18px
+		font-size: 12px
+		padding: 5px 0 0 8px
+		color: white
+		font-weight: bold
+		display: none
 	.videoListCellContainer:nth-child(odd)
 		background-color: #313131  
 	.videoListCellContainer:nth-child(even)
@@ -1701,3 +1713,39 @@ a#fdbk_tab
 	margin-right: 3px
 
 		
+		
+#settings
+	display: inline-block
+	float: right
+	height: 26px
+	width: 90px
+	margin-top: 3px
+	margin-left: 10px
+	background-color: #c0c0c0
+	color: #585858
+	background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d))
+	background: -moz-linear-gradient(top,  #c0c0c0,  #8d8d8d)
+	background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d)
+	border-radius: 2px
+	-webkit-border-radius: 2px
+	-moz-border-radius: 2px
+	cursor: pointer
+	#settings-text
+		vertical-align: top
+		font-size: 14px
+		display: inline-block
+		padding-top: 4px
+		text-indent: 6px
+		width: 60px
+	#settings-arrow
+		height: 12px
+		width: 16px
+		display: inline-block
+		margin-top: 7px
+		float: right
+		margin-right: 6px
+		background: url('/images/room/newicons/settings-arrow.png') 50% 50% no-repeat
+#settings:hover
+		-moz-box-shadow:inset 0 0 1px #000000;
+		-webkit-box-shadow:inset 0 0 1px #000000;
+		box-shadow:inset 0 0 1px #000000;
