@@ -242,7 +242,7 @@ div#outer {
   height: 17px;
   background: url("/images/room/clearsearch.png") 50% 50% no-repeat;
 }
-div.chatContainer {
+.chatContainer {
   font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   width: 300px;
   height: 220px;
@@ -250,23 +250,17 @@ div.chatContainer {
   max-height: 220px;
   display: block;
 }
-div.chatContainer div.chatHeader {
+.chatContainer .chatHeader {
   width: 300px;
   height: 30px;
   background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   background: -moz-linear-gradient(top, #666, #434343);
+  background-image: -o-linear-gradient(top, #666, #434343);
 }
-div.chatContainer div.chatHeader background-image: -o-linear-gradient(top,
-div.chatContainer div.chatHeader #666,
-div.chatContainer div.chatHeader #434343),
-div.chatContainer div.chatHeader img.chatIcon {
-  display: inline-block;
-  width: 27px;
-  height: 24px;
-  margin-top: 4px;
-  margin-left: 5px;
+.chatContainer  img.chatIcon {
+  background-color: #f00;
 }
-div.chatContainer div.chatHeader div.chatTitle {
+.chatContainer  .chatTitle {
   margin-top: 6px;
   font-size: 16px;
   font-weight: bold;
@@ -277,7 +271,7 @@ div.chatContainer div.chatHeader div.chatTitle {
   height: 18px;
   width: 36px;
 }
-div.chatContainer #messages {
+.chatContainer #messages {
   background-color: #373737;
   border: none;
   color: #000;
@@ -285,7 +279,7 @@ div.chatContainer #messages {
   overflow-y: scroll;
   overflow-x: hidden;
 }
-div.chatContainer #messages div.messageContainer {
+.chatContainer #messages div.messageContainer {
   padding: 2px 4px;
   min-height: 20px;
   height: auto;
@@ -296,21 +290,21 @@ div.chatContainer #messages div.messageContainer {
   font-size: 14px;
   color: #d4d4d4;
 }
-div.chatContainer #messages div.messageContainer span {
+.chatContainer #messages div.messageContainer span {
   padding: 2px 0px 2px;
   margin-right: 3px;
   font-weight: bold;
   display: inline-block;
 }
-div.chatContainer #messages div.messageContainer div {
+.chatContainer #messages div.messageContainer div {
   padding-top: 2px;
   padding-bottom: 2px;
   display: inline;
 }
-div.chatContainer #messages div.messageContainer:nth-child(odd) {
+.chatContainer #messages div.messageContainer:nth-child(odd) {
   background-color: #313131;
 }
-div.chatContainer form.inputBox {
+.chatContainer form.inputBox {
   background-color: #666;
   background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   background: -moz-linear-gradient(top, #666, #434343);
@@ -322,7 +316,7 @@ div.chatContainer form.inputBox {
   -moz-border-bottom-right-radius: 2px;
   border-bottom-right-radius: 2px;
 }
-div.chatContainer form.inputBox input {
+.chatContainer form.inputBox input {
   border-radius: 4px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -336,7 +330,7 @@ div.chatContainer form.inputBox input {
   text-indent: 4px;
   color: #c0c0c0;
 }
-div.chatContainer form.inputBox input:focus {
+.chatContainer form.inputBox input:focus {
   background-color: #e7e7e7;
   color: #000;
 }
@@ -536,7 +530,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -70px;
   margin-top: 23px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 63px;
   text-align: left;
   text-indent: 1px;
@@ -1294,7 +1288,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1616,7 +1610,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1626,7 +1620,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -1652,7 +1646,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -40%;
-  background: rgba(0,0,0,0.70);
+  background: rgba(0,0,0,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1698,7 +1692,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1709,7 +1703,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 #sofa-remote {
   left: 170px;
@@ -1876,7 +1870,9 @@ a#fdbk_tab {
   padding: 0 !important;
   display: inline;
 }
-<<<<<<< HEAD
+.friendInRoomPic {
+  margin-right: 3px;
+}
 #settings {
   display: inline-block;
   float: right;
@@ -1915,8 +1911,4 @@ a#fdbk_tab {
   -moz-box-shadow: inset 0 0 1px #000;
   -webkit-box-shadow: inset 0 0 1px #000;
   box-shadow: inset 0 0 1px #000;
-=======
-.friendInRoomPic {
-  margin-right: 3px;
->>>>>>> 55553822dfcda1f5979fa77170e3c5dbd28626fc
 }
