@@ -283,7 +283,7 @@ div#outer {
   margin: 3px 0 0 4px;
 }
 .chatContainer  .chatTitle {
-  margin-top: 6px;
+  margin-top: 5px;
   font-size: 16px;
   font-weight: bold;
   text-indent: 10px;
@@ -796,8 +796,11 @@ button.search.active {
 #vol-up {
   text-indent: -3px;
 }
-.vol-container {
+.volContainer {
   width: 114px;
+  height: 25px;
+  display: block;
+  margin-top: 6px;
 }
 .buttonContainer,
 .bottombuttonContainer,
@@ -929,7 +932,7 @@ button
   -moz-border-radius: 6px;
   font-size: 16px;
   margin-top: 9px;
-  width: 800px;
+  width: 840px;
   height: 36px;
   border: 0;
   outline: 0;
