@@ -245,9 +245,10 @@ div#outer
 		background-image: -o-linear-gradient(top, #666, #434343)
 	}		
 		img.chatIcon
-			margin-top: 3px 0 0 4px
+			vertical-align: top
+			margin: 3px 0 0 4px
 		.chatTitle
-			margin-top: 6px
+			margin-top: 5px
 			font-size: 16px
 			font-weight: bold
 			text-indent: 10px
@@ -714,8 +715,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 #vol-up
 	text-indent: -3px
 
-.vol-container
+.volContainer
 	width: 114px
+	height: 25px
+	display: block
+	margin-top: 6px
 
 .buttonContainer, .bottombuttonContainer, .bottombuttonContainerwide  
 	border: none
@@ -823,7 +827,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				-moz-border-radius: 6px
 				font-size: 16px
 				margin-top: 9px
-				width: 800px
+				width: 840px
 				height: 36px
 				border: 0
 				outline: 0
@@ -891,7 +895,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						.listed-video-name
 							font-size: 14px
 						.true-room-name
-							display: none
+							display: none 
 			tr.room-row:nth-child(odd)
 				background-color: #313131
 			tr.room-row:nth-child(odd)
@@ -1056,7 +1060,8 @@ div#top-video-name
 	vertical-align: top
 	
 .playlist-hover-highlight
-	background: yellow
+	background: #141414
+	color: silver
 	
 #playlist-collection-display
 	border: none
