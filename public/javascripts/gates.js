@@ -1461,10 +1461,20 @@ $(function() {
 		},
 	
 		render: function() {
-			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle"); 
+			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle");
+			var friendsHTML = this.renderFriends()
 			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + roomListCellModel.get("curVidTitle") : "" ,
-				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("friends").length}));
+				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: friendsHTML}));
 			return this;
+		},
+		
+		renderFriends: function() {
+			var result = "";
+			var friends = this.options.roomListCellModel.get("friends");
+			for (var i in friends){
+				result += "<img class='friendInRoomPic' src='http://graph.facebook.com/"+ friends[i] + "/picture' style='width:45px; height:45px;'>"
+			}
+			return result;
 		},
 		
 	  clickJoinRoom: function(el) {
