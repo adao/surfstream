@@ -1203,7 +1203,8 @@ background-color: green,
   vertical-align: top;
 }
 .playlist-hover-highlight {
-  background: #ff0;
+  background: #141414;
+  color: #c0c0c0;
 }
 #playlist-collection-display {
   border: none;
