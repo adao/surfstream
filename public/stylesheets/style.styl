@@ -23,74 +23,36 @@ button
 		display: inline-block
 		width: 455px
 		height: 40px
-	#cur-video-info
-		margin-left: 25px
-		height: 40px
-		vertical-align: top
-		overflow: hidden
-		text-overflow: ellipsis
-		white-space: nowrap
-		color: #B2B2B2
-		display: inline-block
-		#cur-video-name
-			overflow: hidden
-			text-overflow: ellipsis
-			white-space: nowrap
-			display: block
-			height: 22px
-			font-size: 14px
-		#cur-video-time
-			display: inline-block
-			height: 13px
-			text-align: left
-			font-size: 12px
-			width: 100px
-			vertical-align: top
-			margin-left: 4px
-			margin-top: -1px
-		#clock
-			width: 12px
-			height: 13px
-			vertical-align: top
 
 #now-playing-tv
 	width: 640px;
-	height: 50px
+	height: 60px
 	background-color: black
 	z-index: 31
 	margin-left: 10px
 	opacity: 0.85
-	margin-top: 10px
+	margin-top: 342px
 	position: absolute
 	display:none
+	font-size: 16px
+	color: silver
 	#cur-video-name
-		overflow: hidden
-		text-overflow: ellipsis
-		white-space: nowrap
+		margin-top: 2px
 		display: block
-		font-size: 24px
-		position: absolute
-		z-index: 334
-		color: white
-		margin-left: 30px
-		margin-top: 19px
-		width: 600px;
-	#cur-video-time
-		display: inline-block
-		font-size: 12px
-		vertical-align: top
-		margin-top: 8px
-		position: absolute
-		color: white
-		font-weight:bold
-		margin-left: 20px;
-	#clock
-		width: 12px
-		height: 13px
-		margin-top: 8px
-		margin-left: 2px
-		vertical-align: top
-		position: absolute;
+		text-indent: 4px
+	#time-container
+		margin-right: 4px
+		display: block
+		margin-top: 6px
+		#clock, #cur-video-time
+			vertical-align: top
+		#clock
+			margin: 1px 4px 0px 4px
+			display: inline-block
+		#cur-video-time
+			display: inline-block
+			margin-top: -3px
+			
 #now-playing-container
 	height: 100px!important
 	width: 300px!important
@@ -283,7 +245,7 @@ div#outer
 		background-image: -o-linear-gradient(top, #666, #434343)
 	}		
 		img.chatIcon
-			background-color: red
+			margin-top: 3px 0 0 4px
 		.chatTitle
 			margin-top: 6px
 			font-size: 16px
@@ -1146,12 +1108,15 @@ div#top-video-name
 	z-index: -1
 	#playlist-notification-container
 		width: 285px
-		height: 18px
+		min-height: 18px
 		font-size: 12px
 		padding: 5px 0 0 8px
-		color: white
+		color: #D4D4D4
 		font-weight: bold
 		display: none
+		#playlist-notification-text
+			width: 279px
+			margin-bottom: 2px
 	.videoListCellContainer:nth-child(odd)
 		background-color: #313131  
 	.videoListCellContainer:nth-child(even)
@@ -1542,8 +1507,8 @@ div#top-video-name
 	position: absolute
 	margin-left: 2px
 	z-index: 10000
-	margin-top: 345px
-	margin-left: 15px
+	margin-top: 350px
+	margin-left: 605px
 	width: 30px
 	padding: 3px
 	display: none

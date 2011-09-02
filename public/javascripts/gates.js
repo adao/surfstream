@@ -791,7 +791,7 @@ $(function() {
 	
 	setNotificationText: function(text) {
 		if (this.playlist.get("videos").length == 0) {
-			$("#playlist-notification-text").text("Add videos or the remote will skip your turn");
+			$("#playlist-notification-text").text("Add videos to your playlist or your turn will be skipped");
 		} else {
 			$("#playlist-notification-text").text("Up next: " + this.playlist.get("videos").at(0).get("title"));
 		}
