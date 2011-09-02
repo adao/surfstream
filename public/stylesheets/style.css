@@ -170,8 +170,8 @@ div#outer {
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist:hover,
 #outer #coolshit #right-side .sidebarContainer .viewBar .search:hover {
-  -moz-box-shadow: inset 0 0 2px #000;
-  -webkit-box-shadow: inset 0 0 2px #000;
+  -moz-box-shadow: inset 0 0 4px #000;
+  -webkit-box-shadow: inset 0 0 4px #000;
   box-shadow: inset 0 0 4px #000;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
@@ -954,15 +954,22 @@ button
   width: 50px;
   padding: 6px;
 }
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.room-name-hd {
+  width: 245px;
+}
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-name-hd,
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-friends-hd,
-#room-modal #roomsWrapper table#roomsTable tr.table-header th.viewers-hd {
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.viewers-hd,
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.room-history-hd {
   border-right: 1px solid #585858;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row {
   color: #fff;
   height: 60px;
   cursor: pointer;
+}
+#room-modal #roomsWrapper table#roomsTable tr.room-row .room-friends {
+  text-indent: 8px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;
@@ -991,7 +998,7 @@ button
   font-size: 16px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-video-name {
-  font-size: 12px;
+  font-size: 14px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #313131;
@@ -1859,4 +1866,43 @@ a#fdbk_tab {
 .videoChatCell .videoChatInfo .videoChatCellText {
   padding: 0 !important;
   display: inline;
+}
+#settings {
+  display: inline-block;
+  float: right;
+  height: 26px;
+  width: 90px;
+  margin-top: 3px;
+  margin-left: 10px;
+  background-color: #c0c0c0;
+  color: #585858;
+  background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
+  background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
+  background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  cursor: pointer;
+}
+#settings #settings-text {
+  vertical-align: top;
+  font-size: 14px;
+  display: inline-block;
+  padding-top: 4px;
+  text-indent: 6px;
+  width: 60px;
+}
+#settings #settings-arrow {
+  height: 12px;
+  width: 16px;
+  display: inline-block;
+  margin-top: 7px;
+  float: right;
+  margin-right: 6px;
+  background: url("/images/room/newicons/settings-arrow.png") 50% 50% no-repeat;
+}
+#settings:hover {
+  -moz-box-shadow: inset 0 0 1px #000;
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
 }
