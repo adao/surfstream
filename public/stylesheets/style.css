@@ -7,6 +7,9 @@ button {
 .hidden {
   display: none;
 }
+#header {
+  z-index: 40;
+}
 #header img#logo {
   margin-top: -4px;
 }
@@ -21,7 +24,7 @@ button {
   color: #b2b2b2;
   font-size: 20px;
   display: inline-block;
-  max-width: 260px;
+  width: 455px;
   height: 40px;
 }
 #header #cur-video-info {
@@ -56,6 +59,48 @@ button {
   width: 12px;
   height: 13px;
   vertical-align: top;
+}
+#now-playing-tv {
+  width: 640px;
+  height: 50px;
+  background-color: #000;
+  z-index: 31;
+  margin-left: 10px;
+  opacity: 0.85;
+  margin-top: 10px;
+  position: absolute;
+  display: none;
+}
+#now-playing-tv #cur-video-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  font-size: 24px;
+  position: absolute;
+  z-index: 334;
+  color: #fff;
+  margin-left: 30px;
+  margin-top: 19px;
+  width: 600px;
+}
+#now-playing-tv #cur-video-time {
+  display: inline-block;
+  font-size: 12px;
+  vertical-align: top;
+  margin-top: 8px;
+  position: absolute;
+  color: #fff;
+  font-weight: bold;
+  margin-left: 20px;
+}
+#now-playing-tv #clock {
+  width: 12px;
+  height: 13px;
+  margin-top: 8px;
+  margin-left: 2px;
+  vertical-align: top;
+  position: absolute;
 }
 #now-playing-container {
   height: 100px !important;
@@ -95,6 +140,21 @@ button {
   height: 40px;
   display: block;
   background-color: #f00;
+}
+.time-bar {
+  height: 4px;
+  width: 638px;
+  z-index: 50;
+  position: absolute;
+  margin-top: 12px;
+  margin-left: 11px;
+}
+#time-total-bar {
+  background-color: #c0c0c0;
+  display: none;
+}
+#time-elapsed-bar {
+  background-color: #34c8ff;
 }
 #become-dj {
   cursor: n-resize;
@@ -536,7 +596,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -70px;
   margin-top: 23px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 63px;
   text-align: left;
   text-indent: 1px;
@@ -1294,7 +1354,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1616,7 +1676,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1626,7 +1686,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -1652,7 +1712,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -40%;
-  background: rgba(0,0,0,0.70);
+  background: rgba(0,0,0,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1688,17 +1748,21 @@ background-color: green,
   position: absolute;
   margin-left: 2px;
   z-index: 10000;
-  margin-top: 234px;
+  margin-top: 345px;
+  margin-left: 15px;
   width: 30px;
   padding: 3px;
   display: none;
+  background-color: #fff;
+  opacity: 0.65;
 }
 #fullscreenIcon:hover {
-  background-color: #fff;
+  background-color: #34c8ff;
+  cursor: pointer;
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1709,7 +1773,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 #sofa-remote {
   left: 170px;
@@ -1800,6 +1864,7 @@ a#fdbk_tab {
   font-weight: bold;
   border: 2px solid #c0c0c0;
   font-size: 12px;
+  margin-left: 6px;
 }
 .social {
   height: 32px;
@@ -1876,7 +1941,12 @@ a#fdbk_tab {
   padding: 0 !important;
   display: inline;
 }
-<<<<<<< HEAD
+#YouTubePlayer {
+  pointer-events: none;
+}
+.friendInRoomPic {
+  margin-right: 3px;
+}
 #settings {
   display: inline-block;
   float: right;
@@ -1915,8 +1985,4 @@ a#fdbk_tab {
   -moz-box-shadow: inset 0 0 1px #000;
   -webkit-box-shadow: inset 0 0 1px #000;
   box-shadow: inset 0 0 1px #000;
-=======
-.friendInRoomPic {
-  margin-right: 3px;
->>>>>>> 55553822dfcda1f5979fa77170e3c5dbd28626fc
 }
