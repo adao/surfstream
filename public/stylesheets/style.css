@@ -1051,6 +1051,9 @@ button
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-room-name {
   font-size: 16px;
 }
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-room-name span {
+  display: none;
+}
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-video-name {
   font-size: 14px;
 }
@@ -1935,12 +1938,9 @@ a#fdbk_tab {
   padding: 0 !important;
   display: inline;
 }
-<<<<<<< HEAD
-=======
 #YouTubePlayer {
   pointer-events: none;
 }
->>>>>>> 3ebd8cbdcc30eae40d55f21920d09df51883fbdb
 .friendInRoomPic {
   margin-right: 3px;
 }
