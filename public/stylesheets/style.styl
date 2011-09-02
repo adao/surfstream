@@ -7,6 +7,7 @@ button
 .hidden
 	display: none
 #header
+	z-index:40
 	img#logo
 		margin-top: -4px
 	#cur-room-name
@@ -20,7 +21,7 @@ button
 		color: #B2B2B2
 		font-size: 20px
 		display: inline-block
-		max-width: 260px
+		width: 455px
 		height: 40px
 	#cur-video-info
 		margin-left: 25px
@@ -51,7 +52,45 @@ button
 			width: 12px
 			height: 13px
 			vertical-align: top
-		
+
+#now-playing-tv
+	width: 640px;
+	height: 50px
+	background-color: black
+	z-index: 31
+	margin-left: 10px
+	opacity: 0.85
+	margin-top: 10px
+	position: absolute
+	display:none
+	#cur-video-name
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		display: block
+		font-size: 24px
+		position: absolute
+		z-index: 334
+		color: white
+		margin-left: 30px
+		margin-top: 19px
+		width: 600px;
+	#cur-video-time
+		display: inline-block
+		font-size: 12px
+		vertical-align: top
+		margin-top: 8px
+		position: absolute
+		color: white
+		font-weight:bold
+		margin-left: 20px;
+	#clock
+		width: 12px
+		height: 13px
+		margin-top: 8px
+		margin-left: 2px
+		vertical-align: top
+		position: absolute;
 #now-playing-container
 	height: 100px!important
 	width: 300px!important
@@ -85,6 +124,20 @@ button
 		display: block
 		background-color: red
 
+
+.time-bar
+	height: 4px
+	width: 638px
+	z-index: 50
+	position: absolute
+	margin-top: 12px
+	margin-left: 11px
+#time-total-bar
+	background-color: silver
+	display:none
+#time-elapsed-bar
+	background-color: #34C8FF
+	display: none
 #become-dj
 	cursor: n-resize
 	position: absolute
@@ -146,8 +199,8 @@ div#outer
 						-webkit-border-top-right-radius: 2px!important
 						float: left
 					.playlist:hover, .search:hover
-						-moz-box-shadow:inset 0 0 2px #000000;
-						-webkit-box-shadow:inset 0 0 2px #000000;
+						-moz-box-shadow:inset 0 0 4px #000000;
+						-webkit-box-shadow:inset 0 0 4px #000000;
 						box-shadow:inset 0 0 4px #000000; 
 					.search
 						float: right
@@ -215,26 +268,23 @@ div#outer
 
 
 //Chat Box
-div.chatContainer
+.chatContainer
 	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
 	width: 300px
 	height: 220px
 	max-width: 300px
 	max-height: 220px
 	display: block
-	div.chatHeader
+	.chatHeader {
 		width: 300px
 		height: 30px
 		background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
 		background: -moz-linear-gradient(top,  #666,  #434343)
-		background-image: -o-linear-gradient(top, #666, #434343)		
+		background-image: -o-linear-gradient(top, #666, #434343)
+	}		
 		img.chatIcon
-			display: inline-block
-			width: 27px
-			height: 24px
-			margin-top: 4px
-			margin-left: 5px
-		div.chatTitle
+			background-color: red
+		.chatTitle
 			margin-top: 6px
 			font-size: 16px
 			font-weight: bold
@@ -787,7 +837,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		background-color: #666
 		background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
 		background: -moz-linear-gradient(top,  #666,  #434343)
-		background-image: -o-linear-gradient(top, #666, #434343)
+		background-image: -o-linear-gradient(top, #666, #434343) 
 		display: block
 		height: 54px
 		border-top-right-radius: 2px
@@ -845,12 +895,16 @@ button.playlist, button.playlist.active, button.search, button.search.active
 					-moz-border-radius: 0px!important
 					width: 50px
 					padding: 6px
-				th.room-name-hd, th.room-friends-hd, th.viewers-hd
+				th.room-name-hd
+					width: 245px
+				th.room-name-hd, th.room-friends-hd, th.viewers-hd, th.room-history-hd
 					border-right: 1px solid #585858;    
 			tr.room-row
 				color: white
 				height: 60px
 				cursor: pointer
+				.room-friends
+					text-indent: 8px
 				td
 					border-right: 1px solid #585858
 					.num-viewers, .num-djs
@@ -869,9 +923,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 							display: block
 							margin-bottom: 4px
 						.listed-room-name
-							font-size: 16px 
+							font-size: 16px
+							 span
+								display: none
 						.listed-video-name
-							font-size: 12px
+							font-size: 14px
 			tr.room-row:nth-child(odd)
 				background-color: #313131
 			tr.room-row:nth-child(odd)
@@ -1486,14 +1542,17 @@ div#top-video-name
 	position: absolute
 	margin-left: 2px
 	z-index: 10000
-	margin-top: 234px
+	margin-top: 345px
+	margin-left: 15px
 	width: 30px
 	padding: 3px
 	display: none
-
-#fullscreenIcon:hover
 	background-color: white
-
+	opacity: .65
+	
+#fullscreenIcon:hover
+	background-color: #34C8FF
+	cursor: pointer
 #fullscreenIcon.fully
 	background-color: white
 	background: rgba(255, 255, 255, .3)
@@ -1585,7 +1644,7 @@ a#fdbk_tab
 	font-weight: bold
 	border: 2px solid silver
 	font-size: 12px
-	
+	margin-left: 6px
 .social
 	height: 32px
 	width: 32px
@@ -1647,7 +1706,46 @@ a#fdbk_tab
 			padding: 0!important 
 			display: inline
 
+#YouTubePlayer
+	pointer-events: none
+
 .friendInRoomPic
 	margin-right: 3px
 
 		
+		
+#settings
+	display: inline-block
+	float: right
+	height: 26px
+	width: 90px
+	margin-top: 3px
+	margin-left: 10px
+	background-color: #c0c0c0
+	color: #585858
+	background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d))
+	background: -moz-linear-gradient(top,  #c0c0c0,  #8d8d8d)
+	background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d)
+	border-radius: 2px
+	-webkit-border-radius: 2px
+	-moz-border-radius: 2px
+	cursor: pointer
+	#settings-text
+		vertical-align: top
+		font-size: 14px
+		display: inline-block
+		padding-top: 4px
+		text-indent: 6px
+		width: 60px
+	#settings-arrow
+		height: 12px
+		width: 16px
+		display: inline-block
+		margin-top: 7px
+		float: right
+		margin-right: 6px
+		background: url('/images/room/newicons/settings-arrow.png') 50% 50% no-repeat
+#settings:hover
+		-moz-box-shadow:inset 0 0 1px #000000;
+		-webkit-box-shadow:inset 0 0 1px #000000;
+		box-shadow:inset 0 0 1px #000000;
