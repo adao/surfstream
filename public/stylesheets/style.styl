@@ -7,6 +7,7 @@ button
 .hidden
 	display: none
 #header
+	z-index:40
 	img#logo
 		margin-top: -4px
 	#cur-room-name
@@ -20,7 +21,7 @@ button
 		color: #B2B2B2
 		font-size: 20px
 		display: inline-block
-		max-width: 260px
+		width: 455px
 		height: 40px
 	#cur-video-info
 		margin-left: 25px
@@ -51,7 +52,45 @@ button
 			width: 12px
 			height: 13px
 			vertical-align: top
-		
+
+#now-playing-tv
+	width: 640px;
+	height: 50px
+	background-color: black
+	z-index: 31
+	margin-left: 10px
+	opacity: 0.85
+	margin-top: 10px
+	position: absolute
+	display:none
+	#cur-video-name
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		display: block
+		font-size: 24px
+		position: absolute
+		z-index: 334
+		color: white
+		margin-left: 30px
+		margin-top: 19px
+		width: 600px;
+	#cur-video-time
+		display: inline-block
+		font-size: 12px
+		vertical-align: top
+		margin-top: 8px
+		position: absolute
+		color: white
+		font-weight:bold
+		margin-left: 20px;
+	#clock
+		width: 12px
+		height: 13px
+		margin-top: 8px
+		margin-left: 2px
+		vertical-align: top
+		position: absolute;
 #now-playing-container
 	height: 100px!important
 	width: 300px!important
@@ -85,6 +124,19 @@ button
 		display: block
 		background-color: red
 
+
+.time-bar
+	height: 4px
+	width: 638px
+	z-index: 50
+	position: absolute
+	margin-top: 12px
+	margin-left: 11px
+#time-total-bar
+	background-color: silver
+	display:none
+#time-elapsed-bar
+	background-color: #34C8FF
 #become-dj
 	cursor: n-resize
 	position: absolute
@@ -1487,14 +1539,17 @@ div#top-video-name
 	position: absolute
 	margin-left: 2px
 	z-index: 10000
-	margin-top: 234px
+	margin-top: 345px
+	margin-left: 15px
 	width: 30px
 	padding: 3px
 	display: none
-
-#fullscreenIcon:hover
 	background-color: white
-
+	opacity: .65
+	
+#fullscreenIcon:hover
+	background-color: #34C8FF
+	cursor: pointer
 #fullscreenIcon.fully
 	background-color: white
 	background: rgba(255, 255, 255, .3)
@@ -1586,7 +1641,7 @@ a#fdbk_tab
 	font-weight: bold
 	border: 2px solid silver
 	font-size: 12px
-	
+	margin-left: 6px
 .social
 	height: 32px
 	width: 32px
@@ -1647,6 +1702,9 @@ a#fdbk_tab
 		.videoChatCellText
 			padding: 0!important 
 			display: inline
+
+#YouTubePlayer
+	pointer-events: none
 
 .friendInRoomPic
 	margin-right: 3px
