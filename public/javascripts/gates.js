@@ -1588,6 +1588,26 @@ $(function() {
 			$("#now-playing-tv").fadeOut();
 			$("#time-elapsed-bar").fadeOut();
 		});
+	 $("#slider-line-container").bind('drag',function( event ){
+									if (event.target.id == "slider-line" || event.target.id == "slider-line-container"){
+											console.log(event.layerX)
+										if (event.layerX >= 98) {
+												$( "#slider-ball" ).css({"margin-left": 89});
+										} else {
+											$( "#slider-ball" ).css({"margin-left": event.layerX + 10});
+										}
+									}
+									var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 7) / 82) * 100);
+										window.YTPlayer.setVolume(volume);		              
+		                });
+		
+		$("#slider-line-container").bind('draginit',function( event ){
+			if (event.layerX <= 98) {
+			$( "#slider-ball" ).css({"margin-left": event.layerX + 10});
+			var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 7) / 82) * 100);
+				window.YTPlayer.setVolume(volume);
+		}
+		});
 	 //$(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
 	 //remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
 	 //remotePullup.attr("title", "Pull Up")
