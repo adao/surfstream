@@ -599,29 +599,6 @@ $(function() {
 			playlistTitle: this.options.playlist_nameholder_name,
 			nameholderView: this
 		});
-/*		$("#playlist-delete-modal").dialog("destroy");
-		$("#playlist-delete-modal").dialog({
-			resizable: false,
-			height: 140,
-			width: 300,
-			zIndex: 10000,
-			dialogClass: "playlist-delete-confirmation",
-			closeText: "hide",
-			buttons: {
-				"Delete playlist": function () {
-					$(this).dialog("close");
-				},
-				Cancel: function() {
-					$(this).dialog("close");
-				}
-			},
-			close: function(event, ui) {
-				$("#modalBG").hide();
-			},
-			open: function(event, ui) {
-				$(".playlist-delete-confirmation").offset({top: 110})
-			}
-		});*/
 	},
 	
 	removeNameholder: function() {
@@ -639,7 +616,7 @@ $(function() {
  });
  
  window.DeleteConfirmationView = Backbone.View.extend({
-	el: "#playlist-delete-modal",
+	id: "playlist-delete-modal",
 	
 	deleteConfirmTemplate: _.template($('#playlist-delete-confirmation-template').html()),
 	
@@ -660,16 +637,17 @@ $(function() {
 	
 	render: function() {
 		$(this.el).html(this.deleteConfirmTemplate({playlist_title: this.options.playlistTitle}));
+		document.body.appendChild(this.el);
 	},
 	
 	cancelDelete: function() {
-		$(this.el).hide();
+		this.remove();
 		$("#modalBG").hide();
 	},
 	
 	deletePlaylist: function() {
 		this.options.nameholderView.removeNameholder();
-		$(this.el).hide();
+		this.remove();
 		$("#modalBG").hide();
 	}
  });
@@ -852,7 +830,6 @@ $(function() {
 	},
 	
 	addToPlaylist: function(event) {
-		console.log("ABOOGA BOOGA");
 		var selectedPlaylistId = $(event.data.historyItem.el).find(".addToPlaylistFromHistory").val();
 		if (selectedPlaylistId == 0)
 			return;
@@ -1554,11 +1531,23 @@ $(function() {
 	 //remotePullup.tipsy({
 	 //   gravity: 's',
 	 //  });
+	 
 	 avatarVAL.css("margin-left", '410px');
 	 avatarVAL.hide();
 	 avatarVAL.data({"sofaML": 410});
 	 avatarVAL.data({"sofaMT": 0});
 	 avatarVAL.append(this.make('div', {id:'valtipsy', title: "<div style='color: #CAEDFA; font-family: \"Courier New\", Courier, monospace' >VAL, the Video Robot</div>", style:"z-index: 2; width: 70px; height: 40px; margin-top: 50px; position: absolute;" }));
+	 this.valChatTipsy = this.make('div', {id:'avatarChat_VAL', "class": "chattip" });
+	 avatarVAL.append(this.valChatTipsy);
+	 $(this.valChatTipsy).tipsy({
+		gravity: 'sw',
+	  fade: 'true',
+	  delayOut: 3000,
+	  trigger: 'manual',
+	  title: function() {
+	  return this.getAttribute('latest_txt')
+	  }
+	 });
 	 $("#valtipsy").tipsy({
 	    gravity: 'n',
 	    fade: 'true',
@@ -1752,13 +1741,22 @@ $(function() {
 	 new AvatarView({user: user});	 
   },
 
-  removeUser: function(user) {
+	valChat: function(text) {
+   $(this.valChatTipsy).attr('latest_txt', text);
+   $(this.valChatTipsy).tipsy("show");
+   setTimeout(function() {
+	  if($("#avatarChat_VAL").length > 0)
+			$("#avatarChat_VAL").tipsy("hide");
+   }, 3000);
+  },
+  
+	removeUser: function(user) {
 	 var avatar = this.$("#avatarWrapper_" + user.id);
    var chat = $("#avatarChat_" + user.id);
 	 avatar.data("animating", false);
 	 chat.tipsy('hide');
    avatar.remove();
-  }
+	}
 
  }, { /* Class properties */
 
@@ -1771,7 +1769,6 @@ $(function() {
 	  if($("#avatarChat_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
-
  });
 
  window.AvatarView = Backbone.View.extend({
@@ -1837,6 +1834,7 @@ $(function() {
 			return "/images/room/monsters/yellow.png";
 		default:
 		  console.log("RUH-ROH!");
+			return null;
 		}
 	},
 	
@@ -1855,8 +1853,9 @@ $(function() {
 			return "/images/room/monsters/smiles/openteeth.png";
 		default:
 		  console.log("RUH-ROH!");
+			return null;
 		}
-	},
+	}
  });
 	
  window.ShareBarView = Backbone.View.extend({
@@ -2035,17 +2034,17 @@ $(function() {
    /* First set up all listeners */
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
-	console.log('video announced');
+		console.log('video announced');
 		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, isdj, skipX, skipY;
 		SurfStreamApp.curDJ = video.dj;
 		if (typeof(mpq) !== 'undefined') mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
-		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title);	//debugging
+		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title+' and time start: '+video.time);	//debugging
 		$("#fullTitle").html(video.title);
 		$("#cur-video-name").html(video.title);
 		var curvid, curLen, roomModel, playerModel;
 		if (video.dj == app.get("userModel").get("ssId")) {
-			console.log("here");
+		  console.log("here");
 			$("#video-list-container .videoListCellContainer:first").remove();
 			var playlistModel = app.get("userModel").get("playlistCollection").get("activePlaylist");
 			var playlistItemModel = playlistModel.get("videos").at(0);
@@ -2079,9 +2078,9 @@ $(function() {
     //HACK
     $("#room-name").html(video.title)
     app.get("roomModel").get("userCollection").forEach(function(userModel) {
-		 $("#avatarWrapper_" + userModel.get("id")).data("animating", false);
-     $("#avatarWrapper_" + userModel.get("id")+ " .smiley").hide();
-     $("#avatarWrapper_" + userModel.get("id")+ " .default").show();
+	  	$("#avatarWrapper_" + userModel.get("id")).data("animating", false);
+     	$("#avatarWrapper_" + userModel.get("id")+ " .smiley").hide();
+     	$("#avatarWrapper_" + userModel.get("id")+ " .default").show();
     });
     //ENDHACK
 		roomModel = app.get("roomModel")
