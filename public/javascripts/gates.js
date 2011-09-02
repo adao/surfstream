@@ -1786,7 +1786,7 @@ $(function() {
 
   toggleDJStatus: function(event) {
 		if (event.data.playlistCollection.get("activePlaylist").get("videos").length == 0) {
-			event.data.theatreView.valChat("Mofucker you can't VJ without no videos!  >:-/ ");
+			event.data.theatreView.valChat("You can't VJ without any videos!  >:-/ ");
 			return;
 		}
 		$("#playlist-notification-container").slideToggle();
