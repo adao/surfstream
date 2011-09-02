@@ -591,14 +591,18 @@ $(function() {
 				ui.draggable.remove();
 			}
 		});
-		this.calculatePlaylistHeight(); 
-		this.clickDeletePlaylist = 0;
+		if (this.options.playlist_nameholder_value == recentlyWatchedPlaylistId || this.options.playlist_nameholder_value == facebookPlaylistId) {
+			$(this.el).find(".delete-nameholder").remove();
+		}
+		this.calculatePlaylistHeight();
 	},
 	
 	render: function() {
 		$(this.el).prepend(this.playlistNameholderTemplate({playlist_name: this.options.playlist_nameholder_name}));
 		$(this.el).val(this.options.playlist_nameholder_value);
-	  $("#playlist-collection-display").prepend(this.el);
+	  //$("#playlist-collection-display").prepend(this.el);
+		var length = $("#playlist-collection-display").children().length;
+		$(this.el).insertBefore($("#playlist-collection-display").children()[length - 1]);
 	  return this;
 	},
 	
@@ -621,14 +625,9 @@ $(function() {
 	},
 	
 	removeNameholder: function() {
-		var playlistId = this.options.playlist_nameholder_value;
-		if (playlistId == facebookPlaylistId) {
-			window.SurfStreamApp.get("mainView").theatreView.valChat("You can't delete your fb wall list");
-			return;
-		}
 		$(this.el).remove();
 		this.calculatePlaylistHeight();
-		this.options.playlistCollection.deletePlaylist(playlistId);
+		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
 	},
 	
 	calculatePlaylistHeight: function() {
@@ -2112,7 +2111,7 @@ $(function() {
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title+' and time start: '+video.time);	//debugging
 		$("#fullTitle").html(video.title);
 		$("#cur-video-name").html(video.title);
-		var curvid, curLen, roomModel, playerModel;
+		var curvid, roomModel, playerModel;
 		if (video.dj == app.get("userModel").get("ssId")) {
 		  console.log("here");
 			$("#video-list-container .videoListCellContainer:first").remove();
@@ -2160,6 +2159,13 @@ $(function() {
 		curvid =  playerModel.get("curVid");
 		if (curvid) {
 			app.get("mainView").roomHistoryView.addToRoomHistory(new RoomHistoryItemModel({title: curvid.title, duration: curvid.duration, percent: curvid.percent, videoId: curvid.videoId}));
+			var playlistItemModel = new PlaylistItemModel({
+			title: curvid.title,
+			thumb: ss_idToImg(curvid.videoId),
+			videoId: curvid.videoId,
+			duration: curvid.duration
+		});
+		window.SurfStreamApp.get("userModel").get("playlistCollection").addVideoToPlaylist(recentlyWatchedPlaylistId, playlistItemModel);
 		}
 		//save the currently playing state
 		playerModel.set({curVid: {videoId: video.id, title: video.title, duration: video.duration, percent: 0.5} });
@@ -2596,4 +2602,5 @@ function strip(html)
    return tmp.textContent||tmp.innerText;
 }
 
+var recentlyWatchedPlaylistId = 1;
 var facebookPlaylistId = 2;
