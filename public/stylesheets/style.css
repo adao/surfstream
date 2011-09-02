@@ -279,10 +279,11 @@ div#outer {
   background-image: -o-linear-gradient(top, #666, #434343);
 }
 .chatContainer  img.chatIcon {
-  margin-top: 3px 0 0 4px;
+  vertical-align: top;
+  margin: 3px 0 0 4px;
 }
 .chatContainer  .chatTitle {
-  margin-top: 6px;
+  margin-top: 5px;
   font-size: 16px;
   font-weight: bold;
   text-indent: 10px;
@@ -551,7 +552,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -70px;
   margin-top: 23px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   width: 63px;
   text-align: left;
   text-indent: 1px;
@@ -795,8 +796,11 @@ button.search.active {
 #vol-up {
   text-indent: -3px;
 }
-.vol-container {
+.volContainer {
   width: 114px;
+  height: 25px;
+  display: block;
+  margin-top: 6px;
 }
 .buttonContainer,
 .bottombuttonContainer,
@@ -928,7 +932,7 @@ button
   -moz-border-radius: 6px;
   font-size: 16px;
   margin-top: 9px;
-  width: 800px;
+  width: 840px;
   height: 36px;
   border: 0;
   outline: 0;
@@ -1203,7 +1207,8 @@ background-color: green,
   vertical-align: top;
 }
 .playlist-hover-highlight {
-  background: #ff0;
+  background: #141414;
+  color: #c0c0c0;
 }
 #playlist-collection-display {
   border: none;
@@ -1256,8 +1261,8 @@ background-color: green,
   z-index: -1;
 }
 #playlist-view #playlist-notification-container {
-  width: 285px;
-  min-height: 18px;
+  width: 278px;
+  height: 13px;
   font-size: 12px;
   padding: 5px 0 0 8px;
   color: #d4d4d4;
@@ -1319,7 +1324,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1401,7 +1406,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1641,7 +1646,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1651,7 +1656,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 .nametip {
   width: 70px;
@@ -1677,7 +1682,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -40%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.70);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1727,7 +1732,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1738,7 +1743,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 #sofa-remote {
   left: 170px;
