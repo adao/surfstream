@@ -155,6 +155,7 @@ button {
 }
 #time-elapsed-bar {
   background-color: #34c8ff;
+  display: none;
 }
 #become-dj {
   cursor: n-resize;
