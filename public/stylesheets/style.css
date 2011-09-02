@@ -1369,7 +1369,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1868,4 +1868,7 @@ a#fdbk_tab {
 .videoChatCell .videoChatInfo .videoChatCellText {
   padding: 0 !important;
   display: inline;
+}
+.friendInRoomPic {
+  margin-right: 3px;
 }
