@@ -726,7 +726,7 @@ button.search.active {
   width: 114px !important;
   float: right;
   display: block;
-  margin-top: -17px;
+  margin-top: 3px;
   margin-right: 5px;
   text-align: center;
   z-index: 1000;
@@ -1017,6 +1017,9 @@ button
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-video-name {
   font-size: 14px;
+}
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .true-room-name {
+  display: none;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #313131;
