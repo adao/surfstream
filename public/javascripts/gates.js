@@ -1439,9 +1439,13 @@ $(function() {
 	
 		render: function() {
 			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle");
-			var friendsHTML = this.renderFriends()
+			var friendsHTML = this.renderFriends();
+			var rName = roomListCellModel.get("rID");
+			if (roomListCellModel.get("rID") == SurfStreamApp.inRoom) {
+				rName = rName + "<span style='color: #34C8FF;'> (You Are Here)</span>";
+			}
 			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + roomListCellModel.get("curVidTitle") : "" ,
-				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: friendsHTML}));
+				roomname: rName, numDJs: roomListCellModel.get("numDJs"), friends: friendsHTML, truename: roomListCellModel.get("rID")}));
 			return this;
 		},
 		
@@ -1455,7 +1459,8 @@ $(function() {
 		},
 		
 	  clickJoinRoom: function(el) {
-			var roomName = $(this).find(".listed-room-name").html();
+			var roomName = $(this).find(".true-room-name").html();
+			if (roomName == SurfStreamApp.inRoom) return;
 			SocketManagerModel.joinRoom(roomName, false);
 			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
 			window.SurfStreamApp.get("mainView").roomModal.hide();
