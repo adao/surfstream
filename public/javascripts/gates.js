@@ -1923,7 +1923,7 @@ $(function() {
 		$("#avatarWrapper_" + user.id).data("isDJ", "0");
 		console.log("margintop stored, value: "+ user.get('y'))
 		$(this.el).data({"roomX": user.get('x'), "roomY": user.get('y'), "trueY": user.get('y') });
-		$(this.el).animate({"margin-top": user.get('y'), "margin-left": user.get('x') }, 900, 'expoout');
+		$(this.el).animate({"margin-top": user.get('y'), "margin-left": user.get('x'), "z-index": Math.floor(user.get('y')) }, 900, 'expoout');
 	},
 	
 	putOnSofa : function() {
