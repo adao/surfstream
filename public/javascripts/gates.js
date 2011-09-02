@@ -250,7 +250,7 @@ $(function() {
 			author: entry.author[0].name.$t
 		}
 		var playlistItemModel = new PlaylistItemModel(attributes);
-		this.get("playlistCollection").addVideoToPlaylist(2, playlistItemModel);
+		this.get("playlistCollection").addVideoToPlaylist(facebookPlaylistId, playlistItemModel);
 	}
 	
  });
@@ -375,6 +375,7 @@ $(function() {
 		var playlistItemModel = ss_modelWithAttribute(this.get("videos"), "videoId", videoId);
 	 	var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 	 	this.get("videos").remove(playlistItemModel);
+		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
 		SocketManagerModel.deleteFromPlaylist(this.get("playlistId"), videoId);
 	},
 	
@@ -401,7 +402,7 @@ $(function() {
 		}
 		SocketManagerModel.choosePlaylist(playlistId);
 		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(playlistId)});
-		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.playlist = playlistCollection.get("activePlaylist");
+		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setPlaylist(playlistCollection.get("activePlaylist"));
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.resetPlaylist();
 		playlistNameholderView = playlistCollection.idToPlaylistNameholder[playlistId];
 		$(playlistNameholderView.el).removeClass("unselected-playlist-nameholder").addClass("selected-playlist-nameholder");
@@ -409,6 +410,12 @@ $(function() {
 	},
 	
 	deletePlaylist: function(playlistId) {
+		if (playlistId == this.get("activePlaylist").get("playlistId")) {
+			var randomId = this.randomPlaylistId(playlistId);
+			if (!randomId)
+				return;
+			this.setActivePlaylist(randomId);
+		}
 		$(this.idToPlaylistDropdown[playlistId].el).remove();
 		for (var i = 0; i < this.idToPlaylistViews[playlistId].length; i++) {
 			$(this.idToPlaylistViews[playlistId][i]).remove();
@@ -459,6 +466,15 @@ $(function() {
 			}
 		}
 		return false;
+	},
+	
+	randomPlaylistId: function(playlistId) {
+		for (var id in this.idToPlaylist) {
+			if( this.idToPlaylist.hasOwnProperty(id) && id != playlistId) {
+				return id;
+			}
+		}
+		return null;
 	},
 	
 	newPlaylistId: function() {
@@ -591,6 +607,9 @@ $(function() {
 	},
 	
 	setActivePlaylistTwo: function() {
+		if (window.SurfStreamApp.onSofa && this.options.playlistCollection.getPlaylistById(this.options.playlist_nameholder_value).get("videos").length == 0) {
+			window.SurfStreamApp.get("mainView").theatreView.valChat("Add videos to your playlist or you gettn skipped on remote. DAWG");
+		}
 		this.options.playlistCollection.setActivePlaylist(this.options.playlist_nameholder_value);
 	},
 	
@@ -602,9 +621,14 @@ $(function() {
 	},
 	
 	removeNameholder: function() {
+		var playlistId = this.options.playlist_nameholder_value;
+		if (playlistId == facebookPlaylistId) {
+			window.SurfStreamApp.get("mainView").theatreView.valChat("You can't delete your fb wall list");
+			return;
+		}
 		$(this.el).remove();
 		this.calculatePlaylistHeight();
-		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
+		this.options.playlistCollection.deletePlaylist(playlistId);
 	},
 	
 	calculatePlaylistHeight: function() {
@@ -656,6 +680,8 @@ $(function() {
   id: 'playlist-view',
 
   playlistTemplate: _.template($('#playlist-template').html()),
+	
+	playlistNotificationTemplate: _.template($("#playlist-notification-template").html()),
 
   initialize: function() {
 	 this.render();
@@ -686,6 +712,7 @@ $(function() {
 	 		    at: index,
 	 		    silent: true
 	 		   });
+				window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
 	 		 SocketManagerModel.toIndexInPlaylist(playlistCollection.get("playlistId"), videoId, index);
 	 		},
 			cursorAt: {bottom: 30, left: 142},
@@ -694,6 +721,9 @@ $(function() {
 			forceHelperSize: true,
 			alreadyShrunk: false,
 			opacity: 0.6,
+			start: function (event, ui) {
+				
+			},
 			sort: function(event, ui) {
 				var yThreshold = $("#playlist-collection").offset().top + $("#playlist-collection").outerHeight() - ui.item.height() * 3 / 4;
 				var yPosition = ui.position.top;
@@ -733,11 +763,12 @@ $(function() {
 	 $("#video-list-container").disableSelection();
   },
 
-    render: function() {
-     $(this.el).html(this.playlistTemplate());
-     $(".videoView").append(this.el);
-     return this;
-    },
+  render: function() {
+		$(this.el).html(this.playlistTemplate());
+		$(this.el).prepend(this.playlistNotificationTemplate());
+	  $(".videoView").append(this.el);
+		return this;
+  },
 
   addVideo: function(playlistItemModel, playlistId) {
    var playlistCellView = new PlaylistCellView({
@@ -751,6 +782,19 @@ $(function() {
 	resetPlaylist : function() {
 		$("#video-list-container.videoListContainer").empty();
 		this.playlist.get("videos").each(function(playlistItemModel) {this.addVideo(playlistItemModel, this.playlist.get("playlistId"))}, this);
+	},
+	
+	setPlaylist: function(playlistModel) {
+		this.playlist = playlistModel;
+		this.setNotificationText();
+	},
+	
+	setNotificationText: function(text) {
+		if (this.playlist.get("videos").length == 0) {
+			$("#playlist-notification-text").text("Add videos or the remote will skip your turn");
+		} else {
+			$("#playlist-notification-text").text("Up next: " + this.playlist.get("videos").at(0).get("title"));
+		}
 	}
  });
 
@@ -1246,6 +1290,7 @@ $(function() {
    var buttonRemove, buttonToTop, videoID;
    playlistCellView.render();
    $("#video-list-container").prepend(playlistCellView.el);
+	 window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
    videoID = copyPlaylistItemModel.get("videoId");
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
@@ -1510,7 +1555,7 @@ $(function() {
 
   initialize: function() {
 	 var becomeDJ = $("#become-dj"), remotePullup = $("#remote-pullup"), avatarVAL = $("#avatarWrapper_VAL");
-   becomeDJ.bind("click", this.toggleDJStatus);
+   becomeDJ.bind("click", {theatreView: this, playlistCollection: this.options.userModel.get("playlistCollection")}, this.toggleDJStatus);
 	 becomeDJ.hide();
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", {theatre: this}, this.fullscreenToggle);
@@ -1529,6 +1574,7 @@ $(function() {
 	 avatarVAL.append(this.make('div', {id:'valtipsy', title: "<div style='color: #CAEDFA; font-family: \"Courier New\", Courier, monospace' >VAL, the Video Robot</div>", style:"z-index: 2; width: 70px; height: 40px; margin-top: 50px; position: absolute;" }));
 	 this.valChatTipsy = this.make('div', {id:'avatarChat_VAL', "class": "chattip" });
 	 avatarVAL.append(this.valChatTipsy);
+	 $(this.valChatTipsy).css("margin-top", "15px");
 	 $(this.valChatTipsy).tipsy({
 		gravity: 'sw',
 	  fade: 'true',
@@ -1723,7 +1769,12 @@ $(function() {
 		}
 	}, 
 
-  toggleDJStatus: function() {
+  toggleDJStatus: function(event) {
+		if (event.data.playlistCollection.get("activePlaylist").get("videos").length == 0) {
+			event.data.theatreView.valChat("Mofucker you can't VJ without no videos!  >:-/ ");
+			return;
+		}
+		$("#playlist-notification-container").slideToggle();
     SocketManagerModel.becomeDJ();
   },
 
@@ -1917,6 +1968,7 @@ $(function() {
 
   initialize: function() {
 		$('#getOff').live('click', function() {
+			$("#playlist-notification-container").slideToggle();
 		  $("#stepDown").remove();
 			$('#getOff').remove();
 			$("#skipContainer").remove();
@@ -2041,6 +2093,7 @@ $(function() {
 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 			playlistModel.get("videos").remove(playlistItemModel);
 			app.get("userModel").get("playlistCollection").addVideoToPlaylist(playlistModel.get("playlistId"), copyPlaylistItemModel);
+			window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
 		}
     if (!window.playerLoaded) {
      var params = {
@@ -2513,3 +2566,4 @@ function strip(html)
    return tmp.textContent||tmp.innerText;
 }
 
+var facebookPlaylistId = 2;
