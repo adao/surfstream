@@ -26,13 +26,14 @@
 	models.VAL = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
-			this.userSuggest = new models.Playlist({videos: new models.VideoCollection()});
 			this.autoPlaylist = new models.Playlist({videos: new models.VideoCollection()});
 			
 			this.isDJ = true;
 			this.takeSuggest = false;
 			
 			this.autoplay = false;
+			
+			this.recList = [];
 		},
 		
 		addValListeners: function(socket) {
@@ -52,6 +53,22 @@
 					val.playVideo();
 				}
 			});
+			
+			socket.on('val:requestRecs', function() {
+				val.getAndSendRecs(socket);
+			});
+		},
+		
+		getAndSendRecs: function(socket) {
+			if(this.room) var roomName = this.room.get('name');
+			console.log('our room name is '+roomName)
+																															//we're assuming a lot of videos with these indices
+			redisClient && redisClient.lrange('room:'+roomName+':val:playlist', -15, -1, function(err, reply) {
+				if(err) return;
+				
+				console.log('reply from recs: '+reply)
+				socket.emit('val:sendRecs', reply);
+			})	
 		},
 		
 		playVideo: function() {
@@ -897,28 +914,28 @@
 			socket.on('playlist:addVideo', function(data) {
 				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
 				if (playlists[data.playlistId].moveToTop(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 
 			socket.on('playlist:delete', function(data) {
 				if (playlists[data.playlistId].deleteVideo(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 			
 			socket.on('playlist:moveVideo', function(data) {
 				if (playlists[data.playlistId].moveToIndex(data.videoId, data.index)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			})
 		},
