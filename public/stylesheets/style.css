@@ -1264,7 +1264,7 @@ background-color: green,
 }
 #playlist-view #playlist-notification-container {
   width: 278px;
-  min-height: 14px;
+  min-height: 18px;
   font-size: 12px;
   padding: 5px 0 0 8px;
   color: #d4d4d4;
@@ -1770,6 +1770,7 @@ a#fdbk_tab {
 .dropdown-title {
   margin-left: 6px;
   margin-top: 7px;
+  float: right;
 }
 #playlistDropdown {
   font-size: 12px;
@@ -1837,6 +1838,7 @@ a#fdbk_tab {
   border: 2px solid #c0c0c0;
   font-size: 12px;
   margin-left: 6px;
+  float: right;
 }
 .social {
   height: 32px;
