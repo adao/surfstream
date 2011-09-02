@@ -608,7 +608,7 @@ $(function() {
 	
 	setActivePlaylistTwo: function() {
 		if (window.SurfStreamApp.onSofa && this.options.playlistCollection.getPlaylistById(this.options.playlist_nameholder_value).get("videos").length == 0) {
-			window.SurfStreamApp.get("mainView").theatreView.valChat("Add videos to your playlist or you gettn skipped on remote. DAWG");
+			window.SurfStreamApp.get("mainView").theatreView.valChat("Add videos to your playlist, or else you'll get skipped!");
 		}
 		this.options.playlistCollection.setActivePlaylist(this.options.playlist_nameholder_value);
 	},
@@ -623,7 +623,7 @@ $(function() {
 	removeNameholder: function() {
 		var playlistId = this.options.playlist_nameholder_value;
 		if (playlistId == facebookPlaylistId) {
-			window.SurfStreamApp.get("mainView").theatreView.valChat("You can't delete your fb wall list");
+			window.SurfStreamApp.get("mainView").theatreView.valChat("Sorry, but your Facebook playlist cannot be deleted");
 			return;
 		}
 		$(this.el).remove();
@@ -1755,7 +1755,7 @@ $(function() {
 				newDJ = true;
 				if (djArray[dj].id == this.options.userModel.get("ssId"))  {
 					user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
-					$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Get Off Sofa</a>");
+					$('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Step Down</a>");
 					$('#stepDown').hover(function() {$('#getOff').fadeIn()}, function() {$('#getOff').fadeOut(); });
 				}
 			} else {
