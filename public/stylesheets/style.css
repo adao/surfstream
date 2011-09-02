@@ -279,7 +279,8 @@ div#outer {
   background-image: -o-linear-gradient(top, #666, #434343);
 }
 .chatContainer  img.chatIcon {
-  margin-top: 3px 0 0 4px;
+  vertical-align: top;
+  margin: 3px 0 0 4px;
 }
 .chatContainer  .chatTitle {
   margin-top: 6px;
