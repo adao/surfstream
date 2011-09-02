@@ -1580,11 +1580,13 @@ $(function() {
 		function(){
 			$("#fullscreenIcon").fadeIn();
 			$("#now-playing-tv").fadeIn();
+			$("#time-elapsed-bar").fadeIn();
 		}, 
 		//onmouseout
 		function(){
 			$("#fullscreenIcon").fadeOut();
 			$("#now-playing-tv").fadeOut();
+			$("#time-elapsed-bar").fadeOut();
 		});
 	 //$(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
 	 //remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
