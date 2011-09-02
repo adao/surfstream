@@ -31,6 +31,8 @@
 			
 			this.isDJ = true;
 			this.takeSuggest = false;
+			
+			this.autoplay = false;
 		},
 		
 		addValListeners: function(socket) {
@@ -55,7 +57,7 @@
 		playVideo: function() {
 			var roomName = this.room.get('name');
 			console.log('['+roomName+'][VAL] playVideo(): num users --> '+this.room.users.length);
-			if(this.room.users.length == 0) return;
+			if(this.room.users.length == 0 && !this.autoplay) return;
 
 			var rc = this.room.redisClient;
 			var roomName = this.room.get('name');
@@ -66,23 +68,27 @@
 				if(val.room.currVideo) return;
 				if(err) {
 					console.log('['+roomName+'][VAL] playVideo() | rc.lpop : ERROR! '+err);
+					val.autoplay = false;
 					val.fetchYouTubeVideo();
 					return;
 				}
 				if(reply) {
-					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
+					val.autoplay = true;
+					var rawVideo = JSON.parse(reply);
 					var videoToPlay = new models.Video({
-						videoId: reply.videoId,
-						duration: reply.duration,
-						title: reply.title,
-						thumb: reply.thumb,
-						author: reply.author,
+						videoId: rawVideo['id'],
+						duration: rawVideo['duration'],
+						title: rawVideo['title'],
+						thumb: rawVideo['thumb'],
+						author: rawVideo['author'],
 						dj: 'VAL'
 					});
-					
+
+					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
 					val.room.vm.play(videoToPlay);
 				} else {
 					console.log('['+roomName+'][VAL] playVideo(): no videos in the autoplaylist, fetching one from YouTube');
+					val.autoplay = false;
 					val.fetchYouTubeVideo();
 				}
 			});
@@ -116,7 +122,7 @@
 			var options = { 
 				host: 'gdata.youtube.com',
 				port: 80,
-				path: '/feeds/api/videos/'+videoId+'/related?alt=json&start-index=1&max-results=25&v=2',
+				path: '/feeds/api/videos/'+videoId+'/related?alt=json&format=5&start-index=1&max-results=25&v=2',
 			};
 			
 			var room = this.room;
@@ -334,7 +340,7 @@
 			if(this.currVideo) {
 				var timeIn = new Date();
 				var timeDiff = (timeIn.getTime() - this.currVideo.get('timeStart')) / 1000; //time difference in seconds
-				console.log('['+this.get('name')+'][Room] sending current video to socket, title: '+this.currVideo.get('title'));
+				console.log('['+this.get('name')+'][Room] sending current video to socket, title: '+this.currVideo.get('title')+ ' and time to start: '+Math.ceil(timeDiff));
 
 				var dj = this.currVideo.get('dj');
 				console.log("...the current dj is "+dj);
@@ -362,7 +368,18 @@
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
 			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
-			//console.log("Here's the roomdata: " + roomData.rID);
+			
+			var recentVids = [];
+			if(this.history.recentVids && this.history.recentVids.length > 0) {
+				for(var i=0; i < this.history.recentVids.length && i < 3; i++) {
+					var currVid = this.history.recentVids.at(i);
+					var vidToAdd = { title: currVid.get('title'), thumb: currVid.get('thumb') };
+					recentVids.push(vidToAdd);
+				}
+				recentVids = recentVids.reverse();
+			
+				roomData.recentVids = recentVids;
+			}
 			return roomData;
 		}
 		
@@ -540,7 +557,7 @@
 			for(var i=0; i < lookBackNum && i < len; i++) {
 				var currVideo = this.recentVids.at(i);
 				if(currVideo.get('percent') >= 50) {
-					console.log('pushing on good video '+currVideo.get('title'));
+					//console.log('pushing on good video '+currVideo.get('title'));
 					videoArray.push(currVideo);
 				}
 			}
@@ -549,7 +566,7 @@
 				var randInt = Math.floor(Math.random()*videoArray.length);	//0 <= x < videoArray.length
 				return videoArray[randInt];
 			} else {
-				console.log('all those failed, reverting to old school')
+				//console.log('all those failed, reverting to old school')
 				var lookBackNum = 3;
 				if (this.recentVids.length < lookBackNum) lookBackNum = this.recentVids.length;
 				var randInt = Math.floor(Math.random()*lookBackNum);	//0 <= randInt < lookBackNum
@@ -570,7 +587,7 @@
 			});
 			
 			if(this.recentVids.length >= HIST_NUM_RECENT)
-				this.recentVids.remove(this.recentVids.at(HIST_NUM_RECENT-1)); //remove the oldest video
+				this.recentVids.remove(this.recentVids.at(this.recentVids.length-1)); //remove the oldest video
 			this.recentVids.add(videoToAdd, { at: 0 });
 			this.room.redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
 
@@ -988,7 +1005,7 @@
 
 					djs.room.sockM.announceDJs(); 
 
-					if(djs.length == 1) { //this user is the only human dj
+					if(djs.length == 1 && !djs.room.VAL.autoplay) { //this user is the only human dj
 						if(djs.room.currVideo) {	//VAL is playing a video, need to clear it
 							console.log('['+roomName+'][socket] [dj:join] -- clearing the timeout for VAL\'s video'+djs.room.currVideo.get('timeoutId'));
 							clearTimeout(djs.room.currVideo.get('timeoutId'));

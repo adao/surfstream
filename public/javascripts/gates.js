@@ -250,7 +250,7 @@ $(function() {
 			author: entry.author[0].name.$t
 		}
 		var playlistItemModel = new PlaylistItemModel(attributes);
-		this.get("playlistCollection").addVideoToPlaylist(2, playlistItemModel);
+		this.get("playlistCollection").addVideoToPlaylist(facebookPlaylistId, playlistItemModel);
 	}
 	
  });
@@ -375,6 +375,7 @@ $(function() {
 		var playlistItemModel = ss_modelWithAttribute(this.get("videos"), "videoId", videoId);
 	 	var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 	 	this.get("videos").remove(playlistItemModel);
+		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
 		SocketManagerModel.deleteFromPlaylist(this.get("playlistId"), videoId);
 	},
 	
@@ -401,7 +402,7 @@ $(function() {
 		}
 		SocketManagerModel.choosePlaylist(playlistId);
 		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(playlistId)});
-		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.playlist = playlistCollection.get("activePlaylist");
+		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setPlaylist(playlistCollection.get("activePlaylist"));
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.resetPlaylist();
 		playlistNameholderView = playlistCollection.idToPlaylistNameholder[playlistId];
 		$(playlistNameholderView.el).removeClass("unselected-playlist-nameholder").addClass("selected-playlist-nameholder");
@@ -409,6 +410,12 @@ $(function() {
 	},
 	
 	deletePlaylist: function(playlistId) {
+		if (playlistId == this.get("activePlaylist").get("playlistId")) {
+			var randomId = this.randomPlaylistId(playlistId);
+			if (!randomId)
+				return;
+			this.setActivePlaylist(randomId);
+		}
 		$(this.idToPlaylistDropdown[playlistId].el).remove();
 		for (var i = 0; i < this.idToPlaylistViews[playlistId].length; i++) {
 			$(this.idToPlaylistViews[playlistId][i]).remove();
@@ -459,6 +466,15 @@ $(function() {
 			}
 		}
 		return false;
+	},
+	
+	randomPlaylistId: function(playlistId) {
+		for (var id in this.idToPlaylist) {
+			if( this.idToPlaylist.hasOwnProperty(id) && id != playlistId) {
+				return id;
+			}
+		}
+		return null;
 	},
 	
 	newPlaylistId: function() {
@@ -591,6 +607,9 @@ $(function() {
 	},
 	
 	setActivePlaylistTwo: function() {
+		if (window.SurfStreamApp.onSofa && this.options.playlistCollection.getPlaylistById(this.options.playlist_nameholder_value).get("videos").length == 0) {
+			window.SurfStreamApp.get("mainView").theatreView.valChat("Add videos to your playlist or you gettn skipped on remote. DAWG");
+		}
 		this.options.playlistCollection.setActivePlaylist(this.options.playlist_nameholder_value);
 	},
 	
@@ -599,35 +618,17 @@ $(function() {
 			playlistTitle: this.options.playlist_nameholder_name,
 			nameholderView: this
 		});
-/*		$("#playlist-delete-modal").dialog("destroy");
-		$("#playlist-delete-modal").dialog({
-			resizable: false,
-			height: 140,
-			width: 300,
-			zIndex: 10000,
-			dialogClass: "playlist-delete-confirmation",
-			closeText: "hide",
-			buttons: {
-				"Delete playlist": function () {
-					$(this).dialog("close");
-				},
-				Cancel: function() {
-					$(this).dialog("close");
-				}
-			},
-			close: function(event, ui) {
-				$("#modalBG").hide();
-			},
-			open: function(event, ui) {
-				$(".playlist-delete-confirmation").offset({top: 110})
-			}
-		});*/
 	},
 	
 	removeNameholder: function() {
+		var playlistId = this.options.playlist_nameholder_value;
+		if (playlistId == facebookPlaylistId) {
+			window.SurfStreamApp.get("mainView").theatreView.valChat("You can't delete your fb wall list");
+			return;
+		}
 		$(this.el).remove();
 		this.calculatePlaylistHeight();
-		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
+		this.options.playlistCollection.deletePlaylist(playlistId);
 	},
 	
 	calculatePlaylistHeight: function() {
@@ -639,7 +640,7 @@ $(function() {
  });
  
  window.DeleteConfirmationView = Backbone.View.extend({
-	el: "#playlist-delete-modal",
+	id: "playlist-delete-modal",
 	
 	deleteConfirmTemplate: _.template($('#playlist-delete-confirmation-template').html()),
 	
@@ -660,16 +661,17 @@ $(function() {
 	
 	render: function() {
 		$(this.el).html(this.deleteConfirmTemplate({playlist_title: this.options.playlistTitle}));
+		document.body.appendChild(this.el);
 	},
 	
 	cancelDelete: function() {
-		$(this.el).hide();
+		this.remove();
 		$("#modalBG").hide();
 	},
 	
 	deletePlaylist: function() {
 		this.options.nameholderView.removeNameholder();
-		$(this.el).hide();
+		this.remove();
 		$("#modalBG").hide();
 	}
  });
@@ -678,6 +680,8 @@ $(function() {
   id: 'playlist-view',
 
   playlistTemplate: _.template($('#playlist-template').html()),
+	
+	playlistNotificationTemplate: _.template($("#playlist-notification-template").html()),
 
   initialize: function() {
 	 this.render();
@@ -708,6 +712,7 @@ $(function() {
 	 		    at: index,
 	 		    silent: true
 	 		   });
+				window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
 	 		 SocketManagerModel.toIndexInPlaylist(playlistCollection.get("playlistId"), videoId, index);
 	 		},
 			cursorAt: {bottom: 30, left: 142},
@@ -716,6 +721,9 @@ $(function() {
 			forceHelperSize: true,
 			alreadyShrunk: false,
 			opacity: 0.6,
+			start: function (event, ui) {
+				
+			},
 			sort: function(event, ui) {
 				var yThreshold = $("#playlist-collection").offset().top + $("#playlist-collection").outerHeight() - ui.item.height() * 3 / 4;
 				var yPosition = ui.position.top;
@@ -755,11 +763,12 @@ $(function() {
 	 $("#video-list-container").disableSelection();
   },
 
-    render: function() {
-     $(this.el).html(this.playlistTemplate());
-     $(".videoView").append(this.el);
-     return this;
-    },
+  render: function() {
+		$(this.el).html(this.playlistTemplate());
+		$(this.el).prepend(this.playlistNotificationTemplate());
+	  $(".videoView").append(this.el);
+		return this;
+  },
 
   addVideo: function(playlistItemModel, playlistId) {
    var playlistCellView = new PlaylistCellView({
@@ -773,6 +782,19 @@ $(function() {
 	resetPlaylist : function() {
 		$("#video-list-container.videoListContainer").empty();
 		this.playlist.get("videos").each(function(playlistItemModel) {this.addVideo(playlistItemModel, this.playlist.get("playlistId"))}, this);
+	},
+	
+	setPlaylist: function(playlistModel) {
+		this.playlist = playlistModel;
+		this.setNotificationText();
+	},
+	
+	setNotificationText: function(text) {
+		if (this.playlist.get("videos").length == 0) {
+			$("#playlist-notification-text").text("Add videos or the remote will skip your turn");
+		} else {
+			$("#playlist-notification-text").text("Up next: " + this.playlist.get("videos").at(0).get("title"));
+		}
 	}
  });
 
@@ -852,7 +874,6 @@ $(function() {
 	},
 	
 	addToPlaylist: function(event) {
-		console.log("ABOOGA BOOGA");
 		var selectedPlaylistId = $(event.data.historyItem.el).find(".addToPlaylistFromHistory").val();
 		if (selectedPlaylistId == 0)
 			return;
@@ -1269,6 +1290,7 @@ $(function() {
    var buttonRemove, buttonToTop, videoID;
    playlistCellView.render();
    $("#video-list-container").prepend(playlistCellView.el);
+	 window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
    videoID = copyPlaylistItemModel.get("videoId");
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
@@ -1461,14 +1483,29 @@ $(function() {
 		},
 	
 		render: function() {
-			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle"); 
+			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle");
+			var friendsHTML = this.renderFriends();
+			var rName = roomListCellModel.get("rID");
+			if (roomListCellModel.get("rID") == SurfStreamApp.inRoom) {
+				rName = rName + "<span style='color: #34C8FF;'> (You Are Here)</span>";
+			}
 			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + roomListCellModel.get("curVidTitle") : "" ,
-				roomname: roomListCellModel.get("rID"), numDJs: roomListCellModel.get("numDJs"), friends: roomListCellModel.get("friends").length}));
+				roomname: rName, numDJs: roomListCellModel.get("numDJs"), friends: friendsHTML, truename: roomListCellModel.get("rID")}));
 			return this;
 		},
 		
+		renderFriends: function() {
+			var result = "";
+			var friends = this.options.roomListCellModel.get("friends");
+			for (var i in friends){
+				result += "<img class='friendInRoomPic' src='http://graph.facebook.com/"+ friends[i] + "/picture' style='width:45px; height:45px;'>"
+			}
+			return result;
+		},
+		
 	  clickJoinRoom: function(el) {
-			var roomName = $(this).find(".listed-room-name").html();
+			var roomName = $(this).find(".true-room-name").html();
+			if (roomName == SurfStreamApp.inRoom) return;
 			SocketManagerModel.joinRoom(roomName, false);
 			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
 			window.SurfStreamApp.get("mainView").roomModal.hide();
@@ -1533,7 +1570,7 @@ $(function() {
 
   initialize: function() {
 	 var becomeDJ = $("#become-dj"), remotePullup = $("#remote-pullup"), avatarVAL = $("#avatarWrapper_VAL");
-   becomeDJ.bind("click", this.toggleDJStatus);
+   becomeDJ.bind("click", {theatreView: this, playlistCollection: this.options.userModel.get("playlistCollection")}, this.toggleDJStatus);
 	 becomeDJ.hide();
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", {theatre: this}, this.fullscreenToggle);
@@ -1544,11 +1581,24 @@ $(function() {
 	 //remotePullup.tipsy({
 	 //   gravity: 's',
 	 //  });
+	 
 	 avatarVAL.css("margin-left", '410px');
 	 avatarVAL.hide();
 	 avatarVAL.data({"sofaML": 410});
 	 avatarVAL.data({"sofaMT": 0});
 	 avatarVAL.append(this.make('div', {id:'valtipsy', title: "<div style='color: #CAEDFA; font-family: \"Courier New\", Courier, monospace' >VAL, the Video Robot</div>", style:"z-index: 2; width: 70px; height: 40px; margin-top: 50px; position: absolute;" }));
+	 this.valChatTipsy = this.make('div', {id:'avatarChat_VAL', "class": "chattip" });
+	 avatarVAL.append(this.valChatTipsy);
+	 $(this.valChatTipsy).css("margin-top", "15px");
+	 $(this.valChatTipsy).tipsy({
+		gravity: 'sw',
+	  fade: 'true',
+	  delayOut: 3000,
+	  trigger: 'manual',
+	  title: function() {
+	  return this.getAttribute('latest_txt')
+	  }
+	 });
 	 $("#valtipsy").tipsy({
 	    gravity: 'n',
 	    fade: 'true',
@@ -1734,7 +1784,12 @@ $(function() {
 		}
 	}, 
 
-  toggleDJStatus: function() {
+  toggleDJStatus: function(event) {
+		if (event.data.playlistCollection.get("activePlaylist").get("videos").length == 0) {
+			event.data.theatreView.valChat("Mofucker you can't VJ without no videos!  >:-/ ");
+			return;
+		}
+		$("#playlist-notification-container").slideToggle();
     SocketManagerModel.becomeDJ();
   },
 
@@ -1742,13 +1797,22 @@ $(function() {
 	 new AvatarView({user: user});	 
   },
 
-  removeUser: function(user) {
+	valChat: function(text) {
+   $(this.valChatTipsy).attr('latest_txt', text);
+   $(this.valChatTipsy).tipsy("show");
+   setTimeout(function() {
+	  if($("#avatarChat_VAL").length > 0)
+			$("#avatarChat_VAL").tipsy("hide");
+   }, 3000);
+  },
+  
+	removeUser: function(user) {
 	 var avatar = this.$("#avatarWrapper_" + user.id);
    var chat = $("#avatarChat_" + user.id);
 	 avatar.data("animating", false);
 	 chat.tipsy('hide');
    avatar.remove();
-  }
+	}
 
  }, { /* Class properties */
 
@@ -1761,7 +1825,6 @@ $(function() {
 	  if($("#avatarChat_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
-
  });
 
  window.AvatarView = Backbone.View.extend({
@@ -1827,6 +1890,7 @@ $(function() {
 			return "/images/room/monsters/yellow.png";
 		default:
 		  console.log("RUH-ROH!");
+			return null;
 		}
 	},
 	
@@ -1845,8 +1909,9 @@ $(function() {
 			return "/images/room/monsters/smiles/openteeth.png";
 		default:
 		  console.log("RUH-ROH!");
+			return null;
 		}
-	},
+	}
  });
 	
  window.ShareBarView = Backbone.View.extend({
@@ -1918,6 +1983,7 @@ $(function() {
 
   initialize: function() {
 		$('#getOff').live('click', function() {
+			$("#playlist-notification-container").slideToggle();
 		  $("#stepDown").remove();
 			$('#getOff').remove();
 			$("#skipContainer").remove();
@@ -2025,23 +2091,24 @@ $(function() {
    /* First set up all listeners */
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
-	console.log('video announced');
+		console.log('video announced');
 		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, isdj, skipX, skipY;
 		SurfStreamApp.curDJ = video.dj;
 		if (typeof(mpq) !== 'undefined') mpq.track("Video Started", {DJ: video.dj, fullscreen: SurfStreamApp.fullscreen, mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen +")"});
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
-		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title);	//debugging
+		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title+' and time start: '+video.time);	//debugging
 		$("#fullTitle").html(video.title);
 		$("#cur-video-name").html(video.title);
 		var curvid, curLen, roomModel, playerModel;
 		if (video.dj == app.get("userModel").get("ssId")) {
-			console.log("here");
+		  console.log("here");
 			$("#video-list-container .videoListCellContainer:first").remove();
 			var playlistModel = app.get("userModel").get("playlistCollection").get("activePlaylist");
 			var playlistItemModel = playlistModel.get("videos").at(0);
 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 			playlistModel.get("videos").remove(playlistItemModel);
 			app.get("userModel").get("playlistCollection").addVideoToPlaylist(playlistModel.get("playlistId"), copyPlaylistItemModel);
+			window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
 		}
     if (!window.playerLoaded) {
      var params = {
@@ -2069,9 +2136,9 @@ $(function() {
     //HACK
     $("#room-name").html(video.title)
     app.get("roomModel").get("userCollection").forEach(function(userModel) {
-		 $("#avatarWrapper_" + userModel.get("id")).data("animating", false);
-     $("#avatarWrapper_" + userModel.get("id")+ " .smiley").hide();
-     $("#avatarWrapper_" + userModel.get("id")+ " .default").show();
+	  	$("#avatarWrapper_" + userModel.get("id")).data("animating", false);
+     	$("#avatarWrapper_" + userModel.get("id")+ " .smiley").hide();
+     	$("#avatarWrapper_" + userModel.get("id")+ " .default").show();
     });
     //ENDHACK
 		roomModel = app.get("roomModel")
@@ -2514,3 +2581,4 @@ function strip(html)
    return tmp.textContent||tmp.innerText;
 }
 
+var facebookPlaylistId = 2;
