@@ -27,80 +27,40 @@ button {
   width: 455px;
   height: 40px;
 }
-#header #cur-video-info {
-  margin-left: 25px;
-  height: 40px;
-  vertical-align: top;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #b2b2b2;
-  display: inline-block;
-}
-#header #cur-video-info #cur-video-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: block;
-  height: 22px;
-  font-size: 14px;
-}
-#header #cur-video-info #cur-video-time {
-  display: inline-block;
-  height: 13px;
-  text-align: left;
-  font-size: 12px;
-  width: 100px;
-  vertical-align: top;
-  margin-left: 4px;
-  margin-top: -1px;
-}
-#header #cur-video-info #clock {
-  width: 12px;
-  height: 13px;
-  vertical-align: top;
-}
 #now-playing-tv {
   width: 640px;
-  height: 50px;
+  height: 60px;
   background-color: #000;
   z-index: 31;
   margin-left: 10px;
   opacity: 0.85;
-  margin-top: 10px;
+  margin-top: 342px;
   position: absolute;
   display: none;
+  font-size: 16px;
+  color: #c0c0c0;
 }
 #now-playing-tv #cur-video-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  margin-top: 2px;
   display: block;
-  font-size: 24px;
-  position: absolute;
-  z-index: 334;
-  color: #fff;
-  margin-left: 30px;
-  margin-top: 19px;
-  width: 600px;
+  text-indent: 4px;
 }
-#now-playing-tv #cur-video-time {
+#now-playing-tv #time-container {
+  margin-right: 4px;
+  display: block;
+  margin-top: 6px;
+}
+#now-playing-tv #time-container #clock,
+#now-playing-tv #time-container #cur-video-time {
+  vertical-align: top;
+}
+#now-playing-tv #time-container #clock {
+  margin: 1px 4px 0px 4px;
   display: inline-block;
-  font-size: 12px;
-  vertical-align: top;
-  margin-top: 8px;
-  position: absolute;
-  color: #fff;
-  font-weight: bold;
-  margin-left: 20px;
 }
-#now-playing-tv #clock {
-  width: 12px;
-  height: 13px;
-  margin-top: 8px;
-  margin-left: 2px;
-  vertical-align: top;
-  position: absolute;
+#now-playing-tv #time-container #cur-video-time {
+  display: inline-block;
+  margin-top: -3px;
 }
 #now-playing-container {
   height: 100px !important;
@@ -319,7 +279,7 @@ div#outer {
   background-image: -o-linear-gradient(top, #666, #434343);
 }
 .chatContainer  img.chatIcon {
-  background-color: #f00;
+  margin-top: 3px 0 0 4px;
 }
 .chatContainer  .chatTitle {
   margin-top: 6px;
@@ -1294,12 +1254,16 @@ background-color: green,
 }
 #playlist-view #playlist-notification-container {
   width: 285px;
-  height: 18px;
+  min-height: 18px;
   font-size: 12px;
   padding: 5px 0 0 8px;
-  color: #fff;
+  color: #d4d4d4;
   font-weight: bold;
   display: none;
+}
+#playlist-view #playlist-notification-container #playlist-notification-text {
+  width: 279px;
+  margin-bottom: 2px;
 }
 #playlist-view .videoListCellContainer:nth-child(odd) {
   background-color: #313131;
@@ -1746,8 +1710,8 @@ background-color: green,
   position: absolute;
   margin-left: 2px;
   z-index: 10000;
-  margin-top: 345px;
-  margin-left: 15px;
+  margin-top: 350px;
+  margin-left: 605px;
   width: 30px;
   padding: 3px;
   display: none;
