@@ -1098,7 +1098,7 @@ $(function() {
      id: "YouTubePlayer"
     };
     swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
-   	setInterval(updateTime, 1000);
+   	setInterval(updateTime, 300);
 		}
   }
 
@@ -1530,6 +1530,17 @@ $(function() {
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", {theatre: this}, this.fullscreenToggle);
 	 $("#fullscreenIcon").bind("click", {theatre: this}, this.fullscreenToggle);
+	 $("#video-div").hover(
+		//onmousein
+		function(){
+			$("#fullscreenIcon").fadeIn();
+			$("#now-playing-tv").fadeIn();
+		}, 
+		//onmouseout
+		function(){
+			$("#fullscreenIcon").fadeOut();
+			$("#now-playing-tv").fadeOut();
+		});
 	 //$(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
 	 //remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
 	 //remotePullup.attr("title", "Pull Up")
@@ -2069,6 +2080,7 @@ $(function() {
      };
      swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
      window.video_ID = video.id;
+		 window.secs = video.time;
 		 window.video_title = video.title;
 		 setInterval(updateTime, 1000);
     } else {
@@ -2498,7 +2510,8 @@ function updateTime() {
 	if(window.YTPlayer){
 		$("#countdownFull").html("Time: " + ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
 		if(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0){
-		 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));  
+		 $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
+		 $("#time-elapsed-bar").css({"width": 635*(window.YTPlayer.getCurrentTime()/window.YTPlayer.getDuration()) + "px"});
 		}
 	}	
 }
