@@ -1147,7 +1147,7 @@ $(function() {
     title: this.options.video.get("title"),
     vid_id: this.options.video.get("videoId"),
 		duration: ss_formatSeconds(this.options.video.get("duration")),
-		viewCount: this.options.video.get("viewCount") + " views",
+		viewCount: (this.options.video.get("viewCount") > 0) ? (this.options.video.get("viewCount") + " views" ) : "",
 		author: this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
@@ -1509,7 +1509,7 @@ $(function() {
 		render: function() {
 			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle");
 			var friendsHTML = this.renderFriends();
-			var rName = roomListCellModel.get("rID");
+			var rName = roomListCellModel.get("roomName");
 			if (roomListCellModel.get("rID") == SurfStreamApp.inRoom) {
 				rName = rName + "<span style='color: #34C8FF;'> (You Are Here)</span>";
 			}
@@ -1632,6 +1632,10 @@ $(function() {
 				window.YTPlayer.setVolume(volume);
 		}
 		});
+		
+		
+		
+		
 	 //$(".remote-top").bind("click", {remote: this}, this.pullRemoteUp);
 	 //remotePullup.bind("click", {remote: this}, this.pullRemoteUp);
 	 //remotePullup.attr("title", "Pull Up")
@@ -1677,7 +1681,33 @@ $(function() {
    this.options.userCollection.bind("remove", this.removeUser, this);
    this.chats = [];
 	 this.full = false;
+	
+		$("#ch-up").click({theatre: this}, function(e){
+			var curRoom = SurfStreamApp.inRoom;
+			e.data.theatre.flipChannel(curRoom, true);
+		});
+		
+		$("#ch-down").click({theatre: this},function(e){
+			var curRoom = SurfStreamApp.inRoom;
+			e.data.theatre.flipChannel(curRoom, false);
+		});
   },
+
+	flipChannel: function(rID, up) {
+		var roomArray = SurfStreamApp.get("roomModel").get("roomListCollection").toArray();
+		var rIDArray = _.map(roomArray, function(room) {return room.get("rID")})
+		var curIndex = _.indexOf(rIDArray, rID);
+		if (up) {
+			curIndex = curIndex + 1;
+		} else {
+			curIndex = curIndex - 1;
+		}
+		
+		if (curIndex < 0) curIndex = rIDArray.length - 1;
+		if (curIndex == rIDArray.length) curIndex = 0;
+		
+		SocketManagerModel.joinRoom(rIDArray[curIndex]);
+	},
 
 	pullRemoteUp : function (e) {
 		
@@ -2374,6 +2404,33 @@ $(function() {
 		app.get("roomModel").get("roomHistoryCollection").reset(roomHistory);
 	});
 	
+	socket.on("val:sendRecs", function(recs) {
+		console.log('got recs '+ recs);
+		var resultsCollection = app.get("searchBarModel").get("searchResultsCollection");
+	  var buildup = [];
+	   for (var i = 0; i < recs.length; i++) {
+	    var item = JSON.parse(recs[i]);
+	    var videoResult = {
+	     title: item.title,
+	     thumb: ss_idToImg(item.id),
+			 videoId: item.id,
+	     duration: item.duration,
+	     viewCount: 0,
+	     author: item.uploader
+	    };
+	    buildup.push(videoResult);
+	   }
+		resultsCollection.reset();
+		$("#searchContainer").empty();
+		if (buildup.length > 0) {
+			$("#searchContainer").append('<div style="text-align: center">Recommended Videos</div>');
+		} else {
+			$("#searchContainer").append('<div style="font-size: 13px; text-align: center">Play A Video To Give VAL an Idea of What You Like!</div>');
+		}
+		
+	   resultsCollection.add(buildup);
+	});
+	
  }
 
  }, {
@@ -2496,7 +2553,10 @@ $(function() {
 			mpq.track("Room Joined", {wasDJ: isDJ, rID:rID, mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"}); 
 		}
 		var payload = {rID: rID};
-		if (create) payload.create = true;
+		if (create) {
+			payload.create = true;
+			payload.roomName = $.trim(payload.rID).replace(/\s+/g, '-');
+		}
 		if (SurfStreamApp.inRoom) {
 			payload.currRoom = SurfStreamApp.inRoom;
 		}		
@@ -2514,6 +2574,7 @@ $(function() {
 		}
 		window.SurfStreamApp.get("roomModel").get("playerModel").set({curVid: null}); //dont calculate a room history cell on next vid announce
 		SocketManagerModel.socket.emit('room:join', payload);
+		SocketManagerModel.socket.emit("val:requestRecs");
 		SurfStreamApp.curDJ = "__none__";
 	}
 
