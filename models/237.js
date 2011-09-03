@@ -439,6 +439,7 @@
 				this.room.addChatListener(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
+				this.room.VAL.addValListeners(socket);
 				console.log('['+this.room.get('name')+'][SM] addSocket(): socket is joining channel with name: '+this.room.get('name'));
 				socket.join(this.room.get("name"));
 			}
