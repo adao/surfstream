@@ -77,9 +77,10 @@ adminSUB.on('message', function(channel, message) {
 			}
 			break;
 		case 'room:add':
-			console.log('\n[PUBSUB] received request to add room: '+message.room)
-			if(!roomManager.roomMap[message.room]) {
-				roomManager.createRoom(message.room, true);
+			console.log('\n[PUBSUB] received request to add room: '+JSON.stringify(message))
+			if(message.roomId && !roomManager.roomMap[message.roomId]) {
+				console.log('...passed check, making room')
+				roomManager.createRoom(message.roomId, message.trueName, true);
 			}
 			break;
 		case 'room:rename':
@@ -105,7 +106,7 @@ RoomManager = Backbone.Model.extend({
 					roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
 					roomMgr.roomMap[roomId].set({ name: roomId });
 					redisClient.get('room:'+roomId, function(err, reply) {
-						if(err) return;
+						if(err || !reply) return;
 						console.log("getting specific room's info: "+reply)
 						var rawRoom = JSON.parse(reply);
 						console.log('the room name is '+rawRoom.roomName)
