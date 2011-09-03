@@ -1478,7 +1478,7 @@ $(function() {
 		submitNewRoom: function(e) {
 			var roomName = $("#CreateRoomName").val();
 			if (roomName == "") return false;
-			SocketManagerModel.joinRoom(roomName , true);
+			SocketManagerModel.joinRoom($.trim(roomName).replace(/\s+/g, '-'), true, roomName);
 			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
 			e.data.modal.hide();
 			return false;
@@ -1528,10 +1528,10 @@ $(function() {
 		},
 		
 	  clickJoinRoom: function(el) {
-			var roomName = $(this).find(".true-room-name").html();
-			if (roomName == SurfStreamApp.inRoom) return;
-			SocketManagerModel.joinRoom(roomName, false);
-			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
+			var rID = $(this).find(".true-room-name").html();
+			if (rID == SurfStreamApp.inRoom) return;
+			SocketManagerModel.joinRoom(rID, false, $(this).find(".listed-room-name"));
+			window.SurfStreamApp.get("mainRouter").navigate("/" + rID, false);
 			window.SurfStreamApp.get("mainView").roomModal.hide();
 		}
 		
@@ -1706,7 +1706,7 @@ $(function() {
 		if (curIndex < 0) curIndex = rIDArray.length - 1;
 		if (curIndex == rIDArray.length) curIndex = 0;
 		
-		SocketManagerModel.joinRoom(rIDArray[curIndex]);
+		SocketManagerModel.joinRoom(rIDArray[curIndex], false, rID.replace(/-+/g, ' '));
 	},
 
 	pullRemoteUp : function (e) {
@@ -2538,11 +2538,11 @@ $(function() {
 		console.log("LOGGED");
 	},
 	
-	joinRoom: function(rID, create) {
+	joinRoom: function(rID, create, roomName) {
 		var vidsPlayed = SurfStreamApp.vidsPlayed;
 		var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
 		SurfStreamApp.vidsPlayed = 0;
-		$("#cur-room-name").html("<span style='font-weight:normal'>Channel:</span> " + rID);
+		$("#cur-room-name").html("<span style='font-weight:normal'>Channel:</span> " + roomName);
 		$("#cur-video-name").hide();
 		$("#cur-video-time").hide();
 		
@@ -2555,7 +2555,7 @@ $(function() {
 		var payload = {rID: rID};
 		if (create) {
 			payload.create = true;
-			payload.roomName = $.trim(payload.rID).replace(/\s+/g, '-');
+			payload.roomName = roomName;
 		}
 		if (SurfStreamApp.inRoom) {
 			payload.currRoom = SurfStreamApp.inRoom;
@@ -2586,7 +2586,7 @@ $(function() {
 	},
 		
 	joinRoom: function(rID) {
-		SocketManagerModel.joinRoom(rID, false);
+		SocketManagerModel.joinRoom(rID, false, rID.replace(/-+/g, ' '));
 	}
  });
 	
