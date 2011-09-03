@@ -1427,12 +1427,12 @@ $(function() {
   },
 	
 	toggleSound: function(event) {
-		if (soundOn) {
+		if (window.SurfStreamApp.get("mainView").soundOn) {
 			$(event.data.this.el).find(".soundToggler").text("Sound Off");
-			soundOn = false;
+			window.SurfStreamApp.get("mainView").soundOn = false;
 		} else {
 			$(event.data.this.el).find(".soundToggler").text("Sound On");
-			soundOn = true;
+			window.SurfStreamApp.get("mainView").soundOn = true;
 		}
 	},
 
@@ -2085,6 +2085,7 @@ $(function() {
 	soundTemplate: _.template($('#audio-tag-template').html()),
 
   initialize: function() {
+		this.soundOn = true;
 		$('#getOff').live('click', function() {
 			$("#playlist-notification-container").slideToggle();
 		  $("#stepDown").remove();
@@ -2160,14 +2161,16 @@ $(function() {
 	},
 	
 	playSound: function(audioTagId) {
-		for (var i = 0; i < this.maxAudioChannels; i++) {
-			var currentTime = new Date();
-			if (this.audioChannels[i]['finished'] < currentTime.getTime()) {
-				this.audioChannels[i]['finished'] = currentTime.getTime() + document.getElementById(audioTagId).duration * 1000;
-				this.audioChannels[i]['channel'].src = document.getElementById(audioTagId).src;
-				this.audioChannels[i]['channel'].load();
-				this.audioChannels[i]['channel'].play();
-				break;
+		if (this.soundOn) {
+			for (var i = 0; i < this.maxAudioChannels; i++) {
+				var currentTime = new Date();
+				if (this.audioChannels[i]['finished'] < currentTime.getTime()) {
+					this.audioChannels[i]['finished'] = currentTime.getTime() + document.getElementById(audioTagId).duration * 1000;
+					this.audioChannels[i]['channel'].src = document.getElementById(audioTagId).src;
+					this.audioChannels[i]['channel'].load();
+					this.audioChannels[i]['channel'].play();
+					break;
+				}
 			}
 		}
 	}
@@ -2707,13 +2710,6 @@ function skipVideo() {
 }
 
 var soundEmbed = null;
-var soundOn = true;
-
-function soundPlay(which) {
-	if (soundOn) {
-		document.getElementById(which).play();
-	}
-}
 
 Object.size = function(obj) {
     var size = 0, key;
