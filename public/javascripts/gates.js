@@ -2444,7 +2444,7 @@ $(function() {
 		if (buildup.length > 0) {
 			$("#searchContainer").append('<div style="text-align: center">Recommended Videos</div>');
 		} else {
-			$("#searchContainer").append('<div style="font-size: 13px; text-align: center">Play A Video To Give VAL an Idea of What You Like!</div>');
+			$("#searchContainer").append('<div style="font-size: 13px; text-align: center">The more videos you play and like/dislike, the better the videos VAL will play</div>');
 		}
 		
 	   resultsCollection.add(buildup);
