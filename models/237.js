@@ -560,10 +560,17 @@
 	models.History = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
-			this.recentVids = new models.VideoCollection();
+			this.recentVids = new models.VideoCollection(); //holds 10
+			this.dankVids = new models.VideoCollection(); //holds 10
 			this.size = -1;	//to signify no redis read
 			this.setSize();
 			//TODO: initialize this.recentVids from redis history
+		},
+		
+		addToDankVids: function(video) {
+			if(!video) return;
+			
+			this.dankvids.add(video);
 		},
 		
 		setSize: function() {
