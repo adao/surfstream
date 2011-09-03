@@ -1386,6 +1386,7 @@ $(function() {
 
   initialize: function() {
    this.render();
+	 $(this.el).find(".soundToggler").live("click", {"this": this}, this.toggleSound);
    this.options.chatCollection.bind("add", this.makeNewChatMsg, this);
 	 this.options.chatCollection.bind("reset", this.clearChat);
    this.chatContainer = new AutoScroll({
@@ -1424,6 +1425,16 @@ $(function() {
    });
    this.chatContainer.activeScroll();
   },
+	
+	toggleSound: function(event) {
+		if (soundOn) {
+			$(event.data.this.el).find(".soundToggler").text("Sound Off");
+			soundOn = false;
+		} else {
+			$(event.data.this.el).find(".soundToggler").text("Sound On");
+			soundOn = true;
+		}
+	},
 
 	clearChat: function() {
 		$("#messages").empty();
@@ -2696,9 +2707,12 @@ function skipVideo() {
 }
 
 var soundEmbed = null;
+var soundOn = true;
 
 function soundPlay(which) {
-	document.getElementById(which).play();
+	if (soundOn) {
+		document.getElementById(which).play();
+	}
 }
 
 Object.size = function(obj) {
