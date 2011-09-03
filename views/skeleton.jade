@@ -57,7 +57,17 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 				a Terms			
 		#nowPlayingFull(style="display: none")
 			div#fullTitle 
-			div#countdownFull 
+			div.fsContainer
+				#countdownFull
+			div.fsContainer#thumbsContainerFS
+				button#upVoteFS.voteFS
+				button#downVoteFS.voteFS
+			div.fsContainer#chContainerFS
+				button#upCh.chFS Ch +
+				button#downCh.chFS Ch -
+			div.fsContainer#volContainerFS
+			div#fullscreenContainerFS
+				button#fullscreenIcon   
 		#roomsList
 		include audiotag
 		include chat
