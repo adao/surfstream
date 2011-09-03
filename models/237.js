@@ -393,6 +393,7 @@
 		xport: function() {
 			var roomData = {};
 			roomData.rID = this.get('name');
+			roomData.roomName = this.get('trueName');
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
 			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
