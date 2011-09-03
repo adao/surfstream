@@ -451,8 +451,6 @@ $(function() {
 		playlistModel.set({playlistId: playlistId, name: name, videos: videos});
 		this.idToPlaylist[playlistId] = playlistModel;
 		
-		this.idToPlaylistNameholder[playlistId] = new PlaylistNameholderView({playlist_nameholder_value: playlistId, 			playlist_nameholder_name: name, playlistCollection: this});
-		
 		this.idToPlaylistViews[playlistId] = [];
 		
 		if (playlistId != recentlyWatchedPlaylistId) {
@@ -461,7 +459,9 @@ $(function() {
 			this.idToPlaylistDropdown[playlistId] = playlistDropdownCellView;
 			this.playlists.push(playlistModel);
 		}
-		//send socket event
+		var playlistNameholderView = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name, playlistCollection: this});
+		this.idToPlaylistNameholder[playlistId] = playlistNameholderView;
+		playlistNameholderView.setActivePlaylist();
 	},
 	
 	removePlaylist: function() {
@@ -600,7 +600,7 @@ $(function() {
 	
 	events: {
 		"click .delete-nameholder": "presentDialog",
-		"click .playlist-nameholder-name": "setActivePlaylistTwo"
+		"click .playlist-nameholder-name": "setActivePlaylist"
 	},
 	
 	initialize: function() {
@@ -647,7 +647,7 @@ $(function() {
 		console.log("works");
 	},
 	
-	setActivePlaylistTwo: function() {
+	setActivePlaylist: function() {
 		if (window.SurfStreamApp.onSofa && this.options.playlistCollection.getPlaylistById(this.options.playlist_nameholder_value).get("videos").length == 0) {
 			window.SurfStreamApp.get("mainView").theatreView.valChat("Add videos to your playlist, or else you'll get skipped!");
 		}
@@ -671,6 +671,10 @@ $(function() {
 		var pcHeight = $("#playlist-collection").outerHeight(true);
 		var viewHeight = $("#myplaylist").outerHeight(true);
 		$("#playlist-view").css('height', viewHeight - pcHeight);
+	},
+	
+	highlightView: function() {
+		
 	}
 	
  });
@@ -1382,6 +1386,7 @@ $(function() {
 
   initialize: function() {
    this.render();
+	 $(this.el).find(".soundToggler").live("click", {"this": this}, this.toggleSound);
    this.options.chatCollection.bind("add", this.makeNewChatMsg, this);
 	 this.options.chatCollection.bind("reset", this.clearChat);
    this.chatContainer = new AutoScroll({
@@ -1420,6 +1425,16 @@ $(function() {
    });
    this.chatContainer.activeScroll();
   },
+	
+	toggleSound: function(event) {
+		if (window.SurfStreamApp.get("mainView").soundOn) {
+			$(event.data.this.el).find(".soundToggler").text("Sound Off");
+			window.SurfStreamApp.get("mainView").soundOn = false;
+		} else {
+			$(event.data.this.el).find(".soundToggler").text("Sound On");
+			window.SurfStreamApp.get("mainView").soundOn = true;
+		}
+	},
 
 	clearChat: function() {
 		$("#messages").empty();
@@ -2070,6 +2085,7 @@ $(function() {
 	soundTemplate: _.template($('#audio-tag-template').html()),
 
   initialize: function() {
+		this.soundOn = true;
 		$('#getOff').live('click', function() {
 			$("#playlist-notification-container").slideToggle();
 		  $("#stepDown").remove();
@@ -2145,14 +2161,16 @@ $(function() {
 	},
 	
 	playSound: function(audioTagId) {
-		for (var i = 0; i < this.maxAudioChannels; i++) {
-			var currentTime = new Date();
-			if (this.audioChannels[i]['finished'] < currentTime.getTime()) {
-				this.audioChannels[i]['finished'] = currentTime.getTime() + document.getElementById(audioTagId).duration * 1000;
-				this.audioChannels[i]['channel'].src = document.getElementById(audioTagId).src;
-				this.audioChannels[i]['channel'].load();
-				this.audioChannels[i]['channel'].play();
-				break;
+		if (this.soundOn) {
+			for (var i = 0; i < this.maxAudioChannels; i++) {
+				var currentTime = new Date();
+				if (this.audioChannels[i]['finished'] < currentTime.getTime()) {
+					this.audioChannels[i]['finished'] = currentTime.getTime() + document.getElementById(audioTagId).duration * 1000;
+					this.audioChannels[i]['channel'].src = document.getElementById(audioTagId).src;
+					this.audioChannels[i]['channel'].load();
+					this.audioChannels[i]['channel'].play();
+					break;
+				}
 			}
 		}
 	}
@@ -2692,10 +2710,6 @@ function skipVideo() {
 }
 
 var soundEmbed = null;
-
-function soundPlay(which) {
-	document.getElementById(which).play();
-}
 
 Object.size = function(obj) {
     var size = 0, key;
