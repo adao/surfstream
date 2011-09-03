@@ -23,16 +23,18 @@
 	/*************************/
 	/*      		VAL			     */
 	/*************************/
+	var DEFAULT_VAL_THRESHOLD = 6;
 	models.VAL = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
-			this.userSuggest = new models.Playlist({videos: new models.VideoCollection()});
 			this.autoPlaylist = new models.Playlist({videos: new models.VideoCollection()});
 			
 			this.isDJ = true;
 			this.takeSuggest = false;
 			
 			this.autoplay = false;
+			
+			this.recList = [];
 		},
 		
 		addValListeners: function(socket) {
@@ -52,6 +54,22 @@
 					val.playVideo();
 				}
 			});
+			
+			socket.on('val:requestRecs', function() {
+				val.getAndSendRecs(socket);
+			});
+		},
+		
+		getAndSendRecs: function(socket) {
+			if(this.room) var roomName = this.room.get('name');
+			console.log('our room name is '+roomName)
+																															//we're assuming a lot of videos with these indices
+			redisClient && redisClient.lrange('room:'+roomName+':val:playlist', -15, -1, function(err, reply) {
+				if(err) return;
+				
+				console.log('reply from recs: '+reply)
+				socket.emit('val:sendRecs', reply);
+			})	
 		},
 		
 		playVideo: function() {
@@ -83,7 +101,17 @@
 						author: rawVideo['author'],
 						dj: 'VAL'
 					});
-
+					
+					if(!rawVideo.counter) rawVideo.counter = 0; 
+					rawVideo.counter = rawVideo.counter + 1;	//number of times this video has been played
+					
+					var limit = DEFAULT_VAL_THRESHOLD;
+					if(rawVideo.limit) limit = rawVideo.limit;
+					if(rawVideo.counter < limit) {
+						console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
+						rc.rpush(key, JSON.stringify(rawVideo));
+					}
+					
 					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
 					val.room.vm.play(videoToPlay);
 				} else {
@@ -365,6 +393,7 @@
 		xport: function() {
 			var roomData = {};
 			roomData.rID = this.get('name');
+			roomData.roomName = this.get('trueName');
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
 			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
@@ -411,6 +440,7 @@
 				this.room.addChatListener(socket);
 				this.room.meter.addListeners(socket);
 				this.room.djs.addListeners(socket);
+				this.room.VAL.addValListeners(socket);
 				console.log('['+this.room.get('name')+'][SM] addSocket(): socket is joining channel with name: '+this.room.get('name'));
 				socket.join(this.room.get("name"));
 			}
@@ -897,28 +927,28 @@
 			socket.on('playlist:addVideo', function(data) {
 				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			}); 
 
 			socket.on('playlist:moveVideoToTop', function(data) {
 				if (playlists[data.playlistId].moveToTop(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 
 			socket.on('playlist:delete', function(data) {
 				if (playlists[data.playlistId].deleteVideo(data.videoId)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			});
 			
 			socket.on('playlist:moveVideo', function(data) {
 				if (playlists[data.playlistId].moveToIndex(data.videoId, data.index)) {
 					thisUser.savePlaylist(data.playlistId);
-					console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
+					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			})
 		},
