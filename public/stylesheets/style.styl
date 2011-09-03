@@ -1,5 +1,7 @@
 FontFamily = "Segoe UI",Candara,"Bitstream Vera Sans","DejaVu Sans","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
 
+.tipsy
+	font-family: FontFamily
 body
 	background-color: #141414
 button
@@ -721,8 +723,14 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	width: 114px
 	height: 25px
 	display: block
-	margin-top: 6px
-
+	margin-top: -3px
+	
+.volText
+	font-size: 11px;
+	color: white;
+	margin-left: 16px;
+	pointer-events: none;
+	padding-top: 3px;
 .buttonContainer, .bottombuttonContainer, .bottombuttonContainerwide  
 	border: none
 	background-color: #818181
@@ -1691,28 +1699,47 @@ a#fdbk_tab
 
 #slider-line-container
 	width: 80px
-	height: 14px
+	height: 21px
 	position: absolute
 	margin-left: 17px
 	margin-top: 8px
 	background: transparent
 	cursor:pointer
 
-#slider-line
+.volIcon
+	width: 23px;
+	height: 23px;
+	margin-top: -16px;
+	position: absolute;
+	margin-left: 68px;
+
+
+.vol-line
 	width: 80px
-	height: 5px
+	height: 9px;
 	position: absolute
-	background: -webkit-gradient(linear, left top, left bottom, from(rgb(43,43,43)), to(rgb(59,59,59)))
-	background: -moz-linear-gradient(top,  rgb(43,43,43),  rgb(59,59,59))
-	background-image: -o-linear-gradient(top, rgb(43,43,43), rgb(59,59,59))
 	cursor:pointer
 	margin-top: 4px;
+	border-radius: 5px;
+#slider-line
+	background: -webkit-gradient(linear, left top, left bottom, from(rgb(37,37,37)), to(rgb(57,57,57)))
+	background: -moz-linear-gradient(top,  rgb(37,37,37),  rgb(57,57,57))
+	background-image: -o-linear-gradient(top,  rgb(37,37,37), rgb(57,57,57))
+	border-top: 1px black
+#slider-line-full
+	background: -webkit-gradient(linear, left top, left bottom, from(rgb(59,59,59)), to(rgb(43,43,43)))
+	background: -moz-linear-gradient(top,  rgb(59,59,59),  rgb(43,43,43))
+	background-image: -o-linear-gradient(top,  rgb(59,59,59), rgb(43,43,43))
+	border-top: 1px black
+	width: 66px
+	z-index: 3
 #slider-ball
 	position: absolute
-	margin-left: 47px
-	margin-top: -1px
+	margin-left: 66px
+	margin-top: 2px
 	cursor: pointer
 	pointer-events: none
+	z-index: 4
 #settings
 	display: inline-block
 	float: right

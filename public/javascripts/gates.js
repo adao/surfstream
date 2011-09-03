@@ -1147,7 +1147,7 @@ $(function() {
     title: this.options.video.get("title"),
     vid_id: this.options.video.get("videoId"),
 		duration: ss_formatSeconds(this.options.video.get("duration")),
-		viewCount: (this.options.video.get("viewCount") > 0) ? (this.options.video.get("viewCount") + " views" ) : "",
+		viewCount: (this.options.video.get("viewCount") > 0) ? (ss_formatViews(this.options.video.get("viewCount")) + " views" ) : "",
 		author: this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
@@ -1613,7 +1613,7 @@ $(function() {
 			$("#time-elapsed-bar").fadeOut();
 		});
 	 $("#slider-line-container").bind('drag',function( event ){
-									if (event.target.id == "slider-line" || event.target.id == "slider-line-container"){
+									if (event.target.id == "slider-line" || event.target.id == "slider-line-container" || event.target.id == "slider-line-full"){
 											console.log(event.layerX)
 										if (event.layerX >= 98) {
 												$( "#slider-ball" ).css({"margin-left": 89});
@@ -1621,15 +1621,19 @@ $(function() {
 											$( "#slider-ball" ).css({"margin-left": event.layerX + 10});
 										}
 									}
-									var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 7) / 82) * 100);
-										window.YTPlayer.setVolume(volume);		              
+									var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 10) / 82) * 100);
+										window.YTPlayer.setVolume(volume);
+										$("#slider-line-full").css({width: (volume * .8) });		              
 		                });
+										
+		
 		
 		$("#slider-line-container").bind('draginit',function( event ){
 			if (event.layerX <= 98) {
 			$( "#slider-ball" ).css({"margin-left": event.layerX + 10});
-			var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 7) / 82) * 100);
+			var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 10) / 82) * 100);
 				window.YTPlayer.setVolume(volume);
+				$("#slider-line-full").css({width: (volume * .8) });		      
 		}
 		});
 		
@@ -2709,6 +2713,23 @@ function strip(html)
    var tmp = document.createElement("DIV");
    tmp.innerHTML = html;
    return tmp.textContent||tmp.innerText;
+}
+
+
+function ss_formatViews(n) {
+   var s = ""+n, abs = Math.abs(n), _, i;
+
+   if (abs >= 1000) {
+       _  = (""+abs).split(/\./);
+       i  = _[0].length % 3 || 3;
+
+       _[0] = s.slice(0,i + (n < 0)) +
+              _[0].slice(i).replace(/(\d{3})/g,',$1');
+
+       s = _.join('.');
+   }
+
+   return s;
 }
 
 var recentlyWatchedPlaylistId = 1;
