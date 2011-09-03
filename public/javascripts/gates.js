@@ -451,8 +451,6 @@ $(function() {
 		playlistModel.set({playlistId: playlistId, name: name, videos: videos});
 		this.idToPlaylist[playlistId] = playlistModel;
 		
-		this.idToPlaylistNameholder[playlistId] = new PlaylistNameholderView({playlist_nameholder_value: playlistId, 			playlist_nameholder_name: name, playlistCollection: this});
-		
 		this.idToPlaylistViews[playlistId] = [];
 		
 		if (playlistId != recentlyWatchedPlaylistId) {
@@ -461,7 +459,9 @@ $(function() {
 			this.idToPlaylistDropdown[playlistId] = playlistDropdownCellView;
 			this.playlists.push(playlistModel);
 		}
-		//send socket event
+		var playlistNameholderView = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name, playlistCollection: this});
+		this.idToPlaylistNameholder[playlistId] = playlistNameholderView;
+		playlistNameholderView.setActivePlaylist();
 	},
 	
 	removePlaylist: function() {
@@ -600,7 +600,7 @@ $(function() {
 	
 	events: {
 		"click .delete-nameholder": "presentDialog",
-		"click .playlist-nameholder-name": "setActivePlaylistTwo"
+		"click .playlist-nameholder-name": "setActivePlaylist"
 	},
 	
 	initialize: function() {
@@ -647,7 +647,7 @@ $(function() {
 		console.log("works");
 	},
 	
-	setActivePlaylistTwo: function() {
+	setActivePlaylist: function() {
 		if (window.SurfStreamApp.onSofa && this.options.playlistCollection.getPlaylistById(this.options.playlist_nameholder_value).get("videos").length == 0) {
 			window.SurfStreamApp.get("mainView").theatreView.valChat("Add videos to your playlist, or else you'll get skipped!");
 		}
@@ -671,6 +671,10 @@ $(function() {
 		var pcHeight = $("#playlist-collection").outerHeight(true);
 		var viewHeight = $("#myplaylist").outerHeight(true);
 		$("#playlist-view").css('height', viewHeight - pcHeight);
+	},
+	
+	highlightView: function() {
+		
 	}
 	
  });
