@@ -680,14 +680,14 @@ width: 48px {
 #share,
 #shareBar {
   float: right;
-  width: 184px;
+  width: 194px;
   height: 40px;
   color: #000;
   margin-left: 6px;
 }
 #share .share,
 #shareBar .share {
-  margin-top: 6px;
+  margin-top: 13px;
   vertical-align: top;
   color: #b2b2b2;
   font-size: 16px;
@@ -699,7 +699,8 @@ width: 48px {
 #share #social,
 #shareBar #social {
   display: inline-block;
-  margin-top: 1px;
+  margin-top: 2px;
+  padding-left: 10px;
   width: 130px;
   height: 40px;
 }
@@ -1811,6 +1812,8 @@ a#fdbk_tab {
   z-index: 10;
 }
 .dropdown-title {
+  float: left;
+  padding-left: 4px;
   margin-left: 6px;
   margin-top: 7px;
   float: right;
@@ -1880,6 +1883,9 @@ a#fdbk_tab {
   font-weight: bold;
   border: 2px solid #c0c0c0;
   font-size: 12px;
+  width: 182px;
+  margin-right: 19px;
+  margin-top: 4px;
   margin-left: 6px;
   float: right;
 }
