@@ -1478,8 +1478,9 @@ $(function() {
 		submitNewRoom: function(e) {
 			var roomName = $("#CreateRoomName").val();
 			if (roomName == "") return false;
-			SocketManagerModel.joinRoom($.trim(roomName).replace(/\s+/g, '-'), true, roomName);
-			window.SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
+			var rID = $.trim(roomName).replace(/\s+/g, '-');
+			SocketManagerModel.joinRoom(rID, true, roomName);
+			window.SurfStreamApp.get("mainRouter").navigate("/" + rID, false);
 			e.data.modal.hide();
 			return false;
 		},
@@ -1530,7 +1531,7 @@ $(function() {
 	  clickJoinRoom: function(el) {
 			var rID = $(this).find(".true-room-name").html();
 			if (rID == SurfStreamApp.inRoom) return;
-			SocketManagerModel.joinRoom(rID, false, $(this).find(".listed-room-name"));
+			SocketManagerModel.joinRoom(rID, false, $(this).find(".listed-room-name").html());
 			window.SurfStreamApp.get("mainRouter").navigate("/" + rID, false);
 			window.SurfStreamApp.get("mainView").roomModal.hide();
 		}

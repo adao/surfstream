@@ -78,8 +78,9 @@ adminSUB.on('message', function(channel, message) {
 			break;
 		case 'room:add':
 			console.log('\n[PUBSUB] received request to add room: '+message.room)
-			if(!roomManager.roomMap[message.room]) 
+			if(!roomManager.roomMap[message.room]) {
 				roomManager.createRoom(message.room, true);
+			}
 			break;
 		case 'room:rename':
 			console.log('\n[PUBSUB] received request to rename room: '+message.oldName+ ' --> '+message.newName)
@@ -103,6 +104,13 @@ RoomManager = Backbone.Model.extend({
 				_.each(rooms, function(roomId) {
 					roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
 					roomMgr.roomMap[roomId].set({ name: roomId });
+					redisClient.get('room:'+roomId, function(err, reply) {
+						if(err) return;
+						console.log("getting specific room's info: "+reply)
+						var rawRoom = JSON.parse(reply);
+						console.log('the room name is '+rawRoom.roomName)
+						roomMgr.roomMap[roomId].set({ trueName: rawRoom.roomName });
+					})
 				});
 			}
 		});
@@ -130,13 +138,13 @@ RoomManager = Backbone.Model.extend({
 		}
 	},
 	
-	createRoom: function(roomId, fromAdmin) {
+	createRoom: function(roomId, roomName, fromAdmin) {
 		if(this.roomMap[roomId]) return;
 		console.log('[   zion   ][RoomMgr] createRoom(): a room is being created: '+roomId);
 		this.roomMap[roomId] = new models.Room(io, redisClient);
-		this.roomMap[roomId].set({ name: roomId });
+		this.roomMap[roomId].set({ name: roomId, trueName: roomName });
 		if(!fromAdmin) redisClient.rpush('rooms', roomId);	//list of all rooms
-		redisClient.set('room:'+roomId, this.roomMap[roomId].xport());
+		redisClient.set('room:'+roomId, JSON.stringify(this.roomMap[roomId].xport()));
 	},
 	
 	renameRoom: function(oldName, newName) {
@@ -263,8 +271,8 @@ io.sockets.on('connection', function(socket) {
 				console.log("\n\n[   zion   ] [socket] [room:join]: user tried to create an empty room! returning")
 				return;
 			}
-			console.log("\n\n[   zion   ] [socket] [room:join]: user wants to create room: "+data.rID);
-			roomManager.createRoom(data.rID, false);
+			console.log("\n\n[   zion   ] [socket] [room:join]: user wants to create room: "+data.roomName+' with rID '+data.rID);
+			roomManager.createRoom(data.rID, data.roomName, false);
 		} 
 		if(redisClient) {
 			redisClient.sadd("onlineFacebookUsers", data.fbId);

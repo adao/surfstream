@@ -23,6 +23,7 @@
 	/*************************/
 	/*      		VAL			     */
 	/*************************/
+	var DEFAULT_VAL_THRESHOLD = 6;
 	models.VAL = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
@@ -100,7 +101,17 @@
 						author: rawVideo['author'],
 						dj: 'VAL'
 					});
-
+					
+					if(!rawVideo.counter) rawVideo.counter = 0; 
+					rawVideo.counter = rawVideo.counter + 1;	//number of times this video has been played
+					
+					var limit = DEFAULT_VAL_THRESHOLD;
+					if(rawVideo.limit) limit = rawVideo.limit;
+					if(rawVideo.counter < limit) {
+						console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
+						rc.rpush(key, JSON.stringify(rawVideo));
+					}
+					
 					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
 					val.room.vm.play(videoToPlay);
 				} else {
@@ -382,6 +393,7 @@
 		xport: function() {
 			var roomData = {};
 			roomData.rID = this.get('name');
+			roomData.roomName = this.get('trueName');
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
 			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
