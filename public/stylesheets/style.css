@@ -2086,3 +2086,6 @@ a#fdbk_tab {
   -webkit-box-shadow: inset 0 0 1px #000;
   box-shadow: inset 0 0 1px #000;
 }
+#fba_ss_id {
+  display: none;
+}

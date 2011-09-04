@@ -1,5 +1,6 @@
 window.fbAsyncInit = function() {
-	FB.init({ appId: '103932176371457',
+	var fbappid = $("#fba_ss_id").html();
+	FB.init({ appId: fbappid,
 		status: true,
 		cookie: true,
 		xfbml: true,
