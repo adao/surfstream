@@ -1615,18 +1615,34 @@ $(function() {
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", {theatre: this}, this.fullscreenToggle);
 	 $("#fullscreenIcon").bind("click", {theatre: this}, this.fullscreenToggle);
-	 $("#video-div").hover(
+	 $(".video-div-proxy").hover(
 		//onmousein
-		function(){
-			$("#fullscreenIcon").fadeIn();
-			$("#now-playing-tv").fadeIn();
-			$("#time-elapsed-bar").fadeIn();
-		}, 
+		function(e){
+			console.log("in at " + e.layerX + ", " + e.layerY);
+			$("#fullscreenIcon").stop()
+			$("#now-playing-tv").stop()
+			$("#time-elapsed-bar").stop()
+			
+			 $("#fullscreenIcon, #now-playing-tv, #time-elapsed-bar").css({display:"block"});
+			$("#fullscreenIcon").animate({opacity: 1});
+			$("#now-playing-tv").animate({opacity: .85});
+			$("#time-elapsed-bar").animate({opacity: .85});
+		
+			
+		}, 	
+		
 		//onmouseout
-		function(){
-			$("#fullscreenIcon").fadeOut();
-			$("#now-playing-tv").fadeOut();
-			$("#time-elapsed-bar").fadeOut();
+		function(e){
+			console.log("out at " + e.layerX + ", " + e.layerY);
+			$("#fullscreenIcon").stop()
+			$("#now-playing-tv").stop()
+			$("#time-elapsed-bar").stop()
+			var hide =  function(){ $(this).css({display:"none"}) };
+			
+		$("#fullscreenIcon").animate({opacity: 0},600, "swing", hide)
+		$("#now-playing-tv").animate({opacity: 0},600, "swing", hide)
+		$("#time-elapsed-bar").animate({opacity: 0},600, "swing", hide)
+	
 		});
 	 $("#slider-line-container").bind('drag',function( event ){
 									if (event.target.id == "slider-line" || event.target.id == "slider-line-container" || event.target.id == "slider-line-full"){

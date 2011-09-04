@@ -17,7 +17,7 @@ button {
   margin-top: -4px;
 }
 #header #cur-room-name {
-  margin-top: 4px;
+  margin-top: 7px;
   font-weight: bold;
   vertical-align: top;
   margin-left: 20px;
@@ -36,10 +36,9 @@ button {
   background-color: #000;
   z-index: 31;
   margin-left: 10px;
-  opacity: 0.85;
+  opacity: 0;
   margin-top: 342px;
   position: absolute;
-  display: none;
   font-size: 16px;
   color: #c0c0c0;
 }
@@ -118,7 +117,7 @@ button {
 }
 #time-elapsed-bar {
   background-color: #34c8ff;
-  display: none;
+  opacity: 0;
 }
 #become-dj {
   cursor: n-resize;
@@ -690,7 +689,7 @@ width: 48px {
 }
 #share .share,
 #shareBar .share {
-  margin-top: 13px;
+  margin-top: 10px;
   vertical-align: top;
   color: #b2b2b2;
   font-size: 16px;
@@ -1107,7 +1106,6 @@ button
   width: 660px;
   height: 413px;
   background: url("/images/room/newicons/tv-black.png");
-  z-index: 1;
 }
 #YouTubePlayer {
   padding-left: 10px;
@@ -1779,9 +1777,8 @@ background-color: green,
   margin-left: 605px;
   width: 30px;
   padding: 3px;
-  display: none;
   background-color: #fff;
-  opacity: 0.65;
+  opacity: 0;
 }
 #fullscreenIcon:hover {
   background-color: #34c8ff;
@@ -1975,8 +1972,31 @@ a#fdbk_tab {
   padding: 0 !important;
   display: inline;
 }
-#YouTubePlayer {
-  pointer-events: none;
+.video-div-proxy {
+  z-index: 32;
+  position: absolute;
+}
+#w {
+  float: left;
+  width: 550px;
+  height: 400px;
+}
+#e {
+  margin-left: 570px;
+  float: left;
+  width: 80px;
+  height: 400px;
+}
+#s {
+  float: left;
+  width: 655px;
+  height: 30px;
+  margin-top: 370px;
+}
+#n {
+  float: left;
+  width: 655px;
+  height: 330px;
 }
 .friendInRoomPic {
   margin-right: 3px;
