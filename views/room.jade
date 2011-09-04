@@ -1,6 +1,10 @@
 #room-template(style="display:none;")
 	#room-container
 		#video-div
+			#w.video-div-proxy
+			#e.video-div-proxy
+			#s.video-div-proxy
+			#n.video-div-proxy
 			#now-playing-tv
 				#cur-video-name
 				#time-container
@@ -36,10 +40,11 @@
 					.remote-bottom
 						.volContainer
 							#slider-line-container
-								#slider-line
+								#slider-line.vol-line
+								#slider-line-full.vol-line
 							#slider-ball
 								img(src="/images/room/newicons/ball-slider.png")
-							#vol-icon
+						.volText - Volume +
 						.bottombuttonContainerwide
 							button#rooms Rooms
 						.bottombuttonContainerwide

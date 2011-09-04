@@ -1,5 +1,7 @@
 FontFamily = "Segoe UI",Candara,"Bitstream Vera Sans","DejaVu Sans","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
 
+.tipsy
+	font-family: FontFamily
 body
 	background-color: #141414
 button
@@ -30,10 +32,9 @@ button
 	background-color: black
 	z-index: 31
 	margin-left: 10px
-	opacity: 0.85
+	opacity: 0
 	margin-top: 342px
 	position: absolute
-	display:none
 	font-size: 16px
 	color: silver
 	#cur-video-name
@@ -99,7 +100,7 @@ button
 	display:none
 #time-elapsed-bar
 	background-color: #34C8FF
-	display: none
+	opacity: 0
 #become-dj
 	cursor: n-resize
 	position: absolute
@@ -722,8 +723,14 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	width: 114px
 	height: 25px
 	display: block
-	margin-top: 6px
-
+	margin-top: -3px
+	
+.volText
+	font-size: 11px;
+	color: white;
+	margin-left: 16px;
+	pointer-events: none;
+	padding-top: 3px;
 .buttonContainer, .bottombuttonContainer, .bottombuttonContainerwide  
 	border: none
 	background-color: #818181
@@ -960,7 +967,6 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	width: 660px
 	height: 413px
 	background: url('/images/room/newicons/tv-black.png')
-	z-index: 1
 
 #YouTubePlayer
 	padding-left: 10px
@@ -1559,14 +1565,13 @@ div#top-video-name
 #fullscreenIcon
 	position: absolute
 	margin-left: 2px
-	z-index: 10000
+	z-index: 32444
 	margin-top: 350px
 	margin-left: 605px
 	width: 30px
 	padding: 3px
-	display: none
 	background-color: white
-	opacity: .65
+	opacity: 0
 	
 #fullscreenIcon:hover
 	background-color: #34C8FF
@@ -1731,37 +1736,74 @@ a#fdbk_tab
 		.videoChatCellText
 			padding: 0!important 
 			display: inline
-
-#YouTubePlayer
-	pointer-events: none
+.video-div-proxy
+	z-index: 32
+	position: absolute;
+#w
+	float: left;
+	width: 550px;
+	height: 400px;
+#e
+	margin-left: 570px;
+	float: left;
+	width: 80px;
+	height: 400px;
+#s
+	float: left;
+	width: 655px;
+	height: 30px;
+	margin-top:370px
+#n
+	float: left;
+	width: 655px;
+	height: 330px;
 
 .friendInRoomPic
 	margin-right: 3px
 
 #slider-line-container
 	width: 80px
-	height: 14px
+	height: 21px
 	position: absolute
 	margin-left: 17px
 	margin-top: 8px
 	background: transparent
 	cursor:pointer
 
-#slider-line
+.volIcon
+	width: 23px;
+	height: 23px;
+	margin-top: -16px;
+	position: absolute;
+	margin-left: 68px;
+
+
+.vol-line
 	width: 80px
-	height: 5px
+	height: 9px;
 	position: absolute
-	background: -webkit-gradient(linear, left top, left bottom, from(rgb(43,43,43)), to(rgb(59,59,59)))
-	background: -moz-linear-gradient(top,  rgb(43,43,43),  rgb(59,59,59))
-	background-image: -o-linear-gradient(top, rgb(43,43,43), rgb(59,59,59))
 	cursor:pointer
 	margin-top: 4px;
+	border-radius: 5px;
+#slider-line
+	background: -webkit-gradient(linear, left top, left bottom, from(rgb(37,37,37)), to(rgb(57,57,57)))
+	background: -moz-linear-gradient(top,  rgb(37,37,37),  rgb(57,57,57))
+	background-image: -o-linear-gradient(top,  rgb(37,37,37), rgb(57,57,57))
+	border-top: 1px black
+#slider-line-full
+	background: -webkit-gradient(linear, left top, left bottom, from(rgb(59,59,59)), to(rgb(43,43,43)))
+	background: -moz-linear-gradient(top,  rgb(59,59,59),  rgb(43,43,43))
+	background-image: -o-linear-gradient(top,  rgb(59,59,59), rgb(43,43,43))
+	border-top: 1px black
+	width: 66px
+	z-index: 3
 #slider-ball
 	position: absolute
-	margin-left: 47px
-	margin-top: -1px
+	margin-left: 66px
+	margin-top: 2px
 	cursor: pointer
 	pointer-events: none
+	z-index: 4
 #settings
 	display: inline-block
 	float: right
@@ -1797,3 +1839,6 @@ a#fdbk_tab
 		-moz-box-shadow:inset 0 0 1px #000000;
 		-webkit-box-shadow:inset 0 0 1px #000000;
 		box-shadow:inset 0 0 1px #000000;
+
+#fba_ss_id
+	display: none

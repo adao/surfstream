@@ -1,3 +1,43 @@
+window.fbAsyncInit = function() {
+	var fbappid = $("#fba_ss_id").html();
+	FB.init({ appId: fbappid,
+		status: true,
+		cookie: true,
+		xfbml: true,
+		oauth: true});
+		
+	button = document.getElementById('fb-auth');
+	button.onclick = function() {
+		FB.login(function(response) {}, {scope:'email,read_stream,user_about_me,read_friendlists'});
+	};
+	
+	function proceed_to_site(response) {
+		console.log(response);
+		if (response.authResponse) {
+			//user is already logged in and connected
+			window.SurfStreamApp = new SurfStreamModel({
+			  socket: socket_init
+			 });
+			 console.log("started app");
+			window.SurfStreamApp.get("userModel").set({fbId: response.authResponse.userID});
+			SocketManagerModel.sendFBId(response.authResponse.userID);
+			document.getElementById('frontdoor').style.display = 'none';
+			document.getElementById('loadingScreen').style.display = 'none';
+			document.getElementById('outer').style.display = 'block';
+		} else {
+			// yeah right
+			document.getElementById('loadingScreen').style.display = 'none';
+			document.getElementById('frontdoor').style.display = 'inline-block';
+			FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
+		}
+	}
+		
+	// run once with current status and whenever the status changes
+	FB.getLoginStatus(proceed_to_site);
+};
+
+
+
 $(function() {
 
  _.templateSettings = {
@@ -5,6 +45,8 @@ $(function() {
  };
 
  ZeroClipboard.setMoviePath('/swf/ZeroClipboard.swf');
+
+ socket_init = io.connect();
 
  window.ChatMessageModel = Backbone.Model.extend({});
 
@@ -1150,7 +1192,7 @@ $(function() {
     title: this.options.video.get("title"),
     vid_id: this.options.video.get("videoId"),
 		duration: ss_formatSeconds(this.options.video.get("duration")),
-		viewCount: (this.options.video.get("viewCount") > 0) ? (this.options.video.get("viewCount") + " views" ) : "",
+		viewCount: (this.options.video.get("viewCount") > 0) ? (ss_formatViews(this.options.video.get("viewCount")) + " views" ) : "",
 		author: this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
@@ -1615,21 +1657,41 @@ $(function() {
 	 $("#nowPlayingFull").hide();
 	 $("#fullscreen").bind("click", {theatre: this}, this.fullscreenToggle);
 	 $("#fullscreenIcon").bind("click", {theatre: this}, this.fullscreenToggle);
-	 $("#video-div").hover(
+	 $(".video-div-proxy").hover(
 		//onmousein
-		function(){
-			$("#fullscreenIcon").fadeIn();
-			$("#now-playing-tv").fadeIn();
-			$("#time-elapsed-bar").fadeIn();
-		}, 
+		function(e){
+			console.log("in at " + e.layerX + ", " + e.layerY);
+			$("#fullscreenIcon").stop()
+			$("#now-playing-tv").stop()
+			$("#time-elapsed-bar").stop()
+			
+			 $("#fullscreenIcon, #now-playing-tv, #time-elapsed-bar").css({display:"block"});
+			$("#fullscreenIcon").animate({opacity: 1});
+			$("#now-playing-tv").animate({opacity: .85});
+			$("#time-elapsed-bar").animate({opacity: .85});
+		
+			
+		}, 	
+		
 		//onmouseout
-		function(){
-			$("#fullscreenIcon").fadeOut();
-			$("#now-playing-tv").fadeOut();
-			$("#time-elapsed-bar").fadeOut();
+		function(e){
+			if (e.toElement.id == "fullscreenIcon" || e.toElement.className == '.video-div-proxy') {
+				console.log("on full or other proxy")
+				return;
+			}
+			console.log("out at " + e.layerX + ", " + e.layerY);
+			$("#fullscreenIcon").stop()
+			$("#now-playing-tv").stop()
+			$("#time-elapsed-bar").stop()
+			var hide =  function(){ $(this).css({display:"none"}) };
+			
+		$("#fullscreenIcon").animate({opacity: 0},600, "swing", hide)
+		$("#now-playing-tv").animate({opacity: 0},600, "swing", hide)
+		$("#time-elapsed-bar").animate({opacity: 0},600, "swing", hide)
+	
 		});
 	 $("#slider-line-container").bind('drag',function( event ){
-									if (event.target.id == "slider-line" || event.target.id == "slider-line-container"){
+									if (event.target.id == "slider-line" || event.target.id == "slider-line-container" || event.target.id == "slider-line-full"){
 											console.log(event.layerX)
 										if (event.layerX >= 98) {
 												$( "#slider-ball" ).css({"margin-left": 89});
@@ -1637,15 +1699,19 @@ $(function() {
 											$( "#slider-ball" ).css({"margin-left": event.layerX + 10});
 										}
 									}
-									var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 7) / 82) * 100);
-										window.YTPlayer.setVolume(volume);		              
+									var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 10) / 82) * 100);
+										window.YTPlayer.setVolume(volume);
+										$("#slider-line-full").css({width: (volume * .8) });		              
 		                });
+										
+		
 		
 		$("#slider-line-container").bind('draginit',function( event ){
 			if (event.layerX <= 98) {
 			$( "#slider-ball" ).css({"margin-left": event.layerX + 10});
-			var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 7) / 82) * 100);
+			var volume = Math.floor((($("#slider-ball").css("margin-left").replace("px", "") - 10) / 82) * 100);
 				window.YTPlayer.setVolume(volume);
+				$("#slider-line-full").css({width: (volume * .8) });		      
 		}
 		});
 		
@@ -2633,6 +2699,9 @@ $(function() {
 	
  window.playerLoaded = false;
 
+ 	var e = document.createElement('script'); e.async = true;
+	e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+	document.getElementById('fb-root').appendChild(e);
 });
 
 function setSuggestions(suggestions) {
@@ -2748,6 +2817,154 @@ function strip(html)
    return tmp.textContent||tmp.innerText;
 }
 
+
+function ss_formatViews(n) {
+   var s = ""+n, abs = Math.abs(n), _, i;
+
+   if (abs >= 1000) {
+       _  = (""+abs).split(/\./);
+       i  = _[0].length % 3 || 3;
+
+       _[0] = s.slice(0,i + (n < 0)) +
+              _[0].slice(i).replace(/(\d{3})/g,',$1');
+
+       s = _.join('.');
+   }
+
+   return s;
+}
+
 var recentlyWatchedPlaylistId = 1;
 var thumbsUpPlaylistId = 2;
 var facebookPlaylistId = 3;
+
+/******************** FB_INITONE ***********************/
+
+
+function login(response, info) {
+	if (response.authResponse) {
+		var accessToken = response.authResponse.accessToken;
+		userInfo.innerHTML = '<img src="https://graph.facebook.com/' + info.id + '/picture">' + info.name
+			+ "<br /> Your Access Token: " + accessToken;
+		showLoader(false);
+		document.getElementById('other').style.display = "block";
+	}
+}
+		
+function logout(response) {
+	userInfo.innerHTML                             =   "";
+	document.getElementById('debug').innerHTML     =   "";
+	document.getElementById('other').style.display =   "none";
+	showLoader(false);
+}
+
+//stream publish method
+function streamPublish(name, description, hrefTitle, hrefLink, userPrompt) {
+	showLoader(true);
+	FB.ui(
+		{
+			method: 'stream.publish',
+			message: '',
+			attachment: {
+				name: name,
+				caption: '',
+				description: (description),
+				href: hrefLink
+			},
+			action_links: [
+				{ text: hrefTitle, href: hrefLink }
+			],
+			user_prompt_message: userPrompt
+		},
+		function(response) {
+			showLoader(false);
+		}
+	);
+}
+			
+function showStream() {
+	FB.api('/me', function(response) {
+		//console.log(response.id);
+		streamPublish(response.name, 'I like the articles of Thinkdiff.net', 'hrefTitle', 'http://thinkdiff.net', "Share thinkdiff.net");
+		}
+	);
+}
+
+function share() {
+	showLoader(true);
+	var share = {
+		method: 'stream.share',
+		u: 'http://thinkdiff.net/'
+	};
+		
+	FB.ui(share, function(response) {
+		showLoader(false);
+		console.log(response);
+	});
+}
+			
+function graphStreamPublish(){
+	showLoader(true);
+				
+	FB.api('/me/feed', 'post',
+		{
+			message     : "I love thinkdiff.net for facebook app development tutorials",
+			link        : 'http://ithinkdiff.net',
+			picture     : 'http://thinkdiff.net/iphone/lucky7_ios.jpg',
+			name        : 'iOS Apps & Games',
+			description : 'Checkout iOS apps and games from iThinkdiff.net. I found some of them are just awesome!'
+		},
+	
+		function(response) {
+			showLoader(false);
+			if (!response || response.error) {
+				alert('Error occured');
+			} else {
+				alert('Post ID: ' + response.id);
+			}
+		}
+	);
+}
+
+function fqlQuery(){
+	showLoader(true);
+	
+	FB.api('/me', function(response) {
+		showLoader(false);
+		
+		//http://developers.facebook.com/docs/reference/fql/user/
+		var query       =  FB.Data.query('select name, profile_url, sex, pic_small from user where uid={0}', response.id);
+		query.wait(function(rows) {
+			document.getElementById('debug').innerHTML =
+				'FQL Information: '+  "<br />" +
+				'Your name: '      +  rows[0].name
+				'Your Sex: '       +  (rows[0].sex!= undefined ? rows[0].sex : "")                            + "<br />" +
+				'Your Profile: '   +  "<a href='" + rows[0].profile_url + "'>" + rows[0].profile_url + "</a>" + "<br />" +
+				'<img src="'       +  rows[0].pic_small + '" alt="" />' + "<br />";
+		});
+	});
+}
+
+function setStatus(){
+	showLoader(true);
+	status1 = document.getElementById('status').value;
+	FB.api({
+		method: 'status.set',
+		status: status1
+	},
+	function(response) {
+		if (response == 0){
+			alert('Your facebook status not updated. Give Status Update Permission.');
+		} else {
+			alert('Your facebook status updated');
+		}
+		showLoader(false);
+	});
+}
+
+function showLoader(status) {
+	if (status) {
+		document.getElementById('loader').style.display = 'block';
+	}	else {
+		document.getElementById('loader').style.display = 'none';}
+	}
