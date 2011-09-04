@@ -2,7 +2,8 @@
 	_ = require('underscore')._;
   Backbone = require('backbone');
 	models = exports;
-	var redisClient = require('redis').createClient(),
+	var redis = require('redis');
+	var redisClient = redis.createClient(),
 	http = require('http');
 	
 	var permSockEvents = {};
@@ -924,10 +925,6 @@
 						//console.log(playlists);
 					}
 				})
-				
-				var newPlaylist = new models.Playlist({name: data.playlistName, videos: new models.VideoCollection()});
-				playlists[data.playlistId] = newPlaylist;
-				thisUser.savePlaylist(data.playlistId);
 			});
 			
 			socket.on('playlist:addVideo', function(data) {
