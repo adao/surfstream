@@ -653,13 +653,19 @@
 
 	models.Playlist = Backbone.Model.extend({
 
-		addVideo: function(playlistId, videoId, thumb, title, duration, author) {
+		addVideo: function(playlistId, videoId, thumb, title, duration, author, append) {
 			if(this.containsVideo(videoId))
 				return false;
 			var vid = new models.Video();
 			vid.id = videoId;
 			vid.set({ playlistId: playlistId, videoId: videoId, thumb: thumb, title: title, duration: duration, author: author});
-			this.get("videos").add(vid);
+			if (append) {
+				this.get("videos").add(vid);
+			} else {
+				this.get("videos").add(vid, {
+					at: 0
+				});
+			}
 			return true;
 		},
 		
@@ -928,7 +934,7 @@
 			});
 			
 			socket.on('playlist:addVideo', function(data) {
-				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author)) {
+				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author, data.append)) {
 					thisUser.savePlaylist(data.playlistId);
 					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}

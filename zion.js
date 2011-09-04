@@ -243,11 +243,13 @@ io.sockets.on('connection', function(socket) {
 				StagingUsers[socket.id] = currUser;
 				var defaultPlaylist = new models.Playlist({name: "Recently Watched", videos: new models.VideoCollection()});
 				var facebookPlaylist = new models.Playlist({name: "My FB Wall", videos: new models.VideoCollection()});
-				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 1, JSON.stringify(defaultPlaylist), 2, JSON.stringify(facebookPlaylist), function(err, reply) {
+				var firstPlaylist = new models.Playlist({name: "My 1st surfstream playlist :)", videos: new models.VideoCollection()});
+				var thumbsUp = new models.Playlist({name: "Thumbs up! )3", videos: new models.VideoCollection()});
+				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 1, JSON.stringify(defaultPlaylist), 2, JSON.stringify(thumbsUp), 3, JSON.stringify(facebookPlaylist), 4, JSON.stringify(firstPlaylist), function(err, reply) {
 					if (err) {
 						console.log("Error writing ss user's default playlists " + ssUser.ssId + " to Redis");
 					} else {
-						redisClient.set("user:" + ssUser.ssId + ":activePlaylist", 2, function(err, reply) {
+						redisClient.set("user:" + ssUser.ssId + ":activePlaylist", 3, function(err, reply) {
 							if (err) {
 								console.log("error setting user " + ssUser.ssId + "'s active playlist");
 							} else {
