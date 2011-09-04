@@ -250,7 +250,18 @@ $(function() {
 			author: entry.author[0].name.$t
 		}
 		var playlistItemModel = new PlaylistItemModel(attributes);
-		this.get("playlistCollection").addVideoToPlaylist(facebookPlaylistId, playlistItemModel);
+		
+		playlistItemModel.set({playlistId: facebookPlaylistId});
+		this.get("playlistCollection").getPlaylistById(facebookPlaylistId).get("videos").add(playlistItemModel);
+		SocketManagerModel.addVideoToPlaylist(facebookPlaylistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"), true);
+		if (facebookPlaylistId == this.get("playlistCollection").get("activePlaylist").get("playlistId")) {
+			var playlistCellView = new PlaylistCellView({
+				playlistItemModel: playlistItemModel,
+				playlistId: playlistItemModel.get("playlistId"),
+				id: playlistItemModel.get("videoId")
+			});
+			playlistCellView.initializeViewToTop(false);
+		}
 	}
 	
  });
@@ -368,7 +379,9 @@ $(function() {
 	},
 	
 	addToPlaylist: function(playlistItemModel) {
-		this.get("videos").add(playlistItemModel);
+		this.get("videos").add(playlistItemModel, {
+			at: 0
+		});
 	},
 	
 	removeFromPlaylist: function(videoId) {
@@ -505,27 +518,10 @@ $(function() {
 	addVideoToPlaylist: function(playlistId, playlistItemModel) {
 		playlistItemModel.set({playlistId: playlistId});
 		this.getPlaylistById(playlistId).addToPlaylist(playlistItemModel);
-		SocketManagerModel.addVideoToPlaylist(playlistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"));
+		SocketManagerModel.addVideoToPlaylist(playlistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"), false);
 		if (playlistId == this.get("activePlaylist").get("playlistId")) {
 			window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.addVideo(playlistItemModel, playlistId);
 		}
-	},
-	
-	addToRecentlyWatched: function(playlistItemModel) {
-		playlistItemModel.set({playlistId: recentlyWatchedPlaylistId});
-		this.getPlaylistById(recentlyWatchedPlaylistId).get("videos").add(playlistItemModel, {
-			at: 0
-		});
-		if (recentlyWatchedPlaylistId == this.get("activePlaylist").get("playlistId")) {
-			var playlistCellView = new PlaylistCellView({
-				playlistItemModel: playlistItemModel,
-				playlistId: recentlyWatchedPlaylistId,
-				id: playlistItemModel.get("videoId")
-			});
-			playlistCellView.initializeViewToTop(true);
-		}
-		SocketManagerModel.addVideoToPlaylist(recentlyWatchedPlaylistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"));
-		SocketManagerModel.toTopOfPlaylist(recentlyWatchedPlaylistId, playlistItemModel.get("videoId"));
 	}
  });
 
@@ -628,7 +624,7 @@ $(function() {
 				ui.draggable.remove();
 			}
 		});
-		if (this.options.playlist_nameholder_value == recentlyWatchedPlaylistId || this.options.playlist_nameholder_value == facebookPlaylistId) {
+		if (this.options.playlist_nameholder_value == recentlyWatchedPlaylistId || this.options.playlist_nameholder_value == facebookPlaylistId || this.options.playlist_nameholder_value == thumbsUpPlaylistId) {
 			$(this.el).find(".delete-nameholder").remove();
 		}
 		this.calculatePlaylistHeight();
@@ -816,12 +812,15 @@ $(function() {
 		playlistId: playlistId,
 		id: playlistItemModel.get("videoId")
    });
-   playlistCellView.initializeViewToTop(false);
+   playlistCellView.initializeViewToTop(true);
   },
 
 	resetPlaylist : function() {
 		$("#video-list-container.videoListContainer").empty();
-		this.playlist.get("videos").each(function(playlistItemModel) {this.addVideo(playlistItemModel, this.playlist.get("playlistId"))}, this);
+		//this.playlist.get("videos").each(function(playlistItemModel) {this.addVideo(playlistItemModel, this.playlist.get("playlistId"))}, this);
+		for (var i = this.playlist.get("videos").length - 1; i >= 0; i--) {
+			this.addVideo(this.playlist.get("videos").at(i), this.playlist.get("playlistId"));
+		}
 	},
 	
 	setPlaylist: function(playlistModel) {
@@ -1328,6 +1327,7 @@ $(function() {
    SocketManagerModel.toTopOfPlaylist(event.data.videoModel.get("playlistId"), event.data.videoModel.get("videoId"));
    var playlistCellView = new PlaylistCellView({
     playlistItemModel: copyPlaylistItemModel,
+		playlistId: event.data.videoModel.get("playlistId"),
 		id: event.data.videoModel.get("videoId")
    });
    playlistCellView.initializeViewToTop(true);
@@ -1681,7 +1681,7 @@ $(function() {
 	    fade: 'true',
 			html: true
 	   });
-   $("#up-vote").bind("click", SocketManagerModel.voteUp);
+   $("#up-vote").bind("click", this.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
     offset: 10
@@ -1708,6 +1708,19 @@ $(function() {
 			e.data.theatre.flipChannel(curRoom, false);
 		});
   },
+	
+	voteUp: function() {
+		var nowPlaying = window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid");
+		var attributes = {
+			title: nowPlaying.title,
+			thumb: ss_idToImg(nowPlaying.videoId),
+			videoId: nowPlaying.videoId,
+			duration: nowPlaying.duration
+		}
+		var playlistItemModel = new PlaylistItemModel(attributes);
+		window.SurfStreamApp.get("userModel").get("playlistCollection").addVideoToPlaylist(thumbsUpPlaylistId, playlistItemModel);
+		SocketManagerModel.voteUp();
+	},
 
 	flipChannel: function(rID, up) {
 		var roomArray = SurfStreamApp.get("roomModel").get("roomListCollection").toArray();
@@ -2212,8 +2225,16 @@ $(function() {
 			var playlistModel = app.get("userModel").get("playlistCollection").get("activePlaylist");
 			var playlistItemModel = playlistModel.get("videos").at(0);
 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
-			playlistModel.get("videos").remove(playlistItemModel);
-			app.get("userModel").get("playlistCollection").addVideoToPlaylist(playlistModel.get("playlistId"), copyPlaylistItemModel);
+			playlistModel.get("videos").add(copyPlaylistItemModel, {
+				at: playlistModel.get("videos").length
+			});
+			
+			var playlistCellView = new PlaylistCellView({
+				playlistItemModel: copyPlaylistItemModel,
+				playlistId: copyPlaylistItemModel.get("playlistId"),
+				id: copyPlaylistItemModel.get("videoId")
+			});
+			playlistCellView.initializeViewToTop(false);
 			window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
 		}
     if (!window.playerLoaded) {
@@ -2261,7 +2282,7 @@ $(function() {
 					videoId: curvid.videoId,
 					duration: curvid.duration
 				});
-				playlistCollection.addToRecentlyWatched(playlistItemModel);
+				playlistCollection.addVideoToPlaylist(recentlyWatchedPlaylistId, playlistItemModel);
 			}
 		}
 		//save the currently playing state
@@ -2488,14 +2509,15 @@ $(function() {
    SocketManagerModel.socket.emit('dj:quit');
   },
 
-  addVideoToPlaylist: function(playlistId, videoId, thumb, title, duration, author) {
+  addVideoToPlaylist: function(playlistId, videoId, thumb, title, duration, author, append) {
    SocketManagerModel.socket.emit('playlist:addVideo', {
 		playlistId: playlistId,
     videoId: videoId,
     thumb: thumb,
     title: title,
 		duration: duration,
-		author: author
+		author: author,
+		append: append
    });
   },
 
@@ -2727,4 +2749,5 @@ function strip(html)
 }
 
 var recentlyWatchedPlaylistId = 1;
-var facebookPlaylistId = 2;
+var thumbsUpPlaylistId = 2;
+var facebookPlaylistId = 3;

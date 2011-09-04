@@ -14,7 +14,7 @@ button {
   margin-top: -4px;
 }
 #header #cur-room-name {
-  margin-top: 4px;
+  margin-top: 7px;
   font-weight: bold;
   vertical-align: top;
   margin-left: 20px;
@@ -554,7 +554,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -70px;
   margin-top: 23px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   width: 63px;
   text-align: left;
   text-indent: 1px;
@@ -687,7 +687,7 @@ width: 48px {
 }
 #share .share,
 #shareBar .share {
-  margin-top: 13px;
+  margin-top: 10px;
   vertical-align: top;
   color: #b2b2b2;
   font-size: 16px;
@@ -1157,13 +1157,13 @@ background-color: green,
   height: 10px;
   width: 10px;
   border: none;
-  background: url("/images/room/newicons/delete-playlist.png") 50% 50% no-repeat;
   float: right;
+  background: url("/images/room/newicons/delete-playlist-hover.png") 50% 50% no-repeat;
   margin-top: 5.5px;
   margin-left: 4px;
 }
 .delete-nameholder:hover {
-  background: url("/images/room/newicons/delete-playlist-hover.png") 50% 50% no-repeat;
+  background: url("/images/room/newicons/delete-playlist.png") 50% 50% no-repeat;
 }
 .unselected-playlist-nameholder:hover {
   -moz-box-shadow: inset 0 0 1px #000;
@@ -1193,12 +1193,17 @@ background-color: green,
   display: inline-block;
   height: 20px;
 }
-.playlist-nameholder-name,
-.delete-nameholder,
-.playlist-collection-input {
-  font-family: "Lucida Grande", Verdana;
+.playlist-nameholder-name {
+  padding: 0 4px 0 4px;
   vertical-align: middle;
   line-height: 20px;
+}
+.delete-nameholder {
+  vertical-align: middle;
+  line-height: 20px;
+}
+#playlist-collection-input {
+  background-color: #c0c0c0;
 }
 .selected-playlist-nameholder {
   border-color: #008ab8;
@@ -1208,6 +1213,7 @@ background-color: green,
   background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
   color: #fff;
   vertical-align: top;
+  font-weight: bold;
 }
 .playlist-hover-highlight {
   background: #141414;
@@ -1327,7 +1333,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1409,7 +1415,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1649,7 +1655,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1659,7 +1665,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 .nametip {
   width: 70px;
@@ -1681,7 +1687,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -200px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.70);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1779,7 +1785,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1790,7 +1796,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 #sofa-remote {
   left: 170px;
