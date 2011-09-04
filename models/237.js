@@ -67,7 +67,6 @@
 			redisClient && redisClient.lrange('room:'+roomName+':val:playlist', -15, -1, function(err, reply) {
 				if(err) return;
 				
-				console.log('reply from recs: '+reply)
 				socket.emit('val:sendRecs', reply);
 			})	
 		},
@@ -1176,7 +1175,7 @@
 	/*         Meter         */
 	/*************************/
 	
-	var SKIP_PERCENT_THRESHOLD = 35;
+	var SKIP_PERCENT_THRESHOLD = 25;
 	models.Meter = Backbone.Model.extend({
 		initialize: function() {
 			//this.room = room;
