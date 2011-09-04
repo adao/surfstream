@@ -106,11 +106,15 @@ RoomManager = Backbone.Model.extend({
 					roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
 					roomMgr.roomMap[roomId].set({ name: roomId });
 					redisClient.get('room:'+roomId, function(err, reply) {
-						if(err || !reply) return;
-						console.log("getting specific room's info: "+reply)
+						if(err) return;
+						console.log("...getting specific room's info: "+reply)
+						if(!reply) return;
+						
 						var rawRoom = JSON.parse(reply);
-						console.log('the room name is '+rawRoom.roomName)
-						roomMgr.roomMap[roomId].set({ trueName: rawRoom.roomName });
+						if(rawRoom.roomName) {
+							console.log('...the room name is '+rawRoom.roomName)
+							roomMgr.roomMap[roomId].set({ trueName: rawRoom.roomName });
+						}
 					})
 				});
 			}
