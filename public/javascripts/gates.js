@@ -13,22 +13,25 @@ window.fbAsyncInit = function() {
 	
 	function proceed_to_site(response) {
 		console.log(response);
+		FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
 		if (response.authResponse) {
 			//user is already logged in and connected
-			window.SurfStreamApp = new SurfStreamModel({
-			  socket: socket_init
-			 });
-			 console.log("started app");
-			window.SurfStreamApp.get("userModel").set({fbId: response.authResponse.userID});
-			SocketManagerModel.sendFBId(response.authResponse.userID);
+			if (!userLoggedOut) {
+				window.SurfStreamApp = new SurfStreamModel({
+				  socket: socket_init
+				});
+				console.log("started app");
+				window.SurfStreamApp.get("userModel").set({fbId: response.authResponse.userID});
+				SocketManagerModel.sendFBId(response.authResponse.userID);
+			}
 			document.getElementById('frontdoor').style.display = 'none';
 			document.getElementById('loadingScreen').style.display = 'none';
 			document.getElementById('outer').style.display = 'block';
 		} else {
 			// yeah right
 			document.getElementById('loadingScreen').style.display = 'none';
+			document.getElementById('outer').style.display = 'none';
 			document.getElementById('frontdoor').style.display = 'inline-block';
-			FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
 		}
 	}
 		
@@ -39,19 +42,14 @@ window.fbAsyncInit = function() {
 
 
 $(function() {
-
  _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
  };
 
  ZeroClipboard.setMoviePath('/swf/ZeroClipboard.swf');
-
  socket_init = io.connect();
-
  window.ChatMessageModel = Backbone.Model.extend({});
-
  window.VideoPlayerModel = Backbone.Model.extend({});
-
  window.RoomModel = Backbone.Model.extend({
 	
 	initialize : function() {
@@ -304,16 +302,17 @@ $(function() {
 			});
 			playlistCellView.initializeViewToTop(false);
 		}
+	},
+	
+	logout: function() {
+		FB.logout();
 	}
 	
  });
 
  window.SearchResultModel = Backbone.Model.extend({});
-
  window.PlaylistItemModel = Backbone.Model.extend({});
-
  window.RoomHistoryItemModel = Backbone.Model.extend({});
-
  window.SurfStreamModel = Backbone.Model.extend({
   defaults: {
    sharing: new ShareModel()
@@ -333,10 +332,6 @@ $(function() {
 	this.set({
 		mainRouter: new RaRouter({})
 	});
-	
-   this.set({
-    mainView: new MainView()
-   });
 
    this.set({
     roomModel: new RoomModel({
@@ -354,11 +349,6 @@ $(function() {
      searchResultsCollection: new SearchResultsCollection()
     })
    });
-   
-	 mainView = this.get("mainView");
-	 roomModel = this.get("roomModel");
-   mainView.initializeTopBarView();
-	 mainView.initializeRoomListView(roomModel.get("roomListCollection"));
 	
 	//initing the user sends the initial socket event
 	 this.set({
@@ -369,6 +359,16 @@ $(function() {
      socketManagerModel: this.get("socketManagerModel")
     })
    });
+	 
+	 this.set({
+    mainView: new MainView({userModel: this.get("userModel")})
+   });
+   
+	 mainView = this.get("mainView");
+	 roomModel = this.get("roomModel");
+   mainView.initializeTopBarView();
+	 mainView.initializeRoomListView(roomModel.get("roomListCollection"));
+	
  
 	 mainView.initializePlayerView(roomModel.get("playerModel"), roomModel.get("userCollection"), this.get("userModel"), mainView.roomModal);
 	 mainView.initializeRoomHistoryView(roomModel.get("roomHistoryCollection"));
@@ -499,7 +499,7 @@ $(function() {
 	},
 	
 	addPlaylist: function(playlistId, name, videos) {
-		if (!name || name == "") {
+		if (!name || name == "" || this.hasPlaylistName(name)) {
 			return;
 		}
 		var playlistModel = new PlaylistModel();
@@ -516,6 +516,7 @@ $(function() {
 		}
 		var playlistNameholderView = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name, playlistCollection: this});
 		this.idToPlaylistNameholder[playlistId] = playlistNameholderView;
+		console.log(playlistModel);
 		playlistNameholderView.setActivePlaylist();
 	},
 	
@@ -2157,6 +2158,59 @@ $(function() {
    window.open("mailto:friend@domainname.com?subject=Come%20to%20SurfStream.tv%20sometime!&body=God%20this%20shit%20is%20" + "awesome!%2C%20here's%20a%20link%0A%0A" + window.location, '_parent');
   }
  });
+ 
+ window.SettingsView = Backbone.View.extend({
+	//className: "settingsButton",
+	
+	el: "#settings",
+	
+	settingsTemplate: _.template($("#settings-template").html()),
+	
+	events: {
+		"mouseover #settings-text": "showSettings",
+		"mouseout": "hideSettings",
+		"click #logout-button": "logout"
+	},
+	
+	initialize: function() {
+		this.showingDropdown = false;
+		this.render();
+		this.userModel = this.options.userModel;
+	},
+	
+	render: function() {
+		$(this.el).html(this.settingsTemplate());
+	},
+	
+	showSettings: function() {
+		if (!this.showingDropdown && event.fromElement.id != "settings-dropdown" && event.fromElement.id != "settings-arrow") {
+			console.log("Showing settings");
+			$("#settings-dropdown").show();
+			this.showingDropdown = true;
+		}
+	},
+	
+	hideSettings: function() {
+		console.log("HERERERE");
+		console.log(event);
+		if (event.toElement) {
+			if (event.toElement.id == "settings-arrow" || event.toElement.id == "settings-dropdown" || event.toElement.id == "settings" || event.fromElement.id == "settings-arrow" || event.toElement.id == "logout-button") {
+				console.log(event.toElement.id);
+				return;
+			}
+		}
+		console.log("Hiding settings");
+		$("#settings-dropdown").hide();
+		this.showingDropdown = false;
+	},
+	
+	logout: function() {
+		console.log("logoutttt");
+		window.YTPlayer = null;
+		userLoggedOut = true;
+		this.userModel.logout();
+	}
+ });
 
  window.MainView = Backbone.View.extend({
   el: 'body',
@@ -2189,6 +2243,7 @@ $(function() {
     roomName: 'Placeholder'
    }));
    this.shareBarView = new ShareBarView();
+	 this.settingsView = new SettingsView({userModel: this.options.userModel});
   },
 
   initializeChatView: function(chatCollection, userModel) {
@@ -2417,10 +2472,14 @@ $(function() {
 	 });
 
    socket.on('playlist:initialize', function(data) {
+		if (userLoggedOut)
+			return;
 		var userPlaylists = data.userPlaylists;
 		var playlistCollection = app.get("userModel").get("playlistCollection");
-		for (var i = 1; i <= Object.size(userPlaylists); i++) {
-			playlistCollection.addPlaylist(i, userPlaylists[i].name, new PlaylistItemCollection(userPlaylists[i].videos));
+		for (var playlistId in userPlaylists) {
+			if (userPlaylists.hasOwnProperty(playlistId)) {
+				playlistCollection.addPlaylist(playlistId, userPlaylists[playlistId].name, new PlaylistItemCollection(userPlaylists[playlistId].videos));
+			}
 		}
 		playlistCollection.setActivePlaylist(data.activePlaylistId);
 		var getPath = function(href) {
@@ -2810,8 +2869,7 @@ Object.size = function(obj) {
     return size;
 };
 
-function strip(html)
-{
+function strip(html) {
    var tmp = document.createElement("DIV");
    tmp.innerHTML = html;
    return tmp.textContent||tmp.innerText;
@@ -2837,6 +2895,7 @@ function ss_formatViews(n) {
 var recentlyWatchedPlaylistId = 1;
 var thumbsUpPlaylistId = 2;
 var facebookPlaylistId = 3;
+var userLoggedOut = false;
 
 /******************** FB_INITONE ***********************/
 
