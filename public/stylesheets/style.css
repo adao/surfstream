@@ -511,15 +511,15 @@ div.historyContainer .history .videoHistory {
 }
 .searchCellContainer {
   width: 285px;
-  height: 60px;
+  height: 80px;
   text-shadow: 1px 1px 1px #000;
 }
 .searchCellContainer .thumbContainer {
   float: left;
-  width: 63px;
-  height: 50px;
+  width: 75px;
+  height: 60px;
   margin-left: 5px;
-  margin-top: 5px;
+  margin-top: 10px;
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -527,8 +527,8 @@ div.historyContainer .history .videoHistory {
   cursor: pointer;
 }
 .searchCellContainer .cellInfo {
-  float: left;
-  width: 210px;
+  display: inline-block;
+  width: 205px;
   height: 60px;
 }
 .searchCellContainer .cellInfo .videoInfo {
@@ -540,24 +540,22 @@ div.historyContainer .history .videoHistory {
 }
 .searchCellContainer .cellInfo .videoInfo .title {
   overflow-y: hidden;
-  margin-top: 5px;
+  margin-top: 8px;
   width: 150px;
-  height: 15px;
+  height: 38px;
   font-weight: bold;
-  font-size: 11px;
+  font-size: 10px;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   pointer-events: none;
   text-shadow: 1px 1px 4px #000;
 }
 .searchCellContainer .cellInfo .videoInfo .duration {
   position: relative;
-  margin-left: -70px;
-  margin-top: 23px;
+  margin-left: -82px;
+  margin-top: 12px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
-  width: 63px;
+  background: rgba(0,0,0,0.8);
+  width: 75px;
   text-align: left;
   text-indent: 1px;
   font-weight: bold;
@@ -565,13 +563,13 @@ div.historyContainer .history .videoHistory {
 }
 .searchCellContainer .cellInfo .videoInfo .viewCount {
   position: relative;
-  top: -15px;
+  top: -12px;
   font-size: 10px;
   pointer-events: none;
 }
 .searchCellContainer .cellInfo .videoInfo .author {
   position: relative;
-  top: -43px;
+  top: -36px;
   font-size: 11px;
   cursor: pointer;
   float: left;
@@ -579,7 +577,7 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer .cellInfo .cellButtons {
   float: right;
   width: 30px;
-  height: 60px;
+  height: 80px;
   margin-left: -13px;
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist,
@@ -589,7 +587,7 @@ div.historyContainer .history .videoHistory {
   border: none;
   cursor: pointer;
   width: 30px;
-  height: 60px;
+  height: 80px;
   display: block;
 }
 .searchCellContainer .cellInfo .cellButtons .addToPlaylist {
@@ -622,8 +620,8 @@ div.historyContainer .history .videoHistory {
   background-color: #666;
 }
 .previewVideo {
-  margin-left: -48px;
-  margin-top: 5px;
+  margin-left: -54px;
+  margin-top: 18px;
   position: relative;
   opacity: 0.5;
   display: none;
@@ -689,7 +687,7 @@ width: 48px {
 }
 #share .share,
 #shareBar .share {
-  margin-top: 10px;
+  margin-top: 8px;
   vertical-align: top;
   color: #b2b2b2;
   font-size: 16px;
@@ -1341,7 +1339,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1423,7 +1421,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1663,7 +1661,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1673,7 +1671,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -1695,7 +1693,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -200px;
-  background: rgba(0,0,0,0.70);
+  background: rgba(0,0,0,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1778,7 +1776,7 @@ background-color: green,
 #fullscreenIcon {
   position: absolute;
   margin-left: 2px;
-  z-index: 32444;
+  z-index: 10000;
   margin-top: 350px;
   margin-left: 605px;
   width: 30px;
@@ -1792,7 +1790,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1803,7 +1801,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 #sofa-remote {
   left: 170px;
