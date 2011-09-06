@@ -2551,9 +2551,9 @@ $(function() {
 			$("#avatarWrapper_" + fbid + " .default").show();
 		 }
     }
-		if (app.get("roomModel").get("playerModel").get("curVid")) {
-			console.log(meterStats.videoPercent);
-			app.get("roomModel").get("playerModel").get("curVid").percent = meterStats.videoPercent;
+		if (app.get("roomModel").get("playerModel").get("curVid") && meterStats.videoId != 0) {
+			if (app.get("roomModel").get("playerModel").get("curVid").videoId == meterStats.videoId)
+				app.get("roomModel").get("playerModel").get("curVid").percent = meterStats.videoPercent;
 		}
    });
 

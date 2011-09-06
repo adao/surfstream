@@ -264,8 +264,8 @@
 				dj: videoToPlay.get('dj')
 			});
 			
-			this.room.meter.reset();
 			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle, videoDJ);
+			this.room.meter.reset();
 			
 			var roomName = this.room.get('name');
 			console.log('['+roomName+']'+"[VM] play(): announcing video with <id,title,dur>: <"+videoId+','+videoTitle+','+videoDuration+'>');
@@ -498,7 +498,8 @@
 				{ upvoteSet: meter.upvoteSet, 
 					down: meter.down, 
 					up: meter.up,
-					videoPercent: meter.videoPercent
+					videoPercent: meter.videoPercent,
+					videoId: meter.room.currVideo ? meter.room.currVideo.get("videoId") : 0
 				}
 			);
 		},

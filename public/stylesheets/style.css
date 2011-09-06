@@ -2089,6 +2089,7 @@ a#fdbk_tab {
   background: url("/images/room/newicons/settings-arrow.png") 50% 50% no-repeat;
   position: absolute;
   left: 69px;
+  top: 0;
 }
 #settings #settings-dropdown {
   font-size: 16px;
