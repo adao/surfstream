@@ -936,7 +936,8 @@ $(function() {
 		$(this.el).html(this.roomHistoryItemViewTemplate({
 			title: historyItem.get("title"),
 			duration: ss_formatSeconds(historyItem.get("duration")),
-			percent: historyItem.get("percent")}));
+			percent: historyItem.get("percent")
+		}));
 		this.$(".thumbContainer > img").attr("src", ss_idToHDImg(historyItem.get("videoId")));
 		return this;
 	},
@@ -2182,15 +2183,19 @@ $(function() {
 		$(this.el).html(this.settingsTemplate());
 	},
 	
-	showSettings: function() {
-		if (!this.showingDropdown && event.fromElement.id != "settings-dropdown" && event.fromElement.id != "settings-arrow") {
+	showSettings: function(event) {
+		if (!this.showingDropdown) {
+			if (event.fromElement) {
+				if (event.fromElement.id == "settings-dropdown" && event.fromElement.id == "settings-arrow")
+					return;
+			}
 			console.log("Showing settings");
 			$("#settings-dropdown").show();
 			this.showingDropdown = true;
 		}
 	},
 	
-	hideSettings: function() {
+	hideSettings: function(event) {
 		console.log("HERERERE");
 		console.log(event);
 		if (event.toElement) {
@@ -2544,9 +2549,12 @@ $(function() {
 			$("#avatarWrapper_" + fbid).data("animating", false);
 			$("#avatarWrapper_" + fbid + " .smiley").hide();
 			$("#avatarWrapper_" + fbid + " .default").show();
+		 }
+    }
+		if (app.get("roomModel").get("playerModel").get("curVid")) {
+			console.log(meterStats.videoPercent);
+			app.get("roomModel").get("playerModel").get("curVid").percent = meterStats.videoPercent;
 		}
-   }
-	 app.get("roomModel").get("playerModel").set({percent: total / meterStats.upvoteSet.size});
    });
 
 	socket.on("rooms:announce", function(roomList) {
@@ -2910,12 +2918,6 @@ function login(response, info) {
 	}
 }
 		
-function logout(response) {
-	userInfo.innerHTML                             =   "";
-	document.getElementById('debug').innerHTML     =   "";
-	document.getElementById('other').style.display =   "none";
-	showLoader(false);
-}
 
 //stream publish method
 function streamPublish(name, description, hrefTitle, hrefLink, userPrompt) {

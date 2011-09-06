@@ -149,7 +149,7 @@
 			var options = { 
 				host: 'gdata.youtube.com',
 				port: 80,
-				path: '/feeds/api/videos/'+videoId+'/related?alt=json&format=5&start-index=1&max-results=25&v=2',
+				path: '/feeds/api/videos/'+videoId+'/related?alt=json&format=5&start-index=1&max-results=25&v=2'
 			};
 			
 			var room = this.room;
@@ -177,7 +177,7 @@
 						if(unplayedCount > 4) break;
 						
 						var currVideoId = videoData['feed']['entry'][i]['media$group']['yt$videoid']['$t'];
-						if(!room.history.checkIfPlayedRecently(currVideoId)) {
+						if(!room.history.checkIfPlayedRecently(currVideoId) && !room.history.checkIfVideoHasBeenSkipped(currVideoId)) {
 							unplayedVideos.push(videoData['feed']['entry'][i]);
 							unplayedCount = unplayedCount + 1;
 						}
@@ -280,12 +280,12 @@
 				}
 				
 				var videoId = this.room.currVideo.get('videoId'), 
-					percent = this.room.meter.calculatePercent(),
+					percent = this.room.meter.videoPercent,
 					title = this.room.currVideo.get('title'),
 					duration = this.room.currVideo.get('duration'),
 					thumb = this.room.currVideo.get('thumb');
 					dj = this.room.currVideo.get('dj');
-							
+				console.log(percent);			
 				this.room.history.addVideo(videoId, title, duration, thumb, dj, percent);
 				this.room.clearVideo();
 			}
@@ -497,7 +497,9 @@
 			io.sockets.in(this.room.get('name')).emit('meter:announce', 
 				{ upvoteSet: meter.upvoteSet, 
 					down: meter.down, 
-					up: meter.up }
+					up: meter.up,
+					videoPercent: meter.videoPercent
+				}
 			);
 		},
 		
@@ -552,7 +554,7 @@
 	/*************************/
 	
 	models.VideoCollection = Backbone.Collection.extend({
-		model: models.Video,
+		model: models.Video
 	});
 	
 	var HIST_NUM_RECENT = 10;
@@ -560,6 +562,7 @@
 		initialize: function(room) {
 			this.room = room;
 			this.recentVids = new models.VideoCollection(); //holds 10
+			this.skippedVideos = new models.VideoCollection();
 			this.dankVids = new models.VideoCollection(); //holds 10
 			this.size = -1;	//to signify no redis read
 			this.setSize();
@@ -603,9 +606,9 @@
 				return videoArray[randInt];
 			} else {
 				//console.log('all those failed, reverting to old school')
-				var lookBackNum = 3;
-				if (this.recentVids.length < lookBackNum) lookBackNum = this.recentVids.length;
-				var randInt = Math.floor(Math.random()*lookBackNum);	//0 <= randInt < lookBackNum
+				var lookBackNumber = 3;
+				if (this.recentVids.length < lookBackNumber) lookBackNumber = this.recentVids.length;
+				var randInt = Math.floor(Math.random()*lookBackNumber);	//0 <= randInt < lookBackNum
 				var recentVideo = this.recentVids.at(randInt);
 				return recentVideo;
 			}
@@ -619,7 +622,7 @@
 				duration: duration,
 				thumb: thumb,
 				dj: dj,
-				percent: percent,
+				percent: percent
 			});
 			
 			if(this.recentVids.length >= HIST_NUM_RECENT)
@@ -632,11 +635,33 @@
 			// }
 		},
 		
+		addSkippedVideo: function(videoId) {
+			var skippedVideo = new models.Video({
+				videoId: videoId
+			});
+			this.skippedVideos.add(skippedVideo, {
+				at: 0
+			});
+			if (this.skippedVideos.length > 25) {
+				this.skippedVideos.remove(this.skippedVideos.at(24));
+			}
+		},
+		
 		checkIfPlayedRecently: function(videoId) {
 			var len = this.recentVids.length;
 			for(var i = 0; i < len; i++) {
 				if(this.recentVids.at(i).get('videoId') == videoId) 
 					return true;
+			}
+			return false;
+		},
+		
+		checkIfVideoHasBeenSkipped: function(videoId) {
+			var lengthToCare = this.skippedVideos.length > 25 ? 25 : this.skippedVideos.length;
+			for (var i = 0; i < lengthToCare; i++) {
+				if (this.skippedVideos.at(i).get("videoId") == videoId) {
+					return true;
+				}
 			}
 			return false;
 		},
@@ -1190,6 +1215,7 @@
 			this.up = 0;
 			this.down = 0;
 			this.percentage = 0;
+			this.videoPercent = 50;
 		},
 		
 		setRoom: function(room) {
@@ -1214,6 +1240,7 @@
 					console.log('...success!');
 					if(meter.room.currVideo.get('dj') != 'VAL')
 						meter.room.djs.currDJ.addPoint();
+					var currPercent = meter.calculatePercent();
 					meter.room.sockM.announceMeter();
 				}
 			});
@@ -1232,12 +1259,14 @@
 						meter.room.djs.currDJ.subtractPoint();
 					
 					var currPercent = meter.calculatePercent();
+					meter.room.sockM.announceMeter();
 					if(currPercent < SKIP_PERCENT_THRESHOLD) {
 						console.log('\n\n['+roomName+'][socket] [meter:downvote] called, percent below threshold...skipping current video');
 						if(meter.room.currVideo) {
 							console.log('...video playing, clearing timeout :'+meter.room.currVideo.get('timeoutId'));
 							clearTimeout(meter.room.currVideo.get('timeoutId'));
 						}
+						meter.room.history.addSkippedVideo(meter.room.currVideo.get("videoId"));
 						meter.room.vm.onVideoEnd();
 					}
 				}
@@ -1313,6 +1342,7 @@
 			}
 			var videoScore = basePercent + percentUp - percentDown;
 			console.log('['+this.room.get('name')+'][MET] calculatePercent(): percent for video is '+videoScore+' with up: '+numUp+' and down: '+numDown+' and numUsers: '+numUsers);
+			this.videoPercent = videoScore;
 			return videoScore;
 		}
 
