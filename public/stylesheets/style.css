@@ -554,7 +554,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -82px;
   margin-top: 12px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   width: 75px;
   text-align: left;
   text-indent: 1px;
@@ -1339,7 +1339,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1421,7 +1421,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.80);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1532,6 +1532,7 @@ background-color: green,
 .ui-autocomplete li.ui-menu-item {
   margin-left: -40px;
   width: 290px;
+  font-weight: bold;
 }
 .ui-autocomplete li .ui-corner-all {
   display: block;
@@ -1661,7 +1662,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1671,7 +1672,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 .nametip {
   width: 70px;
@@ -1693,7 +1694,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -200px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.70);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1790,7 +1791,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.30);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1801,7 +1802,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.60);
 }
 #sofa-remote {
   left: 170px;
@@ -2058,6 +2059,7 @@ a#fdbk_tab {
   width: 90px;
   margin-top: 3px;
   margin-left: 10px;
+  margin-right: 2px;
   background-color: #c0c0c0;
   color: #585858;
   background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
@@ -2067,6 +2069,7 @@ a#fdbk_tab {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   cursor: pointer;
+  position: relative;
 }
 #settings #settings-text {
   vertical-align: top;
@@ -2074,7 +2077,7 @@ a#fdbk_tab {
   display: inline-block;
   padding-top: 4px;
   text-indent: 6px;
-  width: 60px;
+  width: 90px;
 }
 #settings #settings-arrow {
   height: 12px;
@@ -2084,6 +2087,16 @@ a#fdbk_tab {
   float: right;
   margin-right: 6px;
   background: url("/images/room/newicons/settings-arrow.png") 50% 50% no-repeat;
+  position: absolute;
+  left: 69px;
+  top: 0;
+}
+#settings #settings-dropdown {
+  font-size: 16px;
+  padding-left: 5px;
+  background-color: #808080;
+  display: none;
+  margin-top: -3px;
 }
 #settings:hover {
   background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
