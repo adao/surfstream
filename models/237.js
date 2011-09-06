@@ -379,6 +379,7 @@
 					duration: this.currVideo.get('duration')
 				});
 			}
+			this.sendRoomHistory(user);
 		},
 		
 		//will need to be room-specific soon, just ripped from existing solution for now.
@@ -409,6 +410,10 @@
 				roomData.recentVids = recentVids;
 			}
 			return roomData;
+		},
+		
+		sendRoomHistory: function(user) {
+			user.get("socket").emit("room:history", this.history.recentVids.toJSON());
 		}
 		
 	});

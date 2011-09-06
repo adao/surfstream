@@ -905,7 +905,6 @@ $(function() {
 	},
 	
 	resetRoomHistory: function() {
-		this.render();
 		this.options.roomHistoryCollection.each(function(roomHistoryItem) {new RoomHistoryItemView({room: roomHistoryItem})});
 	},
 	
@@ -2412,7 +2411,7 @@ $(function() {
 			}
 		}
 		//save the currently playing state
-		playerModel.set({curVid: {videoId: video.id, title: video.title, duration: video.duration, percent: 0.5} });
+		playerModel.set({curVid: {videoId: video.id, title: video.title, duration: video.duration, percent:50} });
 		$("#clock").show(); 
 		$("#cur-video-name").show(); 
 		$("#cur-video-time").show(); 
