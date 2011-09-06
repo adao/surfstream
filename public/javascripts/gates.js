@@ -919,15 +919,12 @@ $(function() {
 	roomHistoryItemViewTemplate: _.template($('#historyCell-template').html()),
 	
 	events: {
-		"mousedown .addToPlaylistFromHistory": "addPlaylistDropdown"
+		"mousedown": "addPlaylistDropdown"
 	},
 
 	initialize: function() {
 		$($(".videoHistory")[0]).prepend(this.render().el);
 		this.populatedDropdown = false;
-		//this.addPlaylistDropdown();
-		//$(this.el).find(".addToPlaylistFromHistory").selectbox();
-		//$(this.el).find(".addToPlaylistFromHistory:first").bind("change", {playlistCollection: window.SurfStreamApp.get("userModel").get("playlistCollection"), historyItem: this}, this.addToPlaylist);
 	},
 	
 	render: function() {
@@ -959,6 +956,7 @@ $(function() {
 		var selectedPlaylistId = $(event.data.historyItem.el).find(".addToPlaylistFromHistory").val();
 		if (selectedPlaylistId == 0)
 			return;
+		$(this).addClass("added");
 		var historyItem = event.data.historyItem.options.room;
 		var attributes = {
 			title: historyItem.get("title"),
