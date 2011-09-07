@@ -381,6 +381,18 @@ div.historyContainer
 		// 		font-size: 10px
 		// 		color: black   
 			
+.videoThumbnailContainer
+	position: relative
+	display: inline
+	.videoTitle
+		position: absolute
+		width: 170px
+		top: 2px
+		left: 2px
+	.videoThumbnail
+		width: 200px
+		height: 150px
+		padding-right: 9px
 			
 //history cell			
 .videoLog
@@ -448,7 +460,10 @@ div.historyContainer
 			.addToPlaylistFromHistory.added
 				background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAMCAQAAAAXSy9vAAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAJdnBBZwAAAA8AAAAMAEgxQNAAAADeSURBVBjTZcmtSoNRAIDh55zv7AtewxCbN2CwaRBRQYtFsMkGFsuKxQuwDA2CRTAYBIPBaDM7TMKKcRYxyIKI+34Mmz/gW97wBH/qjdcwsmfetpD+YTLScix61w49iGo1gkyho6tSyF3FCQZhgge6SpXcwGmSKU0bepMUDu0rkAws60elWQ8u5QonP/hkQV8KvUUXmrjxoqVQa3i04lmmTHY1fUo2UKHh3ppXmZJoy7lcpVSqJHeWvpEo2HEmqdWSW6uG4hjnRGTajiTJtXUfomqMJLVK0jFlxqYg/CJf1GNJn+JqkhQAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTEtMDgtMjJUMDI6NDM6MzktMDQ6MDBO8tieAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDExLTA4LTIyVDAyOjQzOjM5LTA0OjAwP69gIgAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAAASUVORK5CYII=') 50% 50% no-repeat
 				cursor: default
-			
+
+.valstream-icon
+	width: 15px
+	height: 15px
 			
 .videoLog:nth-child(odd)
 	background-color: #313131
@@ -808,11 +823,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	position: absolute
 	top: 40px
 	left: 50%
-	margin-left: -430px
+	margin-left: -450px
 	font-family: FontFamily
 	overflow-y: none
 	overflow-x: none
-	width: 860px
+	width: 900px
 	height: 637px
 	background-color: black
 	z-index: 10000
@@ -835,7 +850,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		-webkit-border-top-left-radius: 2px
 		form.roomSearch
 			display: inline-block
-			width: 860px
+			width: 900px
 			height: 54px
 			input
 				color: silver
@@ -848,7 +863,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				-moz-border-radius: 6px
 				font-size: 16px
 				margin-top: 9px
-				width: 840px
+				width: 880px
 				height: 36px
 				border: 0
 				outline: 0
@@ -865,39 +880,36 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			background-color: transparent
 	#roomsWrapper
 		background-color: #313131
-		width: 860px
+		width: 900px
 		height: 543px
 		overflow-y: scroll
 		overflow-x: hidden
 		table#roomsTable
-			width: 844px
+			width: 884px
 			border-collapse: collapse
 			tr.table-header
 				background-color: black
 				color: white
 				height: 30px
-				th.viewers-hd
-					border-radius: 0px!important
-					-webkit-border-radius: 0px!important
-					-moz-border-radius: 0px!important
-					width: 50px
-					padding: 6px
 				th.room-name-hd
-					width: 245px
+					width: 160px
 				th.room-name-hd, th.room-friends-hd, th.viewers-hd, th.room-history-hd
-					border-right: 1px solid #585858;    
+					border-right: 1px solid #585858;
+				th.room-friends-hd
+					width: 10px
+					text-align: center
 			tr.room-row
 				color: white
 				height: 60px
 				cursor: pointer
 				.room-friends
 					margin-left: 8px
+					text-align: center
 				td
 					border-right: 1px solid #585858
 					.num-viewers, .num-djs
 						font-weight: bold
 						text-align: center
-					.num-viewers
 						padding-top: 4px
 						font-size: 25px
 						height: 35px
@@ -909,6 +921,8 @@ button.playlist, button.playlist.active, button.search, button.search.active
 							margin-left: 8px
 							display: block
 							margin-bottom: 4px
+							width: 152px
+							word-wrap: break-word
 						.listed-room-name
 							font-size: 16px
 							 span
@@ -916,7 +930,10 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						.listed-video-name
 							font-size: 14px
 						.true-room-name
-							display: none 
+							display: none
+					.room-history-container
+						list-style-type: none
+						margin-left: -30px
 			tr.room-row:nth-child(odd)
 				background-color: #313131
 			tr.room-row:nth-child(odd)

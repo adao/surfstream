@@ -1557,21 +1557,37 @@ $(function() {
 		className: "room-row",
 		
 		roomListCellTemplate: _.template($('#roomlistCell-template #celltemplate-table .room-row').html()),
+		
+		videoThumbnailTemplate: _.template($("#video-thumbnail-template").html()),
 
 		initialize: function () {
-			$($("#roomsTable tbody:first")[0]).append(this.render().el);
+			this.render();
 			$(this.el).bind("click", this.clickJoinRoom);																					
 		},
 	
 		render: function() {
-			var roomListCellModel = this.options.roomListCellModel, curVidTitle = roomListCellModel.get("curVidTitle");
+			var roomModel = this.options.roomListCellModel;
+			var curVidTitle = roomModel.get("curVidTitle");
 			var friendsHTML = this.renderFriends();
-			var rName = roomListCellModel.get("roomName");
-			if (roomListCellModel.get("rID") == SurfStreamApp.inRoom) {
+			var rName = roomModel.get("roomName");
+			if (roomModel.get("rID") == SurfStreamApp.inRoom) {
 				rName = rName + "<span style='color: #34C8FF;'> (You Are Here)</span>";
 			}
-			$(this.el).html(this.roomListCellTemplate({viewers: roomListCellModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + roomListCellModel.get("curVidTitle") : "" ,
-				roomname: rName, numDJs: roomListCellModel.get("numDJs"), friends: friendsHTML, truename: roomListCellModel.get("rID")}));
+			$(this.el).html(this.roomListCellTemplate({viewers: roomModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + curVidTitle : "" , roomname: rName, numDJs: roomModel.get("numDJs"), friends: friendsHTML, truename: roomModel.get("rID")}));
+			if (!roomModel.get("valstream")) {
+				$(this.el).find(".valstream-icon").hide();
+			}
+			var recentVids = roomModel.get("recentVids");
+			$($("#roomsTable tbody:first")[0]).append(this.el);
+			if (recentVids) {
+				for (var i = 0; i < recentVids.length && i < 3; i++) {
+					var videoThumbnail = this.videoThumbnailTemplate({
+						video_title: recentVids[i].title
+					});
+					$(this.el).find(".room-history-container").prepend(videoThumbnail);
+					$(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(recentVids[i].videoId));
+				}
+			}
 			return this;
 		},
 		

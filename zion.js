@@ -148,7 +148,12 @@ RoomManager = Backbone.Model.extend({
 		console.log('[   zion   ][RoomMgr] createRoom(): a room is being created: '+roomId);
 		this.roomMap[roomId] = new models.Room(io, redisClient);
 		this.roomMap[roomId].set({ name: roomId, trueName: roomName });
-		if(!fromAdmin) redisClient.rpush('rooms', roomId);	//list of all rooms
+		if(!fromAdmin) {
+			this.roomMap[roomId].set({ valstream: 0 });
+			redisClient.rpush('rooms', roomId);	//list of all rooms
+		} else {
+			this.roomMap[roomId].set({ valstream: 1 });
+		}
 		redisClient.set('room:'+roomId, JSON.stringify(this.roomMap[roomId].xport()));
 	},
 	
