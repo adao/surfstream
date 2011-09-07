@@ -619,7 +619,6 @@ img.share-email-image
 	width: 194px
 	height: 40px
 	color: black
-	margin-left: 6px
 	.share
 		margin-top: 8px
 		vertical-align: top
@@ -632,7 +631,6 @@ img.share-email-image
 	#social
 		display: inline-block
 		margin-top: 2px
-		padding-left: 10px
 		width: 130px
 		height: 40px
 
@@ -1380,8 +1378,8 @@ div#top-video-name
 	position: absolute
 
 .defaultSmile1
-	margin-top: 45px
-	margin-left: 10px
+	margin-top: 50px;
+	margin-left: 16px;
 .defaultSmile2
 	margin-top: 48px
 	margin-left: 14px
@@ -1841,12 +1839,31 @@ a#fdbk_tab
 	pointer-events: none
 	z-index: 4
 #settings
+	margin-top: 3px
+	#settings-text
+		vertical-align: top
+		font-size: 14px
+		display: inline-block
+		padding-top: 4px
+		text-indent: 6px
+		width: 80px
+		margin-left: 5px
+		text-align: center
+	#settings-arrow
+		height: 12px
+		width: 16px
+		display: inline-block
+		margin-top: 7px
+		float: right
+		margin-right: 6px
+		background: url('/images/room/newicons/settings-arrow.png') 50% 50% no-repeat
+
+
+.settingsButton
 	display: inline-block
 	float: right
 	height: 26px
-	width: 90px
-	margin-top: 3px
-	margin-left: 10px
+	width: 110px
 	background-color: #c0c0c0
 	color: #585858
 	background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d))
@@ -1856,25 +1873,530 @@ a#fdbk_tab
 	-webkit-border-radius: 2px
 	-moz-border-radius: 2px
 	cursor: pointer
-	#settings-text
-		vertical-align: top
-		font-size: 14px
-		display: inline-block
-		padding-top: 4px
-		text-indent: 6px
-		width: 60px
-	#settings-arrow
-		height: 12px
-		width: 16px
-		display: inline-block
-		margin-top: 7px
-		float: right
-		margin-right: 6px
-		background: url('/images/room/newicons/settings-arrow.png') 50% 50% no-repeat
-#settings:hover
-		-moz-box-shadow:inset 0 0 1px #000000;
-		-webkit-box-shadow:inset 0 0 1px #000000;
-		box-shadow:inset 0 0 1px #000000;
-
+#change-avatar
+	position:absolute
+	margin-left: 850px
+	margin-top: 28px
+	display: none
+.settingsButton:hover
+	-moz-box-shadow:inset 0 0 1px #000000;
+	-webkit-box-shadow:inset 0 0 1px #000000;
+	box-shadow:inset 0 0 1px #000000;
+	color: white
+	background: -moz-linear-gradient(top, #34C8FF, #008AB8);
+	background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8));
+	background: -moz-linear-gradient(top, #34C8FF, #008AB8);
+	background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
+	cursor: pointer
+#edit-profile
+	margin-top: 54px
+	position:absolute
+	margin-left: 850px
+	display: none
+	z-index:55
+#logout
+	margin-top: 80px
+	position:absolute
+	margin-left: 850px
+	display: none
+	z-index:55
+.settingsInnerText
+	font-size: 12px;
+	text-align: left;
+	text-indent: 0px;
+	padding-top: 6px;
+	width: 100px;
+	vertical-align: top;
+	display: inline-block
+	margin-left: 5px
 #fba_ss_id
 	display: none
+
+
+.avt_1
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 13px;
+		margin-top: 24px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 43px;
+		margin-top: 24px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 16px;
+		margin-top: 30px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 45px;
+		margin-top: 30px;
+	.eye_left_cartoon_large
+		margin-left: 13px;
+		width: 15px;
+		margin-top: 26px;
+	.eye_right_cartoon_large
+		margin-left: 42px;
+		width: 15px;
+		margin-top: 26px;
+	.eye_left_cartoon_medium
+		margin-left: 16px;
+		width: 9px;
+		margin-top: 30px;
+	.eye_right_cartoon_medium
+		margin-left: 46px;
+		width: 9px;
+		margin-top: 30px;
+	.eye_left_cute_large
+		margin-top: 24px;
+		margin-left: 13px;
+		width: 19px
+	.eye_right_cute_large
+		margin-top: 24px;
+		margin-left: 43px;
+		width: 19px
+	.eye_left_cute_medium
+		margin-top: 28px;
+		margin-left: 16px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 28px;
+		margin-left: 45px;
+		width: 10px;
+		
+	.glasses_dark
+		margin-top: 17px;
+		margin-left: -3px;
+	.glasses_monocole
+		margin-left: 35px;
+		margin-top: 16px;
+	.glasses_red
+		margin-left: -3px;
+		margin-top: 16px;
+	.glasses_shiny
+		margin-left: -4px;
+		margin-top: 17px;
+	.glasses_thick
+		margin-top: 17px;
+		margin-left: -4px;
+
+	.smile_cucumber
+		margin-left: 10px;
+		margin-top: 50px;
+	.smile_default
+		margin-left: 17px;
+		margin-top: 58px;
+	.smile_modest
+		margin-left: 11px;
+		margin-top: 56px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 11px;
+		margin-top: 50px;
+	.smile_openteeth
+		margin-left: 10px;
+		margin-top: 49px;
+	.smile_vampire
+		margin-left: 11px;
+		margin-top: 49px;
+	.hat-bow
+		margin-top: -10px;
+	.hat-brown
+		margin-left: 13px;
+		margin-top: -11px;
+	.hat-headphones
+		margin-top: -10px;
+		margin-left: -1px;
+	.hat-horns
+		margin-top: -16px;
+		margin-left: 3px;
+		
+.avt_2
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 19px;
+		margin-top: 42px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 43px;
+		margin-top: 42px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 22px;
+		margin-top: 46px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 47px;
+		margin-top: 46px;
+	.eye_left_cartoon_large
+		margin-left: 21px;
+		width: 13px;
+		margin-top: 44px;
+	.eye_right_cartoon_large
+		margin-left: 44px;
+		width: 13px;
+		margin-top: 44px;
+	.eye_left_cartoon_medium
+		margin-left: 22px;
+		width: 9px;
+		margin-top: 47px;
+	.eye_right_cartoon_medium
+		margin-left: 46px;
+		width: 9px;
+		margin-top: 47px;
+	.eye_left_cute_large
+		margin-top: 43px;
+		margin-left: 19px;
+		width: 15px;
+	.eye_right_cute_large
+		margin-top: 43px;
+		margin-left: 44px;
+		width: 15px;
+	.eye_left_cute_medium
+		margin-top: 46px;
+		margin-left: 22px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 46px;
+		margin-left: 46px;
+		width: 10px;
+
+	.glasses_dark
+		margin-top: 34px;
+	.glasses_monocole
+		margin-left: 35px;
+		margin-top: 33px;
+	.glasses_red
+		margin-top: 35px;
+	.glasses_shiny
+		margin-left: -1px;
+		margin-top: 35px;
+	.glasses_thick
+		margin-top: 34px;
+
+	.smile_cucumber
+		margin-left: 14px;
+		margin-top: 58px;
+	.smile_default
+		margin-left: 20px;
+		margin-top: 66px;
+	.smile_modest
+		margin-left: 20px;
+		margin-top: 66px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 14px;
+		margin-top: 61px;
+	.smile_openteeth
+		margin-left: 14px;
+		margin-top: 60px;
+	.smile_vampire
+		margin-left: 14px;
+		margin-top: 59px;
+	.hat-bow
+		margin-top: 6px;
+		margin-left: 11px;
+	.hat-brown
+		margin-left: 17px;
+		margin-top: 11px;
+	.hat-headphones
+		margin-top: 13px;
+		margin-left: 6px;
+		width: 65px;
+	.hat-horns
+		margin-top: 11px;
+		margin-left: 7px;
+
+.avt_3
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 13px;
+		margin-top: 40px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 39px;
+		margin-top: 40px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 16px;
+		margin-top: 45px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 41px;
+		margin-top: 45px;
+	.eye_left_cartoon_large
+		margin-left: 14px;
+		width: 13px;
+		margin-top: 42px;
+	.eye_right_cartoon_large
+		margin-left: 49px;
+		width: 13px;
+		margin-top: 42px;
+	.eye_left_cartoon_medium
+		margin-left: 16px;
+		width: 9px;
+		margin-top: 46px;
+	.eye_right_cartoon_medium
+		margin-left: 41px;
+		width: 9px;
+		margin-top: 46px;
+	.eye_left_cute_large
+		margin-top: 42px;
+		margin-left: 14px;
+		width: 15px;
+	.eye_right_cute_large
+		margin-top: 42px;
+		margin-left: 40px;
+		width: 15px;
+	.eye_left_cute_medium
+		margin-top: 44px;
+		margin-left: 16px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 44px;
+		margin-left: 41px;
+		width: 10px;
+
+	.glasses_dark
+		margin-top: 34px;
+		margin-left: -4px;
+	.glasses_monocole
+		margin-left: 31px;
+		margin-top: 32px;
+	.glasses_red
+		margin-top: 35px;
+		margin-left: -4px;
+	.glasses_shiny
+		margin-left: -6px;
+		margin-top: 35px;
+	.glasses_thick
+		margin-top: 34px;
+		margin-left: -5px;
+		
+	.smile_cucumber
+		margin-left: 10px;
+		margin-top: 56px;
+	.smile_default
+		margin-left: 15px;
+		margin-top: 63px;
+	.smile_modest
+		margin-left: 9px;
+		margin-top: 63px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 9px;
+		margin-top: 58px;
+	.smile_openteeth
+		margin-left: 8px;
+		margin-top: 57px;
+	.smile_vampire
+		margin-left: 9px;
+		margin-top: 58px;
+	.hat-bow
+		margin-top: 8px;
+		margin-left: 9px;
+	.hat-brown
+		margin-left: 14px;
+		margin-top: 11px;
+	.hat-headphones
+		margin-top: 4px;
+		margin-left: -3px;
+	.hat-horns
+		margin-top: 10px;
+		margin-left: 2px;
+
+.avt_4
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 13px;
+		margin-top: 47px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 42px;
+		margin-top: 47px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 16px;
+		margin-top: 51px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 44px;
+		margin-top: 51px;
+	.eye_left_cartoon_large
+		margin-left: 14px;
+		width: 13px;
+		margin-top: 48px;
+	.eye_right_cartoon_large
+		margin-left: 43px;
+		width: 13px;
+		margin-top: 48px;
+	.eye_left_cartoon_medium
+		margin-left: 16px;
+		width: 9px;
+		margin-top: 51px;
+	.eye_right_cartoon_medium
+		margin-left: 44px;
+		width: 9px;
+		margin-top: 51px;
+	.eye_left_cute_large
+		margin-top: 48px;
+		margin-left: 14px;
+		width: 15px;
+	.eye_right_cute_large
+		margin-top: 48px;
+		margin-left: 41px;
+		width: 15px;
+	.eye_left_cute_medium
+		margin-top: 50px;
+		margin-left: 16px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 50px;
+		margin-left: 44px;
+		width: 10px;
+
+	.glasses_dark
+		margin-top: 40px;
+		margin-left: -4px;
+	.glasses_monocole
+		margin-left: 35px;
+		margin-top: 38px;
+	.glasses_red
+		margin-top: 42px;
+		margin-left: -4px;
+	.glasses_shiny
+		margin-left: -3px;
+		margin-top: 40px;
+	.glasses_thick
+		margin-top: 40px;
+		margin-left: -4px;
+
+	.smile_cucumber
+		margin-left: 10px;
+		margin-top: 61px;
+	.smile_default
+		margin-left: 16px;
+		margin-top: 66px;
+	.smile_modest
+		margin-left: 10px;
+		margin-top: 67px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 10px;
+		margin-top: 64px;
+	.smile_openteeth
+		margin-left: 9px;
+		margin-top: 62px;
+	.smile_vampire
+		margin-left: 10px;
+		margin-top: 64px;
+	.hat-bow
+		margin-top: 14px;
+		margin-left: 9px;
+	.hat-brown
+		margin-left: 14px;
+		margin-top: 18px;
+	.hat-headphones
+		margin-top: 8px;
+		margin-left: -2px;
+	.hat-horns
+		margin-top: 14px;
+		margin-left: 4px;
+
+
+.avt_5
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 13px;
+		margin-top: 24px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 40px;
+		margin-top: 28px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 16px;
+		margin-top: 30px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 45px;
+		margin-top: 30px;
+	.eye_left_cartoon_large
+		margin-left: 15px;
+		width: 14px;
+		margin-top: 29px;
+	.eye_right_cartoon_large
+		margin-left: 41px;
+		width: 15px;
+		margin-top: 29px;
+	.eye_left_cartoon_medium
+		margin-left: 16px;
+		width: 9px;
+		margin-top: 30px;
+	.eye_right_cartoon_medium
+		margin-left: 44px;
+		width: 9px;
+		margin-top: 30px;
+	.eye_left_cute_large
+		margin-top: 29px;
+		margin-left: 13px;
+		width: 15px;
+	.eye_right_cute_large
+		margin-top: 29px;
+		margin-left: 41px;
+		width:15px
+	.eye_left_cute_medium
+		margin-top: 31px;
+		margin-left: 16px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 31px;
+		margin-left: 44px;
+		width: 10px;
+
+	.glasses_dark
+		margin-top: 21px;
+		width: 69px
+	.glasses_monocole
+		margin-left: 33px;
+		margin-top: 19px;
+	.glasses_red
+		margin-left: -3px;
+		margin-top: 19px;
+	.glasses_shiny
+		margin-left: -4px;
+		margin-top: 20px;
+	.glasses_thick
+		margin-top: 21px;
+		margin-left: -4px;
+
+	.smile_cucumber
+		margin-left: 10px;
+		margin-top: 50px;
+	.smile_default
+		margin-left: 17px;
+		margin-top: 58px;
+	.smile_modest
+		margin-left: 11px;
+		margin-top: 56px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 11px;
+		margin-top: 50px;
+	.smile_openteeth
+		margin-left: 10px;
+		margin-top: 49px;
+	.smile_vampire
+		margin-left: 11px;
+		margin-top: 49px;
+	.hat-bow
+		margin-top: -7px;
+	.hat-brown
+		margin-left: 13px;
+		margin-top: -4px;
+	.hat-headphones
+		margin-top: -5px;
+		margin-left: -1px;
+	.hat-horns
+		margin-top: -8px;
+		margin-left: 3px;
+

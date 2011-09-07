@@ -1984,7 +1984,9 @@ $(function() {
    if (curIndex < 0) curIndex = rIDArray.length - 1;
    if (curIndex == rIDArray.length) curIndex = 0;
 
-   SocketManagerModel.joinRoom(rIDArray[curIndex], false, rID.replace(/-+/g, ' '));
+	 var roomName = rIDArray[curIndex].replace(/-+/g, ' ');
+	 SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
+   SocketManagerModel.joinRoom(rIDArray[curIndex], false, roomName );
   },
 
   pullRemoteUp: function(e) {
@@ -2249,6 +2251,7 @@ $(function() {
    user = this.options.user;
    this.el.id = "avatarWrapper_" + user.id;
    avatarId = user.get("avatar");
+	 this.el.className = "avt_" + avatarId;
    avatarImgSrc = this.getAvatarSrc(avatarId);
    avatarBody = this.make('img', {
     id: 'avatarBody_' + user.id,
@@ -2435,6 +2438,47 @@ $(function() {
     window.open("mailto:contact@surfstream.tv", '_parent');
    });
 
+	/* SETTINGS HAX */
+	$("#settings").hover(
+		function() {
+			$("#change-avatar").show();
+			$("#edit-profile").show();
+			$("#logout").show();
+	}, function(e) {
+			if (e.toElement.id != "change-avatar" && e.toElement.id != "change-avatar-text"){
+				$("#change-avatar").hide();	
+				$("#edit-profile").hide();	
+				$("#logout").hide();		
+			}
+		}
+	);
+	
+	$('#change-avatar').bind('mouseout', function (e) {
+		if (e.toElement.id != "settings" && e.toElement.id != "settings-text" && e.toElement.id != "edit-profile" && e.toElement.id !="edit-profile-text" && e.fromElement.id != "change-avatar-text" && e.toElement.id != "change-avatar-text"){
+			$("#change-avatar").hide();	
+			$("#edit-profile").hide();	
+			$("#logout").hide();
+		}
+		 
+	});
+	
+	$('#edit-profile').bind('mouseout', function (e) {
+		if (e.toElement.id != "change-avatar" && e.toElement.id != "change-avatar-text" && e.toElement.id != "logout" && e.toElement.id !="edit-profile-text" && e.toElement.id !="logout-text" && e.fromElement.id !="edit-profile-text"){
+			$("#change-avatar").hide();	
+			$("#edit-profile").hide();	
+			$("#logout").hide();
+		}
+		 
+	});
+	
+	$('#logout').bind('mouseout', function (e) {
+		if (e.toElement.id != "edit-profile" && e.toElement.id !="edit-profile-text" &&  e.toElement.id !="logout-text" &&  e.toElement.id !="logout"){
+			$("#change-avatar").hide();	
+			$("#edit-profile").hide();	
+			$("#logout").hide();
+		}		 
+	});
+	/* END SETTINGS HAX */
    this.maxAudioChannels = 15;
   },
 
