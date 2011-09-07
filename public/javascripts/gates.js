@@ -1594,7 +1594,9 @@ $(function() {
 		renderFriends: function() {
 			var result = "";
 			var friends = this.options.roomListCellModel.get("friends");
-			for (var i in friends){
+			if (friends.length == 0)
+				return "0";
+			for (var i = 0; i < friends.length && 3; i++) {
 				result += "<img class='friendInRoomPic' src='http://graph.facebook.com/"+ friends[i] + "/picture' style='width:45px; height:45px;'>"
 			}
 			return result;
