@@ -1579,29 +1579,30 @@ $(function() {
 			}
 			var recentVids = roomModel.get("recentVids");
 			$($("#roomsTable tbody:first")[0]).append(this.el);
-			if (curVidTitle) {
-				
-				if (recentVids) {
-					var numRecentVids = recentVids.length;
-					var recentVidLimit = 3;
-					console.log("numRecentVids");
-					console.log(numRecentVids);
-					for (var i = 0; i < numRecentVids && i < 4; i++) {
-						var videoThumbnail = this.videoThumbnailTemplate();
-						$(this.el).find(".room-history-container").prepend(videoThumbnail);
-						$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(recentVids[i].videoId));
-						$(this.el).find(".room-history-container").find(".videoThumbnail:first").bind("mouseover", {videoTitle: recentVids[i].title}, this.displayVideoTitle);
-					}
+			var recentVidLimit = 4;
+			if (!curVidTitle)
+				recentVidLimit = 5;
+			if (recentVids) {
+				var numRecentVids = recentVids.length;
+				for (var i = 0; i < numRecentVids && i < recentVidLimit; i++) {
 					var videoThumbnail = this.videoThumbnailTemplate();
 					$(this.el).find(".room-history-container").prepend(videoThumbnail);
-					$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(roomModel.get("curVidId")));
-					$(this.el).find(".room-history-container").find(".videoThumbnail:first").bind("mouseover", {videoTitle: curVidTitle}, this.displayVideoTitle);
-					$(this.el).find(".room-history-container .videoThumbnailContainer:first .videoThumbnail").addClass("lastPlayedVideo");
-					$(this.el).find(".room-history .lastPlayedVideoTitle").text(curVidTitle);
-				} else {
-					$(this.el).find(".room-history-container").prepend("No videos have been played yet. Be the first!");
+					$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(recentVids[i].videoId));
+					$(this.el).find(".room-history-container").find(".videoThumbnail:first").bind("mouseover", {videoTitle: recentVids[i].title}, this.displayVideoTitle);
 				}
 			}
+			
+			if (curVidTitle) {
+				var videoThumbnail = this.videoThumbnailTemplate();
+				$(this.el).find(".room-history-container").prepend(videoThumbnail);
+				$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(roomModel.get("curVidId")));
+				$(this.el).find(".room-history-container").find(".videoThumbnail:first").bind("mouseover", {videoTitle: curVidTitle}, this.displayVideoTitle);
+				$(this.el).find(".room-history-container .videoThumbnailContainer:first .videoThumbnail").addClass("lastPlayedVideo");
+				$(this.el).find(".room-history .lastPlayedVideoTitle").text(curVidTitle);
+			}
+			
+			if (!curVidTitle && !recentVids)
+				$(this.el).find(".room-history-container").prepend("No videos have been played yet. Be the first!");
 			return this;
 		},
 		
