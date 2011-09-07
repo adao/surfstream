@@ -397,11 +397,13 @@
 			roomData.numDJs = this.djs.length;
 			roomData.numUsers = this.users.length;
 			roomData.valstream = this.get("valstream");
-			if(this.currVideo) roomData.curVidTitle = this.currVideo.get('title');
-			
+			if(this.currVideo) {
+				roomData.curVidTitle = this.currVideo.get('title');
+				roomData.curVidId = this.currVideo.get("videoId");
+			}
 			var recentVids = [];
 			if(this.history.recentVids && this.history.recentVids.length > 0) {
-				for(var i=0; i < this.history.recentVids.length && i < 3; i++) {
+				for(var i=0; i < this.history.recentVids.length && i < 10; i++) {
 					var currVid = this.history.recentVids.at(i);
 					var vidToAdd = { title: currVid.get('title'), videoId: currVid.get('videoId') };
 					recentVids.push(vidToAdd);
