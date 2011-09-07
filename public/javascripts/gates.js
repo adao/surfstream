@@ -1580,12 +1580,15 @@ $(function() {
 			var recentVids = roomModel.get("recentVids");
 			$($("#roomsTable tbody:first")[0]).append(this.el);
 			if (recentVids) {
-				for (var i = 0; i < recentVids.length && i < 3; i++) {
-					var videoThumbnail = this.videoThumbnailTemplate({
-						video_title: recentVids[i].title
-					});
+				var numRecentVids = recentVids.length;
+				for (var i = 0; i < numRecentVids && i < 3; i++) {
+					var videoThumbnail = this.videoThumbnailTemplate();
 					$(this.el).find(".room-history-container").prepend(videoThumbnail);
 					$(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(recentVids[i].videoId));
+					if (i == numRecentVids - 1) {
+						$(this.el).find(".room-history-container .videoThumbnailContainer:first .videoThumbnail").addClass("lastPlayedVideo");
+						$(this.el).find(".room-history .lastPlayedVideoTitle").text(recentVids[i].title);
+					}
 				}
 			} else {
 				$(this.el).find(".room-history-container").prepend("No videos have been played yet. Be the first!");
