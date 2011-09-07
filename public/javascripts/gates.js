@@ -799,6 +799,45 @@ $(function() {
   }
  });
 
+ window.AvatarPickerView = Backbone.View.extend({
+  id: "avatar-picker-modal",
+
+	avatarPickerTemplate: _.template($("#avatar-picker-template").html()),
+	
+	events: {
+   "click .saveChanges": "saveAvatar",
+   "click .cancelPicker": "closePicker"
+  },
+
+	initialize: function() {
+   $("#modalBG").show();
+   $("#modalBG").click({
+    modal: this.el
+   }, function(e) {
+    console.log("FUCK")
+    $(e.data.modal).hide();
+   });
+   this.render();
+   $(this.el).show();
+  },
+
+	render: function() {
+   $(this.el).html(this.avatarPickerTemplate());
+   document.body.appendChild(this.el);
+  },
+	
+	saveAvatar: function() {
+		alert("saveavatar");
+	},
+	
+	closePicker: function() {
+		alert("closePicker")
+		this.remove();
+	  $("#modalBG").hide();
+	}
+	
+ });
+
  window.PlaylistView = Backbone.View.extend({
   id: 'playlist-view',
 
@@ -2477,6 +2516,10 @@ $(function() {
 			$("#edit-profile").hide();	
 			$("#logout").hide();
 		}		 
+	});
+	
+	$('#change-avatar').click(function () {
+		new AvatarPickerView();
 	});
 	/* END SETTINGS HAX */
    this.maxAudioChannels = 15;

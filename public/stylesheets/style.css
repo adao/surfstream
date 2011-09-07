@@ -1515,6 +1515,54 @@ background-color: green,
   background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
   background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
 }
+#avatar-picker-modal {
+  display: none;
+  border: 1px solid #666;
+  background-color: #313131;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  color: #fff;
+  position: absolute;
+  border: 1px solid #666;
+  border-radius: 2px;
+  -moz-radius: 2px;
+  -webkit-radius: 2px;
+  top: 60px;
+  left: 50%;
+  margin-left: -445px;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  overflow-y: none;
+  overflow-x: none;
+  width: 900px;
+  height: 550px;
+  z-index: 10000;
+  font-size: 12px;
+  text-align: center;
+}
+#avatar-picker-modal .dialog-buttons {
+  margin-top: 400px;
+}
+#avatar-picker-modal .dialog-buttons button {
+  border: none;
+  border-radius: 4px;
+  -moz-radius: 4px;
+  -webkit-radius: 4px;
+  width: 40px;
+  height: 20px;
+}
+#avatar-picker-modal .dialog-buttons .saveChanges {
+  background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
+  background: -moz-linear-gradient(top, #34c8ff, #008ab8);
+  background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
+}
+#avatar-picker-modal .dialog-buttons .saveChanges:hover,
+#avatar-picker-modal .dialog-buttons .cancelPicker:hover {
+  color: #fff;
+}
+#avatar-picker-modal .dialog-buttons .cancelPicker {
+  background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
+  background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
+  background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
+}
 .ui-sortable-placeholder {
   width: 50px;
   height: 30px;
@@ -2772,4 +2820,117 @@ a#fdbk_tab {
 .avt_5 .hat-horns {
   margin-top: -8px;
   margin-left: 3px;
+}
+#picker-title {
+  margin-top: 15px;
+  font-size: 33px;
+  font-weight: bold;
+}
+#pickerselection {
+  float: left;
+  height: 450px;
+  width: 560px;
+  margin-top: 30px;
+  margin-left: 30px;
+  text-align: left;
+}
+#pickerselection #picker-bodies .picker-body-wrap {
+  margin-left: 15px;
+  width: 95px;
+  height: 110px;
+  border: 1px solid #fff;
+  display: inline-block;
+  background: #e5e5e5;
+}
+#pickerselection #picker-eyes {
+  height: 45px;
+  margin-top: 30px;
+}
+#pickerselection #picker-eyes .eye-picker-box {
+  width: 80px;
+  height: 40px;
+  margin-left: 10px;
+  background: #e5e5e5;
+  border: 1px solid #fff;
+  display: inline-block;
+}
+#pickerselection #picker-eye-size {
+  height: 40px;
+  display: inline-block;
+  vertical-align: top;
+}
+#pickerselection #picker-eye-size .eye-size-box {
+  width: 80px;
+  height: 30px;
+  margin-left: 10px;
+  margin-top: 5px;
+  background: #e5e5e5;
+  border: 1px solid #fff;
+  display: inline-block;
+}
+#pickerselection #picker-glasses {
+  height: 40px;
+  margin-top: 15px;
+}
+#pickerselection #picker-glasses .glasses-box {
+  width: 90px;
+  height: 35px;
+  margin-left: 10px;
+  margin-top: 5px;
+  background: #e5e5e5;
+  border: 1px solid #fff;
+  display: inline-block;
+  vertical-align: top;
+}
+#pickerselection #picker-glasses .glasses-box-monocle {
+  width: 40px;
+  height: 70px;
+  margin-left: 10px;
+  margin-top: 5px;
+  background: #e5e5e5;
+  border: 1px solid #fff;
+  display: inline-block;
+}
+#pickerselection #picker-smile {
+  height: 40px;
+  margin-top: 15px;
+}
+#pickerselection #picker-smile .smile-box {
+  width: 40px;
+  height: 35px;
+  margin-left: 10px;
+  margin-top: 5px;
+  background: #e5e5e5;
+  border: 1px solid #fff;
+  display: inline-block;
+  vertical-align: top;
+}
+#pickerselection #picker-hat {
+  height: 40px;
+  margin-top: 15px;
+}
+#pickerselection #picker-hat .hat-box {
+  width: 90px;
+  height: 70px;
+  margin-left: 10px;
+  margin-top: 5px;
+  background: #e5e5e5;
+  border: 1px solid #fff;
+  display: inline-block;
+  vertical-align: top;
+}
+#picker-preview {
+  height: 180px;
+  width: 100px;
+  margin-top: 65px;
+  background: #e5e5e5;
+  float: right;
+}
+.picker-select-text {
+  text-indent: 10px;
+  text-indent: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  float: left;
+  margin-top: 10px;
 }
