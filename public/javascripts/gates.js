@@ -1587,6 +1587,8 @@ $(function() {
 					$(this.el).find(".room-history-container").prepend(videoThumbnail);
 					$(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(recentVids[i].videoId));
 				}
+			} else {
+				$(this.el).find(".room-history-container").prepend("No videos have been played yet. Be the first!");
 			}
 			return this;
 		},
