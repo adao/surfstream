@@ -1560,8 +1560,6 @@ $(function() {
 		
 		videoThumbnailTemplate: _.template($("#video-thumbnail-template").html()),
 		
-		friendsHoverTemplate: _.template($("#friends-hover-template").html()),
-		
 		events: {
 			"mouseover .room-friends-container": "displayFriends",
 			"mouseout .room-friends-container": "hideFriends"
