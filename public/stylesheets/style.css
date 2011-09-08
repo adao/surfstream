@@ -1343,6 +1343,11 @@ background-color: green,
   overflow-x: hidden;
   z-index: -1;
 }
+#playlist-view .playlistCellButtonText {
+  font-size: 18px;
+  text-align: center;
+  margin-top: 7px;
+}
 #playlist-view #playlist-notification-container {
   width: 278px;
   min-height: 18px;
