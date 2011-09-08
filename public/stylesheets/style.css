@@ -1046,6 +1046,18 @@ button
 #room-modal #roomsWrapper table#roomsTable tr.room-row .room-friends {
   margin-left: 8px;
   text-align: center;
+  position: relative;
+}
+#room-modal #roomsWrapper table#roomsTable tr.room-row .room-friends .friends-hover-container {
+  text-align: left;
+  margin-left: -40px;
+  width: 250px;
+  display: none;
+  position: absolute;
+  list-style-type: none;
+  padding-left: 2px;
+  z-index: 30;
+  background-color: #808080;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;
@@ -2033,8 +2045,15 @@ a#fdbk_tab {
   width: 655px;
   height: 330px;
 }
-.friendInRoomPic {
+.friendInRoomPic,
+.friendInRoomPicHover {
   margin-right: 3px;
+}
+.friendInRoomPicHover {
+  display: inline;
+}
+.friendInRoomPicHover img {
+  margin-top: 3px;
 }
 #slider-line-container {
   width: 80px;

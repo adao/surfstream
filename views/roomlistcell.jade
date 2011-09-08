@@ -9,4 +9,8 @@
 			td.room-history
 				ul.room-history-container
 				.lastPlayedVideoTitle
-			td.room-friends {{ numDJs }} / {{ viewers }} / {{ friends }}
+			td.room-friends
+				{{ numDJs }} /
+				{{ viewers }} /
+				.room-friends-container {{ partial_friends }}
+				ul.friends-hover-container {{ full_friends }}

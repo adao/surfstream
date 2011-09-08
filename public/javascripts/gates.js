@@ -573,7 +573,7 @@ $(function() {
 	
 	initialize: function() {
 		this.comparator = function(roomlistCellModel) {
-			return (-roomlistCellModel.get("friends").length * 15 + -roomlistCellModel.get("numUsers"));
+			return (roomlistCellModel.get("friends").length * 15 + roomlistCellModel.get("numUsers"));
 		}
 	}
 
@@ -1559,24 +1559,37 @@ $(function() {
 		roomListCellTemplate: _.template($('#roomlistCell-template #celltemplate-table .room-row').html()),
 		
 		videoThumbnailTemplate: _.template($("#video-thumbnail-template").html()),
+		
+		friendsHoverTemplate: _.template($("#friends-hover-template").html()),
+		
+		events: {
+			"mouseover .room-friends-container": "displayFriends",
+			"mouseout .room-friends-container": "hideFriends"
+		},
 
 		initialize: function () {
+			this.friendsHoverHidden = true;
 			this.render();
 			$(this.el).bind("click", this.clickJoinRoom);																					
 		},
 	
 		render: function() {
+			//this.options.roomListCellModel.set({friends: [1389848266057, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314]});
 			var roomModel = this.options.roomListCellModel;
 			var curVidTitle = roomModel.get("curVidTitle");
-			var friendsHTML = this.renderFriends();
+			var partialFriendsHTML = this.renderFriends(2, "friendInRoomPic");
+			var fullFriendsHTML = this.renderFriends(0, "friendInRoomPicHover");
 			var rName = roomModel.get("roomName");
 			if (roomModel.get("rID") == SurfStreamApp.inRoom) {
 				rName = rName + "<span style='color: #34C8FF;'> (You Are Here)</span>";
 			}
-			$(this.el).html(this.roomListCellTemplate({viewers: roomModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + curVidTitle : "" , roomname: rName, numDJs: roomModel.get("numDJs"), friends: friendsHTML, truename: roomModel.get("rID")}));
+			$(this.el).html(this.roomListCellTemplate({viewers: roomModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + curVidTitle : "" , roomname: rName, numDJs: roomModel.get("numDJs"), partial_friends: partialFriendsHTML, full_friends: fullFriendsHTML, truename: roomModel.get("rID")}));
 			if (!roomModel.get("valstream")) {
 				$(this.el).find(".valstream-icon").hide();
 			}
+			
+			//$(this.el).find(".room-friends-container").bind("mouseover", {friends: this.options.roomListCellModel.get("friends")}, this.displayFriends);
+			
 			var recentVids = roomModel.get("recentVids");
 			$($("#roomsTable tbody:first")[0]).append(this.el);
 			var recentVidLimit = 4;
@@ -1606,13 +1619,19 @@ $(function() {
 			return this;
 		},
 		
-		renderFriends: function() {
+		renderFriends: function(count, className) {
 			var result = "";
 			var friends = this.options.roomListCellModel.get("friends");
 			if (friends.length == 0)
 				return "0";
-			for (var i = 0; i < friends.length && 2; i++) {
-				result += "<img class='friendInRoomPic' src='http://graph.facebook.com/"+ friends[i] + "/picture' style='width:45px; height:45px;'>"
+			if (count == 0) {
+				for (var i = 0; i < friends.length; i++) {
+					result += "<li class='" + className + "'</li><img src='http://graph.facebook.com/"+ friends[i] + "/picture' style='width:45px; height:45px;' /></li>"
+				}
+			} else {
+				for (var i = 0; i < friends.length && i < count; i++) {
+					result += "<img class='" + className + "' src='http://graph.facebook.com/"+ friends[i] + "/picture' style='width:45px; height:45px;'>"
+				}
 			}
 			return result;
 		},
@@ -1630,6 +1649,52 @@ $(function() {
 			$(event.toElement.parentElement.parentElement).find(".lastPlayedVideo").removeClass("lastPlayedVideo");
 			$(event.toElement).addClass("lastPlayedVideo");
 			$(event.toElement.parentElement.parentElement.parentElement).find(".lastPlayedVideoTitle").text(event.data.videoTitle);
+		},
+		
+		displayFriends: function(event) {
+			if (this.options.roomListCellModel.get("friends").length == 0)
+				return;
+			var friendsHover = $(event.toElement.parentElement).find(".friends-hover-container");
+			if (friendsHover.length == 0) {
+				friendsHover = $(event.toElement.parentElement.parentElement).find(".friends-hover-container");
+				if (this.friendsHoverHidden) {
+					friendsHover.show()
+					this.friendsHoverHidden = false;
+					var parentOffset = $(event.toElement.parentElement).offset();
+					var friendsHoverTop = parentOffset.top + $(event.toElement.parentElement).height() / 2 - friendsHover.height() / 2;
+					var friendsHoverLeft = parentOffset.left - friendsHover.width();
+					friendsHover.offset({top: friendsHoverTop, left: friendsHoverLeft});
+				}
+			} else {
+				if (this.friendsHoverHidden) {
+					friendsHover.show()
+					this.friendsHoverHidden = false;
+					var parentOffset = $(event.toElement).offset();
+					var friendsHoverTop = parentOffset.top + $(event.toElement).height() / 2 - friendsHover.height() / 2;
+					var friendsHoverLeft = parentOffset.left - friendsHover.width();
+					friendsHover.offset({top: friendsHoverTop, left: friendsHoverLeft});
+				}
+			}
+		},
+		
+		hideFriends: function(event) {
+			console.log("from and to");
+			console.log(event.fromElement);
+			console.log(event.toElement);
+			if (event.toElement) {
+				if (event.toElement.className == "room-friends") {
+					console.log("something");
+				}
+				console.log($(event.toElement.parentElement));
+				console.log($(this.el).find(".room-friends-container"));
+				if (event.toElement.className == "room-friends-container" ||
+						(event.toElement.className == "friendInRoomPic" && $(event.toElement.parentElement).data() == $(this.el).find(".room-friends-container").data())) {
+					return;
+				}
+			}
+			var friendsHover = $(event.fromElement.parentElement.parentElement).find(".friends-hover-container");
+			friendsHover.hide();
+			this.friendsHoverHidden = true;
 		}
 		
 		
@@ -2543,7 +2608,7 @@ $(function() {
      username: strip(msg.data.name),
      msg: strip(msg.data.text)
     });
-    TheatreView.tipsyChat(strip(msg.data.text), msg.data.id);
+    
    });
 
    socket.on('users:announce', function(userJSONArray) {

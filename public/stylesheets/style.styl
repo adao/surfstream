@@ -916,6 +916,17 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				.room-friends
 					margin-left: 8px
 					text-align: center
+					position: relative
+					.friends-hover-container
+						text-align: left
+						margin-left: -40px
+						width: 250px
+						display: none
+						position: absolute
+						list-style-type: none
+						padding-left: 2px
+						z-index: 30
+						background-color: gray
 				td
 					border-right: 1px solid #585858
 					.num-viewers, .num-djs
@@ -1780,9 +1791,13 @@ a#fdbk_tab
 	width: 655px;
 	height: 330px;
 
-.friendInRoomPic
+.friendInRoomPic, .friendInRoomPicHover
 	margin-right: 3px
-
+.friendInRoomPicHover
+	display: inline
+	img
+		margin-top: 3px
+		
 #slider-line-container
 	width: 80px
 	height: 21px
