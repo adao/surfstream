@@ -1,0 +1,73 @@
+#avatar-picker-template(style="display:none;")
+	#picker-title Configure Your Avatar
+	#pickerselection
+		#picker-body
+			.picker-body-wrap.picker-el
+				img.picker-body-blue.pb(src="/images/room/monsters/blue-picker.png", id="ap_body_blue")
+			.picker-body-wrap.picker-el
+				img.picker-body-green.pb(src="/images/room/monsters/green-picker.png", id="ap_body_green")
+			.picker-body-wrap.picker-el
+				img.picker-body-purple.pb(src="/images/room/monsters/purple-picker.png", id="ap_body_purple")
+			.picker-body-wrap.picker-el
+				img.picker-body-red.pb(src="/images/room/monsters/red-picker.png", id="ap_body_red")
+			.picker-body-wrap.picker-el
+				img.picker-body-yellow.pb(src="/images/room/monsters/yellow-picker.png", id="ap_body_yellow")
+		#picker-eye
+			.picker-select-text Eyes
+			.eye-picker-box.picker-el
+				img(src="/images/room/monsters/eyes/cute-picker.png", id="ap_eye_cute")
+			.eye-picker-box.picker-el
+				img(src="/images/room/monsters/eyes/cartoon-picker.png", id="ap_eye_cartoon")
+			.eye-picker-box.picker-el
+				img(src="/images/room/monsters/eyes/blueeye-picker.png", id="ap_eye_blueeyes")
+			#picker-eyesize
+				.picker-select-text Size
+				.eye-size-box.picker-el
+					img(src="/images/room/picker-small.png", id="ap_eyesize_small")
+				.eye-size-box.picker-el
+					img(src="/images/room/picker-large.png", id="ap_eyesize_large")
+		#picker-glasses
+			.picker-select-text Glasses
+			.glasses-none-box.picker-el
+				img.noglasses(src="/images/room/picker-none.png", id="ap_glasses_none")
+				.noglassestext none
+			.glasses-box.picker-el
+				img(src="/images/room/monsters/accessories/glasses-dark-picker.png", id="ap_glasses_dark")
+			.glasses-box.picker-el
+				img(src="/images/room/monsters/accessories/glasses-thick-picker.png", id="ap_glasses_thick")
+			.glasses-box.picker-el
+				img(src="/images/room/monsters/accessories/glasses-red-picker.png", id="ap_glasses_redshades")
+			.glasses-box.picker-el
+				img(src="/images/room/monsters/accessories/glasses-shiny-picker.png", id="ap_glasses_shiny")
+			.glasses-box-monocle.picker-el
+				img(src="/images/room/monsters/accessories/glasses-monocole-picker.png", id="ap_glasses_monocole")
+		#picker-smile
+			.picker-select-text Smile
+			.smile-box.picker-el
+				img(src="/images/room/monsters/smiles/smile-cucumber-picker.png", id="ap_smile_cucumber")
+			.smile-box.picker-el
+				img(src="/images/room/monsters/smiles/smile-openmouth-picker.png", id="ap_smile_openmouth")
+			.smile-box.picker-el
+				img(src="/images/room/monsters/smiles/smile-modest-picker.png", id="ap_smile_modest")
+			.smile-box.picker-el
+				img(src="/images/room/monsters/smiles/smile-vampire-picker.png", id="ap_smile_vampire")
+			.smile-box.picker-el
+				img(src="/images/room/monsters/smiles/smile-openteeth-picker.png", id="ap_smile_openteeth")
+		#picker-hat
+			.picker-select-text(style="margin-top: 25px;") Top
+			.hat-box.picker-el
+				img.notop(src="/images/room/picker-none.png", id="ap_hat_none")
+				.notoptext none
+			.hat-box.picker-el
+				img(src="/images/room/monsters/accessories/hat-headphones-picker.png", id="ap_hat_headphone")
+			.hat-box.picker-el
+				img(src="/images/room/monsters/accessories/hat-bow-picker.png", id="ap_hat_bow")
+			.hat-box.picker-el
+				img(src="/images/room/monsters/accessories/hat-brown-picker.png", id="ap_hat_brown")
+			.hat-box.picker-el
+				img(src="/images/room/monsters/accessories/hat-horns-picker.png", id="ap_hat_horns")
+	#picker-preview
+		.picker-preview-avatar-wrapper
+	.dialog-buttons
+		button.saveChanges Save
+		button.cancelPicker Cancel

@@ -31,16 +31,24 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		#loadingScreen
 		#frontdoor
 			#logo
-				img(src='/images/room/final-logo-first-launch2.png')
+				img(src='/images/room/newicons/splash-logo.png')
 			#instructions
 				h1 Watch Videos Together
 				#fb-root
 				button#fb-auth
 		#outer
 			#header 
+				#change-avatar.settingsButton
+					#change-avatar-text.settingsInnerText Change Avatar
+				#edit-profile.settingsButton
+					#edit-profile-text.settingsInnerText Edit Profile
+				#logout.settingsButton
+					#logout-text.settingsInnerText Logout
 				img(src="/images/room/final-logo-room.png", id="logo")
 				#cur-room-name 
-				#settings
+				#settings.settingsButton
+					#settings-text Settings
+					#settings-arrow				
 				#shareBar
 			#coolshit
 				#funroom
@@ -66,7 +74,9 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 			div#fullscreenContainerFS
 				button#fullscreenIcon   
 		#roomsList
+		#avatar-picker-modal
 		include audiotag
+		include avatarpicker
 		include chat
 		include chatcell
 		include noresults
