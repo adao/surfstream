@@ -800,7 +800,8 @@ $(function() {
  });
 
  window.AvatarPickerView = Backbone.View.extend({
-  id: "avatar-picker-modal",
+	
+	el: "#avatar-picker-modal",
 
 	avatarPickerTemplate: _.template($("#avatar-picker-template").html()),
 	
@@ -812,28 +813,442 @@ $(function() {
 	initialize: function() {
    $("#modalBG").show();
    $("#modalBG").click({
-    modal: this.el
+    modal: this
    }, function(e) {
-    console.log("FUCK")
-    $(e.data.modal).hide();
+		e.data.modal.remove();
+		$("#roomsList").after("<div id=avatar-picker-modal></div>")
+		$("#change-avatar").hide();	
+		$("#edit-profile").hide();	
+		$("#logout").hide();
    });
    this.render();
-   $(this.el).show();
+	 $(".picker-el").click({picker: this}, this.handlePickerElClick);
+	 this.previewWrapper = $($(".picker-preview-avatar-wrapper")[0])
+	 this.previewWrapper.css({"margin-left": 52, "margin-top": 60});
+	 
+	 this.setSelected("body", SurfStreamApp.currentAvatarSettings[0]);
+	 this.setSelected("eye", SurfStreamApp.currentAvatarSettings[1]);
+	 this.setSelected("eyesize", SurfStreamApp.currentAvatarSettings[2]);
+	 this.setSelected("glasses", SurfStreamApp.currentAvatarSettings[3]);
+	 this.setSelected("smile", SurfStreamApp.currentAvatarSettings[4]);
+	 this.setSelected("hat", SurfStreamApp.currentAvatarSettings[5]);
+		$(this.el).show();
+	 this.highlightCurrents(SurfStreamApp.currentAvatarSettings);
+	 this.idMapper = {
+		"blue": 1,
+		"green": 2,
+		"purple" : 3,
+		"red" : 4,
+		"yellow": 5,
+		"cute" : 1,
+		"cartoon": 2, 
+		"blueeyes": 3,
+		"small" : 1,
+		"large" : 2,
+		"dark" : 1,
+		"thick" : 2,
+		"redshades" : 3,
+		"shiny" : 4,
+		"monocole" : 5,
+		"cucumber" : 1,
+		"openmouth" : 2,
+		"modest" : 3,
+		"vampire" : 4,
+		"openteeth" : 5,
+		"headphone" : 1,
+		"bow" : 2,
+		"brown" : 3,
+		"horns" : 4,
+		"none": 0
+	};
+   
   },
+
+	highlightCurrents: function(currents) {
+
+		//highlight relevant ones
+		var style = "4px solid orange";
+		var parent;
+		switch(parseInt(currents[0])) {
+			case 1:
+				parent = $("#ap_body_blue").parent()
+				parent.css({border: style});
+				break;
+			case 2:
+				parent = $("#ap_body_green").parent()
+				parent.css({border: style});
+				break;
+			case 3:
+				parent = $("#ap_body_purple").parent()
+				parent.css({border: style});
+				break;
+			case 4:
+				parent = $("#ap_body_red").parent()
+				parent.css({border: style});
+				break;
+			case 5:
+				parent = $("#ap_body_yellow").parent()
+				parent.css({border: style});
+				break;
+		}
+		switch(parseInt(currents[1])){
+			case 1:
+				parent = $("#ap_eye_cute").parent().css({border: style});
+				break;
+			case 2:
+				parent = $("#ap_eye_cartoon").parent().css({border: style});
+				break;
+			case 3:
+			 	parent = $("#ap_eye_blueeyes").parent().css({border: style});
+				break;	
+		}
+		switch(parseInt(currents[2])){
+			case 1:
+				parent = $("#ap_eyesize_small").parent().css({border: style});
+				break;
+			case 2:
+				parent = $("#ap_eyesize_large").parent().css({border: style});
+				break;
+		}
+		switch(parseInt(currents[3])){
+			case 0:
+				parent = $("#ap_glasses_none").parent().css({border: style});
+				break;
+			case 1:
+				parent = $("#ap_glasses_dark").parent().css({border: style});
+				break;
+			case 2:
+				parent = $("#ap_glasses_thick").parent().css({border: style});
+				break;
+			case 3:
+				parent = $("#ap_glasses_redshades").parent().css({border: style});
+				break;
+			case 4:
+				parent = $("#ap_glasses_shiny").parent().css({border: style});
+				break;
+			case 5:
+			  parent = $("#ap_glasses_monocole").parent().css({border: style});
+				break;
+		}
+		switch(parseInt(currents[4])){
+			case 1:
+				parent = $("#ap_smile_cucumber").parent().css({border: style});
+				break;
+			case 2:
+				parent = $("#ap_smile_openmouth").parent().css({border: style});
+				break;
+			case 3:
+				parent = $("#ap_smile_modest").parent().css({border: style});
+				break;
+			case 4:
+				parent = $("#ap_smile_vampire").parent().css({border: style});
+				break;
+			case 5:
+				parent = $("#ap_smile_openteeth").parent().css({border: style});
+				break;
+		}
+		switch(parseInt(currents[5])) {
+			case 1:
+				$("#ap_hat_headphone").parent().css({border: style});
+				break;
+			case 2:
+				$("#ap_hat_bow").parent().css({border: style});				
+				break;
+			case 3:
+				$("#ap_hat_brown").parent().css({border: style});				
+				break;
+			case 4:
+				$("#ap_hat_horns").parent().css({border: style});
+				break;
+		}
+	},
+	
 
 	render: function() {
    $(this.el).html(this.avatarPickerTemplate());
-   document.body.appendChild(this.el);
   },
 	
 	saveAvatar: function() {
-		alert("saveavatar");
+		var newAvatarSettings = [];
+		newAvatarSettings.push(this.bodyID);
+		newAvatarSettings.push(this.eyeID);
+		newAvatarSettings.push(this.eyesizeID);
+		newAvatarSettings.push(this.glassesID);
+		newAvatarSettings.push(this.smileID);
+		newAvatarSettings.push(this.hatID);
+		SurfStreamApp.currentAvatarSettings = newAvatarSettings;
+		SocketManagerModel.updateAvatar();
+		this.closePicker();
 	},
 	
 	closePicker: function() {
-		alert("closePicker")
 		this.remove();
+		$("#roomsList").after("<div id=avatar-picker-modal></div>")
 	  $("#modalBG").hide();
+		$("#change-avatar").hide();	
+		$("#edit-profile").hide();	
+		$("#logout").hide();
+	},
+	
+	handlePickerElClick: function(e) {
+		var pickerID = e.currentTarget.firstChild.id;
+		var parser = /ap_(.+)_(.+)/;
+		var match = parser.exec(pickerID);
+		
+		//neutralize all
+		$("#picker-"+match[1] + " > .picker-el").css({border: "1px solid white"});
+		//highlight relevant one
+		$(e.currentTarget).css({border: "4px solid orange"});
+		
+		console.log("body part: " + match[1]);
+		console.log('id: ' + match[2]);
+		
+		e.data.picker.setSelected(match[1], e.data.picker.idMapper[match[2]]);
+	},
+	
+	setSelected: function(bodyPart, toPartID) {
+		var bodyPartDiv;
+		switch (bodyPart) {
+			case "body":
+				this.bodyID = toPartID;
+				$(".body-preview").remove()
+				this.previewWrapper.removeClass()
+				this.previewWrapper.addClass("avt_" + toPartID);	
+				this.previewWrapper.prepend(this.buildBodyPart("body", toPartID))
+				break;
+			case "eye":
+		    this.eyeID = toPartID;
+				$(".eye-preview-left").remove();
+				$(".eye-preview-right").remove();
+				this.buildEyes(this.eyeID, this.eyesizeID);
+				break;
+			case "eyesize":
+				this.eyesizeID = toPartID;
+				$(".eye-preview-left").remove();
+				$(".eye-preview-right").remove();
+				this.buildEyes(this.eyeID, this.eyesizeID);
+				break;
+			case "glasses":
+				$(".glasses-preview").remove()
+				if (toPartID != 0) this.previewWrapper.append(this.buildBodyPart("glasses", toPartID))
+				this.glassesID = toPartID;
+				break;
+			case "smile":
+				$(".smile-preview").remove()
+				this.previewWrapper.append(this.buildBodyPart("smile", toPartID))
+				this.smileID = toPartID;
+				break;
+			case "hat":
+				$(".hat-preview").remove()
+				if (toPartID != 0) this.previewWrapper.append(this.buildBodyPart("hat", toPartID))
+				this.hatID = toPartID;
+				break;
+			default:
+				alert("fuuu")
+		} 
+	},
+	
+	buildBodyPart: function (bodyPart, toPartID, large) {
+			return this.make("img", {src: this.bodyPartToPath(bodyPart, toPartID), style: "position: absolute;", "class":  this.bodyPartToClass(bodyPart, toPartID)})
+	},
+	
+	buildEyes: function (eyeID, eyesizeID) {
+		var path = this.bodyPartToPath("eye", eyeID);
+		//render left eye first, then right
+		this.previewWrapper.append(this.make("img", {src: path, style: "position: absolute;", "class" : this.getEyeClass(eyeID, eyesizeID, true)}));
+		this.previewWrapper.append(this.make("img", {src: path, style: "position: absolute;", "class" : this.getEyeClass(eyeID, eyesizeID, false)}));		
+	},
+	
+	getEyeClass : function (eyeID, eyesizeID, left) {
+		var result = "eye_" + (left ? "left" : "right") + "_";
+		switch(parseInt(eyeID)){
+			case 1:
+				result = result + "cute_";
+				break;
+			case 2:
+				result = result + "cartoon_";
+				break;
+			case 3:
+			 	result = result + "blue_"
+				break;
+		}
+		switch(parseInt(eyesizeID)){
+			case 1:
+				result = result + "medium";
+				break;
+			case 2:
+				result = result + "large";
+				break;
+		}
+		return result + " eye-preview-" + (left ? "left" : "right");
+	},
+	
+	bodyPartToPath : function (bodyPart, toPartID) {
+		var result = "/images/room/monsters/";
+		switch (bodyPart) {
+			case "body":
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "blue.png";
+						break;
+					case 2:
+						result = result + "green.png";
+						break;
+					case 3:
+						result = result + "purple.png";
+						break;
+					case 4:
+						result = result + "red.png";
+						break;
+					case 5:
+						result = result + "yellow.png";					
+						break;
+				}
+				break;
+			case "eye":
+				result = result + "eyes/";
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "cute-medium.png";
+						break;
+					case 2:
+						result = result + "cartoon-medium.png";
+						break;
+					case 3:
+						result = result + "blue-medium.png";
+						break;
+				}
+				break;
+			case "glasses":
+				result = result + "accessories/";
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "glasses-dark.png";
+						break;
+					case 2:
+						result = result + "glasses-thick.png";
+						break;
+					case 3:
+						result = result + "glasses-red.png";
+						break;
+					case 4:
+						result = result + "glasses-shiny.png";
+						break;
+					case 5:
+						result = result + "glasses-monocole.png";
+						break;
+				}
+				break;
+			case "smile":
+				result = result + "smiles/";
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "cucumberteeth.png";
+						break;
+					case 2:
+						result = result + "openmouth.png";
+						break;
+					case 3:
+						result = result + "modest.png";
+						break;
+					case 4:
+						result = result + "vampireteeth.png";
+						break;
+					case 5:
+						result = result + "openteeth.png";
+						break;
+				}
+				break;
+			case "hat":
+				result = result + "accessories/";
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "hat-headphones.png";
+						break;
+					case 2:
+						result = result + "hat-bow.png";
+						break;
+					case 3:
+						result = result + "hat-brown.png";
+						break;
+					case 4:
+						result = result + "hat-horns.png";
+						break;
+				}
+				break;
+			default:
+				alert("fuuu")
+		}
+		return result;
+	},
+	
+	bodyPartToClass : function (bodyPart, toPartID) {
+		var result = "-preview ";
+		switch (bodyPart) {
+			case "body":
+				return "body-preview";
+				break;
+			case "glasses":
+				result = "glasses" + result;
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "glasses_dark";
+						break;
+					case 2:
+						result = result + "glasses_thick";
+						break;
+					case 3:
+						result = result + "glasses_red";
+						break;
+					case 4:
+						result = result + "glasses_shiny";
+						break;
+					case 5:
+						result = result + "glasses_monocole";
+						break;
+				}
+				break;
+			case "smile":
+				result = "smile" + result;
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "smile_cucumber";
+						break;
+					case 2:
+						result = result + "smile_openmouth";
+						break;
+					case 3:
+						result = result + "smile_modest";
+						break;
+					case 4:
+						result = result + "smile_vampire";
+						break;
+					case 5:
+						result = result + "smile_openteeth";
+						break;
+				}
+				break;
+			case "hat":
+				result = "hat" + result;
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "hat-headphones";
+						break;
+					case 2:
+						result = result + "hat-bow";
+						break;
+					case 3:
+						result = result + "hat-brown";
+						break;
+					case 4:
+						result = result + "hat-horns";
+						break;
+				}
+				break;
+			default:
+				alert("fuuu")
+		}
+		return result;
 	}
 	
  });
@@ -2284,19 +2699,26 @@ $(function() {
  });
 
  window.AvatarView = Backbone.View.extend({
-
+  
+	
+	
   initialize: function() {
-   var avatarId, avatarImgSrc, avatarBody, avatarMouth, avatarSmile, user, nameDiv, stageX;
+   var avatarBody, avatarMouth, avatarSmile, user, nameDiv, stageX, avatarArray, avatarEyes, avatarBody, avatarGlasses, avatarTop;
    user = this.options.user;
+	 
    this.el.id = "avatarWrapper_" + user.id;
-   avatarId = user.get("avatar");
-	 this.el.className = "avt_" + avatarId;
-   avatarImgSrc = this.getAvatarSrc(avatarId);
-   avatarBody = this.make('img', {
-    id: 'avatarBody_' + user.id,
-    style: 'position:absolute;',
-    src: avatarImgSrc
-   });
+	 avatarArray = user.get("avatar").split(",");
+	
+		if (typeof(SurfStreamApp.currentAvatarSettings) == "undefined" && user.id == SurfStreamApp.get("userModel").get("ssId")) {
+			SurfStreamApp.currentAvatarSettings = avatarArray;
+		 }
+		
+	 this.el.className = "avt_" + avatarArray[0];
+   avatarBody = AvatarView.buildBodyPart("body", avatarArray[0]);
+	 avatarEyes = AvatarView.buildEyes(avatarArray[1], avatarArray[2]);
+	 avatarGlasses = (avatarArray[3] != 0) ? AvatarView.buildBodyPart("glasses", avatarArray[3]) : null;
+	 avatarSmile = AvatarView.buildBodyPart("smile", avatarArray[4]);
+	 avatarTop = (avatarArray[5] != 0) ? AvatarView.buildBodyPart("hat", avatarArray[5]) : null;
    nameDiv = this.make('div', {
     id: 'nameDiv_' + user.id,
     "class": "nametip",
@@ -2308,14 +2730,14 @@ $(function() {
     "class": "chattip"
    });
    avatarMouth = this.make('img', {
-    "class": 'defaultSmile' + avatarId + " default",
-    src: this.defaultMouthSrc
+    "class": 'smile_default default',
+    style: "position: absolute;",
+    src: AvatarView.defaultMouthSrc
    });
-   avatarSmile = this.make('img', {
-    "class": 'defaultSmile' + avatarId + " smiley",
-    src: this.getSmileSrc(avatarId)
-   });
-   $(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(nameDiv).append(chatDiv);
+   $(this.el).append(avatarBody).append(avatarMouth).append(avatarSmile).append(avatarEyes[0]).append(avatarEyes[1]);
+	 if (avatarGlasses)	$(this.el).append(avatarGlasses);
+	 if (avatarTop)	$(this.el).append(avatarTop);
+	 $(this.el).append(nameDiv).append(chatDiv);
    //put off stage
    if (user.get('x') < 290) {
     stageX = -80;
@@ -2350,50 +2772,211 @@ $(function() {
     "margin-left": user.get('x'),
     "z-index": Math.floor(user.get('y'))
    }, 900, 'expoout');
-  },
-
-  putOnSofa: function() {
-
-  },
+  } },
+ {
 
   defaultMouthSrc: "/images/room/monsters/smiles/line.png",
 
-  getAvatarSrc: function(avatarID) {
-   switch (parseInt(avatarID, 10)) {
-   case 1:
-    return "/images/room/monsters/blue.PNG";
-   case 2:
-    return "/images/room/monsters/green.png";
-   case 3:
-    return "/images/room/monsters/purple.png";
-   case 4:
-    return "/images/room/monsters/red.png";
-   case 5:
-    return "/images/room/monsters/yellow.png";
-   default:
-    console.log("RUH-ROH!");
-    return null;
-   }
-  },
-
-  getSmileSrc: function(avatarID) {
-   switch (parseInt(avatarID)) {
-   case 1:
-    return "/images/room/monsters/smiles/cucumberteeth.png";
-   case 2:
-    return "/images/room/monsters/smiles/jankyteeth.png";
-   case 3:
-    return "/images/room/monsters/smiles/openteeth.png";
-   case 4:
-    return "/images/room/monsters/smiles/openmouth.png";
-   case 5:
-    return "/images/room/monsters/smiles/openteeth.png";
-   default:
-    console.log("RUH-ROH!");
-    return null;
-   }
-  }
- });
+	buildBodyPart: function (bodyPart, toPartID, large) {
+			return ss_make("img", {src: this.bodyPartToPath(bodyPart, toPartID), style: "position: absolute;", "class":  this.bodyPartToClass(bodyPart, toPartID)})
+	},
+	
+	buildEyes: function (eyeID, eyesizeID) {
+		var path = this.bodyPartToPath("eye", eyeID);
+		//render left eye first, then right
+		return [ss_make("img", {src: path, style: "position: absolute;", "class" : this.getEyeClass(eyeID, eyesizeID, true)}),
+						ss_make("img", {src: path, style: "position: absolute;", "class" : this.getEyeClass(eyeID, eyesizeID, false)})];		
+	},
+	
+	getEyeClass : function (eyeID, eyesizeID, left) {
+		var result = "eye_" + (left ? "left" : "right") + "_";
+		switch(parseInt(eyeID)){
+			case 1:
+				result = result + "cute_";
+				break;
+			case 2:
+				result = result + "cartoon_";
+				break;
+			case 3:
+			 	result = result + "blue_"
+				break;
+		}
+		switch(parseInt(eyesizeID)){
+			case 1:
+				result = result + "medium";
+				break;
+			case 2:
+				result = result + "large";
+				break;
+		}
+		return result;
+	},
+	
+	bodyPartToPath : function (bodyPart, toPartID) {
+		var result = "/images/room/monsters/";
+		switch (bodyPart) {
+			case "body":
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "blue.png";
+						break;
+					case 2:
+						result = result + "green.png";
+						break;
+					case 3:
+						result = result + "purple.png";
+						break;
+					case 4:
+						result = result + "red.png";
+						break;
+					case 5:
+						result = result + "yellow.png";					
+						break;
+				}
+				break;
+			case "eye":
+				result = result + "eyes/";
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "cute-medium.png";
+						break;
+					case 2:
+						result = result + "cartoon-medium.png";
+						break;
+					case 3:
+						result = result + "blue-medium.png";
+						break;
+				}
+				break;
+			case "glasses":
+				result = result + "accessories/";
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "glasses-dark.png";
+						break;
+					case 2:
+						result = result + "glasses-thick.png";
+						break;
+					case 3:
+						result = result + "glasses-red.png";
+						break;
+					case 4:
+						result = result + "glasses-shiny.png";
+						break;
+					case 5:
+						result = result + "glasses-monocole.png";
+						break;
+				}
+				break;
+			case "smile":
+				result = result + "smiles/";
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "cucumberteeth.png";
+						break;
+					case 2:
+						result = result + "openmouth.png";
+						break;
+					case 3:
+						result = result + "modest.png";
+						break;
+					case 4:
+						result = result + "vampireteeth.png";
+						break;
+					case 5:
+						result = result + "openteeth.png";
+						break;
+				}
+				break;
+			case "hat":
+				result = result + "accessories/";
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "hat-headphones.png";
+						break;
+					case 2:
+						result = result + "hat-bow.png";
+						break;
+					case 3:
+						result = result + "hat-brown.png";
+						break;
+					case 4:
+						result = result + "hat-horns.png";
+						break;
+				}
+				break;
+			default:
+				alert("fuuu")
+		}
+		return result;
+	},
+	
+	bodyPartToClass : function (bodyPart, toPartID) {
+		var result = "";
+		switch (bodyPart) {
+			case "body":
+				return "";
+				break;
+			case "glasses":
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "glasses_dark";
+						break;
+					case 2:
+						result = result + "glasses_thick";
+						break;
+					case 3:
+						result = result + "glasses_red";
+						break;
+					case 4:
+						result = result + "glasses_shiny";
+						break;
+					case 5:
+						result = result + "glasses_monocole";
+						break;
+				}
+				break;
+			case "smile":
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "smile_cucumber smiley";
+						break;
+					case 2:
+						result = result + "smile_openmouth smiley";
+						break;
+					case 3:
+						result = result + "smile_modest smiley";
+						break;
+					case 4:
+						result = result + "smile_vampire smiley";
+						break;
+					case 5:
+						result = result + "smile_openteeth smiley";
+						break;
+				}
+				break;
+			case "hat":
+				switch(parseInt(toPartID)) {
+					case 1:
+						result = result + "hat-headphones";
+						break;
+					case 2:
+						result = result + "hat-bow";
+						break;
+					case 3:
+						result = result + "hat-brown";
+						break;
+					case 4:
+						result = result + "hat-horns";
+						break;
+				}
+				break;
+			default:
+				alert("fuuu")
+		}
+		return result;
+	 } 
+  });
 
  window.ShareBarView = Backbone.View.extend({
   el: '#shareBar',
@@ -2914,6 +3497,66 @@ $(function() {
     resultsCollection.add(buildup);
    });
 
+	socket.on("avatar:change", function(info){
+		var user = $("#avatarWrapper_" +info.userId);
+		user.removeClass();
+		var avatarArray = info.newAvatarArray;
+		user.addClass('avt_'+avatarArray[0]);
+		var inner = user.children();
+		inner.remove();
+		avatarBody = AvatarView.buildBodyPart("body", avatarArray[0]);
+		avatarEyes = AvatarView.buildEyes(avatarArray[1], avatarArray[2]);
+	  avatarGlasses = (avatarArray[3] != 0) ? AvatarView.buildBodyPart("glasses", avatarArray[3]) : null;
+	  avatarSmile = AvatarView.buildBodyPart("smile", avatarArray[4]);
+	  avatarTop = (avatarArray[5] != 0) ? AvatarView.buildBodyPart("hat", avatarArray[5]) : null;
+    nameDiv = ss_make('div', {
+     id: 'nameDiv_' + info.userId,
+     "class": "nametip",
+     style: 'position:absolute;',
+     title: info.name
+    });
+   chatDiv = ss_make('div', {
+     id: 'avatarChat_' + info.userId,
+    "class": "chattip"
+   });
+   avatarMouth = ss_make('img', {
+    "class": 'smile_default default',
+    style: "position: absolute;",
+    src: AvatarView.defaultMouthSrc
+   });
+   user.append(avatarBody).append(avatarMouth).append(avatarSmile).append(avatarEyes[0]).append(avatarEyes[1]);
+	 if (avatarGlasses)	user.append(avatarGlasses);
+	 if (avatarTop)	user.append(avatarTop);
+	 user.append(nameDiv).append(chatDiv); 
+		$("#avatarChat_" + info.userId).tipsy({
+	    gravity: 'sw',
+	    fade: 'true',
+	    delayOut: 3000,
+	    trigger: 'manual',
+	    title: function() {
+	     return this.getAttribute('latest_txt')
+	    }
+	   });
+	   $("#nameDiv_" + info.userId).tipsy({
+	    gravity: 'n',
+	    fade: 'true'
+	   });
+			//NEED TO FIX THIS
+			/*
+	   $("#avatarWrapper_" + info.userId).data("isDJ", "0");
+	   console.log("margintop stored, value: " + user.get('y'))
+	   $(this.el).data({
+	    "roomX": user.get('x'),
+	    "roomY": user.get('y'),
+	    "trueY": user.get('y')
+	   });
+	   $(this.el).animate({
+	    "margin-top": user.get('y'),
+	    "margin-left": user.get('x'),
+	    "z-index": Math.floor(user.get('y'))
+	   }, 900, 'expoout'); */
+	});
+
   }
 
  }, {
@@ -3093,7 +3736,11 @@ $(function() {
    SocketManagerModel.socket.emit('room:join', payload);
    SocketManagerModel.socket.emit("val:requestRecs");
    SurfStreamApp.curDJ = "__none__";
-  }
+  },
+
+	updateAvatar: function() {
+		SocketManagerModel.socket.emit('avatar:update', SurfStreamApp.currentAvatarSettings);
+	}
 
  });
 
@@ -3390,3 +4037,7 @@ function showLoader(status) {
   document.getElementById('loader').style.display = 'none';
  }
 }
+
+dummyView = Backbone.View.extend({})
+
+ss_make = (new dummyView).make;

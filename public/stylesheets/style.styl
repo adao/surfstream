@@ -1351,14 +1351,19 @@ div#top-video-name
 	font-size: 12px
 	text-align: center
 	.dialog-buttons
-		margin-top: 400px;
+		margin-top: 310px;
+		position: absolute;
+		margin-left: 657px;
 		button
 			border: none
 			border-radius: 4px
 			-moz-radius: 4px
 			-webkit-radius: 4px
-			width:40px
-			height:20px
+			width: 80px;
+			height: 28px;
+			margin-left: 10px;
+			font-size: 16px;
+			text-align: center;
 		.saveChanges
 			background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
 			background: -moz-linear-gradient(top,  #34C8FF,  #008AB8)
@@ -1953,6 +1958,43 @@ a#fdbk_tab
 #fba_ss_id
 	display: none
 
+.eye_left_blue_large
+	z-index: 1
+.eye_right_blue_large
+	z-index: 1
+.eye_left_blue_medium
+	z-index: 1
+.eye_right_blue_medium
+	z-index: 1
+.eye_left_cartoon_large
+	z-index: 1
+.eye_right_cartoon_large
+	z-index: 1
+.eye_left_cartoon_medium
+	z-index: 1
+.eye_right_cartoon_medium
+	z-index: 1
+.eye_left_cute_large
+	z-index: 1
+.eye_right_cute_large
+	z-index: 1
+.eye_left_cute_medium
+	z-index: 1
+.eye_right_cute_medium
+	z-index: 1
+
+
+.glasses_monocole
+	z-index: 2
+.glasses_red
+	z-index: 2
+.glasses_shiny
+	z-index: 2
+.glasses_thick
+	z-index: 2
+.glasses_dark
+	z-index: 2
+
 
 .avt_1
 	.eye_left_blue_large
@@ -2121,8 +2163,8 @@ a#fdbk_tab
 		margin-left: 20px;
 		margin-top: 66px;
 	.smile_modest
-		margin-left: 20px;
-		margin-top: 66px;
+		margin-left: 13px;
+		margin-top: 64px;
 		width: 50px;
 	.smile_openmouth
 		margin-left: 14px;
@@ -2348,7 +2390,7 @@ a#fdbk_tab
 	.eye_left_blue_large
 		width: 15px;
 		margin-left: 13px;
-		margin-top: 24px;
+		margin-top: 28px;
 	.eye_right_blue_large
 		width: 15px;
 		margin-left: 40px;
@@ -2448,29 +2490,38 @@ a#fdbk_tab
 #pickerselection
 	float: left;
 	height: 450px;
-	width: 560px;
+	width: 575px;
 	margin-top: 30px;
 	margin-left: 30px;
 	text-align: left;
-	#picker-bodies
+	.picker-el
+		border: 1px solid white
+		display: inline-block
+		background: #E5E5E5
+		cursor: pointer
+		border-radius: 3px;
+		.selected
+			border: 5px solid orange;
+			border-radius: 5px;
+	#picker-body
 		.picker-body-wrap
 			margin-left: 15px
 			width: 95px
 			height: 110px
-			border: 1px solid white
-			display: inline-block
-			background: #E5E5E5
-	#picker-eyes
+			background: url('/images/room/picker-body-bg.png')
+		.pb
+			margin-left: 13px;
+			position: absolute;
+			margin-top: 12px;
+	#picker-eye
 		height: 45px;
 		margin-top: 30px;
 		.eye-picker-box
 			width: 80px
 			height: 40px
 			margin-left:10px
-			background: #E5E5E5
-			border: 1px solid white
-			display: inline-block
-	#picker-eye-size
+			background: url('/images/room/picker-eyes-bg.png')
+	#picker-eyesize
 		height: 40px;
 		display: inline-block;
 		vertical-align: top;
@@ -2479,41 +2530,49 @@ a#fdbk_tab
 			height: 30px
 			margin-left:10px
 			margin-top: 5px;
-			background: #E5E5E5
-			border: 1px solid white
-			display: inline-block
+			background: url('/images/room/picker-eye-size-bg.png')
 	#picker-glasses
 		height: 40px;
 		margin-top: 15px;
 		.glasses-box
 			width: 90px;
 			height: 35px;
-			margin-left:10px
+			margin-left:7px
 			margin-top: 5px;
-			background: #E5E5E5
-			border: 1px solid white
-			display: inline-block
 			vertical-align: top;
+			background: url('/images/room/picker-glasses-bg.png')
 		.glasses-box-monocle
 			width: 40px;
 			height: 70px;
-			margin-left:10px
+			margin-left: 7px
 			margin-top: 5px;
-			background: #E5E5E5
-			border: 1px solid white
-			display: inline-block
+			background: url('/images/room/picker-glasses-monocole-bg.png')
+		.glasses-none-box
+			width: 35px;
+			height: 35px;
+			margin-left: 8px;
+			margin-top:5px
+			vertical-align: top;
+			background: url('/images/room/picker-glasses-none-bg.png')
+			.noglasses
+				width: 20px
+				margin-left: 8px
+				margin-top: 3px
+			.noglassestext
+				font-size: 11px
+				margin-left: 5px
+				margin-top: -4px
+				font-weight: bold
 	#picker-smile
 		height: 40px;
 		margin-top: 15px;
 		.smile-box
-			width: 40px;
+			width: 60px;
 			height: 35px;
 			margin-left:10px
 			margin-top: 5px;
-			background: #E5E5E5
-			border: 1px solid white
-			display: inline-block
 			vertical-align: top;
+			background: url('/images/room/picker-smile-bg.png')
 	#picker-hat
 		height: 40px;
 		margin-top: 15px;
@@ -2522,18 +2581,24 @@ a#fdbk_tab
 			height: 70px;
 			margin-left:10px
 			margin-top: 5px;
-			background: #E5E5E5
-			border: 1px solid white
-			display: inline-block
 			vertical-align: top;
+			background: url('/images/room/picker-top-bg.png')
+			.notop
+				width: 40px;
+				margin-left: 25px;
+				margin-top: 6px;
+			.notoptext
+				font-weight: bold
+				margin-left: 30px
 #picker-preview
 	height: 180px
-	width: 100px
 	margin-top: 115px;
-	background: #E5E5E5;
 	float: right;
 	margin-right: 60px;
 	width: 175px;
+	background: url('/images/room/picker-preview-bg.png')
+	border: 2px solid black;
+	border-radius: 3px;
 .picker-select-text
 	text-indent: 10px
 	text-indent: 10px;

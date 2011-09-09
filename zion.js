@@ -201,7 +201,7 @@ io.sockets.on('connection', function(socket) {
 							fbId: ssUser.id, 
 							socket: socket
 					  });
-						currUser.initializeAndSendPlaylists(socket);
+						currUser.initializeAndSendPlaylists(socket, roomManager, userManager);
 						StagingUsers[socket.id] = currUser; 
 						console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
 							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>')
@@ -253,7 +253,7 @@ io.sockets.on('connection', function(socket) {
 							if (err) {
 								console.log("error setting user " + ssUser.ssId + "'s active playlist");
 							} else {
-								currUser.initializeAndSendPlaylists(socket);
+								currUser.initializeAndSendPlaylists(socket, roomManager, userManager);
 							}
 						});
 					}
@@ -312,6 +312,8 @@ io.sockets.on('connection', function(socket) {
 	socket.on('rooms:load', function(data) {
 		roomManager.sendRoomsInfo(socket, data.id);
 	});
+	
+	
 });
 
 

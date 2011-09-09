@@ -1539,15 +1539,20 @@ background-color: green,
   text-align: center;
 }
 #avatar-picker-modal .dialog-buttons {
-  margin-top: 400px;
+  margin-top: 310px;
+  position: absolute;
+  margin-left: 657px;
 }
 #avatar-picker-modal .dialog-buttons button {
   border: none;
   border-radius: 4px;
   -moz-radius: 4px;
   -webkit-radius: 4px;
-  width: 40px;
-  height: 20px;
+  width: 80px;
+  height: 28px;
+  margin-left: 10px;
+  font-size: 16px;
+  text-align: center;
 }
 #avatar-picker-modal .dialog-buttons .saveChanges {
   background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
@@ -2220,6 +2225,57 @@ a#fdbk_tab {
 #fba_ss_id {
   display: none;
 }
+.eye_left_blue_large {
+  z-index: 1;
+}
+.eye_right_blue_large {
+  z-index: 1;
+}
+.eye_left_blue_medium {
+  z-index: 1;
+}
+.eye_right_blue_medium {
+  z-index: 1;
+}
+.eye_left_cartoon_large {
+  z-index: 1;
+}
+.eye_right_cartoon_large {
+  z-index: 1;
+}
+.eye_left_cartoon_medium {
+  z-index: 1;
+}
+.eye_right_cartoon_medium {
+  z-index: 1;
+}
+.eye_left_cute_large {
+  z-index: 1;
+}
+.eye_right_cute_large {
+  z-index: 1;
+}
+.eye_left_cute_medium {
+  z-index: 1;
+}
+.eye_right_cute_medium {
+  z-index: 1;
+}
+.glasses_monocole {
+  z-index: 2;
+}
+.glasses_red {
+  z-index: 2;
+}
+.glasses_shiny {
+  z-index: 2;
+}
+.glasses_thick {
+  z-index: 2;
+}
+.glasses_dark {
+  z-index: 2;
+}
 .avt_1 .eye_left_blue_large {
   width: 15px;
   margin-left: 13px;
@@ -2426,8 +2482,8 @@ a#fdbk_tab {
   margin-top: 66px;
 }
 .avt_2 .smile_modest {
-  margin-left: 20px;
-  margin-top: 66px;
+  margin-left: 13px;
+  margin-top: 64px;
   width: 50px;
 }
 .avt_2 .smile_openmouth {
@@ -2704,7 +2760,7 @@ a#fdbk_tab {
 .avt_5 .eye_left_blue_large {
   width: 15px;
   margin-left: 13px;
-  margin-top: 24px;
+  margin-top: 28px;
 }
 .avt_5 .eye_right_blue_large {
   width: 15px;
@@ -2829,44 +2885,54 @@ a#fdbk_tab {
 #pickerselection {
   float: left;
   height: 450px;
-  width: 560px;
+  width: 575px;
   margin-top: 30px;
   margin-left: 30px;
   text-align: left;
 }
-#pickerselection #picker-bodies .picker-body-wrap {
+#pickerselection .picker-el {
+  border: 1px solid #fff;
+  display: inline-block;
+  background: #e5e5e5;
+  cursor: pointer;
+  border-radius: 3px;
+}
+#pickerselection .picker-el .selected {
+  border: 5px solid #ffa500;
+  border-radius: 5px;
+}
+#pickerselection #picker-body .picker-body-wrap {
   margin-left: 15px;
   width: 95px;
   height: 110px;
-  border: 1px solid #fff;
-  display: inline-block;
-  background: #e5e5e5;
+  background: url("/images/room/picker-body-bg.png");
 }
-#pickerselection #picker-eyes {
+#pickerselection #picker-body .pb {
+  margin-left: 13px;
+  position: absolute;
+  margin-top: 12px;
+}
+#pickerselection #picker-eye {
   height: 45px;
   margin-top: 30px;
 }
-#pickerselection #picker-eyes .eye-picker-box {
+#pickerselection #picker-eye .eye-picker-box {
   width: 80px;
   height: 40px;
   margin-left: 10px;
-  background: #e5e5e5;
-  border: 1px solid #fff;
-  display: inline-block;
+  background: url("/images/room/picker-eyes-bg.png");
 }
-#pickerselection #picker-eye-size {
+#pickerselection #picker-eyesize {
   height: 40px;
   display: inline-block;
   vertical-align: top;
 }
-#pickerselection #picker-eye-size .eye-size-box {
+#pickerselection #picker-eyesize .eye-size-box {
   width: 80px;
   height: 30px;
   margin-left: 10px;
   margin-top: 5px;
-  background: #e5e5e5;
-  border: 1px solid #fff;
-  display: inline-block;
+  background: url("/images/room/picker-eye-size-bg.png");
 }
 #pickerselection #picker-glasses {
   height: 40px;
@@ -2875,35 +2941,48 @@ a#fdbk_tab {
 #pickerselection #picker-glasses .glasses-box {
   width: 90px;
   height: 35px;
-  margin-left: 10px;
+  margin-left: 7px;
   margin-top: 5px;
-  background: #e5e5e5;
-  border: 1px solid #fff;
-  display: inline-block;
   vertical-align: top;
+  background: url("/images/room/picker-glasses-bg.png");
 }
 #pickerselection #picker-glasses .glasses-box-monocle {
   width: 40px;
   height: 70px;
-  margin-left: 10px;
+  margin-left: 7px;
   margin-top: 5px;
-  background: #e5e5e5;
-  border: 1px solid #fff;
-  display: inline-block;
+  background: url("/images/room/picker-glasses-monocole-bg.png");
+}
+#pickerselection #picker-glasses .glasses-none-box {
+  width: 35px;
+  height: 35px;
+  margin-left: 8px;
+  margin-top: 5px;
+  vertical-align: top;
+  background: url("/images/room/picker-glasses-none-bg.png");
+}
+#pickerselection #picker-glasses .glasses-none-box .noglasses {
+  width: 20px;
+  margin-left: 8px;
+  margin-top: 3px;
+}
+#pickerselection #picker-glasses .glasses-none-box .noglassestext {
+  font-size: 11px;
+  margin-left: 5px;
+  margin-top: -4px;
+  font-weight: bold;
 }
 #pickerselection #picker-smile {
   height: 40px;
   margin-top: 15px;
 }
 #pickerselection #picker-smile .smile-box {
-  width: 40px;
+  width: 60px;
   height: 35px;
   margin-left: 10px;
   margin-top: 5px;
-  background: #e5e5e5;
-  border: 1px solid #fff;
-  display: inline-block;
   vertical-align: top;
+  background: url("/images/room/picker-smile-bg.png");
 }
 #pickerselection #picker-hat {
   height: 40px;
@@ -2914,17 +2993,27 @@ a#fdbk_tab {
   height: 70px;
   margin-left: 10px;
   margin-top: 5px;
-  background: #e5e5e5;
-  border: 1px solid #fff;
-  display: inline-block;
   vertical-align: top;
+  background: url("/images/room/picker-top-bg.png");
+}
+#pickerselection #picker-hat .hat-box .notop {
+  width: 40px;
+  margin-left: 25px;
+  margin-top: 6px;
+}
+#pickerselection #picker-hat .hat-box .notoptext {
+  font-weight: bold;
+  margin-left: 30px;
 }
 #picker-preview {
   height: 180px;
-  width: 100px;
-  margin-top: 65px;
-  background: #e5e5e5;
+  margin-top: 115px;
   float: right;
+  margin-right: 60px;
+  width: 175px;
+  background: url("/images/room/picker-preview-bg.png");
+  border: 2px solid #000;
+  border-radius: 3px;
 }
 .picker-select-text {
   text-indent: 10px;
