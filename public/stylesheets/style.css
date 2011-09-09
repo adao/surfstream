@@ -2,7 +2,7 @@
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
 }
 body {
-  background-color: #141414;
+  background: url("/images/room/newicons/landing-page-bg.png") no-repeat;
 }
 button {
   cursor: pointer;
@@ -109,7 +109,7 @@ button {
   width: 638px;
   z-index: 50;
   position: absolute;
-  margin-top: 12px;
+  margin-top: 397px;
   margin-left: 11px;
 }
 #time-total-bar {
@@ -130,7 +130,6 @@ div#loadingScreen {
   background-color: color;
 }
 div#frontdoor {
-  background: transparent;
   display: none;
 }
 div#outer {
