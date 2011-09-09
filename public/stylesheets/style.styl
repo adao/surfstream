@@ -239,7 +239,7 @@ div#outer
 
 //Chat Box
 .chatContainer
-	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
+	font-family: FontFamily
 	width: 300px
 	height: 220px
 	max-width: 300px
@@ -389,21 +389,7 @@ div.historyContainer
 		// 		font-size: 10px
 		// 		color: black   
 			
-.videoThumbnailContainer
-	position: relative
-	display: inline
-	.videoTitle
-		position: absolute
-		width: 170px
-		top: -133px
-		left: 2px
-	.videoThumbnail
-		width: 117px
-		height: 88px
-		margin-right: 7px
-.videoThumbnail.lastPlayedVideo
-	border-style: solid
-	border-color: white
+
 			
 //history cell			
 .videoLog
@@ -508,7 +494,6 @@ div.historyContainer
 .searchCellContainer
 	width: 285px
 	height: 80px
-	text-shadow:1px 1px 1px black
 	.thumbContainer
 		float: left
 		width: 75px
@@ -539,7 +524,8 @@ div.historyContainer
 				font-size: 10px
 				overflow: hidden
 				pointer-events: none
-				text-shadow: 1px 1px 4px black
+			.duration, .viewCount
+				font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
 			.duration
 				position: relative
 				margin-left: -82px
@@ -556,6 +542,9 @@ div.historyContainer
 				top: -12px
 				font-size: 10px
 				pointer-events: none
+				span
+					font-family: FontFamily
+					margin-left: 3px
 			.author
 				position: relative
 				top: -36px
@@ -681,7 +670,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	color: #585858
 	
 .videoView
-	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
+	font-family: FontFamily
 	color: #D4D4D4
 	height: 378px
 	width: 300px
@@ -834,11 +823,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	position: absolute
 	top: 40px
 	left: 50%
-	margin-left: -450px
+	margin-left: -480px
 	font-family: FontFamily
 	overflow-y: none
 	overflow-x: none
-	width: 900px
+	width: 960px
 	height: 637px
 	background-color: black
 	z-index: 10000
@@ -861,7 +850,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		-webkit-border-top-left-radius: 2px
 		form.roomSearch
 			display: inline-block
-			width: 900px
+			width: 960px
 			height: 54px
 			input
 				color: silver
@@ -874,7 +863,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				-moz-border-radius: 6px
 				font-size: 16px
 				margin-top: 9px
-				width: 880px
+				width: 940px
 				height: 36px
 				border: 0
 				outline: 0
@@ -891,24 +880,26 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			background-color: transparent
 	#roomsWrapper
 		background-color: #313131
-		width: 900px
+		width: 960px
 		height: 543px
 		overflow-y: scroll
 		overflow-x: hidden
 		table#roomsTable
-			width: 884px
+			width: 945px
 			border-collapse: collapse
 			tr.table-header
 				background-color: black
 				color: white
 				height: 30px
 				th.room-name-hd
-					width: 160px
-				th.room-name-hd, th.room-friends-hd, th.viewers-hd, th.room-history-hd
+					width: 236px
+				th.room-name-hd, th.room-friends-hd, th.room-viewers-hd, th.room-history-hd
 					border-right: 1px solid #585858;
 				th.room-friends-hd
 					width: 10px
 					text-align: center
+				th.room-history-hd
+					width: 497px
 			tr.room-row
 				color: white
 				height: 60px
@@ -927,17 +918,33 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						padding-left: 2px
 						z-index: 30
 						background-color: gray
+				.room-viewers
+					text-align: center
+					width: 70px
+				.room-history
+					.lastPlayedVideoTitle
+						margin-left: 8px
+						margin-top: 10px
+				.room-history:hover
+					.videoThumbnailContainer
+						display: inline
 				td
 					border-right: 1px solid #585858
+					.num-viewers
+						font-size: 32px
+						margin-bottom: 8px
 					.num-viewers, .num-djs
 						font-weight: bold
 						text-align: center
-						padding-top: 4px
-						font-size: 25px
-						height: 35px
+						height: 28px
 					.num-djs           
 						font-size: 14px
-						height: 25px
+						height: 14px
+					.remote-dj-icon
+						margin: 1px 0 0 5px
+						vertical-align: middle
+					.num-djs, .remote-dj-icon
+						display: inline-block
 					.room-name-container
 						.listed-room-name, .listed-video-name
 							margin-left: 8px
@@ -957,9 +964,6 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						list-style-type: none
 						margin-left: -30px
 						margin-top: 2px
-					.lastPlayedVideoTitle
-						margin-top: -15px
-						margin-left: 9px
 			tr.room-row:nth-child(odd)
 				background-color: #313131
 			tr.room-row:nth-child(odd)
@@ -1013,7 +1017,24 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			float: right
 			border: none
 			background: transparent
-		
+			
+.videoThumbnailContainer
+	display: none
+	position: relative
+	.videoTitle
+		position: absolute
+		width: 170px
+		top: -133px
+		left: 2px
+	.videoThumbnail
+		width: 96px
+		height: 72px
+		margin-right: 8px
+		margin-top: 8px
+		border-radius: 2px
+.videoThumbnail.lastPlayedVideo
+	border: 1px solid white
+			
 #video-div
 	-webkit-border-top-left-radius: 2px
 	-moz-border-top-left-radius: 2px
@@ -1230,6 +1251,8 @@ div#top-video-name
 					text-wrap: suppress
 					overflow: hidden
 					text-overflow: ellipsis
+				.duration, .views
+					font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif
 				.duration
 					position: relative
 					margin-left: -70px
@@ -1678,6 +1701,9 @@ a#fdbk_tab
 	margin-top: 35px;
 	background-color: #373737;
 	width: 300px
+	
+#playlist-dropdown
+	font-family: FontFamily
 
 #footer
 	position: absolute

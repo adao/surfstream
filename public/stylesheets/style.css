@@ -274,7 +274,7 @@ div#outer {
   background: url("/images/room/clearsearch.png") 50% 50% no-repeat;
 }
 .chatContainer {
-  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   width: 300px;
   height: 220px;
   max-width: 300px;
@@ -425,25 +425,6 @@ div.historyContainer .history .videoHistory {
   -moz-border-bottom-right-radius: 2px;
   -webkit-border-bottom-right-radius: 2px;
 }
-.videoThumbnailContainer {
-  position: relative;
-  display: inline;
-}
-.videoThumbnailContainer .videoTitle {
-  position: absolute;
-  width: 170px;
-  top: -133px;
-  left: 2px;
-}
-.videoThumbnailContainer .videoThumbnail {
-  width: 117px;
-  height: 88px;
-  margin-right: 7px;
-}
-.videoThumbnail.lastPlayedVideo {
-  border-style: solid;
-  border-color: #fff;
-}
 .videoLog {
   width: 325px;
   height: 150px;
@@ -561,7 +542,6 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer {
   width: 285px;
   height: 80px;
-  text-shadow: 1px 1px 1px #000;
 }
 .searchCellContainer .thumbContainer {
   float: left;
@@ -596,14 +576,17 @@ div.historyContainer .history .videoHistory {
   font-size: 10px;
   overflow: hidden;
   pointer-events: none;
-  text-shadow: 1px 1px 4px #000;
+}
+.searchCellContainer .cellInfo .videoInfo .duration,
+.searchCellContainer .cellInfo .videoInfo .viewCount {
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 .searchCellContainer .cellInfo .videoInfo .duration {
   position: relative;
   margin-left: -82px;
   margin-top: 12px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 75px;
   text-align: left;
   text-indent: 1px;
@@ -615,6 +598,10 @@ div.historyContainer .history .videoHistory {
   top: -12px;
   font-size: 10px;
   pointer-events: none;
+}
+.searchCellContainer .cellInfo .videoInfo .viewCount span {
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  margin-left: 3px;
 }
 .searchCellContainer .cellInfo .videoInfo .author {
   position: relative;
@@ -763,7 +750,7 @@ button.search.active {
   color: #585858;
 }
 .videoView {
-  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #d4d4d4;
   height: 378px;
   width: 300px;
@@ -948,11 +935,11 @@ button
   position: absolute;
   top: 40px;
   left: 50%;
-  margin-left: -450px;
+  margin-left: -480px;
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   overflow-y: none;
   overflow-x: none;
-  width: 900px;
+  width: 960px;
   height: 637px;
   background-color: #000;
   z-index: 10000;
@@ -977,7 +964,7 @@ button
 }
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
-  width: 900px;
+  width: 960px;
   height: 54px;
 }
 #room-modal #searchbar form.roomSearch input {
@@ -991,7 +978,7 @@ button
   -moz-border-radius: 6px;
   font-size: 16px;
   margin-top: 9px;
-  width: 880px;
+  width: 940px;
   height: 36px;
   border: 0;
   outline: 0;
@@ -1011,13 +998,13 @@ button
 }
 #room-modal #roomsWrapper {
   background-color: #313131;
-  width: 900px;
+  width: 960px;
   height: 543px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
 #room-modal #roomsWrapper table#roomsTable {
-  width: 884px;
+  width: 945px;
   border-collapse: collapse;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header {
@@ -1026,17 +1013,20 @@ button
   height: 30px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-name-hd {
-  width: 160px;
+  width: 236px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-name-hd,
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-friends-hd,
-#room-modal #roomsWrapper table#roomsTable tr.table-header th.viewers-hd,
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.room-viewers-hd,
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-history-hd {
   border-right: 1px solid #585858;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-friends-hd {
   width: 10px;
   text-align: center;
+}
+#room-modal #roomsWrapper table#roomsTable tr.table-header th.room-history-hd {
+  width: 497px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row {
   color: #fff;
@@ -1059,20 +1049,41 @@ button
   z-index: 30;
   background-color: #808080;
 }
+#room-modal #roomsWrapper table#roomsTable tr.room-row .room-viewers {
+  text-align: center;
+  width: 70px;
+}
+#room-modal #roomsWrapper table#roomsTable tr.room-row .room-history .lastPlayedVideoTitle {
+  margin-left: 8px;
+  margin-top: 10px;
+}
+#room-modal #roomsWrapper table#roomsTable tr.room-row .room-history:hover .videoThumbnailContainer {
+  display: inline;
+}
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;
+}
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .num-viewers {
+  font-size: 32px;
+  margin-bottom: 8px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .num-viewers,
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .num-djs {
   font-weight: bold;
   text-align: center;
-  padding-top: 4px;
-  font-size: 25px;
-  height: 35px;
+  height: 28px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .num-djs {
   font-size: 14px;
-  height: 25px;
+  height: 14px;
+}
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .remote-dj-icon {
+  margin: 1px 0 0 5px;
+  vertical-align: middle;
+}
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .num-djs,
+#room-modal #roomsWrapper table#roomsTable tr.room-row td .remote-dj-icon {
+  display: inline-block;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-room-name,
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-video-name {
@@ -1098,10 +1109,6 @@ button
   list-style-type: none;
   margin-left: -30px;
   margin-top: 2px;
-}
-#room-modal #roomsWrapper table#roomsTable tr.room-row td .lastPlayedVideoTitle {
-  margin-top: -15px;
-  margin-left: 9px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #313131;
@@ -1164,6 +1171,26 @@ button
   float: right;
   border: none;
   background: transparent;
+}
+.videoThumbnailContainer {
+  display: none;
+  position: relative;
+}
+.videoThumbnailContainer .videoTitle {
+  position: absolute;
+  width: 170px;
+  top: -133px;
+  left: 2px;
+}
+.videoThumbnailContainer .videoThumbnail {
+  width: 96px;
+  height: 72px;
+  margin-right: 8px;
+  margin-top: 8px;
+  border-radius: 2px;
+}
+.videoThumbnail.lastPlayedVideo {
+  border: 1px solid #fff;
 }
 #video-div {
   -webkit-border-top-left-radius: 2px;
@@ -1399,6 +1426,10 @@ background-color: green,
   overflow: hidden;
   text-overflow: ellipsis;
 }
+#playlist-view .videoListCellContainer .cellInfo .videoInfo .duration,
+#playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .duration {
   position: relative;
   margin-left: -70px;
@@ -1407,7 +1438,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1489,7 +1520,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1730,7 +1761,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1740,7 +1771,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -1762,7 +1793,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -200px;
-  background: rgba(0,0,0,0.70);
+  background: rgba(0,0,0,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -1859,7 +1890,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1870,7 +1901,7 @@ background-color: green,
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 #sofa-remote {
   left: 170px;
@@ -1906,6 +1937,9 @@ a#fdbk_tab {
   margin-top: 35px;
   background-color: #373737;
   width: 300px;
+}
+#playlist-dropdown {
+  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
 }
 #footer {
   position: absolute;

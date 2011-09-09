@@ -1,16 +1,17 @@
 #roomlistCell-template(style="display:none;")
 	table#celltemplate-table
 		tr.room-row
+			td.room-viewers
+				.num-viewers {{ viewers }}
+				.num-djs {{ numDJs }} / 3 DJs
 			td.room-name
 				.room-name-container
 					.listed-room-name {{ roomname }}
 						img.valstream-icon(src="images/room/icons/gmail.png")
 					.true-room-name {{ truename }}
 			td.room-history
-				ul.room-history-container
 				.lastPlayedVideoTitle
+				ul.room-history-container
 			td.room-friends
-				{{ numDJs }} /
-				{{ viewers }} /
 				.room-friends-container {{ partial_friends }}
 				ul.friends-hover-container {{ full_friends }}

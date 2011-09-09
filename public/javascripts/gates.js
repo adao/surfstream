@@ -1191,7 +1191,7 @@ $(function() {
     title: this.options.video.get("title"),
     vid_id: this.options.video.get("videoId"),
 		duration: ss_formatSeconds(this.options.video.get("duration")),
-		viewCount: (this.options.video.get("viewCount") > 0) ? (ss_formatViews(this.options.video.get("viewCount")) + " views" ) : "",
+		viewCount: (this.options.video.get("viewCount") > 0) ? (ss_formatViews(this.options.video.get("viewCount"))) : "",
 		author: this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
