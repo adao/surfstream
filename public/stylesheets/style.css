@@ -1013,7 +1013,7 @@ button
   height: 30px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-name-hd {
-  width: 236px;
+  width: 254px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-name-hd,
 #room-modal #roomsWrapper table#roomsTable tr.table-header th.room-friends-hd,
@@ -1369,7 +1369,6 @@ background-color: green,
   overflow-y: scroll;
   overflow-x: hidden;
   z-index: -1;
-  height: 316px;
 }
 #playlist-view .playlistCellButtonText {
   font-size: 18px;
