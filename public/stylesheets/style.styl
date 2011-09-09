@@ -40,7 +40,8 @@ button
 	#cur-video-name
 		margin-top: 2px
 		display: block
-		text-indent: 4px
+		width: 586px;
+		margin-left: 4px;
 	#time-container
 		margin-right: 4px
 		display: block
@@ -646,7 +647,6 @@ img.share-email-image
 	width: 194px
 	height: 40px
 	color: black
-	margin-left: 6px
 	.share
 		margin-top: 8px
 		vertical-align: top
@@ -659,7 +659,6 @@ img.share-email-image
 	#social
 		display: inline-block
 		margin-top: 2px
-		padding-left: 10px
 		width: 130px
 		height: 40px
 
@@ -954,8 +953,6 @@ button.playlist, button.playlist.active, button.search, button.search.active
 							word-wrap: break-word
 						.listed-room-name
 							font-size: 16px
-							 span
-								display: none
 						.listed-video-name
 							font-size: 14px
 						.true-room-name
@@ -1414,6 +1411,52 @@ div#top-video-name
 			background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#8D8D8D))
 			background: -moz-linear-gradient(top,  silver,  #8D8D8D)
 			background-image: -o-linear-gradient(top, silver, #8D8D8D)
+#avatar-picker-modal
+	display: none
+	border: 1px solid #666
+	background-color: #313131
+	font-family: FontFamily
+	color: white
+	position: absolute
+	border: 1px solid #666
+	border-radius: 2px
+	-moz-radius: 2px
+	-webkit-radius: 2px
+	top: 60px
+	left: 50%
+	margin-left: -445px;
+	font-family: FontFamily
+	overflow-y: none
+	overflow-x: none
+	width: 900px;
+	height: 550px;
+	z-index: 10000 
+	font-size: 12px
+	text-align: center
+	.dialog-buttons
+		margin-top: 310px;
+		position: absolute;
+		margin-left: 657px;
+		button
+			border: none
+			border-radius: 4px
+			-moz-radius: 4px
+			-webkit-radius: 4px
+			width: 80px;
+			height: 28px;
+			margin-left: 10px;
+			font-size: 16px;
+			text-align: center;
+		.saveChanges
+			background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
+			background: -moz-linear-gradient(top,  #34C8FF,  #008AB8)
+			background-image: -o-linear-gradient(top, #34C8FF, #008AB8)
+		.saveChanges:hover, .cancelPicker:hover
+			color: white
+		.cancelPicker
+			background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#8D8D8D))
+			background: -moz-linear-gradient(top,  silver,  #8D8D8D)
+			background-image: -o-linear-gradient(top, silver, #8D8D8D)
 			
 .ui-sortable-placeholder
 	width: 50px
@@ -1465,8 +1508,8 @@ div#top-video-name
 	position: absolute
 
 .defaultSmile1
-	margin-top: 45px
-	margin-left: 10px
+	margin-top: 50px;
+	margin-left: 16px;
 .defaultSmile2
 	margin-top: 48px
 	margin-left: 14px
@@ -1517,8 +1560,47 @@ div#top-video-name
 	z-index: 30
 
 #avatarWrapper_VAL
-	position:absolute;
+	position:absolute
+	margin-left: 376px
+	margin-top: 10px
 
+#val_body
+	position: absolute
+	margin-top: 10px
+	margin-left: -30px
+	
+#val_l_brow
+	position: absolute
+	margin-top: 27px
+	margin-left: -2px
+#val_r_brow
+	position: absolute
+	margin-top: 27px
+	margin-left: 24px
+#val_l_pupil
+	position: absolute;
+	margin-top: 47px;
+#val_r_pupil
+	position: absolute;
+	margin-top: 47px;
+	margin-left: 23px
+#val_smile
+	position: absolute;
+	margin-top: 58px;
+	margin-left: 7px;
+#valtipsy
+	margin-top: 32px;
+	position: absolute;
+	margin-left: -20px;
+	z-index: 2; 
+	width: 70px; 
+	height: 40px;
+#avatarChat_VAL
+	margin-top: 26px;
+	margin-left: 20px;
+	position: absolute;
+	
+	
 #tvglowimg
 	margin-top: 114px
 	margin-left: 120px
@@ -1872,13 +1954,31 @@ a#fdbk_tab
 	pointer-events: none
 	z-index: 4
 #settings
+	margin-top: 3px
+	#settings-text
+		vertical-align: top
+		font-size: 14px
+		display: inline-block
+		padding-top: 4px
+		text-indent: 6px
+		width: 80px
+		margin-left: 5px
+		text-align: center
+	#settings-arrow
+		height: 12px
+		width: 16px
+		display: inline-block
+		margin-top: 7px
+		float: right
+		margin-right: 6px
+		background: url('/images/room/newicons/settings-arrow.png') 50% 50% no-repeat
+
+
+.settingsButton
 	display: inline-block
 	float: right
 	height: 26px
-	width: 90px
-	margin-top: 3px
-	margin-left: 10px
-	margin-right: 2px
+	width: 110px
 	background-color: #c0c0c0
 	color: #585858
 	background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d))
@@ -1888,35 +1988,690 @@ a#fdbk_tab
 	-webkit-border-radius: 2px
 	-moz-border-radius: 2px
 	cursor: pointer
-	position: relative
-	#settings-text
-		vertical-align: top
-		font-size: 14px
-		display: inline-block
-		padding-top: 4px
-		text-indent: 6px
-		width: 90px
-	#settings-arrow
-		height: 12px
-		width: 16px
-		display: inline-block
-		margin-top: 7px
-		float: right
-		margin-right: 6px
-		background: url('/images/room/newicons/settings-arrow.png') 50% 50% no-repeat
-		position: absolute
-		left: 69px
-		top: 0
-	#settings-dropdown
-		font-size: 14px
-		text-indent: 5px
-		background-color: silver
-		display: none
-		margin-top: -7px
-#settings:hover
-	background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0))
-	background: -moz-linear-gradient(top,  #8d8d8d,  #c0c0c0)
-	background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0)
-
+#change-avatar
+	position:absolute
+	margin-left: 850px
+	margin-top: 28px
+	display: none
+.settingsButton:hover
+	-moz-box-shadow:inset 0 0 1px #000000;
+	-webkit-box-shadow:inset 0 0 1px #000000;
+	box-shadow:inset 0 0 1px #000000;
+	color: white
+	background: -moz-linear-gradient(top, #34C8FF, #008AB8);
+	background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8));
+	background: -moz-linear-gradient(top, #34C8FF, #008AB8);
+	background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
+	cursor: pointer
+#edit-profile
+	margin-top: 54px
+	position:absolute
+	margin-left: 850px
+	display: none
+	z-index:55
+#logout
+	margin-top: 80px
+	position:absolute
+	margin-left: 850px
+	display: none
+	z-index:55
+.settingsInnerText
+	font-size: 12px;
+	text-align: left;
+	text-indent: 0px;
+	padding-top: 6px;
+	width: 100px;
+	vertical-align: top;
+	display: inline-block
+	margin-left: 5px
 #fba_ss_id
 	display: none
+
+.eye_left_blue_large
+	z-index: 1
+.eye_right_blue_large
+	z-index: 1
+.eye_left_blue_medium
+	z-index: 1
+.eye_right_blue_medium
+	z-index: 1
+.eye_left_cartoon_large
+	z-index: 1
+.eye_right_cartoon_large
+	z-index: 1
+.eye_left_cartoon_medium
+	z-index: 1
+.eye_right_cartoon_medium
+	z-index: 1
+.eye_left_cute_large
+	z-index: 1
+.eye_right_cute_large
+	z-index: 1
+.eye_left_cute_medium
+	z-index: 1
+.eye_right_cute_medium
+	z-index: 1
+
+
+.glasses_monocole
+	z-index: 2
+.glasses_red
+	z-index: 2
+.glasses_shiny
+	z-index: 2
+.glasses_thick
+	z-index: 2
+.glasses_dark
+	z-index: 2
+
+
+.avt_1
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 13px;
+		margin-top: 24px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 43px;
+		margin-top: 24px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 16px;
+		margin-top: 30px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 45px;
+		margin-top: 30px;
+	.eye_left_cartoon_large
+		margin-left: 13px;
+		width: 15px;
+		margin-top: 26px;
+	.eye_right_cartoon_large
+		margin-left: 42px;
+		width: 15px;
+		margin-top: 26px;
+	.eye_left_cartoon_medium
+		margin-left: 16px;
+		width: 9px;
+		margin-top: 30px;
+	.eye_right_cartoon_medium
+		margin-left: 46px;
+		width: 9px;
+		margin-top: 30px;
+	.eye_left_cute_large
+		margin-top: 24px;
+		margin-left: 13px;
+		width: 19px
+	.eye_right_cute_large
+		margin-top: 24px;
+		margin-left: 43px;
+		width: 19px
+	.eye_left_cute_medium
+		margin-top: 28px;
+		margin-left: 16px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 28px;
+		margin-left: 45px;
+		width: 10px;
+		
+	.glasses_dark
+		margin-top: 17px;
+		margin-left: -3px;
+	.glasses_monocole
+		margin-left: 35px;
+		margin-top: 16px;
+	.glasses_red
+		margin-left: -3px;
+		margin-top: 16px;
+	.glasses_shiny
+		margin-left: -4px;
+		margin-top: 17px;
+	.glasses_thick
+		margin-top: 17px;
+		margin-left: -4px;
+
+	.smile_cucumber
+		margin-left: 10px;
+		margin-top: 50px;
+	.smile_default
+		margin-left: 17px;
+		margin-top: 58px;
+	.smile_modest
+		margin-left: 11px;
+		margin-top: 56px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 11px;
+		margin-top: 50px;
+	.smile_openteeth
+		margin-left: 10px;
+		margin-top: 49px;
+	.smile_vampire
+		margin-left: 11px;
+		margin-top: 49px;
+	.hat-bow
+		margin-top: -10px;
+	.hat-brown
+		margin-left: 13px;
+		margin-top: -11px;
+	.hat-headphones
+		margin-top: -10px;
+		margin-left: -1px;
+	.hat-horns
+		margin-top: -16px;
+		margin-left: 3px;
+		
+.avt_2
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 19px;
+		margin-top: 42px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 43px;
+		margin-top: 42px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 22px;
+		margin-top: 46px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 47px;
+		margin-top: 46px;
+	.eye_left_cartoon_large
+		margin-left: 21px;
+		width: 13px;
+		margin-top: 44px;
+	.eye_right_cartoon_large
+		margin-left: 44px;
+		width: 13px;
+		margin-top: 44px;
+	.eye_left_cartoon_medium
+		margin-left: 22px;
+		width: 9px;
+		margin-top: 47px;
+	.eye_right_cartoon_medium
+		margin-left: 46px;
+		width: 9px;
+		margin-top: 47px;
+	.eye_left_cute_large
+		margin-top: 43px;
+		margin-left: 19px;
+		width: 15px;
+	.eye_right_cute_large
+		margin-top: 43px;
+		margin-left: 44px;
+		width: 15px;
+	.eye_left_cute_medium
+		margin-top: 46px;
+		margin-left: 22px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 46px;
+		margin-left: 46px;
+		width: 10px;
+
+	.glasses_dark
+		margin-top: 34px;
+	.glasses_monocole
+		margin-left: 35px;
+		margin-top: 33px;
+	.glasses_red
+		margin-top: 35px;
+	.glasses_shiny
+		margin-left: -1px;
+		margin-top: 35px;
+	.glasses_thick
+		margin-top: 34px;
+
+	.smile_cucumber
+		margin-left: 14px;
+		margin-top: 58px;
+	.smile_default
+		margin-left: 20px;
+		margin-top: 66px;
+	.smile_modest
+		margin-left: 13px;
+		margin-top: 64px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 14px;
+		margin-top: 61px;
+	.smile_openteeth
+		margin-left: 14px;
+		margin-top: 60px;
+	.smile_vampire
+		margin-left: 14px;
+		margin-top: 59px;
+	.hat-bow
+		margin-top: 6px;
+		margin-left: 11px;
+	.hat-brown
+		margin-left: 17px;
+		margin-top: 11px;
+	.hat-headphones
+		margin-top: 13px;
+		margin-left: 6px;
+		width: 65px;
+	.hat-horns
+		margin-top: 11px;
+		margin-left: 7px;
+
+.avt_3
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 13px;
+		margin-top: 40px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 39px;
+		margin-top: 40px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 16px;
+		margin-top: 45px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 41px;
+		margin-top: 45px;
+	.eye_left_cartoon_large
+		margin-left: 14px;
+		width: 13px;
+		margin-top: 42px;
+	.eye_right_cartoon_large
+		margin-left: 49px;
+		width: 13px;
+		margin-top: 42px;
+	.eye_left_cartoon_medium
+		margin-left: 16px;
+		width: 9px;
+		margin-top: 46px;
+	.eye_right_cartoon_medium
+		margin-left: 41px;
+		width: 9px;
+		margin-top: 46px;
+	.eye_left_cute_large
+		margin-top: 42px;
+		margin-left: 14px;
+		width: 15px;
+	.eye_right_cute_large
+		margin-top: 42px;
+		margin-left: 40px;
+		width: 15px;
+	.eye_left_cute_medium
+		margin-top: 44px;
+		margin-left: 16px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 44px;
+		margin-left: 41px;
+		width: 10px;
+
+	.glasses_dark
+		margin-top: 34px;
+		margin-left: -4px;
+	.glasses_monocole
+		margin-left: 31px;
+		margin-top: 32px;
+	.glasses_red
+		margin-top: 35px;
+		margin-left: -4px;
+	.glasses_shiny
+		margin-left: -6px;
+		margin-top: 35px;
+	.glasses_thick
+		margin-top: 34px;
+		margin-left: -5px;
+		
+	.smile_cucumber
+		margin-left: 10px;
+		margin-top: 56px;
+	.smile_default
+		margin-left: 15px;
+		margin-top: 63px;
+	.smile_modest
+		margin-left: 9px;
+		margin-top: 63px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 9px;
+		margin-top: 58px;
+	.smile_openteeth
+		margin-left: 8px;
+		margin-top: 57px;
+	.smile_vampire
+		margin-left: 9px;
+		margin-top: 58px;
+	.hat-bow
+		margin-top: 8px;
+		margin-left: 9px;
+	.hat-brown
+		margin-left: 14px;
+		margin-top: 11px;
+	.hat-headphones
+		margin-top: 4px;
+		margin-left: -3px;
+	.hat-horns
+		margin-top: 10px;
+		margin-left: 2px;
+
+.avt_4
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 13px;
+		margin-top: 47px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 42px;
+		margin-top: 47px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 16px;
+		margin-top: 51px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 44px;
+		margin-top: 51px;
+	.eye_left_cartoon_large
+		margin-left: 14px;
+		width: 13px;
+		margin-top: 48px;
+	.eye_right_cartoon_large
+		margin-left: 43px;
+		width: 13px;
+		margin-top: 48px;
+	.eye_left_cartoon_medium
+		margin-left: 16px;
+		width: 9px;
+		margin-top: 51px;
+	.eye_right_cartoon_medium
+		margin-left: 44px;
+		width: 9px;
+		margin-top: 51px;
+	.eye_left_cute_large
+		margin-top: 48px;
+		margin-left: 14px;
+		width: 15px;
+	.eye_right_cute_large
+		margin-top: 48px;
+		margin-left: 41px;
+		width: 15px;
+	.eye_left_cute_medium
+		margin-top: 50px;
+		margin-left: 16px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 50px;
+		margin-left: 44px;
+		width: 10px;
+
+	.glasses_dark
+		margin-top: 40px;
+		margin-left: -4px;
+	.glasses_monocole
+		margin-left: 35px;
+		margin-top: 38px;
+	.glasses_red
+		margin-top: 42px;
+		margin-left: -4px;
+	.glasses_shiny
+		margin-left: -3px;
+		margin-top: 40px;
+	.glasses_thick
+		margin-top: 40px;
+		margin-left: -4px;
+
+	.smile_cucumber
+		margin-left: 10px;
+		margin-top: 61px;
+	.smile_default
+		margin-left: 16px;
+		margin-top: 66px;
+	.smile_modest
+		margin-left: 10px;
+		margin-top: 67px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 10px;
+		margin-top: 64px;
+	.smile_openteeth
+		margin-left: 9px;
+		margin-top: 62px;
+	.smile_vampire
+		margin-left: 10px;
+		margin-top: 64px;
+	.hat-bow
+		margin-top: 14px;
+		margin-left: 9px;
+	.hat-brown
+		margin-left: 14px;
+		margin-top: 18px;
+	.hat-headphones
+		margin-top: 8px;
+		margin-left: -2px;
+	.hat-horns
+		margin-top: 14px;
+		margin-left: 4px;
+
+
+.avt_5
+	.eye_left_blue_large
+		width: 15px;
+		margin-left: 13px;
+		margin-top: 28px;
+	.eye_right_blue_large
+		width: 15px;
+		margin-left: 40px;
+		margin-top: 28px;
+	.eye_left_blue_medium
+		width: 8px;
+		margin-left: 16px;
+		margin-top: 30px;
+	.eye_right_blue_medium
+		width: 8px;
+		margin-left: 45px;
+		margin-top: 30px;
+	.eye_left_cartoon_large
+		margin-left: 15px;
+		width: 14px;
+		margin-top: 29px;
+	.eye_right_cartoon_large
+		margin-left: 41px;
+		width: 15px;
+		margin-top: 29px;
+	.eye_left_cartoon_medium
+		margin-left: 16px;
+		width: 9px;
+		margin-top: 30px;
+	.eye_right_cartoon_medium
+		margin-left: 44px;
+		width: 9px;
+		margin-top: 30px;
+	.eye_left_cute_large
+		margin-top: 29px;
+		margin-left: 13px;
+		width: 15px;
+	.eye_right_cute_large
+		margin-top: 29px;
+		margin-left: 41px;
+		width:15px
+	.eye_left_cute_medium
+		margin-top: 31px;
+		margin-left: 16px;
+		width: 10px;
+	.eye_right_cute_medium
+		margin-top: 31px;
+		margin-left: 44px;
+		width: 10px;
+
+	.glasses_dark
+		margin-top: 21px;
+		width: 69px
+	.glasses_monocole
+		margin-left: 33px;
+		margin-top: 19px;
+	.glasses_red
+		margin-left: -3px;
+		margin-top: 19px;
+	.glasses_shiny
+		margin-left: -4px;
+		margin-top: 20px;
+	.glasses_thick
+		margin-top: 21px;
+		margin-left: -4px;
+
+	.smile_cucumber
+		margin-left: 10px;
+		margin-top: 50px;
+	.smile_default
+		margin-left: 17px;
+		margin-top: 58px;
+	.smile_modest
+		margin-left: 11px;
+		margin-top: 56px;
+		width: 50px;
+	.smile_openmouth
+		margin-left: 11px;
+		margin-top: 50px;
+	.smile_openteeth
+		margin-left: 10px;
+		margin-top: 49px;
+	.smile_vampire
+		margin-left: 11px;
+		margin-top: 49px;
+	.hat-bow
+		margin-top: -7px;
+	.hat-brown
+		margin-left: 13px;
+		margin-top: -4px;
+	.hat-headphones
+		margin-top: -5px;
+		margin-left: -1px;
+	.hat-horns
+		margin-top: -8px;
+		margin-left: 3px;
+
+#picker-title
+	margin-top: 15px;
+	font-size: 33px;
+	font-weight: bold;
+#pickerselection
+	float: left;
+	height: 450px;
+	width: 575px;
+	margin-top: 30px;
+	margin-left: 30px;
+	text-align: left;
+	.picker-el
+		border: 1px solid white
+		display: inline-block
+		background: #E5E5E5
+		cursor: pointer
+		border-radius: 3px;
+		.selected
+			border: 5px solid orange;
+			border-radius: 5px;
+	#picker-body
+		.picker-body-wrap
+			margin-left: 15px
+			width: 95px
+			height: 110px
+			background: url('/images/room/picker-body-bg.png')
+		.pb
+			margin-left: 13px;
+			position: absolute;
+			margin-top: 12px;
+	#picker-eye
+		height: 45px;
+		margin-top: 30px;
+		.eye-picker-box
+			width: 80px
+			height: 40px
+			margin-left:10px
+			background: url('/images/room/picker-eyes-bg.png')
+	#picker-eyesize
+		height: 40px;
+		display: inline-block;
+		vertical-align: top;
+		.eye-size-box
+			width: 80px
+			height: 30px
+			margin-left:10px
+			margin-top: 5px;
+			background: url('/images/room/picker-eye-size-bg.png')
+	#picker-glasses
+		height: 40px;
+		margin-top: 15px;
+		.glasses-box
+			width: 90px;
+			height: 35px;
+			margin-left:7px
+			margin-top: 5px;
+			vertical-align: top;
+			background: url('/images/room/picker-glasses-bg.png')
+		.glasses-box-monocle
+			width: 40px;
+			height: 70px;
+			margin-left: 7px
+			margin-top: 5px;
+			background: url('/images/room/picker-glasses-monocole-bg.png')
+		.glasses-none-box
+			width: 35px;
+			height: 35px;
+			margin-left: 8px;
+			margin-top:5px
+			vertical-align: top;
+			background: url('/images/room/picker-glasses-none-bg.png')
+			.noglasses
+				width: 20px
+				margin-left: 8px
+				margin-top: 3px
+			.noglassestext
+				font-size: 11px
+				margin-left: 5px
+				margin-top: -4px
+				font-weight: bold
+	#picker-smile
+		height: 40px;
+		margin-top: 15px;
+		.smile-box
+			width: 60px;
+			height: 35px;
+			margin-left:10px
+			margin-top: 5px;
+			vertical-align: top;
+			background: url('/images/room/picker-smile-bg.png')
+	#picker-hat
+		height: 40px;
+		margin-top: 15px;
+		.hat-box
+			width: 90px;
+			height: 70px;
+			margin-left:10px
+			margin-top: 5px;
+			vertical-align: top;
+			background: url('/images/room/picker-top-bg.png')
+			.notop
+				width: 40px;
+				margin-left: 25px;
+				margin-top: 6px;
+			.notoptext
+				font-weight: bold
+				margin-left: 30px
+#picker-preview
+	height: 180px
+	margin-top: 115px;
+	float: right;
+	margin-right: 60px;
+	width: 175px;
+	background: url('/images/room/picker-preview-bg.png')
+	border: 2px solid black;
+	border-radius: 3px;
+.picker-select-text
+	text-indent: 10px
+	text-indent: 10px;
+	font-size: 20px;
+	font-weight: bold;
+	float: left;
+	margin-top: 10px;

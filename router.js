@@ -14,9 +14,16 @@ function setupRoutes(app) {
 		res.render('skeleton', {locals: { title: "surfstream.tv", production: app.enabled("production") }});
 	});
 	
+	app.get('/robots.txt', function(req, res) {
+		res.end('User-agent: *\nDisallow: /');
+	});
+	
 	app.get('/:rID', function(req, res) {
 		res.render('skeleton', {locals: { title: "surfstream.tv", production: app.enabled("production") }});
 	});
+	
+	
+
 	
 	
     

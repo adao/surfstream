@@ -2,7 +2,8 @@
 	_ = require('underscore')._;
   Backbone = require('backbone');
 	models = exports;
-	var redisClient = require('redis').createClient(),
+	var redis = require('redis');
+	var redisClient = redis.createClient(),
 	http = require('http');
 	
 	var permSockEvents = {};
@@ -18,6 +19,7 @@
 	permSockEvents['playlist:moveVideoToTop'] = true;
 	permSockEvents['playlist:delete'] = true;
 	permSockEvents['playlist:moveVideo'] = true;
+	permSockEvents['avatar:update'] = true;
 
 
 	/*************************/
@@ -502,6 +504,11 @@
 			console.log("["+this.room.get('name')+"] 'announceClients' fired to all sockets, client count: "+allUsers.length);
 		},
 		
+		announceAvatarChange: function(userId, name, newAvatarArray) {
+			var payload = {userId: userId, newAvatarArray: newAvatarArray, name: name};
+			io.sockets.in(this.room.get('name')).emit('avatar:change', payload);
+		},
+		
 		announceMeter: function() {
 			meter = this.room.meter;
 			io.sockets.in(this.room.get('name')).emit('meter:announce', 
@@ -832,6 +839,10 @@
 			});
 		},
 		
+		// avatar is now defined as an array, as such:
+		// [bodyID, eyeID, eyesizeID, glassesID, smileID, topID]
+		// corresponding range of acceptable values:
+		// [1-5, 1-3, 1-2, 0-5, 1-5, 0-4]
 		getAvatar: function() {
 			var userId = this.get("userId");
 			var userObj = this;
@@ -845,7 +856,7 @@
 					if(reply != 'undefined' && reply != null) {
 						userObj.set({avatar: avatarData});
 					} else { //give them a random first default
-						newAvatar = Math.ceil(Math.random() * 5);
+						newAvatar = [Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3), Math.ceil(Math.random() * 2), Math.ceil(Math.random() * 6) - 1, Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 5) - 1];
 						redisClient.set('user:'+userId+':avatar', newAvatar);
 						userObj.set({avatar: newAvatar});
 					}
@@ -903,7 +914,7 @@
 			return false;
 		},
 		
-		initializeAndSendPlaylists: function(socket) {
+		initializeAndSendPlaylists: function(socket, roomManager, userManager) {
 			var userId = this.get('userId');
 			var userModel = this;
 			redisClient.hgetall('user:' + userId + ':playlists', function(err, reply) {
@@ -920,6 +931,7 @@
 							}
 						}
 						//console.log('getting playlists for user '+userId);
+						userModel.addAvatarListeners(socket, roomManager, userManager);
 						userModel.setPlaylists(userPlaylists);
 						userModel.addPlaylistListeners(socket);
 						//socket.emit("playlist:initialize", userPlaylists);
@@ -966,10 +978,6 @@
 						//console.log(playlists);
 					}
 				})
-				
-				var newPlaylist = new models.Playlist({name: data.playlistName, videos: new models.VideoCollection()});
-				playlists[data.playlistId] = newPlaylist;
-				thisUser.savePlaylist(data.playlistId);
 			});
 			
 			socket.on('playlist:addVideo', function(data) {
@@ -999,6 +1007,20 @@
 					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
 			})
+		},
+		
+		addAvatarListeners: function(socket, roomManager, userManager){
+			var thisUser = this;
+			var rManager = roomManager;
+			var uManager = userManager;
+			socket.on('avatar:update', function(newAvatarSettings) {
+				thisUser.set({avatar: newAvatarSettings});
+				var roomIn = uManager.ssIdToRoom[thisUser.get('userId')];
+				redisClient.set('user:'+thisUser.get('userId')+':avatar', newAvatarSettings);
+				if(roomIn){
+					rManager.roomMap[roomIn].sockM.announceAvatarChange(thisUser.get('userId'), thisUser.get('name'), newAvatarSettings);
+				}
+			});
 		},
 		
 		xport: function() {
