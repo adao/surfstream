@@ -181,8 +181,8 @@ div#outer {
   font-size: 14px;
   font-weight: bold;
   text-align: center !important;
-  width: 146px !important;
-  height: 36px !important;
+  width: 150px !important;
+  height: 25px !important;
   box-shadow: inset 0 0 2px #000;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .search {
@@ -209,11 +209,11 @@ div#outer {
   float: right;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .active {
-  color: #fff;
+  color: #008ab8;
   background-color: #34b7fe;
-  background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
-  background: -moz-linear-gradient(top, #34c8ff, #008ab8);
-  background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #fff, #c0c0c0);
+  background-image: -o-linear-gradient(top, #fff, #c0c0c0);
   -moz-box-shadow: inset 0 0 0px #000 !important;
   -webkit-box-shadow: inset 0 0 0px #000 !important;
   box-shadow: inset 0 0 0px #000 !important;
@@ -752,7 +752,7 @@ button.search.active {
 .videoView {
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #d4d4d4;
-  height: 378px;
+  height: 388px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -1369,6 +1369,12 @@ background-color: green,
   overflow-y: scroll;
   overflow-x: hidden;
   z-index: -1;
+  height: 316px;
+}
+#playlist-view .playlistCellButtonText {
+  font-size: 18px;
+  text-align: center;
+  margin-top: 7px;
 }
 #playlist-view #playlist-notification-container {
   width: 278px;

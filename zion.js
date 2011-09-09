@@ -195,7 +195,8 @@ io.sockets.on('connection', function(socket) {
 				} else {
 					var ssUser = JSON.parse(reply);
 					if (ssUser == null || ssUser == 'undefined') {
-						
+						socket.emit("playlist:showFBImport");
+						socket.emit("user:sendFBProfile");
 					} else {
 						roomManager.sendRoomsInfo(socket, ssUser.ssId);
 						var name = ssUser.name;
@@ -210,8 +211,8 @@ io.sockets.on('connection', function(socket) {
 						StagingUsers[socket.id] = currUser; 
 						console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
 							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>')
+						socket.emit("user:profile", ssUser);
 					}
-					socket.emit("user:profile", ssUser);
 				}
 			});
 		}
@@ -235,6 +236,7 @@ io.sockets.on('connection', function(socket) {
 						console.log("Error writing facebook user " + fbUser.id + " to Redis");
 					}
 				});
+				socket.emit("user:sendFBFriends");
 				var currUser = new models.User({
 					name: ssUser.name, 
 					socketId: socket.id, 
@@ -272,6 +274,12 @@ io.sockets.on('connection', function(socket) {
 			for (var i = 0; i < data.fbFriends.length; i++) {
 				redisClient.sadd("user:" + data.ssId + ":fb_friends", data.fbFriends[i]);
 			}
+		}
+	});
+	
+	socket.on("user:sendFBImportDate", function(data) {
+		if (redisClient) {
+			redisClient.set("user:" + data.ssId + ":fb_import_date", data.date);
 		}
 	});
 	

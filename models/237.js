@@ -472,7 +472,9 @@
 			var userToRemove = this.room.users.get(socket.id);
 			var userId = userToRemove.get('userId');
 			redisClient.set('user:'+userId+':points', userToRemove.get('points'));	//save points for user
-			redisClient.srem("onlineFacebookUsers", userToRemove.get("fbId")); 
+			if (trueDisconnect) {
+				redisClient.srem("onlineFacebookUsers", userToRemove.get("fbId")); 
+			}
 			this.room.removeSocket(socket.id);
 			console.log('['+this.room.get('name')+'][SockM] removeSocket(): <# users, # sockets, # djs> : <'+this.room.users.length+ ','+io.sockets.clients(roomName).length+','+this.room.djs.length+'>');
 
