@@ -2089,7 +2089,7 @@ $(function() {
 			var fullFriendsHTML = this.renderFriends(0, "friendInRoomPicHover");
 			var rName = roomModel.get("roomName");
 			if (roomModel.get("rID") == SurfStreamApp.inRoom) {
-				rName = rName + "<span style='color: #34C8FF;'> (You Are Here)</span>";
+				rName = "<span id='user-cur-room'>" + rName + "</span>";
 			}
 			$(this.el).html(this.roomListCellTemplate({viewers: roomModel.get("numUsers"), currentVideoName: (curVidTitle && curVidTitle.length > 0) ? "► " + curVidTitle : "" , roomname: rName, numDJs: roomModel.get("numDJs"), partial_friends: partialFriendsHTML, full_friends: fullFriendsHTML, truename: roomModel.get("rID")}));
 			if (!roomModel.get("valstream")) {
@@ -3397,7 +3397,7 @@ $(function() {
     $("#cur-video-time").show();
     var isdj = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
     if (isdj && $("#skip").length == 0) {
-     $("#people-area").append("<div id='skipContainer' class='bottombuttonContainerwide'><button id='skip'> Skip Video </button></div>");
+     $("#people-area").append("<div id='skipContainer'><button id='skip'> Skip Video </button></div>");
      skipX = $("#avatarWrapper_" + video.dj).data("sofaML");
      skipY = $("#avatarWrapper_" + video.dj).data("sofaMT") + 100;
      $("#skipContainer").css({

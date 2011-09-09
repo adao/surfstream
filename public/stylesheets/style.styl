@@ -708,7 +708,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			height: 70px
 			display: block
 		.side-button-container
-			margin-top: 10px   
+			margin-top: 12px   
 			vertical-align: top
 			display: inline-block
 			width: 40px
@@ -730,6 +730,9 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			cursor: s-resize
 	#remote.up
 		cursor: s-resize
+#dv-v, #dv-ch
+	vertical-align: top
+	margin-top: -2px
 			
 #remote-container button#remote-pullup:hover
 	background-color: #34b7fe
@@ -757,12 +760,12 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .buttonContainer, .bottombuttonContainer, .bottombuttonContainerwide  
 	border: none
 	background-color: #818181
-	background: -webkit-gradient(linear, left top, left bottom, from(#818181), to(#4a4a4a))
+	background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
 	border: none
 	height: 25px
-	border-radius: 20px
-	-webkit-border-radius: 20px
-	-moz-border-radius: 20px
+	border-radius: 4px
+	-webkit-border-radius: 4px
+	-moz-border-radius: 4px
 	cursor: pointer
 
 .buttonContainer:hover, .bottombuttonContainer:hover, .bottombuttonContainerwide:hover
@@ -781,9 +784,9 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	background: transparent
 	height: 25px
 	width: 35px
-	border-radius: 20px
-	-webkit-border-radius: 20px
-	-moz-border-radius: 20px
+	border-radius: 4px
+	-webkit-border-radius: 4px
+	-moz-border-radius: 4px
 	color: #e5e5e5  
 	cursor: pointer
 	font-family: FontFamily
@@ -791,9 +794,9 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	vertical-align: top;
 	
 .buttonContainer
-	margin: 3px
 	display: inline-block 
 	width: 35px
+	
 	button
 	 background: transparent
 	button#up-vote
@@ -896,7 +899,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 					width: 10px
 					text-align: center
 				th.room-history-hd
-					width: 497px
+					width: 520px
 			tr.room-row
 				color: white
 				height: 60px
@@ -1012,6 +1015,9 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			float: right
 			border: none
 			background: transparent
+
+#user-cur-room
+	color: #34C8FF
 			
 .videoThumbnailContainer
 	display: none
@@ -1540,15 +1546,13 @@ div#top-video-name
 	margin-top: 50px
 	margin-left: 8px
 	
-.getOff
-	cursor: s-resize
+.getOff, #skip
 	position: absolute
 	background: black
 	font-size: 14px
-	padding: 3px
+	padding: 3px 0
 	text-align: center
-	width: 85px
-	margin-top: 40px
+	width: 95px
 	margin-left: -6px
 	border: solid black 2px
 	border-radius: 6px
@@ -1557,6 +1561,13 @@ div#top-video-name
 	opacity: .75
 	z-index: 30
 
+.getOff
+	cursor: s-resize
+	margin-top: 70px
+	width: 91px!important
+#skip
+	cursor: pointer
+	font-family: FontFamily
 #avatarWrapper_VAL
 	position:absolute
 	margin-left: 376px
@@ -1682,9 +1693,9 @@ div#top-video-name
 			display: inline-block
 			vertical-align: top
 		#upVoteFS
-			background: url('/images/room/newicons/upvote-fs.png') 50% 50% no-repeat
+			background: url('/images/room/newicons/upvote-fs2.png') 50% 50% no-repeat
 		#downVoteFS
-			background: url('/images/room/newicons/downvote-fs.png') 50% 50% no-repeat
+			background: url('/images/room/newicons/downvote-fs2.png') 50% 50% no-repeat
 	#fullscreenContainerFS
 		width: 50px
 		#fullscreenFS
@@ -1759,16 +1770,6 @@ div#top-video-name
 	z-index:3
 	position: absolute
 
-#skip
-	background: transparent;
-	height: 25px
-	width: 80px
-	border-radius: 20px
-	-webkit-border-radius: 20px
-	-moz-border-radius: 20px
-	color: #E5E5E5
-	cursor: pointer
-	vertical-align top
 a#fdbk_tab
 	z-index: 10
 
