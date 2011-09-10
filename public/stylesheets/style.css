@@ -1923,6 +1923,11 @@ background-color: green,
   margin-top: 63px;
   margin-left: 9px;
 }
+#val_smileBody {
+  position: absolute;
+  margin-top: -5px;
+  margin-left: -48px;
+}
 #val_filmstrip {
   position: absolute;
   margin-left: -21px;
@@ -2785,7 +2790,7 @@ a#fdbk_tab {
   margin-top: 42px;
 }
 .avt_3 .eye_right_cartoon_large {
-  margin-left: 49px;
+  margin-left: 38px;
   width: 13px;
   margin-top: 42px;
 }
