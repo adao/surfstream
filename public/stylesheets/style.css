@@ -1912,6 +1912,7 @@ background-color: green,
 #val_l_pupil {
   position: absolute;
   margin-top: 47px;
+  margin-left: 2px;
 }
 #val_r_pupil {
   position: absolute;
@@ -1941,7 +1942,7 @@ background-color: green,
   margin-left: 120px;
   position: absolute;
   pointer-events: none;
-  z-index: 3;
+  z-index: 126;
 }
 #modalBG {
   background: #000;
@@ -2135,11 +2136,10 @@ background-color: green,
   position: fixed;
   margin-left: 0px;
   bottom: -13px;
-  left: 100%;
+  left: 0;
   width: 40px;
   margin: 20px;
   margin-top: 0px;
-  margin-left: -72px;
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;

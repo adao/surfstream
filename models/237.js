@@ -803,7 +803,7 @@
 	
 	var X_MAX = 470;
 	var Y_MAX = 125;
-	var Y_MIN = 10;
+	var Y_MIN = 0;
 	
 	models.User = Backbone.Model.extend({
 		defaults: {
@@ -854,6 +854,7 @@
 					avatarData = reply;
 					//console.log('getting avatar for user '+userId+', reply: '+reply);
 					if(reply != 'undefined' && reply != null) {
+						avatarData = reply.split(',');
 						userObj.set({avatar: avatarData});
 					} else { //give them a random first default
 						newAvatar = [Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3), Math.ceil(Math.random() * 2), Math.ceil(Math.random() * 6) - 1, Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 5) - 1];
@@ -872,8 +873,8 @@
 			var thisX = Math.random()*X_MAX;
 			var thisY = Math.random()*(Y_MAX-Y_MIN);
 			thisY = thisY + Y_MIN;
-			if (thisY < 90 && thisX > 100) { //avoid the sofa
-				thisY = 105 + thisY % 40;
+			if (thisY < 70 && thisX > 100) { //avoid the sofa
+				thisY = 70 + thisY % 55;
 			} //TODO: More logic to avoid remote
 			this.set({ xCoord: thisX, yCoord: thisY});
 			return { x: thisX, y: thisY };
