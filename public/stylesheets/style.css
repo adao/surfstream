@@ -210,7 +210,7 @@ div#outer {
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .active {
   color: #008ab8;
-  background-color: #34b7fe;
+  background-color: #fff;
   background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#c0c0c0));
   background: -moz-linear-gradient(top, #fff, #c0c0c0);
   background-image: -o-linear-gradient(top, #fff, #c0c0c0);
@@ -1308,11 +1308,11 @@ background-color: green,
 }
 .selected-playlist-nameholder {
   border-color: #008ab8;
-  background-color: #34c8ff;
-  background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
-  background: -moz-linear-gradient(top, #34c8ff, #008ab8);
-  background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
-  color: #fff;
+  background-color: #fff;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #fff, #c0c0c0);
+  background-image: -o-linear-gradient(top, #fff, #c0c0c0);
+  color: #008ab8;
   vertical-align: top;
   font-weight: bold;
 }
@@ -2152,10 +2152,16 @@ a#fdbk_tab {
   text-decoration: none;
 }
 .playlistDropdownContainer {
-  background-color: #c0c0c0;
-  color: #000;
+  background-color: #fff;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #fff, #c0c0c0);
+  background-image: -o-linear-gradient(top, #fff, #c0c0c0);
+  color: #008ab8;
   font-weight: bold;
-  border: 2px solid #c0c0c0;
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #c0c0c0;
+  border-left: 2px solid #373737;
+  border-right: 2px solid #373737;
   font-size: 12px;
   width: 176px;
   margin-right: 19px;

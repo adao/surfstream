@@ -198,6 +198,15 @@ io.sockets.on('connection', function(socket) {
 						socket.emit("playlist:showFBImport");
 						socket.emit("user:sendFBProfile");
 					} else {
+						redisClient.get("user:" + ssUser.ssId + ":fb_import_date", function(err, reply) {
+							if (err) {
+								console.log("Error gettings user " + ssUser.ssId + "'s last fbImport date");
+							} else {
+								if (reply == null || reply == "undefined") {
+									socket.emit("playlist:showFBImport");
+								}
+							}
+						});
 						roomManager.sendRoomsInfo(socket, ssUser.ssId);
 						var name = ssUser.name;
 						var currUser = new models.User({
