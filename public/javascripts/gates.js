@@ -2439,6 +2439,8 @@ $(function() {
    });
    $("#up-vote").bind("click", this.voteUp);
    $("#down-vote").bind("click", SocketManagerModel.voteDown);
+	 $("#upVoteFS").bind("click", this.voteUp);
+   $("#downVoteFS").bind("click", SocketManagerModel.voteDown);
    $("#vol-up").bind("click", {
     offset: 10
    }, setVideoVolume);
@@ -2466,6 +2468,20 @@ $(function() {
    });
 
    $("#ch-down").click({
+    theatre: this
+   }, function(e) {
+    var curRoom = SurfStreamApp.inRoom;
+    e.data.theatre.flipChannel(curRoom, false);
+   });
+	
+	 $("#upCh").click({
+    theatre: this
+   }, function(e) {
+    var curRoom = SurfStreamApp.inRoom;
+    e.data.theatre.flipChannel(curRoom, true);
+   });
+
+   $("#downCh").click({
     theatre: this
    }, function(e) {
     var curRoom = SurfStreamApp.inRoom;
@@ -3989,7 +4005,7 @@ function ss_modelWithAttribute(collection, attribute, valueToMatch) {
 
 function updateTime() {
  if (window.YTPlayer) {
-  $("#countdownFull").html(ss_formatSeconds(window.YTPlayer.getCurrentTime()) + "/" + ss_formatSeconds(window.YTPlayer.getDuration()));
+  $("#countdownFull").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
   if (window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime() != 0) {
    $("#cur-video-time").html(ss_formatSeconds(window.YTPlayer.getDuration() - window.YTPlayer.getCurrentTime()));
    $("#time-elapsed-bar").css({

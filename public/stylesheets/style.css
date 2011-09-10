@@ -586,7 +586,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -82px;
   margin-top: 12px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 75px;
   text-align: left;
   text-indent: 1px;
@@ -1450,7 +1450,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1532,7 +1532,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1615,7 +1615,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1962,7 +1962,7 @@ background-color: green,
   font-weight: bold;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -1972,7 +1972,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -1994,7 +1994,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -200px;
-  background: rgba(0,0,0,0.70);
+  background: rgba(0,0,0,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -2005,32 +2005,47 @@ background-color: green,
   display: block;
 }
 #nowPlayingFull #volContainerFS {
-  width: 50px;
+  width: 140px;
   height: 50px;
 }
 #nowPlayingFull .fsContainer,
 #nowPlayingFull #fullscreenContainerFS {
   vertical-align: top;
   height: 50px;
-  width: 100px;
+  width: 102px;
+  display: inline-block;
+}
+#nowPlayingFull .fsContainer #clock-fs,
+#nowPlayingFull #fullscreenContainerFS #clock-fs {
+  vertical-align: top;
+  margin-top: 13px;
+  margin-right: 4px;
+  display: inline-block;
+}
+#nowPlayingFull .fsContainer #countdownFull,
+#nowPlayingFull #fullscreenContainerFS #countdownFull {
   display: inline-block;
 }
 #nowPlayingFull #thumbsContainerFS {
   display: inline-block;
   height: 50px;
-  width: 100px;
+  width: 102px;
 }
-#nowPlayingFull #thumbsContainerFS .voteFS {
-  border: none;
+#nowPlayingFull #thumbsContainerFS .voteContainerFS {
   height: 50px;
   width: 50px;
   display: inline-block;
   vertical-align: top;
 }
-#nowPlayingFull #thumbsContainerFS #upVoteFS {
+#nowPlayingFull #thumbsContainerFS .voteContainerFS .voteFS {
+  height: 50px;
+  width: 50px;
+  border: none;
+}
+#nowPlayingFull #thumbsContainerFS .voteContainerFS #upVoteFS {
   background: url("/images/room/newicons/upvote-fs2.png") 50% 50% no-repeat;
 }
-#nowPlayingFull #thumbsContainerFS #downVoteFS {
+#nowPlayingFull #thumbsContainerFS .voteContainerFS #downVoteFS {
   background: url("/images/room/newicons/downvote-fs2.png") 50% 50% no-repeat;
 }
 #nowPlayingFull #fullscreenContainerFS {
@@ -2051,6 +2066,32 @@ background-color: green,
   width: 50px;
   background: transparent;
   border: none;
+  color: #fff;
+  font-size: 20px;
+}
+#nowPlayingFull .chFS,
+#nowPlayingFull .voteContainerFS {
+  cursor: pointer;
+}
+#nowPlayingFull .chFS:hover,
+#nowPlayingFull .voteContainerFS:hover {
+  background-color: #34b7fe;
+  background: rgba(255,255,255,0.6);
+}
+.chFS,
+.voteContainerFS,
+#timeFS,
+#volContainerFS {
+  border-top: 1px solid #4a4a4a !important;
+}
+.chFS,
+.voteContainerFS,
+#timeFS {
+  border-right: 1px solid #4a4a4a !important;
+}
+#volContainerFS,
+#chContainerFS {
+  margin-left: -1px;
 }
 .soundToggler {
   font-size: 12px;
@@ -2091,18 +2132,19 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
-  bottom: 0;
-  left: 0;
-  width: 60px;
+  bottom: -13px;
+  left: 100%;
+  width: 40px;
   margin: 20px;
   margin-top: 0px;
+  margin-left: -72px;
 }
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 #sofa-remote {
   left: 170px;
