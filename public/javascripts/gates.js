@@ -29,7 +29,6 @@ window.fbAsyncInit = function() {
    document.getElementById('frontdoor').style.display = 'none';
    document.getElementById('loadingScreen').style.display = 'none';
    document.getElementById('outer').style.display = 'block';
-	 document.body.style.background = "#141414"
   } else {
    // yeah right
    document.getElementById('loadingScreen').style.display = 'none';
@@ -278,7 +277,6 @@ $(function() {
 	
 	logout: function() {
 		FB.logout();
-		document.body.style.background = "url(/images/room/newicons/landing-page-bg.png) no-repeat"
 	}
 	
 });
