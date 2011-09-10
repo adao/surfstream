@@ -925,9 +925,6 @@ button.playlist, button.playlist.active, button.search, button.search.active
 					.lastPlayedVideoTitle
 						margin-left: 8px
 						margin-top: 10px
-				.room-history:hover
-					.videoThumbnailContainer
-						display: inline
 				td
 					border-right: 1px solid #585858
 					.num-viewers
@@ -1020,7 +1017,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	color: #34C8FF
 			
 .videoThumbnailContainer
-	display: none
+	display: inline-block
 	position: relative
 	.videoTitle
 		position: absolute
@@ -1029,12 +1026,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		left: 2px
 	.videoThumbnail
 		width: 96px
-		height: 72px
+		height: 0px
 		margin-right: 8px
 		margin-top: 8px
 		border-radius: 2px
-.videoThumbnail.lastPlayedVideo
-	border: 1px solid white
+
 			
 #video-div
 	-webkit-border-top-left-radius: 2px

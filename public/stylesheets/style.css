@@ -1058,9 +1058,6 @@ button
   margin-left: 8px;
   margin-top: 10px;
 }
-#room-modal #roomsWrapper table#roomsTable tr.room-row .room-history:hover .videoThumbnailContainer {
-  display: inline;
-}
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;
 }
@@ -1174,7 +1171,7 @@ button
   color: #34c8ff;
 }
 .videoThumbnailContainer {
-  display: none;
+  display: inline-block;
   position: relative;
 }
 .videoThumbnailContainer .videoTitle {
@@ -1185,13 +1182,10 @@ button
 }
 .videoThumbnailContainer .videoThumbnail {
   width: 96px;
-  height: 72px;
+  height: 0px;
   margin-right: 8px;
   margin-top: 8px;
   border-radius: 2px;
-}
-.videoThumbnail.lastPlayedVideo {
-  border: 1px solid #fff;
 }
 #video-div {
   -webkit-border-top-left-radius: 2px;
