@@ -1024,7 +1024,7 @@ $(function() {
     $("#youtubeInput").autocomplete("close");
    });
 
-   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
+/*   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
     if (event.type == "mouseover") {
      if (cell.currentTarget.className == "videoInfo") {
       $(cell.currentTarget.parentNode.parentNode.children[1]).show();
@@ -1039,7 +1039,7 @@ $(function() {
       $(cell.currentTarget.nextSibling).hide();
      }
     }
-   });
+   });*/
   },
 
   render: function() {
@@ -1106,35 +1106,59 @@ $(function() {
 
   searchCellTemplate: _.template($('#searchCell-template').html()),
 
-  className: "searchCellContainer",
+  className: "searchCellContainer nameholder-droppable",
 
   events: {
-   "click .addToPlaylist": "addToPlaylist",
    "click .previewVideo": "previewVideo"
   },
 
   initialize: function() {
-   $("#searchContainer").append(this.render().el);
+		this.render();
+		$(this.el).attr("id", this.options.video.get("videoId"));
+   $("#searchContainer").append(this.el);
+	 
+	 $(this.el).draggable({
+		helper: "clone",
+		opacity: 0.6,
+		cursor: "move",
+		cursorAt: {bottom: 40, left: 142},
+		zIndex: 6,
+		alreadyRotated: false,
+		start: function (event, ui) {
+			
+		},
+		drag: function(event, ui) {
+			if ($(event.target).draggable("option", "alreadyRotated")) {
+				return;
+			}
+			$(event.target).css("visibility", "hidden");
+			window.SurfStreamApp.get("userModel").get("playlistCollection").showDroppable();
+			var videoId = $(ui.item).attr('id');
+			$(ui.helper).find(".previewVideo").remove();
+			$(ui.helper).addClass("shrunkenSearchCellContainer");
+			$(ui.helper).css("margin-left", 100).css("margin-top", -45);
+			$(ui.helper).css("height", 40).css("width", 142);
+			$(ui.helper).stop().animate({rotate: -70}, 500, function() {
+			});
+			$(event.target).draggable("option", "alreadyRotated", true);
+		},
+		stop: function(event, ui) {
+			$(event.target).draggable("option", "alreadyRotated", false);
+			$(event.target).css("visibility", "visible");
+			var searchContainerOffset = $("#searchContainer").offset();
+			$(ui.helper).css("height", 80).css("width", 285);
+			$(ui.helper).removeClass("shrunkenSearchCellContainer");
+			$(ui.helper).offset({top: searchContainerOffset.top, left: searchContainerOffset.left});
+			$(ui.helper).css("margin-top", 0);
+			window.SurfStreamApp.get("userModel").get("playlistCollection").hideDroppable();
+		}
+	 });
+	 
    this.$(".thumbContainer").click({
     cell: this.options
    }, this.previewVideo);
   },
 
-  addToPlaylist: function() {
-   var selectedPlaylist = $("#playlistDropdown .playlistDropdownContainer").val();
-   var videoID = this.options.video.get("videoId");
-   if (ss_modelWithAttribute(this.options.playlistCollection.getPlaylistById(selectedPlaylist).get("videos"), "videoId", videoID)) {
-    return;
-   }
-   this.options.video.set({
-    videoId: videoID
-   });
-   var playlistItemModel = new PlaylistItemModel(this.options.video.attributes);
-   console.log(this.options.video.attributes);
-   this.options.playlistCollection.addVideoToPlaylist(selectedPlaylist, playlistItemModel);
-   var cellId = "#search_result_" + videoID;
-   $(cellId).addClass("added");
-  },
 
   previewVideo: function(e) {
    var videoID = e.data.cell.video.get("videoId");
@@ -1173,7 +1197,9 @@ $(function() {
     title: this.options.video.get("title"),
     vid_id: this.options.video.get("videoId"),
     duration: ss_formatSeconds(this.options.video.get("duration")),
+		realDuration: this.options.video.get("duration"),
     viewCount: (this.options.video.get("viewCount") > 0) ? (ss_formatViews(this.options.video.get("viewCount"))) : "",
+		realViewCount: this.options.video.get("viewCount"),
     author: this.options.video.get("author")
    }));
    $(this.el).find(".thumbContainer").attr("src", this.options.video.get("thumb"));
@@ -1547,37 +1573,48 @@ $(function() {
 	initialize: function() {
 		this.render();
 		$(this.el).droppable({
-			accept: "#video-list-container div",
+			accept: ".nameholder-droppable",
 			hoverClass: "playlist-hover-highlight",
 			drop: function(event, ui) {
 				var fromVideoId = $(ui.draggable).attr('id');
 				var playlistCollection = window.SurfStreamApp.get("userModel").get("playlistCollection");
-				var toPlaylist = playlistCollection.getPlaylistById($(this).val());
+				var toPlaylistId = $(this).val();
+				var toPlaylist = playlistCollection.getPlaylistById(toPlaylistId);
 				if (toPlaylist.hasVideo(fromVideoId)) {
 					window.SurfStreamApp.get("mainView").theatreView.valChat("Sorry, but that playlist already has that video.");
 					return;
 				}
-	 			var fromPlaylist = playlistCollection.get("activePlaylist");
-				if (fromPlaylist.get("playlistId") == $(this).val()) {
-					return;
-				}
 				$(this).addClass("dropped-playlist-nameholder");
-	 			var playlistItemModel = ss_modelWithAttribute(fromPlaylist.get("videos"), "videoId", fromVideoId);
-	 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
-				
-				playlistCollection.addVideoToPlaylist($(this).val(), copyPlaylistItemModel);
-				
 				var shrunkenCopy = $(ui.helper).clone();
 				$("body").append(shrunkenCopy);
 				var copyOffset = shrunkenCopy.offset();
-				shrunkenCopy.animate({width: "1px", height: "5px", top: copyOffset.top + 175, left: copyOffset.left - 90}, 500, function() {
-					$(this).remove();
-				});
+	 			var fromVideoClass = $(ui.draggable).attr("class");
+				
+				if (fromVideoClass.indexOf("searchCellContainer") == -1) {
+					var fromPlaylist = playlistCollection.get("activePlaylist");
+					var playlistItemModel = ss_modelWithAttribute(fromPlaylist.get("videos"), "videoId", fromVideoId);
+		 			var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
+					playlistCollection.addVideoToPlaylist(toPlaylistId, copyPlaylistItemModel);
+					fromPlaylist.removeFromPlaylist(fromVideoId);
+					shrunkenCopy.animate({width: "1px", height: "5px", top: copyOffset.top + 175, left: copyOffset.left - 90}, 500, function() {
+						$(this).remove();
+					});
+				} else {
+					var attributes = {
+						title: $(ui.draggable).find(".title").text(),
+						thumb: ss_idToImg(fromVideoId),
+						duration: $(ui.draggable).find("realDuration").text(),
+						videoId: fromVideoId
+					}
+					var playlistItemModel = new PlaylistItemModel(attributes);
+					playlistCollection.addVideoToPlaylist(toPlaylistId, playlistItemModel);
+					shrunkenCopy.animate({width: "1px", height: "5px", top: copyOffset.top + 180, left: copyOffset.left - 87}, 500, function() {
+						$(this).remove();
+					});
+				}
 				$(this).animate({"background": "white"}, 500, function() {
 					$(this).removeClass("dropped-playlist-nameholder");
 				});
-				
-				fromPlaylist.removeFromPlaylist(fromVideoId);
 				ui.draggable.remove();
 			}
 		});
@@ -1829,7 +1866,7 @@ $(function() {
  window.PlaylistCellView = Backbone.View.extend({
   playlistCellTemplate: _.template($('#video-list-cell-template').html()),
 
-  className: "videoListCellContainer",
+  className: "videoListCellContainer nameholder-droppable",
 
   initializeViewToTop: function(top) {
    var buttonRemove, buttonToTop, videoID;

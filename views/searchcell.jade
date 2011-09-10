@@ -4,10 +4,11 @@
 	.cellInfo
 		.videoInfo
 			.title#title {{ title }}
-			.duration {{ duration }}
-			.viewCount {{ viewCount }}
+			.duration
+				{{ duration }}
+				span.realDuration {{ realDuration }}
+			.viewCount
+				{{ viewCount }}
+				span.realViewCount {{ realViewCount }}
 				span views
 			.author {{ author }}
-		.cellButtons
-			button.addToPlaylist(id ='search_result_{{ vid_id }}') 
-			button.previewVideo(id ='search_result_{{ vid_id }}') preview
