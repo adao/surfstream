@@ -1603,9 +1603,9 @@ $(function() {
 					var attributes = {
 						title: $(ui.draggable).find(".title").text(),
 						thumb: ss_idToImg(fromVideoId),
-						duration: $(ui.draggable).find("realDuration").text(),
+						duration: $(ui.draggable).find(".realDuration").text(),
 						videoId: fromVideoId,
-						viewCount: $(ui.draggable).find("realViewCount").text()
+						viewCount: $(ui.draggable).find(".realViewCount").text()
 					}
 					var playlistItemModel = new PlaylistItemModel(attributes);
 					playlistCollection.addVideoToPlaylist(toPlaylistId, playlistItemModel);
