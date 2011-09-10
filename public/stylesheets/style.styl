@@ -1752,27 +1752,37 @@ div#top-video-name
 		font-size: 20px
 		display: block
 	#volContainerFS
-		width: 50px
+		width: 140px
 		height: 50px
 	.fsContainer, #fullscreenContainerFS
 		vertical-align: top
 		height: 50px
-		width: 100px
+		width: 102px
 		display: inline-block
+		#clock-fs
+			vertical-align: top
+			margin-top:13px
+			margin-right: 4px
+			display: inline-block
+		#countdownFull
+			display: inline-block
 	#thumbsContainerFS
 		display: inline-block
 		height: 50px
-		width: 100px
-		.voteFS
-			border: none
+		width: 102px
+		.voteContainerFS
 			height: 50px
 			width: 50px
-			display: inline-block
+			display:inline-block
 			vertical-align: top
-		#upVoteFS
-			background: url('/images/room/newicons/upvote-fs2.png') 50% 50% no-repeat
-		#downVoteFS
-			background: url('/images/room/newicons/downvote-fs2.png') 50% 50% no-repeat
+			.voteFS
+				height: 50px
+				width: 50px
+				border: none
+			#upVoteFS
+				background: url('/images/room/newicons/upvote-fs2.png') 50% 50% no-repeat
+			#downVoteFS
+				background: url('/images/room/newicons/downvote-fs2.png') 50% 50% no-repeat
 	#fullscreenContainerFS
 		width: 50px
 		#fullscreenFS
@@ -1788,6 +1798,21 @@ div#top-video-name
 		width: 50px
 		background: transparent
 		border: none
+		color: white
+		font-size: 20px
+	.chFS, .voteContainerFS
+		cursor: pointer
+	.chFS:hover, .voteContainerFS:hover
+		background-color: #34b7fe
+		background: rgba(255, 255, 255, .6)
+
+.chFS, .voteContainerFS, #timeFS, #volContainerFS
+	border-top: 1px solid #4a4a4a!important
+.chFS, .voteContainerFS, #timeFS
+	border-right: 1px solid #4a4a4a!important
+
+#volContainerFS, #chContainerFS
+	margin-left: -1px
 		
 .soundToggler
 	font-size: 12px
@@ -1831,12 +1856,12 @@ div#top-video-name
 	background: rgba(255, 255, 255, .3)
 	position: fixed
 	margin-left: 0px
-	bottom: 0
-	left: 0
-	width: 60px
+	bottom: -13px
+	left: 100%
+	width: 40px
 	margin: 20px
 	margin-top: 0px
-
+	margin-left: -72px
 #fullscreenIcon.fully:hover
 	background-color: #34b7fe
 	background: rgba(255, 255, 255, .6)
