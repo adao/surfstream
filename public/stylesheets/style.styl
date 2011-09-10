@@ -193,7 +193,7 @@ div#outer
 						height: 320px
 						width: 300px
 					#searchBar
-						height: 64px;
+						height: 36px;
 						.inputBox
 							z-index: 5
 							position: absolute;
@@ -1158,6 +1158,24 @@ div#top-video-name
 	vertical-align: top
 	font-weight: bold
 	
+.playlist-nameholder.selected-youtube-nameholder
+	background: red
+	color: black
+	vertical-align: top
+	font-weight: bold
+	
+.playlist-nameholder.selected-channel-history-nameholder
+	background: orange
+	color: black
+	vertical-align: top
+	font-weight: bold
+
+.playlist-nameholder.selected-likes-nameholder
+	background: green
+	color: black
+	vertical-align: top
+	font-weight: bold
+	
 .playlist-hover-highlight
 	background: #141414
 	color: silver
@@ -1169,7 +1187,7 @@ div#top-video-name
 	display: inline-block
 	
 #playlist-collection
-	max-height: 120px
+	max-height: 91px
 	font-size: 10px
 	background-color: #434343
 	overflow-y: scroll
@@ -1581,6 +1599,7 @@ div#top-video-name
 		color: #E7E7E7
 	
 #previewContainer
+	display: none
 	height: 213px
 	position: relative;
 	top: -187px;
