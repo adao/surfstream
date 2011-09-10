@@ -857,7 +857,11 @@
 						userObj.set({avatar: avatarData});
 					} else { //give them a random first default
 						newAvatar = [Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3), Math.ceil(Math.random() * 2), Math.ceil(Math.random() * 6) - 1, Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 5) - 1];
-						redisClient.set('user:'+userId+':avatar', newAvatar);
+						redisClient.set('user:'+userId+':avatar', newAvatar, function(err, reply) {
+							if (err) {
+								console.log("Error setting random avatar for user " + userId);
+							}
+						});
 						userObj.set({avatar: newAvatar});
 					}
 				} 
@@ -1016,7 +1020,9 @@
 			socket.on('avatar:update', function(newAvatarSettings) {
 				thisUser.set({avatar: newAvatarSettings});
 				var roomIn = uManager.ssIdToRoom[thisUser.get('userId')];
-				redisClient.set('user:'+thisUser.get('userId')+':avatar', newAvatarSettings);
+				redisClient.set('user:'+thisUser.get('userId')+':avatar', newAvatarSettings, function(err, reply) {
+					console.log("Error setting new avatar settings for user " + thisUser.get('userId'));
+				});
 				if(roomIn){
 					rManager.roomMap[roomIn].sockM.announceAvatarChange(thisUser.get('userId'), thisUser.get('name'), newAvatarSettings);
 				}

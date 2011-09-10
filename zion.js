@@ -14,7 +14,9 @@ var _ = require('underscore')._,
 if (redisClient) {
 	redisClient.get("userId", function(err, reply) {
 		if (!reply) {
-			redisClient.set("userId", 1);
+			redisClient.set("userId", 1, function(err, reply) {
+
+			});
 		}
 	});
 }
@@ -154,7 +156,9 @@ RoomManager = Backbone.Model.extend({
 		} else {
 			this.roomMap[roomId].set({ valstream: 1 });
 		}
-		redisClient.set('room:'+roomId, JSON.stringify(this.roomMap[roomId].xport()));
+		redisClient.set('room:'+roomId, JSON.stringify(this.roomMap[roomId].xport()), function(err, reply) {
+
+		});
 	},
 	
 	renameRoom: function(oldName, newName) {
@@ -281,14 +285,17 @@ io.sockets.on('connection', function(socket) {
 	socket.on("user:sendUserFBFriends", function(data) {
 		if (redisClient) {
 			for (var i = 0; i < data.fbFriends.length; i++) {
-				redisClient.sadd("user:" + data.ssId + ":fb_friends", data.fbFriends[i]);
+				redisClient.sadd("user:" + data.ssId + ":fb_friends", data.fbFriends[i], function(err, reply) {
+				});
 			}
 		}
 	});
 	
 	socket.on("user:sendFBImportDate", function(data) {
 		if (redisClient) {
-			redisClient.set("user:" + data.ssId + ":fb_import_date", data.date);
+			redisClient.set("user:" + data.ssId + ":fb_import_date", data.date, function(err, reply) {
+				
+			});
 		}
 	});
 	
