@@ -1780,6 +1780,7 @@ background-color: green,
 #val_l_pupil {
   position: absolute;
   margin-top: 47px;
+  margin-left: 2px;
 }
 #val_r_pupil {
   position: absolute;
@@ -1809,7 +1810,7 @@ background-color: green,
   margin-left: 120px;
   position: absolute;
   pointer-events: none;
-  z-index: 3;
+  z-index: 126;
 }
 #modalBG {
   background: #000;

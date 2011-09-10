@@ -2570,7 +2570,7 @@ $(function() {
   updateDJs: function(djArray) {
    var oldPosX, oldPosY, user;
    var X_COORDS = [200, 256, 313];
-   var Y_COORD = 25;
+   var Y_COORD = 0;
    var cur_is_dj = false;
    var numOnSofa = 0;
    var newDJ;
@@ -2629,7 +2629,7 @@ $(function() {
      if (SurfStreamApp.curDJ == djArray[dj].id) {
       $("#sofa-remote").animate({
        "left": X_COORDS[dj] + 50,
-       "top": Y_COORD[dj] + 50
+       "top": Y_COORD[dj] + 70
       });
       $("#skipContainer").animate({
        "margin-left": X_COORDS[dj],
@@ -2673,7 +2673,7 @@ $(function() {
    }
 
    //NEED BOUNDS CHECK HERE TODO
-   $("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + "px");
+   $("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + 25 + "px");
    if (!cur_is_dj) {
     $("#become-dj").show();
    } else {
@@ -2734,7 +2734,7 @@ $(function() {
    user = this.options.user;
 	 
    this.el.id = "avatarWrapper_" + user.id;
-	 avatarArray = user.get("avatar").split(",");
+	 avatarArray = user.get("avatar");
 	
 		if (typeof(SurfStreamApp.currentAvatarSettings) == "undefined" && user.id == SurfStreamApp.get("userModel").get("ssId")) {
 			SurfStreamApp.currentAvatarSettings = avatarArray;
@@ -3411,7 +3411,7 @@ $(function() {
     curX = parseInt(djRemote.css("left").replace("px", ""));
     curY = parseInt(djRemote.css("top").replace("px", ""));
     marLeft = 50 - ((video.dj == "VAL") ? 20 : 0);
-    marTop = 50 + ((video.dj == "VAL") ? 13 : 0);
+    marTop = 70 - ((video.dj == "VAL") ? 7 : 0);
     remoteX = $("#avatarWrapper_" + video.dj).data("sofaML") + marLeft;
     remoteY = $("#avatarWrapper_" + video.dj).data("sofaMT") + marTop;
     var bezier_params = {
