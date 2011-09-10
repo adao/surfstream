@@ -2728,7 +2728,7 @@ $(function() {
    }
 
    //NEED BOUNDS CHECK HERE TODO
-   $("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + 25 + "px");
+   $("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + 10 + "px");
    if (!cur_is_dj) {
     $("#become-dj").show();
    } else {
