@@ -1923,6 +1923,21 @@ background-color: green,
   margin-top: 63px;
   margin-left: 9px;
 }
+#val_filmstrip {
+  position: absolute;
+  margin-left: -21px;
+  margin-top: 7px;
+}
+#val_filmreel_left {
+  position: absolute;
+  margin-left: -45px;
+  margin-top: 3px;
+}
+#val_filmreel_right {
+  position: absolute;
+  margin-left: 27px;
+  margin-top: 3px;
+}
 #valtipsy {
   margin-top: 32px;
   position: absolute;

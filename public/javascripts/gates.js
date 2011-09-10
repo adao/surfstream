@@ -3353,7 +3353,7 @@ $(function() {
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
 		console.log('video announced');
-		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, isdj, skipX, skipY;
+		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, reelRotationDegs, isdj, skipX, skipY;
 		SurfStreamApp.curDJ = video.dj;
 		if (typeof(mpq) !== 'undefined') mpq.track("Video Started", {
      DJ: video.dj,
@@ -3484,15 +3484,41 @@ $(function() {
 
     this.rotateRemoteSign = !this.rotateRemoteSign
     rotationDegs = "=1800deg"
+		reelRotationDegs = "=500deg";
     if (this.rotateRemoteSign) {
      rotationDegs = "+" + rotationDegs;
+		 reelRotationDegs = "+" + reelRotationDegs;
     } else {
      rotationDegs = "-" + rotationDegs;
+		 reelRotationDegs = "-" + reelRotationDegs;
     }
     djRemote.animate({
      rotate: rotationDegs,
      path: new $.path.bezier(bezier_params)
     }, 1000);
+		var reel_right = $("#val_filmreel_right"); 
+		var reel_left = $("#val_filmreel_left");
+		if (video.dj == "VAL") {
+			$("#val_l_brow").animate({rotate: "+=20deg", "margin-top":"33px", "margin-left":"3px"}, 400, 'linear').delay(1000).animate({rotate: "-=20deg", "margin-top":"37px", "margin-left":"0px"}, 400, 'linear');
+			$("#val_r_brow").animate({rotate: "-=20deg", "margin-top":"33px", "margin-left":"24px"}, 400, 'linear').delay(1000).animate({rotate: "+=20deg", "margin-top":"37px", "margin-left":"24px"}, 400, 'linear');
+			
+			(function() {
+       
+       var check = $("#avatarWrapper_VAL");
+			 check.data("animating", true);
+			 
+       (function() {
+        if (check.data("animating") == true) {
+         reel_right.animate({rotate: reelRotationDegs}, 3000, 'linear', arguments.callee);
+				 reel_left.animate({rotate: reelRotationDegs}, 3000, 'linear', arguments.callee);
+        }
+       }());
+      }())
+		} else {			
+			$("#avatarWrapper_VAL").data("animating", false);
+			reel_right.stop();
+			reel_left.stop();
+		}
    });
 
    socket.on('video:stop', function() {
