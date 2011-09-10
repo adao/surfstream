@@ -29,7 +29,6 @@ window.fbAsyncInit = function() {
    document.getElementById('frontdoor').style.display = 'none';
    document.getElementById('loadingScreen').style.display = 'none';
    document.getElementById('outer').style.display = 'block';
-	 document.body.style.background = "#141414"
   } else {
    // yeah right
    document.getElementById('loadingScreen').style.display = 'none';
@@ -82,8 +81,17 @@ $(function() {
   },
 
   roomJoin: function() {
-   $("#avatarWrapper_VAL").css('margin-top', -120);
-   $("#avatarWrapper_VAL").animate({
+   
+		var check = $("#avatarWrapper_VAL");
+		check.css('margin-top', -120);
+		check.data("animating", false);
+		if (SurfStreamApp.reelLoop) {
+			clearInterval(SurfStreamApp.reelLoop);
+			SurfStreamApp.reelLoop = false;
+		}
+		$("#val_filmreel_right").stop();
+		$("#val_filmreel_left").stop();
+   check.animate({
     'margin-top': 0
    }, 900, "bounceout");
   }
@@ -278,7 +286,6 @@ $(function() {
 	
 	logout: function() {
 		FB.logout();
-		document.body.style.background = "url(/images/room/newicons/landing-page-bg.png) no-repeat"
 	}
 	
 });
@@ -2487,6 +2494,21 @@ $(function() {
     var curRoom = SurfStreamApp.inRoom;
     e.data.theatre.flipChannel(curRoom, false);
    });
+
+   window.onfocus = function() {
+ 		if(SurfStreamApp.curDJ != "VAL"){
+			var reel_right = $("#val_filmreel_right"); 
+			var reel_left = $("#val_filmreel_left");
+			var check = $("#avatarWrapper_VAL");
+			check.data("animating", false);
+			if (SurfStreamApp.reelLoop) {
+				clearInterval(SurfStreamApp.reelLoop);
+				SurfStreamApp.reelLoop = false;
+			}
+			reel_right.stop();
+			reel_left.stop();
+		}
+	}
   },
 	
 	voteUp: function() {
@@ -2629,7 +2651,6 @@ $(function() {
    var cur_is_dj = false;
    var numOnSofa = 0;
    var newDJ;
-
    SurfStreamApp.sofaUsers = djArray;
    //Remove old DJs
    this.options.userCollection.each(function(userModel) {
@@ -2670,6 +2691,7 @@ $(function() {
      user.data("isDJ", "1");
      newDJ = true;
      if (djArray[dj].id == this.options.userModel.get("ssId")) {
+			user.data("isMainUser", "1");
       user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
       $('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Step Down</a>");
       $('#stepDown').hover(function() {
@@ -2728,7 +2750,7 @@ $(function() {
    }
 
    //NEED BOUNDS CHECK HERE TODO
-   $("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + 25 + "px");
+   $("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + 10 + "px");
    if (!cur_is_dj) {
     $("#become-dj").show();
    } else {
@@ -3353,7 +3375,7 @@ $(function() {
    //Chat -- msg received
    socket.on("video:sendInfo", function(video) {
 		console.log('video announced');
-		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, isdj, skipX, skipY;
+		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, reelRotationDegs, isdj, skipX, skipY;
 		SurfStreamApp.curDJ = video.dj;
 		if (typeof(mpq) !== 'undefined') mpq.track("Video Started", {
      DJ: video.dj,
@@ -3484,15 +3506,46 @@ $(function() {
 
     this.rotateRemoteSign = !this.rotateRemoteSign
     rotationDegs = "=1800deg"
+		reelRotationDegs = "=500deg";
     if (this.rotateRemoteSign) {
      rotationDegs = "+" + rotationDegs;
+		 reelRotationDegs = "+" + reelRotationDegs;
     } else {
      rotationDegs = "-" + rotationDegs;
+		 reelRotationDegs = "-" + reelRotationDegs;
     }
     djRemote.animate({
      rotate: rotationDegs,
      path: new $.path.bezier(bezier_params)
     }, 1000);
+		var reel_right = $("#val_filmreel_right"); 
+		var reel_left = $("#val_filmreel_left");
+		var check = $("#avatarWrapper_VAL");
+		check.data("animating", false);
+		if (SurfStreamApp.reelLoop) {
+			clearInterval(SurfStreamApp.reelLoop);
+			SurfStreamApp.reelLoop = false;
+		}
+		reel_right.stop();
+		reel_left.stop();
+		$("#val_smileBody").css({display:"none"});
+		$("#val_body, #val_l_pupil, #val_r_pupil, #val_smile").css({display:"block"});
+		if (video.dj == "VAL") {
+			$("#val_l_brow").animate({rotate: "+=20deg", "margin-top":"33px", "margin-left":"3px"}, 400, 'linear').delay(1000).animate({rotate: "-=20deg", "margin-top":"37px", "margin-left":"0px"}, 400, 'linear');
+			$("#val_r_brow").animate({rotate: "-=20deg", "margin-top":"33px", "margin-left":"24px"}, 400, 'linear').delay(1000).animate({rotate: "+=20deg", "margin-top":"37px", "margin-left":"24px"}, 400, 'linear');
+			
+       
+       
+			 check.data("animating", true);
+			 	reel_right.animate({rotate: reelRotationDegs}, 3000, 'linear');
+				 reel_left.animate({rotate: reelRotationDegs}, 3000, 'linear');
+       SurfStreamApp.reelLoop = setInterval(function() {
+        if (check.data("animating") == true) {
+         reel_right.animate({rotate: reelRotationDegs}, 3000, 'linear');
+				 reel_left.animate({rotate: reelRotationDegs}, 3000, 'linear');
+        }
+       }, 3000, check, reel_right, reel_left);
+		}
    });
 
    socket.on('video:stop', function() {
@@ -3592,6 +3645,15 @@ $(function() {
 			if (app.get("roomModel").get("playerModel").get("curVid").videoId == meterStats.videoId)
 				app.get("roomModel").get("playerModel").get("curVid").percent = meterStats.videoPercent;
 		}
+		
+		if(app.curDJ == "VAL" && total > 0){
+			$("#val_smileBody").css({display:"block"});
+			$("#val_body, #val_l_pupil, #val_r_pupil, #val_smile").css({display:"none"});
+			SurfStreamApp.valSmileInterval = setTimeout(function() { 
+				$("#val_smileBody").css({display:"none"});
+				$("#val_body, #val_l_pupil, #val_r_pupil, #val_smile").css({display:"block"});
+			}, 4000);			
+		}
    });
 
 	socket.on("rooms:announce", function(roomList) {
@@ -3684,20 +3746,17 @@ $(function() {
 	    gravity: 'n',
 	    fade: 'true'
 	   });
-			//NEED TO FIX THIS
-			/*
-	   $("#avatarWrapper_" + info.userId).data("isDJ", "0");
-	   console.log("margintop stored, value: " + user.get('y'))
-	   $(this.el).data({
-	    "roomX": user.get('x'),
-	    "roomY": user.get('y'),
-	    "trueY": user.get('y')
-	   });
-	   $(this.el).animate({
-	    "margin-top": user.get('y'),
-	    "margin-left": user.get('x'),
-	    "z-index": Math.floor(user.get('y'))
-	   }, 900, 'expoout'); */
+	  //re-add their stepdown if we took it off the main user
+		if (user.data("isDJ") == "1" && user.data("isMainUser") == "1") {
+
+			user.append("<div id='stepDown' style='width: 80px; height: 95px; position: absolute;'></div>");
+		   $('#stepDown').append("<a id='getOff' class='getOff' z-index=30 style='display: none; position: absolute;'>Step Down</a>");
+		   $('#stepDown').hover(function() {
+		    $('#getOff').fadeIn()
+		   }, function() {
+		    $('#getOff').fadeOut();
+		   });	
+		}
 	});
 
   }
