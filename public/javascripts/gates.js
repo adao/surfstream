@@ -2195,8 +2195,8 @@ $(function() {
 		
 		displayVideoTitle: function(event) {
 			console.log("HRM!");
-			$(event.toElement.parentElement.parentElement).find(".lastPlayedVideo").removeClass("lastPlayedVideo");
-			$(event.toElement).addClass("lastPlayedVideo");
+			$(event.toElement.parentElement.parentElement).find(".lastPlayedVideo").css({border: "0px solid white"})
+			$(event.toElement).addClass("lastPlayedVideo").css({border: "1px solid white"});
 			$(event.toElement.parentElement.parentElement.parentElement).find(".lastPlayedVideoTitle").text(event.data.videoTitle);
 		},
 		
@@ -2403,6 +2403,8 @@ $(function() {
      });
     }
    });
+
+	
 
 
 
@@ -3267,6 +3269,29 @@ $(function() {
 		new AvatarPickerView();
 	});
 	/* END SETTINGS HAX */
+	
+	$(".room-history").live('mouseenter',
+		function(e){
+			if (SurfStreamApp.curCell) {
+				SurfStreamApp.curCell.stop().animate({height: "0px"});
+				SurfStreamApp.curCell.css({border: "0px solid white"})
+					
+			}
+			SurfStreamApp.curCell = $(e.currentTarget).find(".videoThumbnail")
+			SurfStreamApp.curCell.filter(".lastPlayedVideo").css({border: "1px solid white"})
+		  SurfStreamApp.curCell.stop().animate({height: "72px"}, 300);
+	});
+	
+	$(".room-history").live('mouseout',
+		function(e){
+		if(e.toElement.className == "room-name" || e.toElement.className == "room-friends"){
+			if (SurfStreamApp.curCell) {
+				SurfStreamApp.curCell.stop().animate({height: "0px"});
+				SurfStreamApp.curCell.css({border: "0px solid white"})
+			}
+		}
+	});
+
    this.maxAudioChannels = 15;
   },
 
