@@ -3810,6 +3810,10 @@ $(function() {
 
   sendMsg: function(data) {
    SocketManagerModel.socket.emit("message", data);
+	 if (typeof(mpq) !== 'undefined') mpq.track("Chat", {
+    chat_text: data.text,
+    mp_note: "User chatted " + data.text
+   });
   },
 
   becomeDJ: function() {
@@ -3817,7 +3821,7 @@ $(function() {
    var numOnSofa = SurfStreamApp.sofaUsers.length;
    if (typeof(mpq) !== 'undefined') mpq.track("Sofa Join", {
     VAL_Playing: valplay,
-    mp_note: "Stepped onto sofa (" + numOnSofa + " people on sofa, __ friends in room, val playing: " + valplay + ")"
+    mp_note: "Stepped onto sofa (" + numOnSofa + " people on sofa, val playing: " + valplay + ")"
    });
    SocketManagerModel.socket.emit('dj:join');
   },
@@ -3829,7 +3833,7 @@ $(function() {
    if (typeof(mpq) !== 'undefined') mpq.track("Sofa Leave", {
     VAL_playing: valplay,
     mid_play: isdj,
-    mp_note: "Stepped off of sofa (" + numOnSofa + " people on sofa, __ friends in room, val playing: " + valplay + ", midPlay: " + isdj + ")"
+    mp_note: "Stepped off of sofa (" + numOnSofa + " people on sofa, val playing: " + valplay + ", midPlay: " + isdj + ")"
    });
    SocketManagerModel.socket.emit('dj:quit');
   },
