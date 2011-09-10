@@ -264,7 +264,7 @@ $(function() {
 		
 		playlistItemModel.set({playlistId: facebookPlaylistId});
 		this.get("playlistCollection").getPlaylistById(facebookPlaylistId).get("videos").add(playlistItemModel);
-		SocketManagerModel.addVideoToPlaylist(facebookPlaylistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"), true);
+		SocketManagerModel.addVideoToPlaylist(facebookPlaylistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("viewCount"), playlistItemModel.get("author"), true);
 		if (facebookPlaylistId == this.get("playlistCollection").get("activePlaylist").get("playlistId")) {
 			var playlistCellView = new PlaylistCellView({
 				playlistItemModel: playlistItemModel,
@@ -1459,7 +1459,7 @@ $(function() {
 	addVideoToPlaylist: function(playlistId, playlistItemModel) {
 		playlistItemModel.set({playlistId: playlistId});
 		this.getPlaylistById(playlistId).addToPlaylist(playlistItemModel);
-		SocketManagerModel.addVideoToPlaylist(playlistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("author"), false);
+		SocketManagerModel.addVideoToPlaylist(playlistId, playlistItemModel.get("videoId"), playlistItemModel.get("thumb"), playlistItemModel.get("title"), playlistItemModel.get("duration"), playlistItemModel.get("viewCount"), playlistItemModel.get("author"), false);
 		if (playlistId == this.get("activePlaylist").get("playlistId")) {
 			window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.addVideo(playlistItemModel, playlistId);
 			window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
@@ -1604,7 +1604,8 @@ $(function() {
 						title: $(ui.draggable).find(".title").text(),
 						thumb: ss_idToImg(fromVideoId),
 						duration: $(ui.draggable).find("realDuration").text(),
-						videoId: fromVideoId
+						videoId: fromVideoId,
+						viewCount: $(ui.draggable).find("realViewCount").text()
 					}
 					var playlistItemModel = new PlaylistItemModel(attributes);
 					playlistCollection.addVideoToPlaylist(toPlaylistId, playlistItemModel);
@@ -3768,13 +3769,14 @@ $(function() {
    SocketManagerModel.socket.emit('dj:quit');
   },
 
-  addVideoToPlaylist: function(playlistId, videoId, thumb, title, duration, author, append) {
+  addVideoToPlaylist: function(playlistId, videoId, thumb, title, duration, viewCount, author, append) {
    SocketManagerModel.socket.emit('playlist:addVideo', {
     playlistId: playlistId,
     videoId: videoId,
     thumb: thumb,
     title: title,
     duration: duration,
+		viewCount: viewCount,
     author: author,
     append: append
    });

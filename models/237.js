@@ -100,6 +100,7 @@
 						title: rawVideo['title'],
 						thumb: rawVideo['thumb'],
 						author: rawVideo['author'],
+						viewCount: rawVideo['viewCount'],
 						dj: 'VAL'
 					});
 					
@@ -199,11 +200,13 @@
 					var videoTitle = videoEntry['media$group']['media$title']['$t'];
 					var videoThumb = videoEntry['media$group']['media$thumbnail'][0]['url'];
 					var videoAuthor = videoEntry['author'][0]['name']['$t'];
+					var videoViewCount = videoEntry['yt$statistics']['viewCount'];
 
 					console.log('['+room.get('name')+']'+"[VAL] fetchYouTubeVideo(): got related vids, index "+randIndex+"/4 with videoid: "+videoToPlayId+" and title: "+videoTitle);
 					var videoToPlay = new models.Video({
 						videoId: videoToPlayId,
 						duration: videoDuration,
+						viewCount: videoViewCount,
 						title: videoTitle,
 						thumb: videoThumb,
 						author: videoAuthor,
@@ -253,20 +256,22 @@
 			var videoId = videoToPlay.get('videoId');
 			var videoDuration = videoToPlay.get('duration');
 			var videoTitle = videoToPlay.get('title');
-			var videoDJ = videoToPlay.get('dj');			
+			var videoDJ = videoToPlay.get('dj');
+			var videoViewCount = videoToPlay.get('viewCount');
 
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
 				videoId: videoId, 
 				title: videoTitle,
 				duration: videoDuration,
+				viewCount: viewCount,
 				author: videoToPlay.get('author'),
 				timeStart: (new Date()).getTime(),
 				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
 				dj: videoToPlay.get('dj')
 			});
 			
-			this.room.sockM.announceVideo(videoId, videoDuration, videoTitle, videoDJ);
+			this.room.sockM.announceVideo(videoId, videoDuration, videoViewCount, videoTitle, videoDJ);
 			this.room.meter.reset();
 			
 			var roomName = this.room.get('name');
@@ -378,7 +383,8 @@
 					time: Math.ceil(timeDiff), 
 					title: this.currVideo.get('title'),
 					dj: this.currVideo.get('dj'),
-					duration: this.currVideo.get('duration')
+					duration: this.currVideo.get('duration'),
+					viewCount: this.currVideo.get('viewCount')
 				});
 			}
 			this.sendRoomHistory(user);
@@ -494,8 +500,8 @@
 			}
 		},
 
-		announceVideo: function(videoId, duration, title, dj) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', { id: videoId, time: 0, title: title, dj: dj, duration: duration });
+		announceVideo: function(videoId, duration, viewCount, title, dj) {
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', {id: videoId, time: 0, title: title, dj: dj, duration: duration, viewCount: viewCount});
 		},
 		
 		announceClients: function() {
@@ -695,12 +701,12 @@
 
 	models.Playlist = Backbone.Model.extend({
 
-		addVideo: function(playlistId, videoId, thumb, title, duration, author, append) {
+		addVideo: function(playlistId, videoId, thumb, title, duration, viewCount, author, append) {
 			if(this.containsVideo(videoId))
 				return false;
 			var vid = new models.Video();
 			vid.id = videoId;
-			vid.set({ playlistId: playlistId, videoId: videoId, thumb: thumb, title: title, duration: duration, author: author});
+			vid.set({ playlistId: playlistId, videoId: videoId, thumb: thumb, title: title, duration: duration, viewCount: viewCount, author: author});
 			if (append) {
 				this.get("videos").add(vid);
 			} else {
@@ -986,7 +992,7 @@
 			});
 			
 			socket.on('playlist:addVideo', function(data) {
-				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.author, data.append)) {
+				if (playlists[data.playlistId].addVideo(data.playlistId, data.videoId, data.thumb, data.title, data.duration, data.viewCount, data.author, data.append)) {
 					thisUser.savePlaylist(data.playlistId);
 					//console.log('playlist ' + data.playlistId + ' is now: '+JSON.stringify(playlists[data.playlistId].get("videos").pluck("title")));
 				}
