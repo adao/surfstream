@@ -2,7 +2,7 @@
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif, "Helvetica";
 }
 body {
-  background: url("/images/room/newicons/landing-page-bg.png") no-repeat;
+  background-color: #141414;
 }
 button {
   cursor: pointer;
@@ -15,6 +15,7 @@ button {
 }
 #header img#logo {
   margin-top: -4px;
+  cursor: pointer;
 }
 #header #cur-room-name {
   margin-top: 7px;
@@ -27,7 +28,7 @@ button {
   color: #b2b2b2;
   font-size: 20px;
   display: inline-block;
-  width: 455px;
+  width: 457px;
   height: 40px;
 }
 #now-playing-tv {
@@ -716,7 +717,7 @@ width: 48px {
 #share,
 #shareBar {
   float: right;
-  width: 194px;
+  width: 215px;
   height: 40px;
   color: #000;
 }
@@ -727,7 +728,7 @@ width: 48px {
   color: #b2b2b2;
   font-size: 16px;
   font-weight: bold;
-  width: 54px;
+  width: 102px;
   height: 22px;
   display: inline-block;
 }
@@ -735,7 +736,7 @@ width: 48px {
 #shareBar #social {
   display: inline-block;
   margin-top: 2px;
-  width: 130px;
+  width: 106px;
   height: 40px;
 }
 button.playlist,
@@ -883,7 +884,7 @@ button.search.active {
 #vol-up,
 #vol-down,
 #rooms,
-#history-button,
+#share-video-button,
 #mute,
 #ch-up,
 #ch-down,
@@ -924,7 +925,7 @@ button
 }
 .bottombuttonContainerwide #rooms,
 .bottombuttonContainerwide #mute,
-.bottombuttonContainerwide #history-button,
+.bottombuttonContainerwide #share-video-button,
 .bottombuttonContainerwide #fullscreen {
   width: 60px;
   background: transparent;
@@ -1058,9 +1059,6 @@ button
   margin-left: 8px;
   margin-top: 10px;
 }
-#room-modal #roomsWrapper table#roomsTable tr.room-row .room-history:hover .videoThumbnailContainer {
-  display: inline;
-}
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;
 }
@@ -1174,7 +1172,7 @@ button
   color: #34c8ff;
 }
 .videoThumbnailContainer {
-  display: none;
+  display: inline-block;
   position: relative;
 }
 .videoThumbnailContainer .videoTitle {
@@ -1185,13 +1183,10 @@ button
 }
 .videoThumbnailContainer .videoThumbnail {
   width: 96px;
-  height: 72px;
+  height: 0px;
   margin-right: 8px;
   margin-top: 8px;
   border-radius: 2px;
-}
-.videoThumbnail.lastPlayedVideo {
-  border: 1px solid #fff;
 }
 #video-div {
   -webkit-border-top-left-radius: 2px;
@@ -1976,7 +1971,7 @@ background-color: green,
 #become-dj-txt {
   position: absolute;
   font-size: 12px;
-  margin-top: 37px;
+  margin-top: 38px;
   margin-left: 8px;
   font-weight: bold;
   color: #373737;
@@ -2153,7 +2148,8 @@ background-color: green,
   background-color: #fff;
   opacity: 0;
 }
-#fullscreenIcon:hover {
+#fullscreenIcon:hover,
+#fullscreenIcon.fully:hover {
   background-color: #34c8ff;
   cursor: pointer;
 }
@@ -2168,10 +2164,12 @@ background-color: green,
   margin: 20px;
   margin-top: 0px;
 }
+
 #fullscreenIcon.fully:hover {
   background-color: #34b7fe;
   background: rgba(255,255,255,0.60);
 }
+
 #sofa-remote {
   left: 170px;
   top: 140px;
@@ -2407,8 +2405,7 @@ a#fdbk_tab {
   font-size: 14px;
   display: inline-block;
   padding-top: 4px;
-  text-indent: 6px;
-  width: 80px;
+  width: 56px;
   margin-left: 5px;
   text-align: center;
 }
@@ -2425,7 +2422,7 @@ a#fdbk_tab {
   display: inline-block;
   float: right;
   height: 26px;
-  width: 110px;
+  width: 83px;
   background-color: #c0c0c0;
   color: #585858;
   background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
@@ -2438,7 +2435,7 @@ a#fdbk_tab {
 }
 #change-avatar {
   position: absolute;
-  margin-left: 850px;
+  margin-left: 877px;
   margin-top: 28px;
   display: none;
 }
@@ -2456,14 +2453,14 @@ a#fdbk_tab {
 #edit-profile {
   margin-top: 54px;
   position: absolute;
-  margin-left: 850px;
+  margin-left: 877px;
   display: none;
   z-index: 55;
 }
 #logout {
   margin-top: 80px;
   position: absolute;
-  margin-left: 850px;
+  margin-left: 877px;
   display: none;
   z-index: 55;
 }
