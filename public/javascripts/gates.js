@@ -42,8 +42,6 @@ window.fbAsyncInit = function() {
  FB.getLoginStatus(proceed_to_site);
 };
 
-
-
 $(function() {
  _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
@@ -337,7 +335,8 @@ $(function() {
      playlistCollection: new PlaylistCollection(),
 		 likesCollection: new LikesCollection(),
      activePlaylist: null,
-     socketManagerModel: this.get("socketManagerModel")
+     socketManagerModel: this.get("socketManagerModel"),
+		 fbId: this.get("fbId")
     })
    });
 
@@ -2207,7 +2206,7 @@ $(function() {
 			//this.options.roomListCellModel.set({friends: [1389848266057, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314, 1984467221314]});
 			var roomModel = this.options.roomListCellModel;
 			var curVidTitle = roomModel.get("curVidTitle");
-			var partialFriendsHTML = this.renderFriends(2, "friendInRoomPic");
+			var partialFriendsHTML = this.renderFriends(1, "friendInRoomPic");
 			var fullFriendsHTML = this.renderFriends(0, "friendInRoomPicHover");
 			var rName = roomModel.get("roomName");
 			if (roomModel.get("rID") == SurfStreamApp.inRoom) {
