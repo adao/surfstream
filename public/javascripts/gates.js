@@ -2395,6 +2395,11 @@ $(function() {
    $("#fullscreen").bind("click", {
     theatre: this
    }, this.fullscreenToggle);
+	 $(document).keyup({theatre: this}, function(e){
+	            if(e.keyCode == 27){
+	               e.data.theatre.fullscreenToggle(e);
+	            }
+	        });
    $("#fullscreenIcon").bind("click", {
     theatre: this
    }, this.fullscreenToggle);
