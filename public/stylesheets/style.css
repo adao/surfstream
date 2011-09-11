@@ -921,6 +921,7 @@ button.search.active {
   margin-left: 5px;
   pointer-events: none;
   padding-top: 3px;
+  font-weight: bold;
 }
 .buttonContainer,
 .bottombuttonContainer,
@@ -1238,6 +1239,7 @@ button
   float: right;
   border: none;
   background: transparent;
+  color: #000;
 }
 #user-cur-room {
   color: #34c8ff;
@@ -2480,6 +2482,16 @@ a#fdbk_tab {
   cursor: pointer;
   pointer-events: none;
   z-index: 4;
+}
+#slider-ball-dot {
+  width: 4px;
+  height: 4px;
+  position: absolute;
+  background: #808080;
+  margin-top: 12px;
+  margin-left: 7px;
+  border-radius: 5px;
+  display: none;
 }
 #settings {
   margin-top: 3px;

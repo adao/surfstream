@@ -2359,9 +2359,9 @@ $(function() {
 
   render: function(nowPlayingMsg) {
    $(this.el).html(this.chatCellVideoTemplate({
-    videoSrc: ss_idToImg(this.options.videoID),
     title: this.options.videoTitle
    }));
+	 this.$(".videoChatImg").attr("src",ss_idToImg(this.options.videoID));
    return this;
   }
  });
@@ -2452,7 +2452,7 @@ $(function() {
    });
    $("#slider-line-container").bind('drag', function(event) {
     if (event.target.id == "slider-line" || event.target.id == "slider-line-container" || event.target.id == "slider-line-full") {
-     console.log(event.layerX)
+     $("#slider-ball-dot").show();
      if (event.layerX >= 98) {
       $("#slider-ball").css({
        "margin-left": 89
@@ -2470,6 +2470,9 @@ $(function() {
     });
    });
 
+	 $("#slider-line-container").bind('dragend', function(event) {
+			$("#slider-ball-dot").hide();
+		});
 
 
    $("#slider-line-container").bind('draginit', function(event) {
