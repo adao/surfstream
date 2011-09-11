@@ -2605,7 +2605,9 @@ $(function() {
 			viewCount: nowPlaying.viewCount
 		}
 		var likesModel = new LikesModel(attributes);
-		window.SurfStreamApp.get("userModel").get("likesCollection").add(likesModel);
+		window.SurfStreamApp.get("userModel").get("likesCollection").add(likesModel, {
+			at: 0
+		});
 		SocketManagerModel.voteUp(attributes);
 	},
 
@@ -3552,7 +3554,9 @@ $(function() {
 				author: curvid.author,
 				viewCount: curvid.viewCount
 			});
-			app.get("roomModel").get("channelHistoryCollection").add(channelHistoryModel);
+			app.get("roomModel").get("channelHistoryCollection").add(channelHistoryModel, {
+				at: 0
+			});
 		}
 		
     //save the currently playing state
