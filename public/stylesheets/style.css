@@ -767,7 +767,7 @@ width: 48px {
 #share,
 #shareBar {
   float: right;
-  width: 220px;
+  width: 214px;
   height: 40px;
   color: #000;
 }
@@ -778,7 +778,7 @@ width: 48px {
   color: #b2b2b2;
   font-size: 16px;
   font-weight: bold;
-  width: 113px;
+  width: 103px;
   height: 22px;
   display: inline-block;
 }
