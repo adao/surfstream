@@ -4189,6 +4189,7 @@ function updateTime() {
 }
 
 function skipVideo() {
+ $("#skipContainer").remove();
  socket_init.emit("video:skip");
 }
 
