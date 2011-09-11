@@ -587,7 +587,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -82px;
   margin-top: 12px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 75px;
   text-align: left;
   text-indent: 1px;
@@ -684,7 +684,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -41px;
   margin-top: 6px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 37px;
   text-align: left;
   text-indent: 0.5px;
@@ -1534,7 +1534,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1616,7 +1616,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1699,7 +1699,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -2074,7 +2074,7 @@ background-color: green,
   margin-left: 4px;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -2084,7 +2084,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -2106,7 +2106,7 @@ background-color: green,
   font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -225px;
-  background: rgba(50,50,50,0.70);
+  background: rgba(50,50,50,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -2188,7 +2188,7 @@ background-color: green,
 #nowPlayingFull .chFS:hover,
 #nowPlayingFull .voteContainerFS:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .chFS,
 .voteContainerFS,
@@ -2245,7 +2245,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: -13px;
