@@ -2459,7 +2459,7 @@ $(function() {
    $("#mute").bind("click", {
     button: $("#mute")
    }, mute);
-   $("#rooms").bind("click", {
+   $("#rooms, #logo").bind("click", {
     modal: this.options.modal
    }, function(e) {
     $("#room-modal").css("display") == "none" ? e.data.modal.show() : e.data.modal.hide()

@@ -15,6 +15,7 @@ button {
 }
 #header img#logo {
   margin-top: -4px;
+  cursor: pointer;
 }
 #header #cur-room-name {
   margin-top: 7px;
