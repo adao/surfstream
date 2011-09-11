@@ -1,5 +1,14 @@
+@font-face {
+  font-family: "custom";
+  src: url("/resources/candara.ttf") format("truetype");
+}
+@font-face {
+  font-family: "custom";
+  src: url("/resources/candarabold.ttf") format("truetype");
+  font-weight: bold;
+}
 .tipsy {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
 }
 body {
   background-color: #141414;
@@ -110,7 +119,7 @@ button {
   width: 638px;
   z-index: 50;
   position: absolute;
-  margin-top: 397px;
+  margin-top: 10px;
   margin-left: 11px;
 }
 #time-total-bar {
@@ -137,7 +146,7 @@ div#outer {
   display: none;
 }
 #outer {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   weight: bold;
   font-size: 25px;
   margin: auto;
@@ -169,55 +178,25 @@ div#outer {
   height: 413px;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar {
-  height: 25px;
+  height: 30px;
 }
-#outer #coolshit #right-side .sidebarContainer .viewBar .playlist,
-#outer #coolshit #right-side .sidebarContainer .viewBar .search {
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
   vertical-align: top;
   background-color: #c0c0c0;
-  background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
-  background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
-  background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
+  color: #fff;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
+  background: -moz-linear-gradient(top, #666, #434343);
+  background-image: -o-linear-gradient(top, #666, #434343);
   border: none;
   font-size: 14px;
   font-weight: bold;
   text-align: center !important;
-  width: 150px !important;
-  height: 25px !important;
-  box-shadow: inset 0 0 2px #000;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .search {
-  border-top-right-radius: 2px !important;
-  -moz-border-top-right-radius: 2px !important;
-  -webkit-border-top-right-radius: 2px !important;
-  border-top-left-radius: 2px !important;
-  -moz-border-top-left-radius: 2px !important;
-  -webkit-border-top-left-radius: 2px !important;
+  width: 300px !important;
+  height: 30px !important;
   float: left;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
   border-top-right-radius: 2px !important;
   -moz-border-top-right-radius: 2px !important;
   -webkit-border-top-right-radius: 2px !important;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .playlist:hover,
-#outer #coolshit #right-side .sidebarContainer .viewBar .search:hover {
-  -moz-box-shadow: inset 0 0 4px #000;
-  -webkit-box-shadow: inset 0 0 4px #000;
-  box-shadow: inset 0 0 4px #000;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .search {
-  float: right;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .active {
-  color: #008ab8;
-  background-color: #fff;
-  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#c0c0c0));
-  background: -moz-linear-gradient(top, #fff, #c0c0c0);
-  background-image: -o-linear-gradient(top, #fff, #c0c0c0);
-  -moz-box-shadow: inset 0 0 0px #000 !important;
-  -webkit-box-shadow: inset 0 0 0px #000 !important;
-  box-shadow: inset 0 0 0px #000 !important;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
@@ -275,7 +254,7 @@ div#outer {
   background: url("/images/room/clearsearch.png") 50% 50% no-repeat;
 }
 .chatContainer {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   width: 300px;
   height: 220px;
   max-width: 300px;
@@ -369,7 +348,7 @@ div#outer {
 }
 div.historyContainer {
   position: absolute;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   font-size: 14px;
   max-height: 634px;
   width: 340px;
@@ -521,7 +500,7 @@ div.historyContainer .history .videoHistory {
   border: 1px solid #000;
 }
 #viewMoreCellContainer {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   width: 285px;
   height: 60px;
 }
@@ -563,7 +542,7 @@ div.historyContainer .history .videoHistory {
 }
 .searchCellContainer .cellInfo .videoInfo {
   float: left;
-  width: 165px;
+  width: 193px;
   height: 60px;
   font-size: 13px;
   padding-left: 7px;
@@ -571,7 +550,7 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer .cellInfo .videoInfo .title {
   overflow-y: hidden;
   margin-top: 8px;
-  width: 150px;
+  width: 192px;
   height: 38px;
   font-weight: bold;
   font-size: 10px;
@@ -601,7 +580,7 @@ div.historyContainer .history .videoHistory {
   pointer-events: none;
 }
 .searchCellContainer .cellInfo .videoInfo .viewCount span {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   margin-left: 3px;
 }
 .searchCellContainer .cellInfo .videoInfo .author {
@@ -698,7 +677,7 @@ div.historyContainer .history .videoHistory {
   pointer-events: none;
 }
 .shrunkenSearchCellContainer .cellInfo .videoInfo .viewCount span {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   margin-left: 1px;
 }
 .shrunkenSearchCellContainer .cellInfo .videoInfo .author {
@@ -788,7 +767,7 @@ width: 48px {
 #share,
 #shareBar {
   float: right;
-  width: 215px;
+  width: 220px;
   height: 40px;
   color: #000;
 }
@@ -799,7 +778,7 @@ width: 48px {
   color: #b2b2b2;
   font-size: 16px;
   font-weight: bold;
-  width: 102px;
+  width: 113px;
   height: 22px;
   display: inline-block;
 }
@@ -814,13 +793,13 @@ button.playlist,
 button.playlist.active,
 button.search,
 button.search.active {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   weight: bold;
   font-size: 12px;
   color: #585858;
 }
 .videoView {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #d4d4d4;
   height: 388px;
   width: 300px;
@@ -968,9 +947,10 @@ button.search.active {
   -moz-border-radius: 4px;
   color: #e5e5e5;
   cursor: pointer;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   font-weight: bold;
   vertical-align: top;
+  text-indent: -2px;
 }
 .buttonContainer {
   display: inline-block;
@@ -1009,7 +989,7 @@ button
   top: 40px;
   left: 50%;
   margin-left: -480px;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   overflow-y: none;
   overflow-x: none;
   width: 960px;
@@ -1283,7 +1263,7 @@ button
   z-index: 9999;
 }
 #top-video-cell {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   font-size: 12px;
   height: 200px;
   width: 285px;
@@ -1389,23 +1369,54 @@ background-color: green,
   vertical-align: top;
   font-weight: bold;
 }
+.youtube-nameholder,
+.channel-history-nameholder,
+.likes-nameholder {
+  -webkit-border-radius: 2px;
+  height: 22px;
+  vertical-align: top;
+  margin-top: -5px;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+.spTitle {
+  vertical-align: top;
+  margin-top: 4px;
+}
+.youtube-nameholder {
+  margin-left: 14px;
+}
+.youtube-nameholder #yt-icon {
+  vertical-align: top;
+  margin-top: 3px;
+  margin-left: -4px;
+}
+#yt-text {
+  display: inline-block;
+  margin-left: 3px;
+  vertical-align: top;
+  margin-top: 1px;
+}
 .playlist-nameholder.selected-youtube-nameholder {
-  background: #f00;
+  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
+  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
   color: #000;
   vertical-align: top;
-  font-weight: bold;
 }
 .playlist-nameholder.selected-channel-history-nameholder {
-  background: #ffa500;
+  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
+  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
   color: #000;
   vertical-align: top;
-  font-weight: bold;
 }
 .playlist-nameholder.selected-likes-nameholder {
-  background: #008000;
+  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
+  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
   color: #000;
   vertical-align: top;
-  font-weight: bold;
 }
 .playlist-hover-highlight {
   background: #141414;
@@ -1748,7 +1759,7 @@ background-color: green,
   display: none;
   border: 1px solid #666;
   background-color: #313131;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #fff;
   position: absolute;
   border: 1px solid #666;
@@ -1758,7 +1769,7 @@ background-color: green,
   top: 110px;
   left: 50%;
   margin-left: -150px;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   overflow-y: none;
   overflow-x: none;
   width: 300px;
@@ -1801,7 +1812,7 @@ background-color: green,
   display: none;
   border: 1px solid #666;
   background-color: #313131;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #fff;
   position: absolute;
   border: 1px solid #666;
@@ -1811,7 +1822,7 @@ background-color: green,
   top: 60px;
   left: 50%;
   margin-left: -445px;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   overflow-y: none;
   overflow-x: none;
   width: 900px;
@@ -1972,7 +1983,7 @@ background-color: green,
 }
 #skip {
   cursor: pointer;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
 }
 #avatarWrapper_VAL {
   position: absolute;
@@ -2103,7 +2114,7 @@ background-color: green,
   color: #fff;
   text-shadow: #585858 0.1em 0.1em 0.5em;
   margin-bottom: 20px;
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -225px;
   background: rgba(50,50,50,0.7);
@@ -2279,7 +2290,7 @@ a#fdbk_tab {
   width: 300px;
 }
 #playlist-dropdown {
-  font-family: "Segoe UI", Candara, "Bitstream Vera Sans", "Helvetica", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
 }
 #footer {
   position: absolute;
