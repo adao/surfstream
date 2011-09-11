@@ -221,6 +221,7 @@ io.sockets.on('connection', function(socket) {
 							socket: socket
 					  });
 						currUser.initializeAndSendPlaylists(socket, roomManager, userManager);
+						currUser.sendLikes(socket);
 						StagingUsers[socket.id] = currUser; 
 						console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
 							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>')
@@ -261,15 +262,13 @@ io.sockets.on('connection', function(socket) {
 					+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
 					
 				StagingUsers[socket.id] = currUser;
-				var defaultPlaylist = new models.Playlist({name: "Recently Watched", videos: new models.VideoCollection()});
 				var facebookPlaylist = new models.Playlist({name: "My FB Wall", videos: new models.VideoCollection()});
 				var firstPlaylist = new models.Playlist({name: "My 1st surfstream playlist :)", videos: new models.VideoCollection()});
-				var thumbsUp = new models.Playlist({name: "Thumbs up! )3", videos: new models.VideoCollection()});
-				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 1, JSON.stringify(defaultPlaylist), 2, JSON.stringify(thumbsUp), 3, JSON.stringify(facebookPlaylist), 4, JSON.stringify(firstPlaylist), function(err, reply) {
+				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 1, JSON.stringify(facebookPlaylist), 2, JSON.stringify(firstPlaylist), function(err, reply) {
 					if (err) {
 						console.log("Error writing ss user's default playlists " + ssUser.ssId + " to Redis");
 					} else {
-						redisClient.set("user:" + ssUser.ssId + ":activePlaylist", 3, function(err, reply) {
+						redisClient.set("user:" + ssUser.ssId + ":activePlaylist", 1, function(err, reply) {
 							if (err) {
 								console.log("error setting user " + ssUser.ssId + "'s active playlist");
 							} else {

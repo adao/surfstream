@@ -258,20 +258,21 @@
 			var videoTitle = videoToPlay.get('title');
 			var videoDJ = videoToPlay.get('dj');
 			var videoViewCount = videoToPlay.get('viewCount');
+			var author = videoToPlay.get('author');
 
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
 				videoId: videoId, 
 				title: videoTitle,
 				duration: videoDuration,
-				viewCount: viewCount,
-				author: videoToPlay.get('author'),
+				viewCount: videoViewCount,
+				author: author,
 				timeStart: (new Date()).getTime(),
 				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
 				dj: videoToPlay.get('dj')
 			});
 			
-			this.room.sockM.announceVideo(videoId, videoDuration, videoViewCount, videoTitle, videoDJ);
+			this.room.sockM.announceVideo(videoId, videoDuration, videoViewCount, author, videoTitle, videoDJ);
 			this.room.meter.reset();
 			
 			var roomName = this.room.get('name');
@@ -286,14 +287,16 @@
 					this.room.djs.currDJ.playlist.moveToBottom(this.room.currVideo.get('videoId'));	
 				}
 				
-				var videoId = this.room.currVideo.get('videoId'), 
-					percent = this.room.meter.videoPercent,
-					title = this.room.currVideo.get('title'),
-					duration = this.room.currVideo.get('duration'),
-					thumb = this.room.currVideo.get('thumb');
-					dj = this.room.currVideo.get('dj');
+				var videoId = this.room.currVideo.get('videoId');
+				var percent = this.room.meter.videoPercent;
+				var	title = this.room.currVideo.get('title');
+				var	duration = this.room.currVideo.get('duration');
+				var	thumb = this.room.currVideo.get('thumb');
+				var	dj = this.room.currVideo.get('dj');
+				var	author = this.room.currVideo.get('author');
+				var viewCount = this.room.currVideo.get('viewCount');
 				console.log(percent);			
-				this.room.history.addVideo(videoId, title, duration, thumb, dj, percent);
+				this.room.history.addVideo(videoId, title, duration, viewCount, author, thumb, dj, percent);
 				this.room.clearVideo();
 			}
 		
@@ -384,7 +387,8 @@
 					title: this.currVideo.get('title'),
 					dj: this.currVideo.get('dj'),
 					duration: this.currVideo.get('duration'),
-					viewCount: this.currVideo.get('viewCount')
+					viewCount: this.currVideo.get('viewCount'),
+					author: this.currVideo.get('author')
 				});
 			}
 			this.sendRoomHistory(user);
@@ -500,8 +504,8 @@
 			}
 		},
 
-		announceVideo: function(videoId, duration, viewCount, title, dj) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', {id: videoId, time: 0, title: title, dj: dj, duration: duration, viewCount: viewCount});
+		announceVideo: function(videoId, duration, viewCount, author, title, dj) {
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', {id: videoId, time: 0, title: title, dj: dj, duration: duration, viewCount: viewCount, author: author});
 		},
 		
 		announceClients: function() {
@@ -638,12 +642,14 @@
 			}
 		},
 		
-		addVideo: function(videoId, title, duration, thumb, dj, percent) {
+		addVideo: function(videoId, title, duration, viewCount, author, thumb, dj, percent) {
 			var videoToAdd = new models.Video({ 
 				id: (new Date()).getTime(),
 				videoId: videoId,
 				title: title,
 				duration: duration,
+				viewCount: viewCount,
+				author: author,
 				thumb: thumb,
 				dj: dj,
 				percent: percent
@@ -923,6 +929,22 @@
 				}
 			}
 			return false;
+		},
+		
+		sendLikes: function(socket) {
+			var userId = this.get('userId');
+			var userModel = this;
+			redisClient.lrange("user:" + userId + ":likes", 0, -1, function(err, reply) {
+				if (err) {
+					console.log("Error getting user " + userId + "'s likes");
+				} else {
+					var likedVideos = [];
+					for (var i = 0; i < reply.length; i++) {
+						likedVideos.push(JSON.parse(reply[i]));
+					}
+					socket.emit("user:likes", likedVideos);
+				}
+			});
 		},
 		
 		initializeAndSendPlaylists: function(socket, roomManager, userManager) {
@@ -1271,7 +1293,7 @@
 		addListeners: function(socket) {
 			var meter = this;
 			var roomName = this.room.get('name');
-			socket.on('meter:upvote', function() {
+			socket.on('meter:upvote', function(video) {
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
@@ -1281,6 +1303,13 @@
 				
 				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 
+				if (redisClient) {
+					redisClient.lpush("user:" + currUser.get("userId") + ":likes", JSON.stringify(video), function(err, reply) {
+						if (err) {
+							console.log("Error lpushing user " + currUser.get("userId") + "'s liked video");
+						}
+					});
+				}
 				var success = meter.addUpvote(currUser.get('userId'));	//checks to make sure the user hasn't already voted
 				if(success) {
 					console.log('...success!');
