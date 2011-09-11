@@ -169,55 +169,26 @@ div#outer {
   height: 413px;
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar {
-  height: 25px;
+  height: 30px;
 }
-#outer #coolshit #right-side .sidebarContainer .viewBar .playlist,
-#outer #coolshit #right-side .sidebarContainer .viewBar .search {
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
   vertical-align: top;
   background-color: #c0c0c0;
-  background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
-  background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
-  background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
+  color: #fff;
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
+  background: -moz-linear-gradient(top, #666, #434343);
+  background-image: -o-linear-gradient(top, #666, #434343);
   border: none;
   font-size: 14px;
   font-weight: bold;
   text-align: center !important;
-  width: 150px !important;
-  height: 25px !important;
+  width: 300px !important;
+  height: 30px !important;
   box-shadow: inset 0 0 2px #000;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .search {
-  border-top-right-radius: 2px !important;
-  -moz-border-top-right-radius: 2px !important;
-  -webkit-border-top-right-radius: 2px !important;
-  border-top-left-radius: 2px !important;
-  -moz-border-top-left-radius: 2px !important;
-  -webkit-border-top-left-radius: 2px !important;
   float: left;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
   border-top-right-radius: 2px !important;
   -moz-border-top-right-radius: 2px !important;
   -webkit-border-top-right-radius: 2px !important;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .playlist:hover,
-#outer #coolshit #right-side .sidebarContainer .viewBar .search:hover {
-  -moz-box-shadow: inset 0 0 4px #000;
-  -webkit-box-shadow: inset 0 0 4px #000;
-  box-shadow: inset 0 0 4px #000;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .search {
-  float: right;
-}
-#outer #coolshit #right-side .sidebarContainer .viewBar .active {
-  color: #008ab8;
-  background-color: #fff;
-  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#c0c0c0));
-  background: -moz-linear-gradient(top, #fff, #c0c0c0);
-  background-image: -o-linear-gradient(top, #fff, #c0c0c0);
-  -moz-box-shadow: inset 0 0 0px #000 !important;
-  -webkit-box-shadow: inset 0 0 0px #000 !important;
-  box-shadow: inset 0 0 0px #000 !important;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
@@ -563,7 +534,7 @@ div.historyContainer .history .videoHistory {
 }
 .searchCellContainer .cellInfo .videoInfo {
   float: left;
-  width: 165px;
+  width: 193px;
   height: 60px;
   font-size: 13px;
   padding-left: 7px;
@@ -571,7 +542,7 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer .cellInfo .videoInfo .title {
   overflow-y: hidden;
   margin-top: 8px;
-  width: 150px;
+  width: 192px;
   height: 38px;
   font-weight: bold;
   font-size: 10px;
@@ -1389,23 +1360,54 @@ background-color: green,
   vertical-align: top;
   font-weight: bold;
 }
+.youtube-nameholder,
+.channel-history-nameholder,
+.likes-nameholder {
+  -webkit-border-radius: 2px;
+  height: 22px;
+  vertical-align: top;
+  margin-top: -5px;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+.spTitle {
+  vertical-align: top;
+  margin-top: 4px;
+}
+.youtube-nameholder {
+  margin-left: 14px;
+}
+.youtube-nameholder #yt-icon {
+  vertical-align: top;
+  margin-top: 3px;
+  margin-left: -4px;
+}
+#yt-text {
+  display: inline-block;
+  margin-left: 3px;
+  vertical-align: top;
+  margin-top: 1px;
+}
 .playlist-nameholder.selected-youtube-nameholder {
-  background: #f00;
+  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
+  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
   color: #000;
   vertical-align: top;
-  font-weight: bold;
 }
 .playlist-nameholder.selected-channel-history-nameholder {
-  background: #ffa500;
+  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
+  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
   color: #000;
   vertical-align: top;
-  font-weight: bold;
 }
 .playlist-nameholder.selected-likes-nameholder {
-  background: #008000;
+  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
+  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
   color: #000;
   vertical-align: top;
-  font-weight: bold;
 }
 .playlist-hover-highlight {
   background: #141414;
