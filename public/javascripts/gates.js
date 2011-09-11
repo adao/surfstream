@@ -2021,7 +2021,7 @@ $(function() {
 	
 	render: function() {
 		$(this.el).html(this.importFBVideoTemplate({
-			text: "Click here to import videos from your Facebook wall :)"
+			text: "Import videos from your Facebook Wall"
 		}));
 		$("#video-list-container").prepend(this.el);
 	},
