@@ -1,9 +1,11 @@
 @font-face
-	font-family: "cats"
-	src: url('/resources/cats2.ttf') format("truetype")
-
-FontFamily = "Segoe UI", "cats", Candara,"Bitstream Vera Sans","Helvetica","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
-
+	font-family: "custom"
+	src: url(/resources/candara.ttf) format("truetype");
+@font-face
+	font-family: "custom"
+	src: url(/resources/candaraboldttf) format("truetype");
+	font-weight: bold
+FontFamily = "Candara", "custom", "Segoe UI", "Bitstream Vera Sans","DejaVu Sans","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
 .tipsy
 	font-family: FontFamily
 body
@@ -99,7 +101,7 @@ button
 	width: 638px
 	z-index: 50
 	position: absolute
-	margin-top: 397px
+	margin-top: 10px
 	margin-left: 11px
 #time-total-bar
 	background-color: silver
@@ -161,7 +163,6 @@ div#outer
 						text-align: center!important
 						width: 300px!important
 						height: 30px!important
-						box-shadow: inset 0 0 2px #000000;
 						float: left
 						border-top-right-radius: 2px!important
 						-moz-border-top-right-radius: 2px!important
@@ -686,7 +687,7 @@ img.share-email-image
 
 #share, #shareBar
 	float: right
-	width: 215px
+	width: 214px
 	height: 40px
 	color: black
 	.share
@@ -695,7 +696,7 @@ img.share-email-image
 		color: #B2B2B2
 		font-size: 16px
 		font-weight: bold
-		width: 102px
+		width: 103px
 		height: 22px
 		display: inline-block
 	#social
@@ -835,6 +836,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	font-family: FontFamily
 	font-weight: bold
 	vertical-align: top;
+	text-indent: -2px
 	
 .buttonContainer
 	display: inline-block 
