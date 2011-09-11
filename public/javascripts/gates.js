@@ -2596,19 +2596,24 @@ $(function() {
 	
 	voteUp: function() {
 		var nowPlaying = window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid");
-		var attributes = {
-			title: nowPlaying.title,
-			thumb: ss_idToImg(nowPlaying.videoId),
-			videoId: nowPlaying.videoId,
-			duration: nowPlaying.duration,
-			author: nowPlaying.author,
-			viewCount: nowPlaying.viewCount
+		var likesCollection = window.SurfStreamApp.get("userModel").get("likesCollection");
+		if (!ss_modelWithAttribute(likesCollection, "videoId", nowPlaying.videoId)) {
+			var attributes = {
+				title: nowPlaying.title,
+				thumb: ss_idToImg(nowPlaying.videoId),
+				videoId: nowPlaying.videoId,
+				duration: nowPlaying.duration,
+				author: nowPlaying.author,
+				viewCount: nowPlaying.viewCount
+			}
+			var likesModel = new LikesModel(attributes);
+			window.SurfStreamApp.get("userModel").get("likesCollection").add(likesModel, {
+				at: 0
+			});
+			SocketManagerModel.voteUp(attributes);
+		} else {
+			SocketManagerModel.voteUp();
 		}
-		var likesModel = new LikesModel(attributes);
-		window.SurfStreamApp.get("userModel").get("likesCollection").add(likesModel, {
-			at: 0
-		});
-		SocketManagerModel.voteUp(attributes);
 	},
 
   flipChannel: function(rID, up) {
