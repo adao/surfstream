@@ -1006,10 +1006,10 @@ $(function() {
    $("#search-view").show();
 	 if (withSearchBar) {
 		$("#searchBar").show();
-		$("#searchContainer").css("height", 261);
+		$("#searchContainer").css("height", 257);
 	 } else {
 		$("#searchBar").hide();
-		$("#searchContainer").css("height", 297);
+		$("#searchContainer").css("height", 293);
 	 }
   },
 
@@ -1724,7 +1724,7 @@ $(function() {
 	calculatePlaylistHeight: function() {
 		var pcHeight = $("#playlist-collection").outerHeight(true);
 		var viewHeight = $("#myplaylist").outerHeight(true);
-		$("#playlist-view").css('height', viewHeight - pcHeight);
+		$("#playlist-view").css('height', viewHeight - pcHeight - 5);
 	},
 	
 	highlightView: function() {
@@ -2347,9 +2347,9 @@ $(function() {
 
   render: function(nowPlayingMsg) {
    $(this.el).html(this.chatCellVideoTemplate({
-    videoSrc: ss_idToImg(this.options.videoID),
     title: this.options.videoTitle
    }));
+	 this.$(".videoChatImg").attr("src",ss_idToImg(this.options.videoID));
    return this;
   }
  });
@@ -2383,6 +2383,11 @@ $(function() {
    $("#fullscreen").bind("click", {
     theatre: this
    }, this.fullscreenToggle);
+	 $(document).keyup({theatre: this}, function(e){
+	            if(e.keyCode == 27){
+	               e.data.theatre.fullscreenToggle(e);
+	            }
+	        });
    $("#fullscreenIcon").bind("click", {
     theatre: this
    }, this.fullscreenToggle);
@@ -2441,7 +2446,7 @@ $(function() {
 	 
    $("#slider-line-container").bind('drag', function(event) {
     if (event.target.id == "slider-line" || event.target.id == "slider-line-container" || event.target.id == "slider-line-full") {
-     console.log(event.layerX)
+     $("#slider-ball-dot").show();
      if (event.layerX >= 98) {
       $("#slider-ball").css({
        "margin-left": 89
@@ -2459,6 +2464,9 @@ $(function() {
     });
    });
 
+	 $("#slider-line-container").bind('dragend', function(event) {
+			$("#slider-ball-dot").hide();
+		});
 
 
    $("#slider-line-container").bind('draginit', function(event) {
@@ -3112,13 +3120,12 @@ $(function() {
    $('#shareFB').css('background-image', '/images/fb_small.png');
    $('#shareTwit').css('background-image', '/images/twitter_small.png');
    $('#shareEmail').css('background-image', '/images/email_small.png');
-   $('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
-   $('#copy-button-container').html("<div id=\"copy-button\" style=\"position:relative\"></div>");
+   //$('#copy-button-container').html("<button id=\"copy-button\"></div>");
    this.link = document.URL;
    var clip = new ZeroClipboard.Client();
    clip.setHandCursor(true);
    clip.setText(this.link);
-   clip.glue('copy-button', 'copy-button-container');
+   clip.glue('copy-button-container');
   },
 
   events: {
