@@ -105,8 +105,9 @@ RoomManager = Backbone.Model.extend({
 			if(rooms) { 
 				console.log('[   zion    ][RoomManager] initialize(): fetching rooms from redis...'+rooms)
 				_.each(rooms, function(roomId) {
-					roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
-					roomMgr.roomMap[roomId].set({ name: roomId });
+					//roomMgr.roomMap[roomId] = new models.Room(io, redisClient);
+					//roomMgr.roomMap[roomId].set({ name: roomId });
+					roomMgr.roomMap[roomId] = new models.Room(io, roomId);
 					redisClient.get('room:'+roomId, function(err, reply) {
 						if(err) return;
 						console.log("...getting specific room's info: "+reply)

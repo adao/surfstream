@@ -64,7 +64,6 @@
 		
 		getAndSendRecs: function(socket) {
 			if(this.room) var roomName = this.room.get('name');
-			console.log('our room name is '+roomName)
 																															//we're assuming a lot of videos with these indices
 			redisClient && redisClient.lrange('room:'+roomName+':val:playlist', -15, -1, function(err, reply) {
 				if(err) return;
@@ -76,7 +75,7 @@
 		playFromHistory: function() {
 			var numVideos = this.room.history.recentVids.length;
 			if(numVideos == HIST_NUM_RECENT) {	//history is full, ok to repeat self
-				var videoFromHistory = this.room.history.recentVids.at(indexToGet - 1);	//last video
+				var videoFromHistory = this.room.history.recentVids.at(numVideos - 1);	
 				this.room.vm.play(videoFromHistory);
 			} else {
 				this.fetchYouTubeVideo();
@@ -87,20 +86,19 @@
 			var roomName = this.room.get('name');
 			console.log('['+roomName+'][VAL] playVideo(): num users --> '+this.room.users.length);
 			//if(this.room.users.length == 0 && !this.autoplay) return
-			if(this.room.users.length == 1 && !this.autoplay) { //play from history
+			if(this.room.users.length == 0 && !this.autoplay) { //play from history
 				console.log('['+roomName+'][VAL] playVideo(): no users and not autoplay, playing from history');
 				return this.playFromHistory();	
 			}	
 
-			var rc = this.room.redisClient;
 			var roomName = this.room.get('name');
 			var key = 'room:'+roomName+':val:playlist';
 			
 			var val = this;
-			rc.lpop(key, function(err, reply) {
+			redisClient && redisClient.lpop(key, function(err, reply) {
 				if(val.room.currVideo) return;
 				if(err) {
-					console.log('['+roomName+'][VAL] playVideo() | rc.lpop : ERROR! '+err);
+					console.log('['+roomName+'][VAL] playVideo() | redisClient.lpop : ERROR! '+err);
 					val.autoplay = false;
 					val.fetchYouTubeVideo();
 					return;
@@ -125,7 +123,7 @@
 					if(rawVideo.limit) limit = rawVideo.limit;
 					if(rawVideo.counter < limit) {
 						console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
-						rc.rpush(key, JSON.stringify(rawVideo));
+						redisClient.rpush(key, JSON.stringify(rawVideo));
 					}
 					
 					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
@@ -267,6 +265,7 @@
 			var videoDJ = videoToPlay.get('dj');
 			var videoViewCount = videoToPlay.get('viewCount');
 			var author = videoToPlay.get('author');
+			var thumb = videoToPlay.get('thumb');
 
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
@@ -277,7 +276,8 @@
 				author: author,
 				timeStart: (new Date()).getTime(),
 				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
-				dj: videoToPlay.get('dj')
+				dj: videoToPlay.get('dj'),
+				thumb: thumb
 			});
 			
 			this.room.sockM.announceVideo(videoId, videoDuration, videoViewCount, author, videoTitle, videoDJ);
@@ -290,7 +290,6 @@
 		onVideoEnd: function () {	
 			//add the video the room history
 			if(this.room.currVideo != null) {
-				console.log('['+this.room.get('name')+'][VM] onVideoEnd(): adding video to history : <title,dj>: '+this.room.currVideo.get('title')+','+this.room.currVideo.get('dj'));
 				if(this.room.djs.currDJ) {
 					this.room.djs.currDJ.playlist.moveToBottom(this.room.currVideo.get('videoId'));	
 				}
@@ -303,7 +302,8 @@
 				var	dj = this.room.currVideo.get('dj');
 				var	author = this.room.currVideo.get('author');
 				var viewCount = this.room.currVideo.get('viewCount');
-				console.log(percent);			
+				
+				console.log('['+this.room.get('name')+'][VM] onVideoEnd(): adding video to history : <title,dj,percent>: '+title+','+dj+','+percent);
 				this.room.history.addVideo(videoId, title, duration, viewCount, author, thumb, dj, percent);
 				this.room.clearVideo();
 			}
@@ -344,12 +344,11 @@
 		defaults: {
 			'name': '',
 			'creator': '',
-			'roomId': 0
 		},
-		
-		initialize: function(io, redisClient) {
+
+		initialize: function(io, roomId) {
 			this.io = io;
-			this.redisClient = redisClient;
+			this.set({ name: roomId });
 			this.VAL = new models.VAL(this);
 			this.vm = new models.VideoManager(this, this.VAL);
 			
@@ -600,15 +599,34 @@
 			this.recentVids = new models.VideoCollection(); //holds HIST_NUM_RECENT vids max
 			this.skippedVideos = new models.VideoCollection();
 			this.dankVids = new models.VideoCollection(); //holds 10
-			this.size = -1;	//to signify no redis read
-			this.setSize();
 			
-			// redisClient && redisClient.lrange("user:" + userId + ":likes", 0, -1, 
-			// function(err, reply) {
-			// 	if(err) {
-			// 		console.log('')
-			// 	}
-			// });
+			if(this.room) {
+				var roomName = this.room.get('name');
+				var hist = this;
+				redisClient && redisClient.lrange('room:'+roomName+':history', 0, HIST_NUM_RECENT, function(err, reply) {
+					if(err) {
+						console.log('['+roomName+'] [Hist] Error initializing rooms: '+err)
+						return;
+					}
+					//console.log('['+roomName+'] [Hist] initializing rooms: '+reply)
+					for(var i=0; i < reply.length; i++) {
+						var video = reply[i];
+						video = JSON.parse(video);
+						//console.log('['+roomName+'] [Hist] video title: '+video['title'] +' dur: '+video['duration']+' author: '+video['author'] +' thumb: '+video['thumb'])
+						
+						if(video['videoId'] && video['title'] && video['duration'] && video['author'] && video['thumb']) {
+							hist.recentVids.add(new models.Video({
+								videoId: video['videoId'],
+								title: video['title'],
+								duration: video['duration'],
+								author: video['author'],
+								thumb: video['thumb']
+							}));
+						}
+					}
+					
+				});
+			}
 		},
 		
 		addToDankVids: function(video) {
@@ -618,17 +636,17 @@
 		},
 		
 		setSize: function() {
-			if(!redisClient || !this.room) return;
-			var hist = this;
-			var roomName = this.room.get('name');
-		 	redisClient.llen('room:'+roomName+':history', function(err, len) {
-				if(err) {
-					console.log('['+roomName+'] [Hist] initialize(): Error in getting history length: '+err)
-					return;
-				}
-				console.log('setting size of room history for room '+roomName+', size is '+len);
-				hist.size = len;
-			});
+			// if(!redisClient || !this.room) return;
+			// var hist = this;
+			// var roomName = this.room.get('name');
+			// 		 	this.room.redisClient.llen('room:'+roomName+':history', function(err, len) {
+			// 	if(err) {
+			// 		console.log('['+roomName+'] [Hist] initialize(): Error in getting history length: '+err)
+			// 		return;
+			// 	}
+			// 	console.log('setting size of room history for room '+roomName+', size is '+len);
+			// 	hist.size = len;
+			// });
 		},
 		
 		getGoodVideo: function(lookBackNum) {
@@ -672,7 +690,7 @@
 			if(this.recentVids.length >= HIST_NUM_RECENT)
 				this.recentVids.remove(this.recentVids.at(this.recentVids.length-1)); //remove the oldest video
 			this.recentVids.add(videoToAdd, { at: 0 });
-			this.room.redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
+			redisClient && redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
 
 			// if(this.size >= 0) { 			//not working, figure out why llen above in setSize doesn't work
 			// 	this.size = this.size + 1;
