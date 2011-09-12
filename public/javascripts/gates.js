@@ -1969,9 +1969,33 @@ $(function() {
    }, this.toTheTop);
    this.options.playlistItemModel.bind("remove", this.removeFromList, this);
   },
+	
+	initializeViewToTopAndGrow: function() {
+   var buttonRemove, buttonToTop, videoID;
+   //Hack because of nested view bindings part 2 (events get eaten by Sidebar)
+   this.render();
+	 $(this.el).css("display", "none");
+   $("#video-list-container").prepend(this.el);
+	 $("#video-list-container").find(".videoListCellContainer").slideDown(500);
+   videoID = this.options.playlistItemModel.get("videoId");
+   buttonRemove = $("#remove_video_" + videoID);
+   buttonRemove.bind("click", {
+    videoModel: this.options.playlistItemModel,
+    playlistCollection: this.options.playlistItemModel.collection
+   }, this.removeFromPlaylist);
+   buttonToTop = $("#send_to_top_" + videoID);
+   buttonToTop.bind("click", {
+    videoModel: this.options.playlistItemModel,
+    playlistCollection: this.options.playlistItemModel.collection,
+    context: this
+   }, this.toTheTop);
+   this.options.playlistItemModel.bind("remove", this.removeFromList, this);
+  },
 
   removeFromPlaylist: function(event) {
-   $(this).parent().parent().parent().remove();
+   $(this).parent().parent().parent().slideUp(500, function() {
+		$(this).remove();
+	 });
    var playlistFrom = window.SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylist[event.data.videoModel.get("playlistId")];
    playlistFrom.removeFromPlaylist(event.data.videoModel.get("videoId"));
   },
@@ -1982,7 +2006,9 @@ $(function() {
    if (collectionReference.at(0).get("videoId") == event.data.videoModel.get("videoId")) {
     return;
    }
-   $(this).parent().parent().parent().remove();
+   $(this).parent().parent().parent().slideUp(500, function() {
+		$(this).remove();
+	 });
    var playlistModelToRemove = ss_modelWithAttribute(collectionReference, "videoId", event.data.videoModel.get("videoId"));
    collectionReference.remove(playlistModelToRemove);
    collectionReference.add(copyPlaylistItemModel, {
@@ -1995,7 +2021,7 @@ $(function() {
     playlistId: event.data.videoModel.get("playlistId"),
     id: event.data.videoModel.get("videoId")
    });
-   playlistCellView.initializeViewToTop(true);
+   playlistCellView.initializeViewToTopAndGrow();
    window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setNotificationText();
   },
 
@@ -2432,9 +2458,11 @@ $(function() {
 
 
    function(e) {
-    if (e.relatedTarget.id == "fullscreenIcon" || e.relatedTarget.className == '.video-div-proxy') {
-     return;
-    }
+		if (e.relatedTarget) {
+	    if (e.relatedTarget.id == "fullscreenIcon" || e.relatedTarget.className == '.video-div-proxy') {
+	     return;
+	    }
+		}
     $("#fullscreenIcon").stop()
     $("#now-playing-tv").stop()
     $("#time-elapsed-bar").stop()
@@ -3150,16 +3178,11 @@ $(function() {
    FB.ui({
     method: 'feed',
     display: 'popup',
-    name: 'Surfstreaming',
+    name: 'Surfstream',
     link: this.link,
     caption: 'StreamSurfin all day',
     description: 'Streamsurfin'
    }, function(response) {
-    if (response && response.post_id) {
-     alert('Post was published.');
-    } else {
-     alert('Post was not published.');
-    }
    });
   },
 
@@ -3168,7 +3191,7 @@ $(function() {
        height = 400,
        left = ($(window).width() - width) / 2,
        top = ($(window).height() - height) / 2,
-       url = "http://twitter.com/share?text=Check%20out%20this%20awesome%20room!",
+       url = "http://twitter.com/share?text=Check%20out%20this%20channel",
        opts = 'status=1' + ',width=' + width + ',height=' + height + ',top=' + top + ',left=' + left;
 
    window.open(url, 'twitter', opts);
