@@ -186,7 +186,7 @@ div#outer
 					#searchContainer
 						overflow-y: scroll
 						overflow-x: hidden
-						height: 261px
+						height: 256px
 						width: 300px
 					#searchBar
 						height: 36px;
@@ -1212,8 +1212,18 @@ div#top-video-name
 	color: #008AB8
 	vertical-align: top
 	font-weight: bold
+	-moz-box-shadow:inset 0 0 4px #008AB8;
+	-webkit-box-shadow:inset 0 0 4px #008AB8;
+	box-shadow:inset 0 0 4px #008AB8;
+	button
+		background: url('/images/room/newicons/delete-playlist.png') 50% 50% no-repeat
+.selected-playlist-nameholder:hover
+	button
+		background: url('/images/room/newicons/delete-playlist-selected.png') 50% 50% no-repeat
 	
 .youtube-nameholder, .channel-history-nameholder, .likes-nameholder
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(silver))
+	background: -moz-linear-gradient(top, #eee, silver)
 	-webkit-border-radius: 2px
 	height: 22px
 	vertical-align: top
@@ -1238,24 +1248,10 @@ div#top-video-name
 	margin-top: 1px
 	
 	
-.playlist-nameholder.selected-youtube-nameholder
-	background: -webkit-gradient(linear, left top, left bottom, from(#8D8D8D), to(silver))
-	background: -moz-linear-gradient(top,  #8D8D8D,  silver)
-	background-image: -o-linear-gradient(top, #8D8D8D, silver)
-	color: black
-	vertical-align: top
-	
-.playlist-nameholder.selected-channel-history-nameholder
-	background: -webkit-gradient(linear, left top, left bottom, from(#8D8D8D), to(silver))
-	background: -moz-linear-gradient(top,  #8D8D8D,  silver)
-	background-image: -o-linear-gradient(top, #8D8D8D, silver)
-	color: black
-	vertical-align: top
-
-.playlist-nameholder.selected-likes-nameholder
-	background: -webkit-gradient(linear, left top, left bottom, from(#8D8D8D), to(silver))
-	background: -moz-linear-gradient(top,  #8D8D8D,  silver)
-	background-image: -o-linear-gradient(top, #8D8D8D, silver)
+.playlist-nameholder.selected-youtube-nameholder, .playlist-nameholder.selected-channel-history-nameholder, .playlist-nameholder.selected-likes-nameholder
+	background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#eee))
+	background: -moz-linear-gradient(top, silver, #eee)
+	background-image: -o-linear-gradient(top, silver, #eee)
 	color: black
 	vertical-align: top
 	
@@ -2211,9 +2207,9 @@ a#fdbk_tab
 	width: 83px
 	background-color: #c0c0c0
 	color: #585858
-	background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d))
-	background: -moz-linear-gradient(top,  #c0c0c0,  #8d8d8d)
-	background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d)
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(silver))
+	background: -moz-linear-gradient(top,  #eee,  silver)
+	background-image: -o-linear-gradient(top, #eee, silver)
 	border-radius: 2px
 	-webkit-border-radius: 2px
 	-moz-border-radius: 2px
