@@ -183,6 +183,7 @@ div#outer
 							margin-left: -167px
 							margin-top: 6px
 				#search-view
+					z-index:3
 					#searchContainer
 						overflow-y: scroll
 						overflow-x: hidden
@@ -241,6 +242,8 @@ div#outer
 	max-width: 300px
 	max-height: 220px
 	display: block
+	position: absolute
+	z-index:5
 	.chatHeader {
 		width: 300px
 		height: 30px
@@ -1661,7 +1664,7 @@ div#top-video-name
 		width: 100%
 	                 
 #close-preview-player 
-	margin-top: -32px;
+	margin-top: -36px;
 	position: absolute;
 	margin-left: 88px;
 	height: 24px;
@@ -1680,11 +1683,10 @@ div#top-video-name
 		color: #E7E7E7
 	
 #previewContainer
-	display: none
-	height: 213px
+	height: 213px;
 	position: relative;
-	top: -187px;
-	
+	z-index: 4;
+	border-top: 1px solid grey;
 .default
 	position: absolute
 

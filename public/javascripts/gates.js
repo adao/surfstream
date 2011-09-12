@@ -956,7 +956,7 @@ $(function() {
     source: this.suggestionList,
     select: function(event, ui) {
      console.log(ui.item.value);
-
+		 
     }
    });
    $("#youtubeInput").bind("autocompleteselect", {
@@ -975,7 +975,7 @@ $(function() {
     $("#youtubeInput").autocomplete("close");
    });
 
-/*   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
+   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
     if (event.type == "mouseover") {
      if (cell.currentTarget.className == "videoInfo") {
       $(cell.currentTarget.parentNode.parentNode.children[1]).show();
@@ -990,7 +990,7 @@ $(function() {
       $(cell.currentTarget.nextSibling).hide();
      }
     }
-   });*/
+   });
   },
 
   render: function() {
@@ -1125,28 +1125,14 @@ $(function() {
    $(window.YTPlayerTwo).css({
     'height': 187
    });
-   $("#previewContainer").css({
-    'height': 213
-   });
+
    $("#previewContainer").animate({
-    'top': 64
+    'top': -187
    });
-   if ($("#searchContainer").css("height") != "125px") {
-    //wait for search to resize before setting scrollTop
-    var cell = this;
     $("#searchContainer").animate({
-     'height': 125,
-     "margin-top": 187
-    }, function() {
-     $("#searchContainer").animate({
-      "scrollTop": cell.offsetTop - 340
-     });
+     "scrollTop": 0 + (this.offsetTop - 211)
     });
-   } else {
-    $("#searchContainer").animate({
-     "scrollTop": this.offsetTop - 340
-    });
-   }
+   
 
    window.YTPlayerTwo.loadVideoById(videoID);
   },
@@ -1261,7 +1247,7 @@ $(function() {
     var atts = {
      id: "YouTubePlayerTwo",
     };
-    swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo", "preview-player", "299", "183", "8", null, null, params, atts);
+    swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo", "preview-player", "300", "183", "8", null, null, params, atts);
    }
   },
 
@@ -1277,11 +1263,9 @@ $(function() {
 	          window.YTPlayerTwo.stopVideo();
 	      }
 	
-   $("#searchContainer").animate({'height': 320, "margin-top":0}, 500);
-	 $("#previewContainer").animate({'top': -187}, 500);
-   // $("#searchContainer").animate({
-   // height: 360
-   // }, "slow");
+   //$("#searchContainer").animate({'height': 320, "margin-top":0}, 500);
+	 $("#previewContainer").animate({'top': 0}, 500);
+
   }
  });
 
@@ -1755,6 +1739,11 @@ $(function() {
 	
 	deactivateNameholder: function() {
 		$(this.el).removeClass("selected-youtube-nameholder");
+		if(typeof(window.YTPlayerTwo.stopVideo) != "undefined") {
+		          window.YTPlayerTwo.stopVideo();
+		 }
+
+		 $("#previewContainer").css({'top': 0});
 	}
  });
  window.ChannelHistoryNameholderView = Backbone.View.extend({
@@ -1779,6 +1768,11 @@ $(function() {
 	
 	deactivateNameholder: function() {
 		$(this.el).removeClass("selected-channel-history-nameholder");
+			if(typeof(window.YTPlayerTwo.stopVideo) != "undefined") {
+			          window.YTPlayerTwo.stopVideo();
+			 }
+
+			 $("#previewContainer").css({'top': 0});
 	}
  });
  window.LikesNameholderView = Backbone.View.extend({
@@ -1803,6 +1797,11 @@ $(function() {
 	
 	deactivateNameholder: function() {
 		$(this.el).removeClass("selected-likes-nameholder");
+			if(typeof(window.YTPlayerTwo.stopVideo) != "undefined") {
+			          window.YTPlayerTwo.stopVideo();
+			 }
+
+			 $("#previewContainer").css({'top': 0}, 500);
 	}
  });
  window.PlaylistView = Backbone.View.extend({
@@ -2782,7 +2781,7 @@ $(function() {
 
    //NEED BOUNDS CHECK HERE TODO
    $("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + 10 + "px");
-   if (!cur_is_dj) {
+   if (!cur_is_dj && djArray.length != 3) {
     $("#become-dj").show();
    } else {
     $("#become-dj").hide();

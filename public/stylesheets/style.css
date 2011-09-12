@@ -215,6 +215,9 @@ margin
   margin-left: -167px;
   margin-top: 6px;
 }
+#outer #coolshit #right-side .sidebarContainer #search-view {
+  z-index: 3;
+}
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -277,6 +280,8 @@ margin
   max-width: 300px;
   max-height: 220px;
   display: block;
+  position: absolute;
+  z-index: 5;
 }
 .chatContainer .chatHeader {
   width: 300px;
@@ -1910,7 +1915,7 @@ background-color: green,
   width: 100%;
 }
 #close-preview-player {
-  margin-top: -32px;
+  margin-top: -36px;
   position: absolute;
   margin-left: 88px;
   height: 24px;
@@ -1931,10 +1936,10 @@ background-color: green,
   color: #e7e7e7;
 }
 #previewContainer {
-  display: none;
   height: 213px;
   position: relative;
-  top: -187px;
+  z-index: 4;
+  border-top: 1px solid #808080;
 }
 .default {
   position: absolute;

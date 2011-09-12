@@ -896,7 +896,7 @@
 					console.log("\n\nERROR in getting user "+userId+"'s avatar!\n");
 				} else {
 					avatarData = reply;
-					//console.log('getting avatar for user '+userId+', reply: '+reply);
+				  console.log('getting avatar for user '+userId+', reply: '+reply);
 					if(reply != 'undefined' && reply != null) {
 						avatarData = reply.split(',');
 						userObj.set({avatar: avatarData});
