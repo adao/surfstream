@@ -145,6 +145,9 @@ div#frontdoor {
 div#outer {
   display: none;
 }
+.align-text {
+  line-height: 172%;
+}
 #outer {
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   weight: bold;
@@ -964,7 +967,6 @@ button.search.active {
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   font-weight: bold;
   vertical-align: top;
-  text-indent: -2px;
 }
 .buttonContainer {
   display: inline-block;
@@ -2095,10 +2097,12 @@ background-color: green,
 }
 #become-dj-txt #play-text {
   margin-left: 10px;
+  line-height: 153%;
 }
 #become-dj-txt #videos-text {
   display: block;
   margin-left: 4px;
+  line-height: 50%;
 }
 #fullscreen.fully {
   background: rgba(255,255,255,0.3);
