@@ -145,6 +145,9 @@ div#frontdoor {
 div#outer {
   display: none;
 }
+.align-text {
+  line-height: 172%;
+}
 #outer {
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   weight: bold;
@@ -198,10 +201,24 @@ div#outer {
   -moz-border-top-right-radius: 2px !important;
   -webkit-border-top-right-radius: 2px !important;
 }
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist #playlist-icon {
+  display: inline-block;
+  float: left;
+  margin-top: 2px;
+  margin-left: 3px;
+margin
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist #playlistTitle {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: -167px;
+  margin-top: 6px;
+}
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 261px;
+  height: 256px;
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar {
@@ -801,7 +818,7 @@ button.search.active {
 .videoView {
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #d4d4d4;
-  height: 388px;
+  height: 383px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -950,7 +967,6 @@ button.search.active {
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   font-weight: bold;
   vertical-align: top;
-  text-indent: -2px;
 }
 .buttonContainer {
   display: inline-block;
@@ -1341,6 +1357,9 @@ background-color: green,
   background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#c0c0c0));
   background: -moz-linear-gradient(top, #fff, #c0c0c0);
   background-image: -o-linear-gradient(top, #fff, #c0c0c0);
+  -moz-box-shadow: 0 0 6px #fff;
+  -webkit-box-shadow: 0 0 6px #fff;
+  box-shadow: 0 0 6px #fff;
 }
 .nameholder-input {
   vertical-align: top;
@@ -1368,10 +1387,21 @@ background-color: green,
   color: #008ab8;
   vertical-align: top;
   font-weight: bold;
+  -moz-box-shadow: inset 0 0 4px #008ab8;
+  -webkit-box-shadow: inset 0 0 4px #008ab8;
+  box-shadow: inset 0 0 4px #008ab8;
+}
+.selected-playlist-nameholder button {
+  background: url("/images/room/newicons/delete-playlist.png") 50% 50% no-repeat;
+}
+.selected-playlist-nameholder:hover button {
+  background: url("/images/room/newicons/delete-playlist-selected.png") 50% 50% no-repeat;
 }
 .youtube-nameholder,
 .channel-history-nameholder,
 .likes-nameholder {
+  background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #eee, #c0c0c0);
   -webkit-border-radius: 2px;
   height: 22px;
   vertical-align: top;
@@ -1397,24 +1427,12 @@ background-color: green,
   vertical-align: top;
   margin-top: 1px;
 }
-.playlist-nameholder.selected-youtube-nameholder {
-  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
-  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
-  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
-  color: #000;
-  vertical-align: top;
-}
-.playlist-nameholder.selected-channel-history-nameholder {
-  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
-  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
-  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
-  color: #000;
-  vertical-align: top;
-}
+.playlist-nameholder.selected-youtube-nameholder,
+.playlist-nameholder.selected-channel-history-nameholder,
 .playlist-nameholder.selected-likes-nameholder {
-  background: -webkit-gradient(linear, left top, left bottom, from(#8d8d8d), to(#c0c0c0));
-  background: -moz-linear-gradient(top, #8d8d8d, #c0c0c0);
-  background-image: -o-linear-gradient(top, #8d8d8d, #c0c0c0);
+  background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#eee));
+  background: -moz-linear-gradient(top, #c0c0c0, #eee);
+  background-image: -o-linear-gradient(top, #c0c0c0, #eee);
   color: #000;
   vertical-align: top;
 }
@@ -1431,9 +1449,10 @@ background-color: green,
 #playlist-collection {
   max-height: 91px;
   font-size: 10px;
-  background-color: #434343;
+  background-color: #313131;
   overflow-y: scroll;
   overflow-x: hidden;
+  border-bottom: 1px solid #666;
 }
 #playlist-collection-form {
   width: 0px;
@@ -1470,6 +1489,7 @@ background-color: green,
 #playlist-view {
   overflow-y: scroll;
   overflow-x: hidden;
+  max-height: 293px;
   z-index: -1;
 }
 #playlist-view .playlistCellButtonText {
@@ -2079,10 +2099,12 @@ background-color: green,
 }
 #become-dj-txt #play-text {
   margin-left: 10px;
+  line-height: 153%;
 }
 #become-dj-txt #videos-text {
   display: block;
   margin-left: 4px;
+  line-height: 50%;
 }
 #fullscreen.fully {
   background: rgba(255,255,255,0.3);
@@ -2520,9 +2542,9 @@ a#fdbk_tab {
   width: 83px;
   background-color: #c0c0c0;
   color: #585858;
-  background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
-  background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
-  background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
+  background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#c0c0c0));
+  background: -moz-linear-gradient(top, #eee, #c0c0c0);
+  background-image: -o-linear-gradient(top, #eee, #c0c0c0);
   border-radius: 2px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
