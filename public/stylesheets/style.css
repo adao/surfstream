@@ -198,6 +198,20 @@ div#outer {
   -moz-border-top-right-radius: 2px !important;
   -webkit-border-top-right-radius: 2px !important;
 }
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist #playlist-icon {
+  display: inline-block;
+  float: left;
+  margin-top: 2px;
+  margin-left: 3px;
+margin
+}
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist #playlistTitle {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: -167px;
+  margin-top: 6px;
+}
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -801,7 +815,7 @@ button.search.active {
 .videoView {
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #d4d4d4;
-  height: 388px;
+  height: 383px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -1431,9 +1445,10 @@ background-color: green,
 #playlist-collection {
   max-height: 91px;
   font-size: 10px;
-  background-color: #434343;
+  background-color: #313131;
   overflow-y: scroll;
   overflow-x: hidden;
+  border-bottom: 1px solid #666;
 }
 #playlist-collection-form {
   width: 0px;
@@ -1470,6 +1485,7 @@ background-color: green,
 #playlist-view {
   overflow-y: scroll;
   overflow-x: hidden;
+  max-height: 293px;
   z-index: -1;
 }
 #playlist-view .playlistCellButtonText {
