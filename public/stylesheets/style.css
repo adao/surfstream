@@ -1357,6 +1357,9 @@ background-color: green,
   background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#c0c0c0));
   background: -moz-linear-gradient(top, #fff, #c0c0c0);
   background-image: -o-linear-gradient(top, #fff, #c0c0c0);
+  -moz-box-shadow: 0 0 6px #fff;
+  -webkit-box-shadow: 0 0 6px #fff;
+  box-shadow: 0 0 6px #fff;
 }
 .nameholder-input {
   vertical-align: top;
