@@ -178,11 +178,11 @@ div#outer
 							margin-left: 3px
 							margin
 						#playlistTitle
-							display: inline-block
+							float: left
 							font-size: 16px
 							font-weight: bold
-							margin-left: -167px
 							margin-top: 6px
+							margin-left: 11px
 				#search-view
 					z-index:3
 					#searchContainer
@@ -1264,8 +1264,10 @@ div#top-video-name
 	vertical-align: top
 	
 .playlist-hover-highlight
-	background: #141414
-	color: silver
+	color: white
+	background: #34C8FF
+	background: -moz-linear-gradient(top, #34C8FF, #008AB8)
+	background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
 	
 #playlist-collection-display
 	border: none
@@ -1279,7 +1281,10 @@ div#top-video-name
 	background-color: #313131
 	overflow-y: scroll
 	overflow-x: hidden
-	border-bottom: 1px solid #666  
+	border-bottom: 1px solid #666
+	
+.playlist-collection-active
+  background-color: #4C4C4C!important
 	
 #playlist-collection-form
 	width: 0px
