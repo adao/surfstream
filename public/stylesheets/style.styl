@@ -1,9 +1,11 @@
 @font-face
-	font-family: "cats"
-	src: url('/resources/cats.ttf') format("truetype")
-
-FontFamily = "Segoe UI", "cats", Candara,"Bitstream Vera Sans","Helvetica","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
-
+	font-family: "custom"
+	src: url(/resources/candara.ttf) format("truetype");
+@font-face
+	font-family: "custom"
+	src: url(/resources/candarabold.ttf) format("truetype");
+	font-weight: bold
+FontFamily = "custom", "Segoe UI", "Bitstream Vera Sans","DejaVu Sans","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
 .tipsy
 	font-family: FontFamily
 body
@@ -99,7 +101,7 @@ button
 	width: 638px
 	z-index: 50
 	position: absolute
-	margin-top: 397px
+	margin-top: 10px
 	margin-left: 11px
 #time-total-bar
 	background-color: silver
@@ -119,6 +121,9 @@ div#frontdoor
 	display: none
 div#outer
 	display: none
+	
+.align-text
+	line-height: 172%
 //skeleton
 #outer
 	font-family: FontFamily
@@ -161,16 +166,27 @@ div#outer
 						text-align: center!important
 						width: 300px!important
 						height: 30px!important
-						box-shadow: inset 0 0 2px #000000;
 						float: left
 						border-top-right-radius: 2px!important
 						-moz-border-top-right-radius: 2px!important
 						-webkit-border-top-right-radius: 2px!important
+						#playlist-icon
+							display: inline-block
+							float: left
+							margin-top: 2px
+							margin-left: 3px
+							margin
+						#playlistTitle
+							display: inline-block
+							font-size: 16px
+							font-weight: bold
+							margin-left: -167px
+							margin-top: 6px
 				#search-view
 					#searchContainer
 						overflow-y: scroll
 						overflow-x: hidden
-						height: 261px
+						height: 256px
 						width: 300px
 					#searchBar
 						height: 36px;
@@ -474,6 +490,7 @@ div.historyContainer
 .searchCellContainer
 	width: 285px
 	height: 80px
+	cursor: n-resize
 	.thumbContainer
 		float: left
 		width: 75px
@@ -497,7 +514,7 @@ div.historyContainer
 			padding-left: 7px
 			.title
 				overflow-y: hidden
-				margin-top: 8px
+				margin-top: 10px
 				width: 192px
 				height: 38px
 				font-weight: bold
@@ -509,7 +526,7 @@ div.historyContainer
 			.duration
 				position: relative
 				margin-left: -82px
-				margin-top: 12px
+				margin-top: 10px
 				font-size: 10px
 				background: rgba(0, 0, 0, .8);
 				width: 75px
@@ -524,12 +541,11 @@ div.historyContainer
 				pointer-events: none
 				span
 					font-family: FontFamily
-					margin-left: 3px
+					margin-left: 1px
 			.author
 				position: relative
 				top: -36px
-				font-size: 11px
-				cursor: pointer
+				font-size: 11px 
 				float: left
 		.cellButtons
 			float: right
@@ -686,7 +702,7 @@ img.share-email-image
 
 #share, #shareBar
 	float: right
-	width: 215px
+	width: 214px
 	height: 40px
 	color: black
 	.share
@@ -695,7 +711,7 @@ img.share-email-image
 		color: #B2B2B2
 		font-size: 16px
 		font-weight: bold
-		width: 102px
+		width: 103px
 		height: 22px
 		display: inline-block
 	#social
@@ -713,7 +729,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .videoView
 	font-family: FontFamily
 	color: #D4D4D4
-	height: 388px
+	height: 383px
 	width: 300px
 	overflow-x: hidden 
 	overflow-y: hidden
@@ -1170,7 +1186,9 @@ div#top-video-name
 	background: -webkit-gradient(linear, left top, left bottom, from(white), to(silver))
 	background: -moz-linear-gradient(top,  white,  silver)
 	background-image: -o-linear-gradient(top, white, silver)
-	
+	-moz-box-shadow: 0 0 6px white;
+	-webkit-box-shadow: 0 0 6px white;
+	box-shadow: 0 0 6px white;
 .nameholder-input
 	vertical-align: top
 	display: inline-block
@@ -1197,8 +1215,18 @@ div#top-video-name
 	color: #008AB8
 	vertical-align: top
 	font-weight: bold
+	-moz-box-shadow:inset 0 0 4px #008AB8;
+	-webkit-box-shadow:inset 0 0 4px #008AB8;
+	box-shadow:inset 0 0 4px #008AB8;
+	button
+		background: url('/images/room/newicons/delete-playlist.png') 50% 50% no-repeat
+.selected-playlist-nameholder:hover
+	button
+		background: url('/images/room/newicons/delete-playlist-selected.png') 50% 50% no-repeat
 	
 .youtube-nameholder, .channel-history-nameholder, .likes-nameholder
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(silver))
+	background: -moz-linear-gradient(top, #eee, silver)
 	-webkit-border-radius: 2px
 	height: 22px
 	vertical-align: top
@@ -1223,24 +1251,10 @@ div#top-video-name
 	margin-top: 1px
 	
 	
-.playlist-nameholder.selected-youtube-nameholder
-	background: -webkit-gradient(linear, left top, left bottom, from(#8D8D8D), to(silver))
-	background: -moz-linear-gradient(top,  #8D8D8D,  silver)
-	background-image: -o-linear-gradient(top, #8D8D8D, silver)
-	color: black
-	vertical-align: top
-	
-.playlist-nameholder.selected-channel-history-nameholder
-	background: -webkit-gradient(linear, left top, left bottom, from(#8D8D8D), to(silver))
-	background: -moz-linear-gradient(top,  #8D8D8D,  silver)
-	background-image: -o-linear-gradient(top, #8D8D8D, silver)
-	color: black
-	vertical-align: top
-
-.playlist-nameholder.selected-likes-nameholder
-	background: -webkit-gradient(linear, left top, left bottom, from(#8D8D8D), to(silver))
-	background: -moz-linear-gradient(top,  #8D8D8D,  silver)
-	background-image: -o-linear-gradient(top, #8D8D8D, silver)
+.playlist-nameholder.selected-youtube-nameholder, .playlist-nameholder.selected-channel-history-nameholder, .playlist-nameholder.selected-likes-nameholder
+	background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#eee))
+	background: -moz-linear-gradient(top, silver, #eee)
+	background-image: -o-linear-gradient(top, silver, #eee)
 	color: black
 	vertical-align: top
 	
@@ -1257,9 +1271,10 @@ div#top-video-name
 #playlist-collection
 	max-height: 91px
 	font-size: 10px
-	background-color: #434343
+	background-color: #313131
 	overflow-y: scroll
-	overflow-x: hidden  
+	overflow-x: hidden
+	border-bottom: 1px solid #666  
 	
 #playlist-collection-form
 	width: 0px
@@ -1297,6 +1312,7 @@ div#top-video-name
 #playlist-view
 	overflow-y: scroll
 	overflow-x: hidden
+	max-height: 293px
 	z-index: -1
 	.playlistCellButtonText
 		font-size: 18px
@@ -1634,10 +1650,10 @@ div#top-video-name
 	width: 250px
 	margin-top: 5px
 	background-color: #E7E7E7
+	font-family: FontFamily
 	li.ui-menu-item
 		margin-left: -40px
 		width: 290px
-		font-weight: bold
 	li .ui-corner-all
 		display: block
 		width: 100%
@@ -1816,9 +1832,11 @@ div#top-video-name
 	color: #373737
 	#play-text
 		margin-left: 10px
+		line-height: 153%
 	#videos-text
 		display: block
 		margin-left: 4px
+		line-height: 50%
 		
 #fullscreen.fully
 	background: rgba(255, 255, 255, .3)
@@ -2202,9 +2220,9 @@ a#fdbk_tab
 	width: 83px
 	background-color: #c0c0c0
 	color: #585858
-	background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d))
-	background: -moz-linear-gradient(top,  #c0c0c0,  #8d8d8d)
-	background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d)
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(silver))
+	background: -moz-linear-gradient(top,  #eee,  silver)
+	background-image: -o-linear-gradient(top, #eee, silver)
 	border-radius: 2px
 	-webkit-border-radius: 2px
 	-moz-border-radius: 2px

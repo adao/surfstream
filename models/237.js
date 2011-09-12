@@ -64,7 +64,6 @@
 		
 		getAndSendRecs: function(socket) {
 			if(this.room) var roomName = this.room.get('name');
-			console.log('our room name is '+roomName)
 																															//we're assuming a lot of videos with these indices
 			redisClient && redisClient.lrange('room:'+roomName+':val:playlist', -15, -1, function(err, reply) {
 				if(err) return;
@@ -73,20 +72,33 @@
 			})	
 		},
 		
+		playFromHistory: function() {
+			var numVideos = this.room.history.recentVids.length;
+			if(numVideos == HIST_NUM_RECENT) {	//history is full, ok to repeat self
+				var videoFromHistory = this.room.history.recentVids.at(numVideos - 1);	
+				this.room.vm.play(videoFromHistory);
+			} else {
+				this.fetchYouTubeVideo();
+			}
+		},
+	
 		playVideo: function() {
 			var roomName = this.room.get('name');
 			console.log('['+roomName+'][VAL] playVideo(): num users --> '+this.room.users.length);
-			if(this.room.users.length == 0 && !this.autoplay) return;
+			//if(this.room.users.length == 0 && !this.autoplay) return
+			if(this.room.users.length == 0 && !this.autoplay) { //play from history
+				console.log('['+roomName+'][VAL] playVideo(): no users and not autoplay, playing from history');
+				return this.playFromHistory();	
+			}	
 
-			var rc = this.room.redisClient;
 			var roomName = this.room.get('name');
 			var key = 'room:'+roomName+':val:playlist';
 			
 			var val = this;
-			rc.lpop(key, function(err, reply) {
+			redisClient && redisClient.lpop(key, function(err, reply) {
 				if(val.room.currVideo) return;
 				if(err) {
-					console.log('['+roomName+'][VAL] playVideo() | rc.lpop : ERROR! '+err);
+					console.log('['+roomName+'][VAL] playVideo() | redisClient.lpop : ERROR! '+err);
 					val.autoplay = false;
 					val.fetchYouTubeVideo();
 					return;
@@ -111,7 +123,7 @@
 					if(rawVideo.limit) limit = rawVideo.limit;
 					if(rawVideo.counter < limit) {
 						console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
-						rc.rpush(key, JSON.stringify(rawVideo));
+						redisClient.rpush(key, JSON.stringify(rawVideo));
 					}
 					
 					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
@@ -124,31 +136,7 @@
 			});
 		},
 		
-		fetchYouTubeVideo: function() {
-			if(this.room.history.length == 0) return;
-			
-			//choose video to base it on
-			// var lookBackNum = 3;
-			// 			if (this.room.history.length < lookBackNum) lookBackNum = this.room.history.length;
-			// 			var randInt = Math.floor(Math.random()*lookBackNum + 1);	//between 1 and lookBackNum, inclusive
-			// 			
-			// 			var recentVideo = this.room.history.at(this.room.history.length - randInt);
-			// 			if(!recentVideo) {
-			// 				console.log("ERROR No video found. You should never see this message! ");
-			// 				return;
-			// 			}
-			var lookBackNum = this.room.djs.length;
-			if(lookBackNum <= 0) lookBackNum = 3;
-			var recentVideo = this.room.history.getGoodVideo(lookBackNum);
-			if(!recentVideo) {
-				console.log('error! recentVid is '+recentVideo+', returning')
-				return;
-			}
-			var videoId = recentVideo.get('videoId');
-			
-			var roomName = this.room.get('name');
-			console.log('['+roomName+'][VAL] fetchYouTubeVideo(): basing recommendation off of video '+recentVideo.get('title'));
-			
+		fetchRelatedVideos: function(videoId) {
 			var options = { 
 				host: 'gdata.youtube.com',
 				port: 80,
@@ -166,7 +154,7 @@
 			
 				res.on('end', function() {
 					if(room.currVideo != null) {
-						console.log('['+roomName+'][VAL] fetchYouTubeVideo(): VAL just finished the request for fetching vid '+
+						console.log('['+roomName+'][VAL] fetchRelatedVideos(): VAL just finished the request for fetching vid '+
 							', but there\'s another video playing! Someone must have gotten back on the couch...ending this request');
 						return;
 					}
@@ -221,6 +209,24 @@
 			  console.log('['+roomName+'][VAL] playVideo(): *** ERROR *** ' + e.message);
 			});
 			req.end();
+		},
+		
+		fetchYouTubeVideo: function() {
+			if(this.room.history.length == 0) return;
+			
+			var lookBackNum = this.room.djs.length;
+			if(lookBackNum <= 0) lookBackNum = 3;
+			var recentVideo = this.room.history.getGoodVideo(lookBackNum);
+			if(!recentVideo) {
+				console.log('error! recentVid is '+recentVideo+', returning')
+				return;
+			}
+			var videoId = recentVideo.get('videoId');
+			
+			var roomName = this.room.get('name');
+			console.log('['+roomName+'][VAL] fetchYouTubeVideo(): basing recommendation off of video '+recentVideo.get('title'));
+
+			this.fetchRelatedVideos(videoId);
 		}
 		
 	});
@@ -259,6 +265,7 @@
 			var videoDJ = videoToPlay.get('dj');
 			var videoViewCount = videoToPlay.get('viewCount');
 			var author = videoToPlay.get('author');
+			var thumb = videoToPlay.get('thumb');
 
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
@@ -269,7 +276,8 @@
 				author: author,
 				timeStart: (new Date()).getTime(),
 				timeoutId: setTimeout(function() { vm.onVideoEnd() }, videoDuration*1000),
-				dj: videoToPlay.get('dj')
+				dj: videoToPlay.get('dj'),
+				thumb: thumb
 			});
 			
 			this.room.sockM.announceVideo(videoId, videoDuration, videoViewCount, author, videoTitle, videoDJ);
@@ -282,7 +290,6 @@
 		onVideoEnd: function () {	
 			//add the video the room history
 			if(this.room.currVideo != null) {
-				console.log('['+this.room.get('name')+'][VM] onVideoEnd(): adding video to history : <title,dj>: '+this.room.currVideo.get('title')+','+this.room.currVideo.get('dj'));
 				if(this.room.djs.currDJ) {
 					this.room.djs.currDJ.playlist.moveToBottom(this.room.currVideo.get('videoId'));	
 				}
@@ -295,7 +302,8 @@
 				var	dj = this.room.currVideo.get('dj');
 				var	author = this.room.currVideo.get('author');
 				var viewCount = this.room.currVideo.get('viewCount');
-				console.log(percent);			
+				
+				console.log('['+this.room.get('name')+'][VM] onVideoEnd(): adding video to history : <title,dj,percent>: '+title+','+dj+','+percent);
 				this.room.history.addVideo(videoId, title, duration, viewCount, author, thumb, dj, percent);
 				this.room.clearVideo();
 			}
@@ -336,12 +344,11 @@
 		defaults: {
 			'name': '',
 			'creator': '',
-			'roomId': 0
 		},
-		
-		initialize: function(io, redisClient) {
+
+		initialize: function(io, roomId) {
 			this.io = io;
-			this.redisClient = redisClient;
+			this.set({ name: roomId });
 			this.VAL = new models.VAL(this);
 			this.vm = new models.VideoManager(this, this.VAL);
 			
@@ -585,16 +592,41 @@
 		model: models.Video
 	});
 	
-	var HIST_NUM_RECENT = 10;
+	var HIST_NUM_RECENT = 15;
 	models.History = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
-			this.recentVids = new models.VideoCollection(); //holds 10
+			this.recentVids = new models.VideoCollection(); //holds HIST_NUM_RECENT vids max
 			this.skippedVideos = new models.VideoCollection();
 			this.dankVids = new models.VideoCollection(); //holds 10
-			this.size = -1;	//to signify no redis read
-			this.setSize();
-			//TODO: initialize this.recentVids from redis history
+			
+			if(this.room) {
+				var roomName = this.room.get('name');
+				var hist = this;
+				redisClient && redisClient.lrange('room:'+roomName+':history', 0, HIST_NUM_RECENT, function(err, reply) {
+					if(err) {
+						console.log('['+roomName+'] [Hist] Error initializing rooms: '+err)
+						return;
+					}
+					//console.log('['+roomName+'] [Hist] initializing rooms: '+reply)
+					for(var i=0; i < reply.length; i++) {
+						var video = reply[i];
+						video = JSON.parse(video);
+						//console.log('['+roomName+'] [Hist] video title: '+video['title'] +' dur: '+video['duration']+' author: '+video['author'] +' thumb: '+video['thumb'])
+						
+						if(video['videoId'] && video['title'] && video['duration'] && video['author'] && video['thumb']) {
+							hist.recentVids.add(new models.Video({
+								videoId: video['videoId'],
+								title: video['title'],
+								duration: video['duration'],
+								author: video['author'],
+								thumb: video['thumb']
+							}));
+						}
+					}
+					
+				});
+			}
 		},
 		
 		addToDankVids: function(video) {
@@ -604,17 +636,17 @@
 		},
 		
 		setSize: function() {
-			if(!this.room.redisClient) return;
-			var hist = this;
-			var roomName = this.room.get('name');
-		 	this.room.redisClient.llen('room:'+roomName+':history', function(err, len) {
-				if(err) {
-					console.log('['+roomName+'] [Hist] initialize(): Error in getting history length: '+err)
-					return;
-				}
-				//console.log('setting size of room history for room '+roomName+', size is '+len);
-				hist.size = len;
-			});
+			// if(!redisClient || !this.room) return;
+			// var hist = this;
+			// var roomName = this.room.get('name');
+			// 		 	this.room.redisClient.llen('room:'+roomName+':history', function(err, len) {
+			// 	if(err) {
+			// 		console.log('['+roomName+'] [Hist] initialize(): Error in getting history length: '+err)
+			// 		return;
+			// 	}
+			// 	console.log('setting size of room history for room '+roomName+', size is '+len);
+			// 	hist.size = len;
+			// });
 		},
 		
 		getGoodVideo: function(lookBackNum) {
@@ -658,7 +690,7 @@
 			if(this.recentVids.length >= HIST_NUM_RECENT)
 				this.recentVids.remove(this.recentVids.at(this.recentVids.length-1)); //remove the oldest video
 			this.recentVids.add(videoToAdd, { at: 0 });
-			this.room.redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
+			redisClient && redisClient.lpush('room:'+this.room.get('name')+':history', JSON.stringify(videoToAdd));
 
 			// if(this.size >= 0) { 			//not working, figure out why llen above in setSize doesn't work
 			// 	this.size = this.size + 1;
@@ -1247,6 +1279,7 @@
 				if(nextDJInfo.dj == this.currDJ) {
 					console.log('...it\'s VAL\'s turn');
 					this.currDJ = null;
+					this.currDJIndex = -1;	//to eliminate the old dj bug -- next DJ will be DJ at index 0
 					return true;
 				}
 				console.log('...no');
@@ -1256,6 +1289,7 @@
 			if(this.currDJIndex == (this.length - 1) && this.currDJ != null) {
 				console.log('...it\'s VAL\'s turn');
 				this.currDJ = null;
+				this.currDJIndex = -1;	//to eliminate the old dj bug -- next DJ will be DJ at index 0
 				return true;
 			}
 			console.log('...no');
@@ -1274,7 +1308,7 @@
 	/*         Meter         */
 	/*************************/
 	
-	var SKIP_PERCENT_THRESHOLD = 25;
+	var SKIP_PERCENT_THRESHOLD = 35;
 	models.Meter = Backbone.Model.extend({
 		initialize: function() {
 			//this.room = room;
