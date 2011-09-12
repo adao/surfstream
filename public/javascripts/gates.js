@@ -1007,10 +1007,10 @@ $(function() {
    $("#search-view").show();
 	 if (withSearchBar) {
 		$("#searchBar").show();
-		$("#searchContainer").css("height", 261);
+		$("#searchContainer").css("height", 257);
 	 } else {
 		$("#searchBar").hide();
-		$("#searchContainer").css("height", 297);
+		$("#searchContainer").css("height", 293);
 	 }
   },
 
@@ -1725,7 +1725,7 @@ $(function() {
 	calculatePlaylistHeight: function() {
 		var pcHeight = $("#playlist-collection").outerHeight(true);
 		var viewHeight = $("#myplaylist").outerHeight(true);
-		$("#playlist-view").css('height', viewHeight - pcHeight);
+		$("#playlist-view").css('height', viewHeight - pcHeight - 5);
 	},
 	
 	highlightView: function() {
@@ -3184,13 +3184,12 @@ $(function() {
    $('#shareFB').css('background-image', '/images/fb_small.png');
    $('#shareTwit').css('background-image', '/images/twitter_small.png');
    $('#shareEmail').css('background-image', '/images/email_small.png');
-   $('#link').html("Link: <input type=\"text\" value=\"" + window.location + "\"/>");
-   $('#copy-button-container').html("<div id=\"copy-button\" style=\"position:relative\"></div>");
+   //$('#copy-button-container').html("<button id=\"copy-button\"></div>");
    this.link = document.URL;
    var clip = new ZeroClipboard.Client();
    clip.setHandCursor(true);
    clip.setText(this.link);
-   clip.glue('copy-button', 'copy-button-container');
+   clip.glue('copy-button-container');
   },
 
   events: {
