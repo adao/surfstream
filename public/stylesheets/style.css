@@ -539,6 +539,7 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer {
   width: 285px;
   height: 80px;
+  cursor: n-resize;
 }
 .searchCellContainer .thumbContainer {
   float: left;
@@ -604,7 +605,6 @@ div.historyContainer .history .videoHistory {
   position: relative;
   top: -36px;
   font-size: 11px;
-  cursor: pointer;
   float: left;
 }
 .searchCellContainer .cellInfo .cellButtons {
@@ -1890,11 +1890,11 @@ background-color: green,
   width: 250px;
   margin-top: 5px;
   background-color: #e7e7e7;
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
 }
 .ui-autocomplete li.ui-menu-item {
   margin-left: -40px;
   width: 290px;
-  font-weight: bold;
 }
 .ui-autocomplete li .ui-corner-all {
   display: block;
