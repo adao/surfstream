@@ -254,7 +254,7 @@ io.sockets.on('connection', function(socket) {
 				socket.emit("user:sendFBFriends");
 				var currUser = new models.User({
 					name: ssUser.name, 
-					socketId: socket.id, 
+					socketId: socket.id,
 					userId: ssUser.ssId,
 					fbId: ssUser.fbId, 
 					socket: socket

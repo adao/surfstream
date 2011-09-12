@@ -1338,7 +1338,7 @@
 				
 				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return; 	//the DJ can't vote for himself
 
-				if (redisClient) {
+				if (redisClient && video) {
 					redisClient.lpush("user:" + currUser.get("userId") + ":likes", JSON.stringify(video), function(err, reply) {
 						if (err) {
 							console.log("Error lpushing user " + currUser.get("userId") + "'s liked video");
