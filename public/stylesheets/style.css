@@ -1,8 +1,8 @@
-@font-face {
+font-face {
   font-family: "custom";
   src: url("/resources/candara.ttf") format("truetype");
 }
-@font-face {
+font-face {
   font-family: "custom";
   src: url("/resources/candarabold.ttf") format("truetype");
   font-weight: bold;
@@ -1128,7 +1128,6 @@ button
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row .room-history .lastPlayedVideoTitle {
   margin-left: 8px;
-  margin-top: 10px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;

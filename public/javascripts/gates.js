@@ -2220,6 +2220,7 @@ $(function() {
 			this.friendsHover = $(this.el).find(".friends-hover-container");
 			this.friendsDisplay = $(this.el).find(".room-friends-container");
 			this.channelHistory = $(this.el).find(".room-history-container");
+			this.videoTitle = $(this.el).find(".lastPlayedVideoTitle");
 			this.channelHistoryDisplayed = false;
 			
 			//$(this.el).find(".room-friends-container").bind("mouseover", {friends: this.options.roomListCellModel.get("friends")}, this.displayFriends);
@@ -2304,6 +2305,7 @@ $(function() {
 				return;
 			//this.channelHistory.stop().slideDown(500);
 			this.channelHistoryDisplayed = true;
+			this.videoTitle.css("margin-top", "10px");
 			this.channelHistory.show();
 		},
 		
@@ -2312,6 +2314,7 @@ $(function() {
 				return;
 			//this.channelHistory.stop().slideUp(500);
 			this.channelHistoryDisplayed = false;
+			this.videoTitle.css("margin-top", "0px");
 			this.channelHistory.hide();
 		}
  });
