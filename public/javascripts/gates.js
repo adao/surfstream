@@ -1087,14 +1087,13 @@ $(function() {
 		zIndex: 6,
 		alreadyRotated: false,
 		start: function (event, ui) {
-			
+			window.SurfStreamApp.get("userModel").get("playlistCollection").showDroppable();
 		},
 		drag: function(event, ui) {
 			if ($(event.target).draggable("option", "alreadyRotated")) {
 				return;
 			}
 			$(event.target).css("visibility", "hidden");
-			window.SurfStreamApp.get("userModel").get("playlistCollection").showDroppable();
 			var videoId = $(ui.item).attr('id');
 			$(ui.helper).find(".previewVideo").remove();
 			$(ui.helper).addClass("shrunkenSearchCellContainer");
@@ -2006,6 +2005,7 @@ $(function() {
    if (collectionReference.at(0).get("videoId") == event.data.videoModel.get("videoId")) {
     return;
    }
+	 $(this).parent().parent().parent().css("visibility", "hidden");
    $(this).parent().parent().parent().slideUp(500, function() {
 		$(this).remove();
 	 });
