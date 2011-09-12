@@ -1116,9 +1116,11 @@ button
   text-align: center;
   width: 70px;
 }
+#room-modal #roomsWrapper table#roomsTable tr.room-row .room-history {
+  width: 520px;
+}
 #room-modal #roomsWrapper table#roomsTable tr.room-row .room-history .lastPlayedVideoTitle {
   margin-left: 8px;
-  margin-top: 10px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;
@@ -1163,6 +1165,7 @@ button
   display: none;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-history-container {
+  display: none;
   list-style-type: none;
   margin-left: -30px;
   margin-top: 2px;
@@ -1245,7 +1248,7 @@ button
 }
 .videoThumbnailContainer .videoThumbnail {
   width: 96px;
-  height: 0px;
+  height: 72px;
   margin-right: 8px;
   margin-top: 8px;
   border-radius: 2px;
@@ -1392,7 +1395,7 @@ background-color: green,
 .selected-playlist-nameholder button {
   background: url("/images/room/newicons/delete-playlist.png") 50% 50% no-repeat;
 }
-.selected-playlist-nameholder:hover button {
+.selected-playlist-nameholder button:hover {
   background: url("/images/room/newicons/delete-playlist-selected.png") 50% 50% no-repeat;
 }
 .youtube-nameholder,
@@ -1401,6 +1404,8 @@ background-color: green,
   background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#c0c0c0));
   background: -moz-linear-gradient(top, #eee, #c0c0c0);
   -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
   height: 22px;
   vertical-align: top;
   margin-top: -5px;
