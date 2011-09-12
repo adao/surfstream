@@ -2193,11 +2193,12 @@ $(function() {
 		
 		events: {
 			"mouseover .room-friends-container": "displayFriends",
-			"mouseout .room-friends-container": "hideFriends"
+			"mouseout .room-friends-container": "hideFriends",
+			"mouseover .room-history": "displayChannelHistory",
+			"mouseout .room-history": "hideChannelHistory"
 		},
 
 		initialize: function () {
-			this.friendsHoverHidden = true;
 			this.render();
 			$(this.el).bind("click", this.clickJoinRoom);																					
 		},
@@ -2216,6 +2217,10 @@ $(function() {
 			if (!roomModel.get("valstream")) {
 				$(this.el).find(".valstream-icon").hide();
 			}
+			this.friendsHover = $(this.el).find(".friends-hover-container");
+			this.friendsDisplay = $(this.el).find(".room-friends-container");
+			this.channelHistory = $(this.el).find(".room-history-container");
+			this.channelHistoryDisplayed = false;
 			
 			//$(this.el).find(".room-friends-container").bind("mouseover", {friends: this.options.roomListCellModel.get("friends")}, this.displayFriends);
 			
@@ -2230,7 +2235,7 @@ $(function() {
 					var videoThumbnail = this.videoThumbnailTemplate();
 					$(this.el).find(".room-history-container").prepend(videoThumbnail);
 					$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(recentVids[i].videoId));
-					$(this.el).find(".room-history-container").find(".videoThumbnail:first").bind("mouseover", {videoTitle: recentVids[i].title}, this.displayVideoTitle);
+					$(this.el).find(".room-history-container").find(".videoThumbnail:first").mouseenter({videoTitle: recentVids[i].title}, this.displayVideoTitle);
 				}
 			}
 			
@@ -2238,7 +2243,7 @@ $(function() {
 				var videoThumbnail = this.videoThumbnailTemplate();
 				$(this.el).find(".room-history-container").prepend(videoThumbnail);
 				$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(roomModel.get("curVidId")));
-				$(this.el).find(".room-history-container").find(".videoThumbnail:first").bind("mouseover", {videoTitle: curVidTitle}, this.displayVideoTitle);
+				$(this.el).find(".room-history-container").find(".videoThumbnail:first").mouseenter({videoTitle: curVidTitle}, this.displayVideoTitle);
 				$(this.el).find(".room-history-container .videoThumbnailContainer:first .videoThumbnail").addClass("lastPlayedVideo");
 				$(this.el).find(".room-history .lastPlayedVideoTitle").text(curVidTitle);
 			}
@@ -2275,55 +2280,39 @@ $(function() {
 		
 		displayVideoTitle: function(event) {
 			console.log("HRM!");
-			$(event.toElement.parentElement.parentElement).find(".lastPlayedVideo").css({border: "0px solid white"})
-			$(event.toElement).addClass("lastPlayedVideo").css({border: "1px solid white"});
-			$(event.toElement.parentElement.parentElement.parentElement).find(".lastPlayedVideoTitle").text(event.data.videoTitle);
+			$(event.currentTarget).parent().parent().find(".lastPlayedVideo").removeClass("lastPlayedVideo").css({border: "0px solid white"});
+			$(event.currentTarget).addClass("lastPlayedVideo").css({border: "1px solid white"});
+			$(event.currentTarget).parent().parent().parent().find(".lastPlayedVideoTitle").text(event.data.videoTitle);
 		},
 		
 		displayFriends: function(event) {
 			if (this.options.roomListCellModel.get("friends").length == 0)
 				return;
-			var friendsHover = $(event.toElement.parentElement).find(".friends-hover-container");
-			if (friendsHover.length == 0) {
-				friendsHover = $(event.toElement.parentElement.parentElement).find(".friends-hover-container");
-				if (this.friendsHoverHidden) {
-					friendsHover.show()
-					this.friendsHoverHidden = false;
-					var parentOffset = $(event.toElement.parentElement).offset();
-					var friendsHoverTop = parentOffset.top + $(event.toElement.parentElement).height() / 2 - friendsHover.height() / 2;
-					var friendsHoverLeft = parentOffset.left - friendsHover.width();
-					friendsHover.offset({top: friendsHoverTop, left: friendsHoverLeft});
-				}
-			} else {
-				if (this.friendsHoverHidden) {
-					friendsHover.show()
-					this.friendsHoverHidden = false;
-					var parentOffset = $(event.toElement).offset();
-					var friendsHoverTop = parentOffset.top + $(event.toElement).height() / 2 - friendsHover.height() / 2;
-					var friendsHoverLeft = parentOffset.left - friendsHover.width();
-					friendsHover.offset({top: friendsHoverTop, left: friendsHoverLeft});
-				}
-			}
+			this.friendsHover.show()
+			var parentOffset = $(event.currentTarget).offset();
+			var friendsHoverTop = parentOffset.top + this.friendsDisplay.height() / 2 - this.friendsHover.height() / 2;
+			var friendsHoverLeft = parentOffset.left - this.friendsHover.width();
+			this.friendsHover.offset({top: friendsHoverTop, left: friendsHoverLeft});
 		},
 		
 		hideFriends: function(event) {
-			console.log("from and to");
-			console.log(event.fromElement);
-			console.log(event.toElement);
-			if (event.toElement) {
-				if (event.toElement.className == "room-friends") {
-					console.log("something");
-				}
-				console.log($(event.toElement.parentElement));
-				console.log($(this.el).find(".room-friends-container"));
-				if (event.toElement.className == "room-friends-container" ||
-						(event.toElement.className == "friendInRoomPic" && $(event.toElement.parentElement).data() == $(this.el).find(".room-friends-container").data())) {
-					return;
-				}
-			}
-			var friendsHover = $(event.fromElement.parentElement.parentElement).find(".friends-hover-container");
-			friendsHover.hide();
-			this.friendsHoverHidden = true;
+			this.friendsHover.hide();
+		},
+		
+		displayChannelHistory: function(event) {
+			if (this.channelHistoryDisplayed)
+				return;
+			//this.channelHistory.stop().slideDown(500);
+			this.channelHistoryDisplayed = true;
+			this.channelHistory.show();
+		},
+		
+		hideChannelHistory: function(event) {
+			if (!this.channelHistoryDisplayed)
+				return;
+			//this.channelHistory.stop().slideUp(500);
+			this.channelHistoryDisplayed = false;
+			this.channelHistory.hide();
 		}
  });
 
@@ -2426,7 +2415,7 @@ $(function() {
 
 
    function(e) {
-    if (e.toElement.id == "fullscreenIcon" || e.toElement.className == '.video-div-proxy') {
+    if (e.currentTarget.id == "fullscreenIcon" || e.currentTarget.className == '.video-div-proxy') {
      return;
     }
     $("#fullscreenIcon").stop()
@@ -2449,6 +2438,7 @@ $(function() {
     }, 600, "swing", hide)
 
    });
+	 
    $("#slider-line-container").bind('drag', function(event) {
     if (event.target.id == "slider-line" || event.target.id == "slider-line-container" || event.target.id == "slider-line-full") {
      console.log(event.layerX)
@@ -2633,64 +2623,6 @@ $(function() {
 	 var roomName = rIDArray[curIndex].replace(/-+/g, ' ');
 	 SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
    SocketManagerModel.joinRoom(rIDArray[curIndex], false, roomName );
-  },
-
-  pullRemoteUp: function(e) {
-
-   if ((e.srcElement && (e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")) || (e.target && (e.target.localName != "button" || e.target.id == "remote-pullup"))) {
-
-    $("#remote-container").animate({
-     "margin-top": -17
-    }, 300, function() {
-     var remotePullup, remoteTop, remote;
-
-     remotePullup = $("#remote-pullup");
-     //if(e.srcElement.id == "remote-pullup") remotePullup.tipsy("hide");
-     remoteTop = $(".remote-top");
-     remote = $("#remote");
-     remotePullup.unbind("click");
-     remoteTop.unbind("click");
-     remote.bind("click", {
-      remote: e.data.remote
-     }, e.data.remote.pullRemoteDown);
-     remotePullup.bind("click", {
-      remote: e.data.remote
-     }, e.data.remote.pullRemoteDown);
-     remoteTop.addClass("up");
-     remote.addClass("up");
-     remotePullup.addClass("up");
-     remotePullup.attr("title", "Pull Down")
-    });
-
-   }
-  },
-
-  pullRemoteDown: function(e) {
-
-   if ((e.srcElement && (e.srcElement.localName != "button" || e.srcElement.id == "remote-pullup")) || (e.target && (e.target.localName != "button" || e.target.id == "remote-pullup"))) {
-
-    $("#remote-container").animate({
-     "margin-top": 130
-    }, 300, function() {
-     var remotePullup, remoteTop, remote;
-     remotePullup = $("#remote-pullup");
-     remotePullup.attr("title", "Pull Up")
-     remoteTop = $(".remote-top");
-     remote = $("#remote");
-     remotePullup.unbind("click");
-     remote.unbind("click");
-     remoteTop.bind("click", {
-      remote: e.data.remote
-     }, e.data.remote.pullRemoteUp);
-     remotePullup.bind("click", {
-      remote: e.data.remote
-     }, e.data.remote.pullRemoteUp);
-     remoteTop.removeClass("up");
-     remote.removeClass("up");
-     remotePullup.removeClass("up");
-    });
-
-   }
   },
 
   fullscreenToggle: function(e) {
@@ -3355,28 +3287,6 @@ $(function() {
 		new AvatarPickerView();
 	});
 	/* END SETTINGS HAX */
-	
-	$(".room-history").live('mouseenter',
-		function(e){
-			if (SurfStreamApp.curCell) {
-				SurfStreamApp.curCell.stop().animate({height: "0px"});
-				SurfStreamApp.curCell.css({border: "0px solid white"})
-					
-			}
-			SurfStreamApp.curCell = $(e.currentTarget).find(".videoThumbnail")
-			SurfStreamApp.curCell.filter(".lastPlayedVideo").css({border: "1px solid white"})
-		  SurfStreamApp.curCell.stop().animate({height: "72px"}, 300);
-	});
-	
-	$(".room-history").live('mouseout',
-		function(e){
-		if(e.toElement.className == "room-name" || e.toElement.className == "room-friends"){
-			if (SurfStreamApp.curCell) {
-				SurfStreamApp.curCell.stop().animate({height: "0px"});
-				SurfStreamApp.curCell.css({border: "0px solid white"})
-			}
-		}
-	});
 
    this.maxAudioChannels = 15;
   },
