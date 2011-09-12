@@ -2719,7 +2719,7 @@ $(function() {
 
   updateDJs: function(djArray) {
    var oldPosX, oldPosY, user;
-   var X_COORDS = [200, 256, 313];
+   var X_COORDS = [200, 266, 328];
    var Y_COORD = 0;
    var cur_is_dj = false;
    var numOnSofa = 0;
@@ -2801,7 +2801,7 @@ $(function() {
      "margin-top": Y_COORD,
      "margin-left": X_COORDS[dj]
     }, 500, "bouncein", function() {
-     $(this).css("z-index", "auto");
+     $(this).css("z-index", "2");
     }); /*restore auto z-index if hopped on couch and became current vj */
 
     user.data({

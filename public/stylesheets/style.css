@@ -135,6 +135,7 @@ button {
   position: absolute;
   width: 60px;
   height: 80px;
+  z-index: 999;
 }
 div#loadingScreen {
   background-color: color;
