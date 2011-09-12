@@ -2641,7 +2641,7 @@ $(function() {
    if (curIndex == rIDArray.length) curIndex = 0;
 
 	 var roomName = rIDArray[curIndex].replace(/-+/g, ' ');
-	 SurfStreamApp.get("mainRouter").navigate("/" + roomName, false);
+	 SurfStreamApp.get("mainRouter").navigate("/" + rIDArray[curIndex], false);
    SocketManagerModel.joinRoom(rIDArray[curIndex], false, roomName );
   },
 

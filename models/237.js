@@ -25,7 +25,7 @@
 	/*************************/
 	/*      		VAL			     */
 	/*************************/
-	var DEFAULT_VAL_THRESHOLD = 6;
+	var DEFAULT_VAL_THRESHOLD = 10;
 	models.VAL = Backbone.Model.extend({
 		initialize: function(room) {
 			this.room = room;
@@ -44,7 +44,7 @@
 			
 			socket.on('val:turnOffDJ', function() {
 				val.isDJ = false;
-				if(val.room.currVideo.get('dj')) {	//VAL is the current DJ
+				if(val.room.currVideo.get('dj') == 'VAL') {	//VAL is the current DJ
 					clearTimeout(val.room.currVideo.get('timeoutId'));
 					val.room.vm.onVideoEnd();
 				}
@@ -75,7 +75,8 @@
 		playFromHistory: function() {
 			var numVideos = this.room.history.recentVids.length;
 			if(numVideos == HIST_NUM_RECENT) {	//history is full, ok to repeat self
-				var videoFromHistory = this.room.history.recentVids.at(numVideos - 1);	
+				var videoFromHistory = this.room.history.recentVids.at(numVideos - 1);
+				videoFromHistory.set({ dj: 'VAL' });	
 				this.room.vm.play(videoFromHistory);
 			} else {
 				this.fetchYouTubeVideo();
@@ -116,15 +117,15 @@
 						dj: 'VAL'
 					});
 					
-					if(!rawVideo.counter) rawVideo.counter = 0; 
-					rawVideo.counter = rawVideo.counter + 1;	//number of times this video has been played
-					
-					var limit = DEFAULT_VAL_THRESHOLD;
-					if(rawVideo.limit) limit = rawVideo.limit;
-					if(rawVideo.counter < limit) {
-						console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
-						redisClient.rpush(key, JSON.stringify(rawVideo));
-					}
+					// if(!rawVideo.counter) rawVideo.counter = 0; 
+					// 				rawVideo.counter = rawVideo.counter + 1;	//number of times this video has been played
+					// 				
+					// 				var limit = DEFAULT_VAL_THRESHOLD;
+					// 				if(rawVideo.limit) limit = rawVideo.limit;
+					// 				if(rawVideo.counter < limit) {
+					console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
+					redisClient.rpush(key, JSON.stringify(rawVideo));
+					//}
 					
 					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
 					val.room.vm.play(videoToPlay);
@@ -551,7 +552,7 @@
 		},
 		
 		announceRoomHistory: function() {
-//			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.toJSON());
+			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.recentVids.toJSON());
 		}
 	});
 
