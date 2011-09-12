@@ -2432,7 +2432,7 @@ $(function() {
 
 
    function(e) {
-    if (e.currentTarget.id == "fullscreenIcon" || e.currentTarget.className == '.video-div-proxy') {
+    if (e.relatedTarget.id == "fullscreenIcon" || e.relatedTarget.className == '.video-div-proxy') {
      return;
     }
     $("#fullscreenIcon").stop()
