@@ -633,11 +633,22 @@ $(function() {
 			info.ss_name = SurfStreamApp.get("userModel").get("displayName");
 			info.avatarSettings = newAvatarSettings;
 			SocketManagerModel.sendFBUser(info);
-			SurfStreamApp.get("mainView").roomModal.show();
+			$("#tutorial").fadeIn();
+			$("#tutorialStart").fadeIn();
+			this.showModal = window.SurfStreamApp.showModalOnLoad;
+			window.SurfStreamApp.showModalOnLoad = false;
+			$("#tutorialStart").click({picker: this}, function(e){
+				e.data.picker.closePicker();
+				if (e.data.picker.showModal) {
+					SurfStreamApp.get("mainView").roomModal.show()
+				}
+				
+			});
 		} else {
-			SocketManagerModel.updateAvatar();			
+			SocketManagerModel.updateAvatar();
+			this.closePicker();		
 		}
-		this.closePicker();
+		
 	},
 
 	closePicker: function() {

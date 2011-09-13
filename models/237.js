@@ -123,7 +123,7 @@
 					// 				var limit = DEFAULT_VAL_THRESHOLD;
 					// 				if(rawVideo.limit) limit = rawVideo.limit;
 					// 				if(rawVideo.counter < limit) {
-					console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
+					//console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
 					redisClient.rpush(key, JSON.stringify(rawVideo));
 					//}
 					
