@@ -1878,19 +1878,35 @@ background-color: green,
   font-size: 16px;
   text-align: center;
 }
-#avatar-picker-modal .dialog-buttons .saveChanges {
+#avatar-picker-modal .dialog-buttons #saveChanges {
   background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
   background: -moz-linear-gradient(top, #34c8ff, #008ab8);
   background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
+  color: #000;
 }
-#avatar-picker-modal .dialog-buttons .saveChanges:hover,
-#avatar-picker-modal .dialog-buttons .cancelPicker:hover {
+#avatar-picker-modal .dialog-buttons #cancelPicker:hover {
   color: #fff;
 }
-#avatar-picker-modal .dialog-buttons .cancelPicker {
+#avatar-picker-modal .dialog-buttons #saveChanges:hover {
+  color: #fff;
+}
+#avatar-picker-modal .dialog-buttons #cancelPicker {
   background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
   background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
   background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
+}
+#name-change-text {
+  font-size: 19px;
+  margin-top: 53px;
+  position: absolute;
+  float: right;
+  margin-left: 694px;
+}
+#name-change-input {
+  margin-left: 667px;
+  position: absolute;
+  margin-top: 84px;
+  font-size: 15px;
 }
 .ui-sortable-placeholder {
   width: 50px;

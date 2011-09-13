@@ -200,7 +200,7 @@ io.sockets.on('connection', function(socket) {
 				} else {
 					var ssUser = JSON.parse(reply);
 					if (ssUser == null || ssUser == 'undefined') {
-						socket.emit("playlist:showFBImport");
+						//socket.emit("playlist:showFBImport");
 						socket.emit("user:sendFBProfile");
 					} else {
 						redisClient.get("user:" + ssUser.ssId + ":fb_import_date", function(err, reply) {
@@ -213,7 +213,7 @@ io.sockets.on('connection', function(socket) {
 							}
 						});
 						roomManager.sendRoomsInfo(socket, ssUser.ssId);
-						var name = ssUser.name;
+						var name = ssUser.ss_name;
 						var currUser = new models.User({
 							name: name, 
 							socketId: socket.id, 
@@ -237,10 +237,16 @@ io.sockets.on('connection', function(socket) {
 		if(redisClient) {
 			redisClient.incr("userId", function(err, reply){
 				var ssUser = fbUser;
+				var newAvatarSettings = fbUser.avatarSettings;
 				ssUser.ssId = reply;
 				socket.emit("user:profile", ssUser);
 				roomManager.sendRoomsInfo(socket, ssUser.ssId);
 				var stringSSUser = JSON.stringify(ssUser);
+				redisClient.set('user:'+ssUser.ssId+':avatar', newAvatarSettings.toString(), function(err, reply) {
+					if (err) {
+						console.log("Error setting new avatar settings for user " + thisUser.get('userId'));
+					}					
+				});
 				redisClient.set("user:" + ssUser.ssId + ":profile", stringSSUser, function(err, reply) {
 					if (err) {
 						console.log("Error writing ss user " + ssUser.ssId + " to Redis");
@@ -253,7 +259,7 @@ io.sockets.on('connection', function(socket) {
 				});
 				socket.emit("user:sendFBFriends");
 				var currUser = new models.User({
-					name: ssUser.name, 
+					name: ssUser.ss_name, 
 					socketId: socket.id,
 					userId: ssUser.ssId,
 					fbId: ssUser.fbId, 
@@ -273,6 +279,7 @@ io.sockets.on('connection', function(socket) {
 							if (err) {
 								console.log("error setting user " + ssUser.ssId + "'s active playlist");
 							} else {
+								socket.emit("playlist:importFacebook");
 								currUser.initializeAndSendPlaylists(socket, roomManager, userManager);
 							}
 						});
