@@ -189,7 +189,8 @@
 					var videoTitle = videoEntry['media$group']['media$title']['$t'];
 					var videoThumb = videoEntry['media$group']['media$thumbnail'][0]['url'];
 					var videoAuthor = videoEntry['author'][0]['name']['$t'];
-					var videoViewCount = videoEntry['yt$statistics']['viewCount'];
+					var statistics = videoEntry['yt$statistics'] ? videoEntry['yt$statistics'] : {"viewCount": 0};
+					var videoViewCount = statistics['viewCount'] ? statistics['viewCount'] : 0;
 
 					console.log('['+room.get('name')+']'+"[VAL] fetchYouTubeVideo(): got related vids, index "+randIndex+"/4 with videoid: "+videoToPlayId+" and title: "+videoTitle);
 					var videoToPlay = new models.Video({
