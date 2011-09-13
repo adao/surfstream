@@ -2322,7 +2322,7 @@ background-color: #4C4C4C,
 #sofa-remote {
   left: 170px;
   top: 140px;
-  z-index: 3 !important;
+  z-index: 1;
   position: absolute;
 }
 a#fdbk_tab {
