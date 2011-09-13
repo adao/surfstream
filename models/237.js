@@ -897,13 +897,13 @@
 					console.log("\n\nERROR in getting user "+userId+"'s avatar!\n");
 				} else {
 					avatarData = reply;
-					//console.log('getting avatar for user '+userId+', reply: '+reply);
+				  console.log('getting avatar for user '+userId+', reply: '+reply);
 					if(reply != 'undefined' && reply != null) {
 						avatarData = reply.split(',');
 						userObj.set({avatar: avatarData});
 					} else { //give them a random first default
 						newAvatar = [Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3), Math.ceil(Math.random() * 2), Math.ceil(Math.random() * 6) - 1, Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 5) - 1];
-						redisClient.set('user:'+userId+':avatar', newAvatar, function(err, reply) {
+						redisClient.set('user:'+userId+':avatar', newAvatar.toString(), function(err, reply) {
 							if (err) {
 								console.log("Error setting random avatar for user " + userId);
 							}
@@ -1079,15 +1079,36 @@
 			var thisUser = this;
 			var rManager = roomManager;
 			var uManager = userManager;
-			socket.on('avatar:update', function(newAvatarSettings) {
+			socket.on('avatar:update', function(data) {
+				var newAvatarSettings = data.avatar;
+				var newUserName = data.name;
+				console.log ("new user name is " + newUserName)
 				thisUser.set({avatar: newAvatarSettings});
 				var roomIn = uManager.ssIdToRoom[thisUser.get('userId')];
-				redisClient.set('user:'+thisUser.get('userId')+':avatar', newAvatarSettings, function(err, reply) {
-					console.log("Error setting new avatar settings for user " + thisUser.get('userId'));
+				redisClient.set('user:'+thisUser.get('userId')+':avatar', newAvatarSettings.toString(), function(err, reply) {
+					if (err) {
+						console.log("Error setting new avatar settings for user " + thisUser.get('userId'));
+					}					
 				});
-				if(roomIn){
-					rManager.roomMap[roomIn].sockM.announceAvatarChange(thisUser.get('userId'), thisUser.get('name'), newAvatarSettings);
-				}
+				redisClient.get("user:" + thisUser.get('userId') + ":profile", function(err, reply) {
+					if (err) {
+						console.log("Error getting new avatar settings for user " + thisUser.get('userId'));
+					}	else {
+						var profile = JSON.parse(reply);
+						profile.ss_name = newUserName;
+						redisClient.mset("user:" + thisUser.get('userId') + ":profile", JSON.stringify(profile), "user:fb_id:" + thisUser.get('fbId') + ":profile", JSON.stringify(profile), function(err, reply) {
+							if (err) {
+								console.log("Error setting ssid profile for user " + thisUser.get('userId'));
+							} else {
+								thisUser.set({name: newUserName});
+								if(roomIn){
+									rManager.roomMap[roomIn].sockM.announceAvatarChange(thisUser.get('userId'), thisUser.get('name'), newAvatarSettings);									
+								}
+							}
+						});
+					}
+				});
+				
 			});
 		},
 		

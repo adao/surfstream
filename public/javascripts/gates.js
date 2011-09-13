@@ -171,17 +171,21 @@ $(function() {
   },
 	
 	initialize: function() {
-		this.showFBButton = false;
+		//this.showFBButton = false;
 	},
 
   getFBUserData: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
    }
+	 //this.getUserPostedVideos();
   },
 
   setUserData: function(info) {
-   SocketManagerModel.sendFBUser(info);
+	SurfStreamApp.get("userModel").set({profile: info});
+	SurfStreamApp.get("mainView").roomModal.hide();
+	SurfStreamApp.get("userModel").set({displayName: info.name})
+  new AvatarPickerView({isFirstVisit: true});
   },
 	
 	initializePlaylists: function(userPlaylists, activePlaylistId) {
@@ -193,6 +197,8 @@ $(function() {
 		$(".active-playlist-nameholder").removeClass("active-playlist-nameholder");
 		this.get("playlistCollection").setActivePlaylist(activePlaylistId);
 		$(this.get("playlistCollection").idToPlaylistNameholder[activePlaylistId].el).addClass("active-playlist-nameholder");
+		if (this.importFacebook)
+			this.getUserPostedVideos();
 	},
 
 	sendUserFBFriends: function(info) {
@@ -434,8 +440,8 @@ $(function() {
 	avatarPickerTemplate: _.template($("#avatar-picker-template").html()),
 
 	events: {
-   "click .saveChanges": "saveAvatar",
-   "click .cancelPicker": "closePicker"
+   "click #saveChanges": "saveAvatar",
+   "click #cancelPicker": "closePicker"
   },
 
 	initialize: function() {
@@ -443,23 +449,33 @@ $(function() {
    $("#modalBG").click({
     modal: this
    }, function(e) {
+	  if (e.data.modal.options.isFirstVisit) return;
 		e.data.modal.remove();
 		$("#roomsList").after("<div id=avatar-picker-modal></div>")
 		$("#change-avatar").hide();	
 		$("#edit-profile").hide();	
 		$("#logout").hide();
    });
+	
    this.render();
+ 	 $("#name-change-input").val(SurfStreamApp.get("userModel").get("displayName"))
 	 $(".picker-el").click({picker: this}, this.handlePickerElClick);
 	 this.previewWrapper = $($(".picker-preview-avatar-wrapper")[0])
 	 this.previewWrapper.css({"margin-left": 52, "margin-top": 60});
-
-	 this.setSelected("body", SurfStreamApp.currentAvatarSettings[0]);
-	 this.setSelected("eye", SurfStreamApp.currentAvatarSettings[1]);
-	 this.setSelected("eyesize", SurfStreamApp.currentAvatarSettings[2]);
-	 this.setSelected("glasses", SurfStreamApp.currentAvatarSettings[3]);
-	 this.setSelected("smile", SurfStreamApp.currentAvatarSettings[4]);
-	 this.setSelected("hat", SurfStreamApp.currentAvatarSettings[5]);
+	 if (this.options.isFirstVisit){
+		 SurfStreamApp.currentAvatarSettings = [Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3), Math.ceil(Math.random() * 2), Math.ceil(Math.random() * 6) - 1, Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 5) - 1];
+	 	 $("#cancelPicker").hide();
+		 $("#saveChanges").css({"margin-left":27, "width":139})
+		 $("#saveChanges").html("Start Surfing")
+	 }
+	this.setSelected("body", SurfStreamApp.currentAvatarSettings[0]);
+	this.setSelected("eye", SurfStreamApp.currentAvatarSettings[1]);
+	this.setSelected("eyesize", SurfStreamApp.currentAvatarSettings[2]);
+	this.setSelected("glasses", SurfStreamApp.currentAvatarSettings[3]);
+	this.setSelected("smile", SurfStreamApp.currentAvatarSettings[4]);
+	this.setSelected("hat", SurfStreamApp.currentAvatarSettings[5]);
+	 
+	 
 		$(this.el).show();
 	 this.highlightCurrents(SurfStreamApp.currentAvatarSettings);
 	 this.idMapper = {
@@ -597,6 +613,11 @@ $(function() {
   },
 
 	saveAvatar: function() {
+		if ($("#name-change-input").val() == "") {
+			$("#name-change-input").css({"border-color": "red"});
+			$("#name-change-text").append('<span style="color: red"> !</span>');
+			return;
+		}
 		var newAvatarSettings = [];
 		newAvatarSettings.push(this.bodyID);
 		newAvatarSettings.push(this.eyeID);
@@ -605,7 +626,17 @@ $(function() {
 		newAvatarSettings.push(this.smileID);
 		newAvatarSettings.push(this.hatID);
 		SurfStreamApp.currentAvatarSettings = newAvatarSettings;
-		SocketManagerModel.updateAvatar();
+		SurfStreamApp.get("userModel").set({displayName: $("#name-change-input").val()});
+		
+		if(this.options.isFirstVisit) {
+			var info = SurfStreamApp.get("userModel").get("profile");
+			info.ss_name = SurfStreamApp.get("userModel").get("displayName");
+			info.avatarSettings = newAvatarSettings;
+			SocketManagerModel.sendFBUser(info);
+			SurfStreamApp.get("mainView").roomModal.show();
+		} else {
+			SocketManagerModel.updateAvatar();			
+		}
 		this.closePicker();
 	},
 
@@ -958,7 +989,7 @@ $(function() {
     source: this.suggestionList,
     select: function(event, ui) {
      console.log(ui.item.value);
-
+		 
     }
    });
    $("#youtubeInput").bind("autocompleteselect", {
@@ -977,7 +1008,7 @@ $(function() {
     $("#youtubeInput").autocomplete("close");
    });
 
-/*   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
+   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
     if (event.type == "mouseover") {
      if (cell.currentTarget.className == "videoInfo") {
       $(cell.currentTarget.parentNode.parentNode.children[1]).show();
@@ -992,7 +1023,7 @@ $(function() {
       $(cell.currentTarget.nextSibling).hide();
      }
     }
-   });*/
+   });
   },
 
   render: function() {
@@ -1126,28 +1157,14 @@ $(function() {
    $(window.YTPlayerTwo).css({
     'height': 187
    });
-   $("#previewContainer").css({
-    'height': 213
-   });
+
    $("#previewContainer").animate({
-    'top': 64
+    'top': -187
    });
-   if ($("#searchContainer").css("height") != "125px") {
-    //wait for search to resize before setting scrollTop
-    var cell = this;
     $("#searchContainer").animate({
-     'height': 125,
-     "margin-top": 187
-    }, function() {
-     $("#searchContainer").animate({
-      "scrollTop": cell.offsetTop - 340
-     });
+     "scrollTop": 0 + (this.offsetTop - 211)
     });
-   } else {
-    $("#searchContainer").animate({
-     "scrollTop": this.offsetTop - 340
-    });
-   }
+   
 
    window.YTPlayerTwo.loadVideoById(videoID);
   },
@@ -1262,7 +1279,7 @@ $(function() {
     var atts = {
      id: "YouTubePlayerTwo",
     };
-    swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo", "preview-player", "299", "183", "8", null, null, params, atts);
+    swfobject.embedSWF("http://www.youtube.com/v/9jIhNOrVG58?version=3&enablejsapi=1&playerapiid=YouTubePlayerTwo", "preview-player", "300", "183", "8", null, null, params, atts);
    }
   },
 
@@ -1278,11 +1295,9 @@ $(function() {
 	          window.YTPlayerTwo.stopVideo();
 	      }
 	
-   $("#searchContainer").animate({'height': 320, "margin-top":0}, 500);
-	 $("#previewContainer").animate({'top': -187}, 500);
-   // $("#searchContainer").animate({
-   // height: 360
-   // }, "slow");
+   //$("#searchContainer").animate({'height': 320, "margin-top":0}, 500);
+	 $("#previewContainer").animate({'top': 0}, 500);
+
   }
  });
 
@@ -1435,6 +1450,13 @@ $(function() {
 				}
 			}
 		}
+		$("#playlistTitle").html("Drag and Drop Videos Into Playlists");
+		$("#yt-pill").hide();
+		$("#likes-pill").hide();
+		$("#history-pill").hide();
+		$("#playlist-collection-input").hide();
+		document.getElementById('playlistTitle').style.color = '#34C8FF'
+		document.getElementById('playlist-collection').style.background = '#141414'
 	},
 	
 	hideDroppable: function() {
@@ -1445,6 +1467,13 @@ $(function() {
 				}
 			}
 		}
+		$("#playlistTitle").html("My Playlists");
+		$("#yt-pill").show();
+		$("#likes-pill").show();
+		$("#history-pill").show()
+		$("#playlist-collection-input").show();
+		document.getElementById('playlistTitle').style.color = 'white'
+		document.getElementById('playlist-collection').style.background = '#313131'
 	}
  });
  window.PlaylistCollectionView = Backbone.View.extend({
@@ -1591,7 +1620,6 @@ $(function() {
 	},
 	
 	addChannelHistoryView: function(recentVideo) {
-		$("#searchContainer").empty();
 		if (this.channelHistoryActive) {
 			var attributes = {
 		   title: recentVideo.get("title"),
@@ -1744,6 +1772,7 @@ $(function() {
 	},
 	initialize: function() {
 		this.render();
+		$(this.el).attr('id', 'yt-pill');
 	},
 	render: function() {
 		$(this.el).html(this.youtubeNameholderTemplate());
@@ -1757,6 +1786,13 @@ $(function() {
 	},
 	
 	deactivateNameholder: function() {
+
+		if(typeof(window.YTPlayerTwo.stopVideo) != "undefined") {
+		          window.YTPlayerTwo.stopVideo();
+		 }
+
+		 $("#previewContainer").css({'top': 0});
+
 		$(this.el).removeClass("selected-non-playlist-nameholder");
 		$(this.el).removeClass("active-playlist-nameholder");
 	}
@@ -1770,6 +1806,7 @@ $(function() {
 	},
 	initialize: function() {
 		this.render();
+		$(this.el).attr('id', 'history-pill');
 	},
 	render: function() {
 		$(this.el).html(this.channelHistoryNameholderTemplate());
@@ -1783,6 +1820,12 @@ $(function() {
 	},
 	
 	deactivateNameholder: function() {
+			if(typeof(window.YTPlayerTwo.stopVideo) != "undefined") {
+			          window.YTPlayerTwo.stopVideo();
+			 }
+
+			 $("#previewContainer").css({'top': 0});
+
 		$(this.el).removeClass("selected-non-playlist-nameholder");
 		$(this.el).removeClass("active-playlist-nameholder");
 	}
@@ -1796,6 +1839,7 @@ $(function() {
 	},
 	initialize: function() {
 		this.render();
+		$(this.el).attr('id', 'likes-pill');
 	},
 	render: function() {
 		$(this.el).html(this.likesNameholderTemplate());
@@ -1809,6 +1853,14 @@ $(function() {
 	},
 	
 	deactivateNameholder: function() {
+
+		$(this.el).removeClass("selected-likes-nameholder");
+			if(typeof(window.YTPlayerTwo.stopVideo) != "undefined") {
+			          window.YTPlayerTwo.stopVideo();
+			 }
+
+			 $("#previewContainer").css({'top': 0}, 500);
+
 		$(this.el).removeClass("selected-non-playlist-nameholder");
 		$(this.el).removeClass("active-playlist-nameholder");
 	}
@@ -1922,9 +1974,9 @@ $(function() {
 		for (var i = this.playlist.get("videos").length - 1; i >= 0; i--) {
 			this.addVideo(this.playlist.get("videos").at(i), this.playlist.get("playlistId"));
 		}
-		if (this.playlist.get("playlistId") == facebookPlaylistId && window.SurfStreamApp.get("userModel").showFBButton) {
+		/*if (this.playlist.get("playlistId") == facebookPlaylistId && window.SurfStreamApp.get("userModel").showFBButton) {
 			new ImportFBVideosCell();
-		}
+		}*/
 	},
 	
 	setPlaylist: function(playlistModel) {
@@ -2422,7 +2474,7 @@ $(function() {
     theatre: this
    }, this.fullscreenToggle);
 	 $(document).keyup({theatre: this}, function(e){
-	            if(e.keyCode == 27){
+	            if(e.keyCode == 27 && e.data.theatre.full){
 	               e.data.theatre.fullscreenToggle(e);
 	            }
 	        });
@@ -2714,7 +2766,7 @@ $(function() {
 
   updateDJs: function(djArray) {
    var oldPosX, oldPosY, user;
-   var X_COORDS = [200, 256, 313];
+   var X_COORDS = [200, 266, 328];
    var Y_COORD = 0;
    var cur_is_dj = false;
    var numOnSofa = 0;
@@ -2796,7 +2848,7 @@ $(function() {
      "margin-top": Y_COORD,
      "margin-left": X_COORDS[dj]
     }, 500, "bouncein", function() {
-     $(this).css("z-index", "auto");
+     $(this).css("z-index", "2");
     }); /*restore auto z-index if hopped on couch and became current vj */
 
     user.data({
@@ -2819,7 +2871,7 @@ $(function() {
 
    //NEED BOUNDS CHECK HERE TODO
    $("#become-dj").css("margin-left", X_COORDS[numOnSofa] + "px").css("margin-top", Y_COORD + 10 + "px");
-   if (!cur_is_dj) {
+   if (!cur_is_dj && djArray.length != 3) {
     $("#become-dj").show();
    } else {
     $("#become-dj").hide();
@@ -3178,10 +3230,10 @@ $(function() {
    FB.ui({
     method: 'feed',
     display: 'popup',
-    name: 'Surfstream',
+    name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
     link: this.link,
-    caption: 'StreamSurfin all day',
-    description: 'Streamsurfin'
+    caption: 'Come watch videos with me',
+    description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
    }, function(response) {
    });
   },
@@ -3191,7 +3243,7 @@ $(function() {
        height = 400,
        left = ($(window).width() - width) / 2,
        top = ($(window).height() - height) / 2,
-       url = "http://twitter.com/share?text=Check%20out%20this%20channel",
+       url = "http://twitter.com/share?text=I'm%20watching%20the%20" + encodeURIComponent(SurfStreamApp.inRoomName) + "%20channel%20on%20%23surfstreamtv%20-%20Now%20Playing%20" + encodeURIComponent(window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title),
        opts = 'status=1' + ',width=' + width + ',height=' + height + ',top=' + top + ',left=' + left;
 
    window.open(url, 'twitter', opts);
@@ -3617,7 +3669,7 @@ $(function() {
 
 	 socket.on("user:profile", function(profile) {
 		app.get("userModel").set({
-			displayName: profile.first_name + " " + profile.last_name,
+			displayName: profile.ss_name,
 			avatarImage: 'https://graph.facebook.com/' + profile.id + '/picture',
 			ssId: profile.ssId
 		});
@@ -3631,7 +3683,7 @@ $(function() {
 	 });
 	 
 	 socket.on("playlist:showFBImport", function(data) {
-		app.get("userModel").showFBButton = true;
+		//app.get("userModel").showFBButton = true;
 		console.log("IGOT CALLED IGOT CALLED");
 	 });
 	 
@@ -3654,6 +3706,8 @@ $(function() {
      username: strip(msg.data.name),
      msg: strip(msg.data.text)
     });
+
+		TheatreView.tipsyChat(msg.data.text, msg.data.id);
     
    });
 
@@ -3668,7 +3722,9 @@ $(function() {
     app.get("mainView").theatreView.updateDJs(djArray);
    });
 
-
+	 socket.on("user:firstVisit", function() {
+		//display modal
+	 });
 
    //.upvoteset maps userids who up to true, .down, .up totals
    socket.on("meter:announce", function(meterStats) {
@@ -3825,6 +3881,10 @@ $(function() {
 	socket.on("user:likes", function(likedVideos) {
 		app.get("userModel").get("likesCollection").reset(likedVideos);
 	});
+	
+	socket.on("playlist:importFacebook", function() {
+		app.get("userModel").importFacebook = true;
+	});
 
   }
 
@@ -3958,6 +4018,7 @@ $(function() {
   },
 
   joinRoom: function(rID, create, roomName) {
+
    var vidsPlayed = SurfStreamApp.vidsPlayed;
    var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
    SurfStreamApp.vidsPlayed = 0;
@@ -3993,6 +4054,7 @@ $(function() {
     payload.currRoom = SurfStreamApp.inRoom;
    }
    SurfStreamApp.inRoom = rID;
+	 SurfStreamApp.inRoomName = roomName;
    payload.fbId = window.SurfStreamApp.get("userModel").get("fbId");
    payload.ssId = window.SurfStreamApp.get("userModel").get("ssId");
    SurfStreamApp.get("roomModel").get("chatCollection").reset();
@@ -4018,7 +4080,7 @@ $(function() {
   },
 
 	updateAvatar: function() {
-		SocketManagerModel.socket.emit('avatar:update', SurfStreamApp.currentAvatarSettings);
+		SocketManagerModel.socket.emit('avatar:update', {avatar: SurfStreamApp.currentAvatarSettings, name: SurfStreamApp.get("userModel").get("displayName")});
 	}
 
  });

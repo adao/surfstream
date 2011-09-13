@@ -1,8 +1,8 @@
-font-face {
+@font-face {
   font-family: "custom";
   src: url("/resources/candara.ttf") format("truetype");
 }
-font-face {
+@font-face {
   font-family: "custom";
   src: url("/resources/candarabold.ttf") format("truetype");
   font-weight: bold;
@@ -135,6 +135,7 @@ button {
   position: absolute;
   width: 60px;
   height: 80px;
+  z-index: 999;
 }
 div#loadingScreen {
   background-color: color;
@@ -209,11 +210,14 @@ div#outer {
 margin
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist #playlistTitle {
-  display: inline-block;
+  float: left;
   font-size: 16px;
   font-weight: bold;
-  margin-left: -167px;
   margin-top: 6px;
+  margin-left: 11px;
+}
+#outer #coolshit #right-side .sidebarContainer #search-view {
+  z-index: 3;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
@@ -246,7 +250,7 @@ margin
   padding: 0;
   border: 0;
   outline: 0;
-  background-color: #373737;
+  background-color: #e7e7e7;
   text-indent: 4px;
   color: #c0c0c0;
 }
@@ -277,6 +281,8 @@ margin
   max-width: 300px;
   max-height: 220px;
   display: block;
+  position: absolute;
+  z-index: 5;
 }
 .chatContainer .chatHeader {
   width: 300px;
@@ -584,7 +590,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -82px;
   margin-top: 10px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 75px;
   text-align: left;
   text-indent: 1px;
@@ -680,7 +686,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -41px;
   margin-top: 6px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 37px;
   text-align: left;
   text-indent: 0.5px;
@@ -1443,8 +1449,10 @@ background-color: green,
   vertical-align: top;
 }
 .playlist-hover-highlight {
-  background: #141414;
-  color: #c0c0c0;
+  color: #fff;
+  background: #34c8ff;
+  background: -moz-linear-gradient(top, #34c8ff, #008ab8);
+  background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
 }
 #playlist-collection-display {
   border: none;
@@ -1460,6 +1468,8 @@ background-color: green,
   overflow-x: hidden;
   border-bottom: 1px solid #666;
 }
+.playlist-collection-active,
+background-color: #4C4C4C,
 #playlist-collection-form {
   width: 0px;
   border: none;
@@ -1571,7 +1581,7 @@ background-color: green,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1653,7 +1663,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-view .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1736,7 +1746,7 @@ background-color: green,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1873,19 +1883,35 @@ background-color: green,
   font-size: 16px;
   text-align: center;
 }
-#avatar-picker-modal .dialog-buttons .saveChanges {
+#avatar-picker-modal .dialog-buttons #saveChanges {
   background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
   background: -moz-linear-gradient(top, #34c8ff, #008ab8);
   background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
+  color: #000;
 }
-#avatar-picker-modal .dialog-buttons .saveChanges:hover,
-#avatar-picker-modal .dialog-buttons .cancelPicker:hover {
+#avatar-picker-modal .dialog-buttons #cancelPicker:hover {
   color: #fff;
 }
-#avatar-picker-modal .dialog-buttons .cancelPicker {
+#avatar-picker-modal .dialog-buttons #saveChanges:hover {
+  color: #fff;
+}
+#avatar-picker-modal .dialog-buttons #cancelPicker {
   background: -webkit-gradient(linear, left top, left bottom, from(#c0c0c0), to(#8d8d8d));
   background: -moz-linear-gradient(top, #c0c0c0, #8d8d8d);
   background-image: -o-linear-gradient(top, #c0c0c0, #8d8d8d);
+}
+#name-change-text {
+  font-size: 19px;
+  margin-top: 53px;
+  position: absolute;
+  float: right;
+  margin-left: 694px;
+}
+#name-change-input {
+  margin-left: 667px;
+  position: absolute;
+  margin-top: 84px;
+  font-size: 15px;
 }
 .ui-sortable-placeholder {
   width: 50px;
@@ -1913,7 +1939,7 @@ background-color: green,
   width: 100%;
 }
 #close-preview-player {
-  margin-top: -32px;
+  margin-top: -36px;
   position: absolute;
   margin-left: 88px;
   height: 24px;
@@ -1934,10 +1960,10 @@ background-color: green,
   color: #e7e7e7;
 }
 #previewContainer {
-  display: none;
   height: 213px;
   position: relative;
-  top: -187px;
+  z-index: 4;
+  border-top: 1px solid #808080;
 }
 .default {
   position: absolute;
@@ -2113,7 +2139,7 @@ background-color: green,
   line-height: 50%;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -2123,7 +2149,7 @@ background-color: green,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -2145,7 +2171,7 @@ background-color: green,
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -225px;
-  background: rgba(50,50,50,0.70);
+  background: rgba(50,50,50,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -2227,7 +2253,7 @@ background-color: green,
 #nowPlayingFull .chFS:hover,
 #nowPlayingFull .voteContainerFS:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .chFS,
 .voteContainerFS,
@@ -2284,7 +2310,7 @@ background-color: green,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: -13px;
@@ -2296,7 +2322,7 @@ background-color: green,
 #sofa-remote {
   left: 170px;
   top: 140px;
-  z-index: 3;
+  z-index: 3 !important;
   position: absolute;
 }
 a#fdbk_tab {

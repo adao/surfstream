@@ -114,6 +114,7 @@ button
 	position: absolute
 	width: 60px
 	height: 80px
+	z-index: 999
 
 div#loadingScreen
 	background-color: color
@@ -177,12 +178,13 @@ div#outer
 							margin-left: 3px
 							margin
 						#playlistTitle
-							display: inline-block
+							float: left
 							font-size: 16px
 							font-weight: bold
-							margin-left: -167px
 							margin-top: 6px
+							margin-left: 11px
 				#search-view
+					z-index:3
 					#searchContainer
 						overflow-y: scroll
 						overflow-x: hidden
@@ -211,7 +213,7 @@ div#outer
 								padding: 0
 								border: 0
 								outline: 0
-								background-color: #373737
+								background-color: #E7E7E7
 								text-indent: 4px
 								color: silver
 							input:focus
@@ -241,6 +243,8 @@ div#outer
 	max-width: 300px
 	max-height: 220px
 	display: block
+	position: absolute
+	z-index:5
 	.chatHeader {
 		width: 300px
 		height: 30px
@@ -1260,8 +1264,10 @@ div#top-video-name
 	vertical-align: top
 	
 .playlist-hover-highlight
-	background: #141414
-	color: silver
+	color: white
+	background: #34C8FF
+	background: -moz-linear-gradient(top, #34C8FF, #008AB8)
+	background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
 	
 #playlist-collection-display
 	border: none
@@ -1275,7 +1281,10 @@ div#top-video-name
 	background-color: #313131
 	overflow-y: scroll
 	overflow-x: hidden
-	border-bottom: 1px solid #666  
+	border-bottom: 1px solid #666
+	
+.playlist-collection-active
+  background-color: #4C4C4C!important
 	
 #playlist-collection-form
 	width: 0px
@@ -1631,17 +1640,31 @@ div#top-video-name
 			margin-left: 10px;
 			font-size: 16px;
 			text-align: center;
-		.saveChanges
+		#saveChanges
 			background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
 			background: -moz-linear-gradient(top,  #34C8FF,  #008AB8)
 			background-image: -o-linear-gradient(top, #34C8FF, #008AB8)
-		.saveChanges:hover, .cancelPicker:hover
+			color: black
+		#cancelPicker:hover
 			color: white
-		.cancelPicker
+		#saveChanges:hover
+			color: white
+		#cancelPicker
 			background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#8D8D8D))
 			background: -moz-linear-gradient(top,  silver,  #8D8D8D)
 			background-image: -o-linear-gradient(top, silver, #8D8D8D)
-			
+
+#name-change-text
+	font-size: 19px;
+	margin-top: 53px;
+	position: absolute;
+	float: right;
+	margin-left: 694px;
+#name-change-input
+	margin-left: 667px;
+	position: absolute;
+	margin-top: 84px;
+	font-size: 15px;
 .ui-sortable-placeholder
 	width: 50px
 	height: 30px
@@ -1665,7 +1688,7 @@ div#top-video-name
 		width: 100%
 	                 
 #close-preview-player 
-	margin-top: -32px;
+	margin-top: -36px;
 	position: absolute;
 	margin-left: 88px;
 	height: 24px;
@@ -1684,11 +1707,10 @@ div#top-video-name
 		color: #E7E7E7
 	
 #previewContainer
-	display: none
-	height: 213px
+	height: 213px;
 	position: relative;
-	top: -187px;
-	
+	z-index: 4;
+	border-top: 1px solid grey;
 .default
 	position: absolute
 
@@ -1993,7 +2015,7 @@ div#top-video-name
 #sofa-remote
 	left: 170px
 	top: 140px
-	z-index:3
+	z-index: 3!important
 	position: absolute
 
 a#fdbk_tab
