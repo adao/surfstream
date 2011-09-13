@@ -171,17 +171,21 @@ $(function() {
   },
 	
 	initialize: function() {
-		this.showFBButton = false;
+		//this.showFBButton = false;
 	},
 
   getFBUserData: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
    }
+	 //this.getUserPostedVideos();
   },
 
   setUserData: function(info) {
-   SocketManagerModel.sendFBUser(info);
+	SurfStreamApp.get("userModel").set({profile: info});
+	SurfStreamApp.get("mainView").roomModal.hide();
+	SurfStreamApp.get("userModel").set({displayName: info.name})
+  new AvatarPickerView({isFirstVisit: true});
   },
 	
 	initializePlaylists: function(userPlaylists, activePlaylistId) {
@@ -193,6 +197,8 @@ $(function() {
 		$(".active-playlist-nameholder").removeClass("active-playlist-nameholder");
 		this.get("playlistCollection").setActivePlaylist(activePlaylistId);
 		$(this.get("playlistCollection").idToPlaylistNameholder[activePlaylistId].el).addClass("active-playlist-nameholder");
+		if (this.importFacebook)
+			this.getUserPostedVideos();
 	},
 
 	sendUserFBFriends: function(info) {
@@ -434,8 +440,8 @@ $(function() {
 	avatarPickerTemplate: _.template($("#avatar-picker-template").html()),
 
 	events: {
-   "click .saveChanges": "saveAvatar",
-   "click .cancelPicker": "closePicker"
+   "click #saveChanges": "saveAvatar",
+   "click #cancelPicker": "closePicker"
   },
 
 	initialize: function() {
@@ -443,23 +449,33 @@ $(function() {
    $("#modalBG").click({
     modal: this
    }, function(e) {
+	  if (e.data.modal.options.isFirstVisit) return;
 		e.data.modal.remove();
 		$("#roomsList").after("<div id=avatar-picker-modal></div>")
 		$("#change-avatar").hide();	
 		$("#edit-profile").hide();	
 		$("#logout").hide();
    });
+	
    this.render();
+ 	 $("#name-change-input").val(SurfStreamApp.get("userModel").get("displayName"))
 	 $(".picker-el").click({picker: this}, this.handlePickerElClick);
 	 this.previewWrapper = $($(".picker-preview-avatar-wrapper")[0])
 	 this.previewWrapper.css({"margin-left": 52, "margin-top": 60});
-
-	 this.setSelected("body", SurfStreamApp.currentAvatarSettings[0]);
-	 this.setSelected("eye", SurfStreamApp.currentAvatarSettings[1]);
-	 this.setSelected("eyesize", SurfStreamApp.currentAvatarSettings[2]);
-	 this.setSelected("glasses", SurfStreamApp.currentAvatarSettings[3]);
-	 this.setSelected("smile", SurfStreamApp.currentAvatarSettings[4]);
-	 this.setSelected("hat", SurfStreamApp.currentAvatarSettings[5]);
+	 if (this.options.isFirstVisit){
+		 SurfStreamApp.currentAvatarSettings = [Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3), Math.ceil(Math.random() * 2), Math.ceil(Math.random() * 6) - 1, Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 5) - 1];
+	 	 $("#cancelPicker").hide();
+		 $("#saveChanges").css({"margin-left":27, "width":139})
+		 $("#saveChanges").html("Start Surfing")
+	 }
+	this.setSelected("body", SurfStreamApp.currentAvatarSettings[0]);
+	this.setSelected("eye", SurfStreamApp.currentAvatarSettings[1]);
+	this.setSelected("eyesize", SurfStreamApp.currentAvatarSettings[2]);
+	this.setSelected("glasses", SurfStreamApp.currentAvatarSettings[3]);
+	this.setSelected("smile", SurfStreamApp.currentAvatarSettings[4]);
+	this.setSelected("hat", SurfStreamApp.currentAvatarSettings[5]);
+	 
+	 
 		$(this.el).show();
 	 this.highlightCurrents(SurfStreamApp.currentAvatarSettings);
 	 this.idMapper = {
@@ -597,6 +613,11 @@ $(function() {
   },
 
 	saveAvatar: function() {
+		if ($("#name-change-input").val() == "") {
+			$("#name-change-input").css({"border-color": "red"});
+			$("#name-change-text").append('<span style="color: red"> !</span>');
+			return;
+		}
 		var newAvatarSettings = [];
 		newAvatarSettings.push(this.bodyID);
 		newAvatarSettings.push(this.eyeID);
@@ -605,7 +626,17 @@ $(function() {
 		newAvatarSettings.push(this.smileID);
 		newAvatarSettings.push(this.hatID);
 		SurfStreamApp.currentAvatarSettings = newAvatarSettings;
-		SocketManagerModel.updateAvatar();
+		SurfStreamApp.get("userModel").set({displayName: $("#name-change-input").val()});
+		
+		if(this.options.isFirstVisit) {
+			var info = SurfStreamApp.get("userModel").get("profile");
+			info.ss_name = SurfStreamApp.get("userModel").get("displayName");
+			info.avatarSettings = newAvatarSettings;
+			SocketManagerModel.sendFBUser(info);
+			SurfStreamApp.get("mainView").roomModal.show();
+		} else {
+			SocketManagerModel.updateAvatar();			
+		}
 		this.closePicker();
 	},
 
@@ -1589,7 +1620,6 @@ $(function() {
 	},
 	
 	addChannelHistoryView: function(recentVideo) {
-		$("#searchContainer").empty();
 		if (this.channelHistoryActive) {
 			var attributes = {
 		   title: recentVideo.get("title"),
@@ -1944,9 +1974,9 @@ $(function() {
 		for (var i = this.playlist.get("videos").length - 1; i >= 0; i--) {
 			this.addVideo(this.playlist.get("videos").at(i), this.playlist.get("playlistId"));
 		}
-		if (this.playlist.get("playlistId") == facebookPlaylistId && window.SurfStreamApp.get("userModel").showFBButton) {
+		/*if (this.playlist.get("playlistId") == facebookPlaylistId && window.SurfStreamApp.get("userModel").showFBButton) {
 			new ImportFBVideosCell();
-		}
+		}*/
 	},
 	
 	setPlaylist: function(playlistModel) {
@@ -2444,7 +2474,7 @@ $(function() {
     theatre: this
    }, this.fullscreenToggle);
 	 $(document).keyup({theatre: this}, function(e){
-	            if(e.keyCode == 27){
+	            if(e.keyCode == 27 && e.data.theatre.full){
 	               e.data.theatre.fullscreenToggle(e);
 	            }
 	        });
@@ -3639,7 +3669,7 @@ $(function() {
 
 	 socket.on("user:profile", function(profile) {
 		app.get("userModel").set({
-			displayName: profile.first_name + " " + profile.last_name,
+			displayName: profile.ss_name,
 			avatarImage: 'https://graph.facebook.com/' + profile.id + '/picture',
 			ssId: profile.ssId
 		});
@@ -3653,7 +3683,7 @@ $(function() {
 	 });
 	 
 	 socket.on("playlist:showFBImport", function(data) {
-		app.get("userModel").showFBButton = true;
+		//app.get("userModel").showFBButton = true;
 		console.log("IGOT CALLED IGOT CALLED");
 	 });
 	 
@@ -3676,6 +3706,8 @@ $(function() {
      username: strip(msg.data.name),
      msg: strip(msg.data.text)
     });
+
+		TheatreView.tipsyChat(msg.data.text, msg.data.id);
     
    });
 
@@ -3690,7 +3722,9 @@ $(function() {
     app.get("mainView").theatreView.updateDJs(djArray);
    });
 
-
+	 socket.on("user:firstVisit", function() {
+		//display modal
+	 });
 
    //.upvoteset maps userids who up to true, .down, .up totals
    socket.on("meter:announce", function(meterStats) {
@@ -3846,6 +3880,10 @@ $(function() {
 	
 	socket.on("user:likes", function(likedVideos) {
 		app.get("userModel").get("likesCollection").reset(likedVideos);
+	});
+	
+	socket.on("playlist:importFacebook", function() {
+		app.get("userModel").importFacebook = true;
 	});
 
   }
@@ -4042,7 +4080,7 @@ $(function() {
   },
 
 	updateAvatar: function() {
-		SocketManagerModel.socket.emit('avatar:update', SurfStreamApp.currentAvatarSettings);
+		SocketManagerModel.socket.emit('avatar:update', {avatar: SurfStreamApp.currentAvatarSettings, name: SurfStreamApp.get("userModel").get("displayName")});
 	}
 
  });
