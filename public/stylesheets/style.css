@@ -1868,7 +1868,7 @@ background-color: #4C4C4C,
   text-align: center;
 }
 #avatar-picker-modal .dialog-buttons {
-  margin-top: 310px;
+  margin-top: 230px;
   position: absolute;
   margin-left: 657px;
 }
@@ -1908,8 +1908,6 @@ background-color: #4C4C4C,
   margin-left: 694px;
 }
 #name-change-input {
-  margin-left: 667px;
-  position: absolute;
   margin-top: 84px;
   font-size: 15px;
 }
@@ -3445,7 +3443,7 @@ a#fdbk_tab {
 }
 #picker-preview {
   height: 180px;
-  margin-top: 115px;
+  margin-top: 40px;
   float: right;
   margin-right: 60px;
   width: 175px;

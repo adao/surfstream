@@ -2738,7 +2738,7 @@ $(function() {
    if (e.data.theatre.full) {
     SurfStreamApp.fullscreen = true;
     if (typeof(mpq) !== 'undefined') mpq.track("Fullscreen on", {
-     mp_note: "Fullscreen open (onsofa: __)"
+     mp_note: "Fullscreen open"
     });
     $("#YouTubePlayer").addClass("fully");
     $("#fullscreenIcon").addClass("fully");
@@ -2758,7 +2758,7 @@ $(function() {
    } else {
     SurfStreamApp.fullscreen = false;
     if (typeof(mpq) !== 'undefined') mpq.track("Fullscreen off", {
-     mp_note: "Fullscreen closed (onsofa: __)"
+     mp_note: "Fullscreen closed"
     });
     $("#YouTubePlayer").removeClass("fully");
     $("#fullscreenIcon").removeClass("fully");
@@ -3967,14 +3967,14 @@ $(function() {
 
   voteUp: function(video) {
    if (typeof(mpq) !== 'undefined') mpq.track("Vote up", {
-    mp_note: "Video was voted up (fronthalf: ___)"
+    mp_note: "Video was voted up"
    });
    SocketManagerModel.socket.emit('meter:upvote', video);
   },
 
   voteDown: function() {
    if (typeof(mpq) !== 'undefined') mpq.track("Vote down", {
-    mp_note: "Video was voted down (fronthalf: ___)"
+    mp_note: "Video was voted down"
    });
    SocketManagerModel.socket.emit('meter:downvote');
   },
@@ -4162,14 +4162,8 @@ function setVideoVolume(event) {
 function mute(event) {
  if (window.YTPlayer.isMuted()) {
   window.YTPlayer.unMute();
-  if (typeof(mpq) !== 'undefined') mpq.track("Mute toggled", {
-   mp_note: "Volume was toggled on"
-  });
  } else {
   window.YTPlayer.mute();
-  if (typeof(mpq) !== 'undefined') mpq.track("Mute toggled", {
-   mp_note: "Volume was toggled off"
-  });
  }
 }
 
