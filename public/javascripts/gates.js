@@ -2135,7 +2135,7 @@ $(function() {
   initialize: function() {
    this.render();
    $(this.el).find(".soundToggler").live("click", {
-    "this": this
+    sound: this
    }, this.toggleSound);
    this.options.chatCollection.bind("add", this.makeNewChatMsg, this);
    this.options.chatCollection.bind("reset", this.clearChat);
@@ -2178,10 +2178,10 @@ $(function() {
 
   toggleSound: function(event) {
    if (window.SurfStreamApp.get("mainView").soundOn) {
-    $(event.data.this.el).find(".soundToggler").text("Sound Off");
+    $(event.data.sound.el).find(".soundToggler").text("Sound Off");
     window.SurfStreamApp.get("mainView").soundOn = false;
    } else {
-    $(event.data.this.el).find(".soundToggler").text("Sound On");
+    $(event.data.sound.el).find(".soundToggler").text("Sound On");
     window.SurfStreamApp.get("mainView").soundOn = true;
    }
   },
