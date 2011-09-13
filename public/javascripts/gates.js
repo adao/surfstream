@@ -1450,6 +1450,13 @@ $(function() {
 				}
 			}
 		}
+		$("#playlistTitle").html("Drag and Drop Videos Into Playlists");
+		$("#yt-pill").hide();
+		$("#likes-pill").hide();
+		$("#history-pill").hide();
+		$("#playlist-collection-input").hide();
+		document.getElementById('playlistTitle').style.color = '#34C8FF'
+		document.getElementById('playlist-collection').style.background = '#141414'
 	},
 	
 	hideDroppable: function() {
@@ -1460,6 +1467,13 @@ $(function() {
 				}
 			}
 		}
+		$("#playlistTitle").html("My Playlists");
+		$("#yt-pill").show();
+		$("#likes-pill").show();
+		$("#history-pill").show()
+		$("#playlist-collection-input").show();
+		document.getElementById('playlistTitle').style.color = 'white'
+		document.getElementById('playlist-collection').style.background = '#313131'
 	}
  });
  window.PlaylistCollectionView = Backbone.View.extend({
@@ -1758,6 +1772,7 @@ $(function() {
 	},
 	initialize: function() {
 		this.render();
+		$(this.el).attr('id', 'yt-pill');
 	},
 	render: function() {
 		$(this.el).html(this.youtubeNameholderTemplate());
@@ -1791,6 +1806,7 @@ $(function() {
 	},
 	initialize: function() {
 		this.render();
+		$(this.el).attr('id', 'history-pill');
 	},
 	render: function() {
 		$(this.el).html(this.channelHistoryNameholderTemplate());
@@ -1823,6 +1839,7 @@ $(function() {
 	},
 	initialize: function() {
 		this.render();
+		$(this.el).attr('id', 'likes-pill');
 	},
 	render: function() {
 		$(this.el).html(this.likesNameholderTemplate());
@@ -2749,7 +2766,7 @@ $(function() {
 
   updateDJs: function(djArray) {
    var oldPosX, oldPosY, user;
-   var X_COORDS = [200, 256, 313];
+   var X_COORDS = [200, 266, 328];
    var Y_COORD = 0;
    var cur_is_dj = false;
    var numOnSofa = 0;
@@ -2831,7 +2848,7 @@ $(function() {
      "margin-top": Y_COORD,
      "margin-left": X_COORDS[dj]
     }, 500, "bouncein", function() {
-     $(this).css("z-index", "auto");
+     $(this).css("z-index", "2");
     }); /*restore auto z-index if hopped on couch and became current vj */
 
     user.data({
@@ -3213,10 +3230,10 @@ $(function() {
    FB.ui({
     method: 'feed',
     display: 'popup',
-    name: 'surfstream presents: ' + SurfStreamApp.inRoomName,
+    name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
     link: this.link,
-    caption: "Check out the channel I'm hanging out in, " + SurfStreamApp.inRoomName + "!",
-    description: 'surfstream.tv - Watch great videos together'
+    caption: 'Come watch videos with me',
+    description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
    }, function(response) {
    });
   },
@@ -3226,7 +3243,7 @@ $(function() {
        height = 400,
        left = ($(window).width() - width) / 2,
        top = ($(window).height() - height) / 2,
-       url = "http://twitter.com/share?text=Hanging%20out%20in%20the%20" + SurfStreamApp.inRoomName +"%20channel%20on%20surfstream.tv",
+       url = "http://twitter.com/share?text=I'm%20watching%20the%20" + encodeURIComponent(SurfStreamApp.inRoomName) + "%20channel%20on%20%23surfstreamtv%20-%20Now%20Playing%20" + encodeURIComponent(window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title),
        opts = 'status=1' + ',width=' + width + ',height=' + height + ',top=' + top + ',left=' + left;
 
    window.open(url, 'twitter', opts);
@@ -4001,6 +4018,7 @@ $(function() {
   },
 
   joinRoom: function(rID, create, roomName) {
+
    var vidsPlayed = SurfStreamApp.vidsPlayed;
    var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
    SurfStreamApp.vidsPlayed = 0;
@@ -4036,7 +4054,7 @@ $(function() {
     payload.currRoom = SurfStreamApp.inRoom;
    }
    SurfStreamApp.inRoom = rID;
-	 SurfStreamApp.inRoomName = rID;
+	 SurfStreamApp.inRoomName = roomName;
    payload.fbId = window.SurfStreamApp.get("userModel").get("fbId");
    payload.ssId = window.SurfStreamApp.get("userModel").get("ssId");
    SurfStreamApp.get("roomModel").get("chatCollection").reset();

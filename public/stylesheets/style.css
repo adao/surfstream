@@ -135,6 +135,7 @@ button {
   position: absolute;
   width: 60px;
   height: 80px;
+  z-index: 999;
 }
 div#loadingScreen {
   background-color: color;
@@ -209,11 +210,11 @@ div#outer {
 margin
 }
 #outer #coolshit #right-side .sidebarContainer .viewBar .playlist #playlistTitle {
-  display: inline-block;
+  float: left;
   font-size: 16px;
   font-weight: bold;
-  margin-left: -167px;
   margin-top: 6px;
+  margin-left: 11px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view {
   z-index: 3;
@@ -249,7 +250,7 @@ margin
   padding: 0;
   border: 0;
   outline: 0;
-  background-color: #373737;
+  background-color: #e7e7e7;
   text-indent: 4px;
   color: #c0c0c0;
 }
@@ -1448,8 +1449,10 @@ background-color: green,
   vertical-align: top;
 }
 .playlist-hover-highlight {
-  background: #141414;
-  color: #c0c0c0;
+  color: #fff;
+  background: #34c8ff;
+  background: -moz-linear-gradient(top, #34c8ff, #008ab8);
+  background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
 }
 #playlist-collection-display {
   border: none;
@@ -1465,6 +1468,8 @@ background-color: green,
   overflow-x: hidden;
   border-bottom: 1px solid #666;
 }
+.playlist-collection-active,
+background-color: #4C4C4C,
 #playlist-collection-form {
   width: 0px;
   border: none;
@@ -2317,7 +2322,7 @@ background-color: green,
 #sofa-remote {
   left: 170px;
   top: 140px;
-  z-index: 3;
+  z-index: 3 !important;
   position: absolute;
 }
 a#fdbk_tab {
