@@ -154,7 +154,7 @@ div#outer
 				height: 413px
 				.viewBar
 					height: 30px
-					.playlist
+					.viewBarHeader
 						vertical-align: top
 						background-color: #c0c0c0
 						color: white
@@ -1255,7 +1255,6 @@ div#top-video-name
 	vertical-align: top
 	margin-top: 1px
 	
-	
 .playlist-nameholder.selected-non-playlist-nameholder
 	background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#eee))
 	background: -moz-linear-gradient(top, silver, #eee)
@@ -1274,14 +1273,38 @@ div#top-video-name
 	background: transparent
 	margin-left: -36px;
 	display: inline-block
+
+.browse-videos-container
+	background: #666
+	position: relative
+	height: 56px
+	.browse-videos-header
+		margin-left: 0px
+		padding-left: 5px
+		padding-top: 2px
+		font-size: 17px
+	#browse-videos-list
+		list-style-type: none
+		display: inline-block
+		margin-left: -36px
+		font-family: "Arial"
+		position: absolute
+		top: 5px
 	
 #playlist-collection
-	max-height: 91px
-	font-size: 10px
-	background-color: #313131
-	overflow-y: scroll
-	overflow-x: hidden
-	border-bottom: 1px solid #666
+	#playlist-collection-display
+		width: 300px
+		max-height: 91px
+		font-size: 10px
+		background-color: #313131
+		overflow-y: scroll
+		overflow-x: hidden
+		border-bottom: 1px solid #666
+	.playlist-collection-header
+		font-size: 17px
+		color: #666
+		padding-left: 5px
+		padding-top: 2px
 	
 .playlist-collection-active
   background-color: #4C4C4C!important

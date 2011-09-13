@@ -965,17 +965,40 @@ $(function() {
   initialize: function() {
    this.render();
    this.playlistCollectionView = new PlaylistCollectionView({
-    playlistCollection: this.options.playlistCollection,
-		searchBarModel: this.options.searchBarModel,
-		channelHistoryCollection: this.options.channelHistoryCollection,
-		likesCollection: this.options.likesCollection
+    playlistCollection: this.options.playlistCollection
    });
+	 this.browseVideoView = new BrowseVideosView({
+		playlistCollection: this.options.playlistCollection,
+		searchBarModel: this.options.searchBarModel,
+		likesCollection: this.options.likesCollection,
+		channelHistoryCollection: this.options.channelHistoryCollection
+	 });
+	 this.playlistActive = true;
   },
 
   render: function() {
    $(this.el).html(this.sidebarTemplate());
    return this;
-  }
+  },
+	
+	hidePlaylistView: function() {
+		if (!this.playlistActive) {
+			return;
+		}
+		$(".active-playlist-nameholder").removeClass("active-playlist-nameholder");
+		$("#playlist-view").hide();
+		this.playlistActive = false;
+	},
+	
+	showPlaylistView: function() {
+		if (this.playlistActive) {
+			return;
+		}
+		$("#playlist-view").show();
+		this.activeNonPlaylistNameholder.deactivateNameholder();
+		this.searchView.hide();
+		this.playlistActive = true;
+	}
 
  });
 
@@ -1489,30 +1512,9 @@ $(function() {
 	playlistCollectionTemplate: _.template($("#playlist-collection-template").html()),
 	
 	initialize: function() {
-		this.options.channelHistoryCollection.bind("add", this.addChannelHistoryView, this);
-		this.options.likesCollection.bind("add", this.addLikesView, this);
 		this.render();
 		this.options.playlistCollection.playlistCollectionView = this;
-		this.playlistActive = true;
-		this.searchActive = false;
-		this.channelHistoryActive = false;
-		this.likesActive = false;
-		this.activeNonPlaylistNameholder;
-		this.likesNameholderView = new LikesNameholderView({
-			playlistCollectionView: this
-		});
-		this.channelHistoryNameholderView = new ChannelHistoryNameholderView({
-			playlistCollectionView: this
-		});
-		this.youtubeNameholderView = new YoutubeNameholderView({
-			playlistCollectionView: this
-		});
 		this.playlistView = new PlaylistView();
-		this.searchView = new SearchView({
-			searchBarModel: this.options.searchBarModel,
-			playlistCollection: this.options.playlistCollection
-	  });
-		this.searchView.hide();
 		$("#playlist-collection-input").bind("keyup", {playlistCollectionView: this}, this.addPlaylist);
 	},
 	
@@ -1533,26 +1535,51 @@ $(function() {
 		$("#playlist-collection-input").val("");
 	},
 	
-	hidePlaylistView: function() {
-		if (!this.playlistActive) {
-			return;
-		}
-		$(".active-playlist-nameholder").removeClass("active-playlist-nameholder");
-		$("#playlist-view").hide();
-		this.playlistActive = false;
+	
+
+
+  render: function() {
+   $(this.el).html(this.playlistCollectionTemplate());
+   $(".videoView").append(this.el);
+   return this;
+  }
+ });
+ window.BrowseVideosView = Backbone.View.extend({
+	el: ".browse-videos-container",
+	
+	browseVideosTemplate: _.template($("#browse-videos-template").html()),
+	
+	initialize: function() {
+		this.options.channelHistoryCollection.bind("add", this.addChannelHistoryView, this);
+		this.options.likesCollection.bind("add", this.addLikesView, this);
+		this.render();
+		this.options.playlistCollection.browseVideoView = this;
+		this.playlistActive = true;
+		this.searchActive = false;
+		this.channelHistoryActive = false;
+		this.likesActive = false;
+		this.activeNonPlaylistNameholder;
+		this.likesNameholderView = new LikesNameholderView({
+			browseVideosView: this
+		});
+		this.channelHistoryNameholderView = new ChannelHistoryNameholderView({
+			browseVideosView: this
+		});
+		this.youtubeNameholderView = new YoutubeNameholderView({
+			browseVideosView: this
+		});
+		this.searchView = new SearchView({
+			searchBarModel: this.options.searchBarModel,
+			playlistCollection: this.options.playlistCollection
+	  });
+		this.searchView.hide();
 	},
 	
-	showPlaylistView: function() {
-		if (this.playlistActive) {
-			return;
-		}
-		$("#playlist-view").show();
-		this.activeNonPlaylistNameholder.deactivateNameholder();
-		this.searchView.hide();
-		this.playlistActive = true;
+	render: function() {
+		$(this.el).html(this.browseVideosTemplate());
 	},
-
-  showSearch: function() {
+	
+	showSearch: function() {
 		if (this.activeNonPlaylistNameholder) {
 			this.activeNonPlaylistNameholder.deactivateNameholder();
 		}
@@ -1654,15 +1681,8 @@ $(function() {
 			var searchResultModel = new SearchResultModel(attributes);
 			new SearchCellView({video: searchResultModel, toTop: true});
 		}
-	},
-
-  render: function() {
-   $(this.el).html(this.playlistCollectionTemplate());
-   $(".videoView").append(this.el);
-   return this;
-  }
+	}
  });
-
  window.PlaylistNameholderView = Backbone.View.extend({
 	className: "playlist-nameholder",
 	tagName: "li",
@@ -1783,13 +1803,13 @@ $(function() {
 	},
 	render: function() {
 		$(this.el).html(this.youtubeNameholderTemplate());
-		$("#playlist-collection-display").prepend(this.el);
+		$("#browse-videos-list").prepend(this.el);
 	},
 	displaySearch: function() {
 		this.options.playlistCollectionView.showSearch();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
-		this.options.playlistCollectionView.activeNonPlaylistNameholder = this;
+		this.options.browseVideosView.activeNonPlaylistNameholder = this;
 	},
 	
 	deactivateNameholder: function() {
@@ -1817,13 +1837,13 @@ $(function() {
 	},
 	render: function() {
 		$(this.el).html(this.channelHistoryNameholderTemplate());
-		$("#playlist-collection-display").prepend(this.el);
+		$("#browse-videos-list").prepend(this.el);
 	},
 	displayChannelHistory: function() {
 		this.options.playlistCollectionView.showChannelHistory();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
-		this.options.playlistCollectionView.activeNonPlaylistNameholder = this;
+		this.options.browseVideosView.activeNonPlaylistNameholder = this;
 	},
 	
 	deactivateNameholder: function() {
@@ -1850,13 +1870,13 @@ $(function() {
 	},
 	render: function() {
 		$(this.el).html(this.likesNameholderTemplate());
-		$("#playlist-collection-display").prepend(this.el);
+		$("#browse-videos-list").prepend(this.el);
 	},
 	displayLikes: function() {
 		this.options.playlistCollectionView.showLikes();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
-		this.options.playlistCollectionView.activeNonPlaylistNameholder = this;
+		this.options.browseVideosView.activeNonPlaylistNameholder = this;
 	},
 	
 	deactivateNameholder: function() {
