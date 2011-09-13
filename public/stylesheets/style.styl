@@ -114,6 +114,7 @@ button
 	position: absolute
 	width: 60px
 	height: 80px
+	z-index: 999
 
 div#loadingScreen
 	background-color: color
@@ -177,12 +178,13 @@ div#outer
 							margin-left: 3px
 							margin
 						#playlistTitle
-							display: inline-block
+							float: left
 							font-size: 16px
 							font-weight: bold
-							margin-left: -167px
 							margin-top: 6px
+							margin-left: 11px
 				#search-view
+					z-index:3
 					#searchContainer
 						overflow-y: scroll
 						overflow-x: hidden
@@ -211,7 +213,7 @@ div#outer
 								padding: 0
 								border: 0
 								outline: 0
-								background-color: #373737
+								background-color: #E7E7E7
 								text-indent: 4px
 								color: silver
 							input:focus
@@ -241,6 +243,8 @@ div#outer
 	max-width: 300px
 	max-height: 220px
 	display: block
+	position: absolute
+	z-index:5
 	.chatHeader {
 		width: 300px
 		height: 30px
@@ -1199,9 +1203,16 @@ div#top-video-name
 
 #playlist-collection-input
 	background-color: silver
+	
+.active-playlist-nameholder, .active-playlist-nameholder:hover
+	-moz-box-shadow: 0 0 6px #00FFFB;
+	-webkit-box-shadow: 0 0 6px #00FFFB;
+	box-shadow: 0 0 6px #00FFFB;
+
 #playlist-collection-input::-webkit-input-placeholder
 		color: #141414
-.selected-playlist-nameholder
+		
+.selected-playlist-nameholder, .selected-playlist-nameholder:hover
 	border-color: #008AB8
 	background-color: white
 	background: -webkit-gradient(linear, left top, left bottom, from(white), to(silver))
@@ -1210,9 +1221,6 @@ div#top-video-name
 	color: #008AB8
 	vertical-align: top
 	font-weight: bold
-	-moz-box-shadow:inset 0 0 4px #008AB8;
-	-webkit-box-shadow:inset 0 0 4px #008AB8;
-	box-shadow:inset 0 0 4px #008AB8;
 	button
 		background: url('/images/room/newicons/delete-playlist.png') 50% 50% no-repeat
 .selected-playlist-nameholder
@@ -1248,7 +1256,7 @@ div#top-video-name
 	margin-top: 1px
 	
 	
-.playlist-nameholder.selected-youtube-nameholder, .playlist-nameholder.selected-channel-history-nameholder, .playlist-nameholder.selected-likes-nameholder
+.playlist-nameholder.selected-non-playlist-nameholder
 	background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#eee))
 	background: -moz-linear-gradient(top, silver, #eee)
 	background-image: -o-linear-gradient(top, silver, #eee)
@@ -1256,8 +1264,10 @@ div#top-video-name
 	vertical-align: top
 	
 .playlist-hover-highlight
-	background: #141414
-	color: silver
+	color: white
+	background: #34C8FF
+	background: -moz-linear-gradient(top, #34C8FF, #008AB8)
+	background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
 	
 #playlist-collection-display
 	border: none
@@ -1271,7 +1281,10 @@ div#top-video-name
 	background-color: #313131
 	overflow-y: scroll
 	overflow-x: hidden
-	border-bottom: 1px solid #666  
+	border-bottom: 1px solid #666
+	
+.playlist-collection-active
+  background-color: #4C4C4C!important
 	
 #playlist-collection-form
 	width: 0px
@@ -1627,17 +1640,31 @@ div#top-video-name
 			margin-left: 10px;
 			font-size: 16px;
 			text-align: center;
-		.saveChanges
+		#saveChanges
 			background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
 			background: -moz-linear-gradient(top,  #34C8FF,  #008AB8)
 			background-image: -o-linear-gradient(top, #34C8FF, #008AB8)
-		.saveChanges:hover, .cancelPicker:hover
+			color: black
+		#cancelPicker:hover
 			color: white
-		.cancelPicker
+		#saveChanges:hover
+			color: white
+		#cancelPicker
 			background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#8D8D8D))
 			background: -moz-linear-gradient(top,  silver,  #8D8D8D)
 			background-image: -o-linear-gradient(top, silver, #8D8D8D)
-			
+
+#name-change-text
+	font-size: 19px;
+	margin-top: 53px;
+	position: absolute;
+	float: right;
+	margin-left: 694px;
+#name-change-input
+	margin-left: 667px;
+	position: absolute;
+	margin-top: 84px;
+	font-size: 15px;
 .ui-sortable-placeholder
 	width: 50px
 	height: 30px
@@ -1661,7 +1688,7 @@ div#top-video-name
 		width: 100%
 	                 
 #close-preview-player 
-	margin-top: -32px;
+	margin-top: -36px;
 	position: absolute;
 	margin-left: 88px;
 	height: 24px;
@@ -1680,11 +1707,10 @@ div#top-video-name
 		color: #E7E7E7
 	
 #previewContainer
-	display: none
-	height: 213px
+	height: 213px;
 	position: relative;
-	top: -187px;
-	
+	z-index: 4;
+	border-top: 1px solid grey;
 .default
 	position: absolute
 
@@ -1989,8 +2015,33 @@ div#top-video-name
 #sofa-remote
 	left: 170px
 	top: 140px
-	z-index:3
+	z-index: 1
 	position: absolute
+
+#tutorial
+	position: absolute;
+	display: none;
+	z-index: 5;
+
+#tutorialStart
+	position: absolute;
+	z-index: 6;
+	margin-left: 785px;
+	margin-top: 410px;
+	border: none;
+	border-radius: 4px;
+	-moz-radius: 4px;
+	-webkit-radius: 4px;
+	font-size: 16px;
+	text-align: center;
+	background: -webkit-gradient(linear, left top, left bottom, from(#8CCB01), to(#2A7D00));
+	background: -moz-linear-gradient(top, #8CCB01, #2A7D00);
+	background-image: -o-linear-gradient(top, #8CCB01, #2A7D00);
+	color: white;
+	height: 100px;
+	display: none
+#tutorialStart:hover
+	color: green
 
 a#fdbk_tab
 	z-index: 10
