@@ -247,13 +247,13 @@
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
 			this.room.users.get(socketId).saveActivePlaylist();
 			var currDJ = this.room.djs.currDJ.get('userId');
-			videoToPlay.set({ dj: currDJ });
+		
 			if(!videoToPlay) {
 				console.log('['+roomName+'][VM] playVideoFromPlaylist(): Request to play video from playlist, but playlist has no videos!');
 				this.playNextVideo();
 				return;
 			}
-			
+			videoToPlay.set({ dj: currDJ });
 			this.play(videoToPlay);
 		},
 		
