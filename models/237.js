@@ -125,7 +125,7 @@
 					// 				if(rawVideo.counter < limit) {
 					//console.log('...adding just played video back into val q, counter is '+rawVideo.counter+' and limit '+limit)
 					redisClient.rpush(key, JSON.stringify(rawVideo));
-					//}
+
 					
 					console.log('['+roomName+'][VAL] playVideo(): playing a video from the autoplaylist');
 					val.room.vm.play(videoToPlay);
@@ -247,13 +247,13 @@
 			var videoToPlay = this.room.users.get(socketId).playlist.playFirstVideo();
 			this.room.users.get(socketId).saveActivePlaylist();
 			var currDJ = this.room.djs.currDJ.get('userId');
-			videoToPlay.set({ dj: currDJ });
+		
 			if(!videoToPlay) {
 				console.log('['+roomName+'][VM] playVideoFromPlaylist(): Request to play video from playlist, but playlist has no videos!');
 				this.playNextVideo();
 				return;
 			}
-			
+			videoToPlay.set({ dj: currDJ });
 			this.play(videoToPlay);
 		},
 		
@@ -554,6 +554,14 @@
 		
 		announceRoomHistory: function() {
 			io.sockets.in(this.room.get('name')).emit('room:history', this.room.history.recentVids.toJSON());
+		},
+		
+		announceSkipVideo: function(reason) {
+			// if(reason == 'downvote') {
+			// 	
+			// } 
+//			console.log('SKIP VIDEO CALLED');
+			io.sockets.in(this.room.get('name')).emit('video:skipAnnounce', reason);
 		}
 	});
 
@@ -1212,11 +1220,12 @@
 				djs.removeDJ(socket.id) 
 			});
 			
-			socket.on("video:skip", function () { 
+			socket.on("video:skip", function () {
 				var roomName = djs.room.get('name');
 				console.log('\n\n['+roomName+'][socket] [video:skip] -- called...')
 				if(djs.room.currVideo) {
 					console.log('...video playing, clearing timeout :'+djs.room.currVideo.get('timeoutId'));
+					djs.room.sockM.announceSkipVideo('dj');
 					clearTimeout(djs.room.currVideo.get('timeoutId'));
 				}
 				djs.room.vm.onVideoEnd();
@@ -1381,7 +1390,7 @@
 				if(!meter.room.currVideo) return;
 
 				var currUser = meter.room.users.get(socket.id);
-				if(currUser) console.log('['+roomName+'][socket] [meter:upvote]  voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
+				if(currUser) console.log('['+roomName+'][socket] [meter:downvote]  voting user: '+currUser.get('name') + ' for video: '+meter.room.currVideo.get('title'));
 				if(meter.room.currVideo.get('dj') != 'VAL' && currUser.get('userId') == meter.room.djs.currDJ.get('userId')) return;
 
 				var success = meter.room.meter.addDownvote(currUser.get('userId'));	//checks to make sure the socket hasn't already voted
@@ -1397,6 +1406,7 @@
 						if(meter.room.currVideo) {
 							console.log('...video playing, clearing timeout :'+meter.room.currVideo.get('timeoutId'));
 							clearTimeout(meter.room.currVideo.get('timeoutId'));
+							meter.room.sockM.announceSkipVideo('downvote');
 						}
 						meter.room.history.addSkippedVideo(meter.room.currVideo.get("videoId"));
 						meter.room.vm.onVideoEnd();
