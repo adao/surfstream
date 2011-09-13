@@ -1462,9 +1462,7 @@ $(function() {
 			}
 		}
 		$("#playlistTitle").html("Drag and Drop Videos Into Playlists");
-		$("#yt-pill").hide();
-		$("#likes-pill").hide();
-		$("#history-pill").hide();
+
 		$("#playlist-collection-input").hide();
 		document.getElementById('playlistTitle').style.color = '#34C8FF'
 		document.getElementById('playlist-collection').style.background = '#141414'
@@ -1479,9 +1477,7 @@ $(function() {
 			}
 		}
 		$("#playlistTitle").html("My Playlists");
-		$("#yt-pill").show();
-		$("#likes-pill").show();
-		$("#history-pill").show()
+
 		$("#playlist-collection-input").show();
 		document.getElementById('playlistTitle').style.color = 'white'
 		document.getElementById('playlist-collection').style.background = '#313131'
@@ -2717,6 +2713,7 @@ $(function() {
 	},
 
   flipChannel: function(rID, up) {
+		$("#playlist-notification-container").slideUp();
    var roomArray = SurfStreamApp.get("roomModel").get("roomListCollection").toArray();
    var rIDArray = _.map(roomArray, function(room) {
     return room.get("rID")
@@ -2894,7 +2891,7 @@ $(function() {
     event.data.theatreView.valChat("You can't VJ without any videos!  >:-/ ");
     return;
    }
-   $("#playlist-notification-container").slideToggle();
+   $("#playlist-notification-container").slideDown();
    SocketManagerModel.becomeDJ();
   },
 
@@ -3332,7 +3329,7 @@ $(function() {
   initialize: function() {
    this.soundOn = true;
    $('#getOff').live('click', function() {
-    $("#playlist-notification-container").slideToggle();
+    $("#playlist-notification-container").slideUp();
     $("#stepDown").remove();
     $('#getOff').remove();
     $("#skipContainer").remove();
@@ -3791,8 +3788,12 @@ $(function() {
 		}
 		for(var friendId in roomList.friendsRooms) {
 			if(roomList.friendsRooms.hasOwnProperty(friendId)) {
-				var roomModel = ss_modelWithAttribute(roomlistCollection, "rID", roomList.friendsRooms[friendId]);
-				roomModel.get("friends").push(friendId);
+				if (roomList.friendsRooms[friendId]) {
+					var roomModel = ss_modelWithAttribute(roomlistCollection, "rID", roomList.friendsRooms[friendId]);
+					if (roomModel) {
+						roomModel.get("friends").push(friendId);
+					}
+				}
 			}
 		}
 		roomlistCollection.sort();
