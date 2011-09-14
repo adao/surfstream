@@ -3463,3 +3463,12 @@ a#fdbk_tab {
 .realViewCount {
   display: none;
 }
+#roomDim {
+  position: absolute;
+  width: 660px;
+  height: 221px;
+  color: #000;
+  z-index: 1000;
+  background: #000;
+  opacity: 0.6;
+}
