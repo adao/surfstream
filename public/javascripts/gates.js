@@ -11,7 +11,7 @@ window.fbAsyncInit = function() {
  button = document.getElementById('fb-auth');
  button.onclick = function() {
   FB.login(function(response) {}, {
-   scope: 'email,read_stream,user_about_me,read_friendlists'
+   scope: 'read_stream'
   });
  };
 
@@ -964,11 +964,12 @@ $(function() {
 
   initialize: function() {
    this.render();
+	 this.options.playlistCollection.sideBarView = this;
    this.playlistCollectionView = new PlaylistCollectionView({
-    playlistCollection: this.options.playlistCollection
-   });
-	 this.browseVideoView = new BrowseVideosView({
-		playlistCollection: this.options.playlistCollection,
+		playlistCollection: this.options.playlistCollection
+	 });
+	 this.browseVideosView = new BrowseVideosView({
+		sideBarView: this,
 		searchBarModel: this.options.searchBarModel,
 		likesCollection: this.options.likesCollection,
 		channelHistoryCollection: this.options.channelHistoryCollection
@@ -995,8 +996,8 @@ $(function() {
 			return;
 		}
 		$("#playlist-view").show();
-		this.activeNonPlaylistNameholder.deactivateNameholder();
-		this.searchView.hide();
+		this.browseVideosView.activeNonPlaylistNameholder.deactivateNameholder();
+		this.browseVideosView.searchView.hide();
 		this.playlistActive = true;
 	}
 
@@ -1061,22 +1062,34 @@ $(function() {
   },
 
   render: function() {
-   $(".videoView").append($(this.el).html(this.searchViewTemplate()));
+   $(".browse-videos-container").append($(this.el).html(this.searchViewTemplate()));
    return this;
   },
 
-  hide: function() {
-   $("#search-view").hide();
+  hide: function(originalHeight) {
+	 $("#searchBar").slideUp();
+   $("#search-view").slideUp();
   },
 
   show: function(withSearchBar) {
-   $("#search-view").show();
+	 var height = $("#playlist-view").height();
+	 var inputBox = $("#searchBar");
+	 $("#search-view").slideDown();
 	 if (withSearchBar) {
-		$("#searchBar").show();
-		$("#searchContainer").css("height", 257);
+		inputBox.slideDown(250, function() {
+			
+		});
+		$("#searchContainer").animate({"height": height - 36}, function() {
+			
+		});
+//		$("#searchContainer").animate({"height": height - inputBox.height()}, function() {
+			
+//		});
 	 } else {
-		$("#searchBar").hide();
-		$("#searchContainer").css("height", 293);
+		inputBox.slideUp();
+		$("#searchContainer").animate({"height": height}, function() {
+			
+		});
 	 }
   },
 
@@ -1388,7 +1401,7 @@ $(function() {
 		if (previouslySelected) {
 			$(playlistCollection.idToPlaylistNameholder[previouslySelected.get("playlistId")].el).removeClass("selected-playlist-nameholder").removeClass("active-playlist-nameholder");
 		}
-		this.playlistCollectionView.showPlaylistView();
+		this.sideBarView.showPlaylistView();
 		SocketManagerModel.choosePlaylist(playlistId);
 		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(playlistId)});
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setPlaylist(playlistCollection.get("activePlaylist"));
@@ -1513,7 +1526,6 @@ $(function() {
 	
 	initialize: function() {
 		this.render();
-		this.options.playlistCollection.playlistCollectionView = this;
 		this.playlistView = new PlaylistView();
 		$("#playlist-collection-input").bind("keyup", {playlistCollectionView: this}, this.addPlaylist);
 	},
@@ -1553,8 +1565,6 @@ $(function() {
 		this.options.channelHistoryCollection.bind("add", this.addChannelHistoryView, this);
 		this.options.likesCollection.bind("add", this.addLikesView, this);
 		this.render();
-		this.options.playlistCollection.browseVideoView = this;
-		this.playlistActive = true;
 		this.searchActive = false;
 		this.channelHistoryActive = false;
 		this.likesActive = false;
@@ -1586,7 +1596,7 @@ $(function() {
 		this.searchActive = true;
 		this.channelHistoryActive = false;
 		this.likesActive = false;
-		this.hidePlaylistView();
+		this.options.sideBarView.hidePlaylistView();
 		this.searchView.show(true);
 		this.resetSearchResults();
   },
@@ -1598,7 +1608,7 @@ $(function() {
 		this.searchActive = false;
 		this.channelHistoryActive = true;
 		this.likesActive = false;
-		this.hidePlaylistView();
+		this.options.sideBarView.hidePlaylistView();
 		this.searchView.show(false);
 		this.resetChannelHistory();
 	},
@@ -1610,7 +1620,7 @@ $(function() {
 		this.searchActive = false;
 		this.channelHistoryActive = false;
 		this.likesActive = true;
-		this.hidePlaylistView();
+		this.options.sideBarView.hidePlaylistView();
 		this.searchView.show(false);
 		this.resetLikes();
 	},
@@ -1708,8 +1718,13 @@ $(function() {
 				$(this).addClass("dropped-playlist-nameholder");
 				var shrunkenCopy = $(ui.helper).clone();
 				$("body").append(shrunkenCopy);
-				var copyOffset = shrunkenCopy.offset();
+				var droppedOffset = $(this).offset();
+				var droppedWidth = $(this).width();
 	 			var fromVideoClass = $(ui.draggable).attr("class");
+				
+				shrunkenCopy.offset({top: droppedOffset.top - 125, left: droppedOffset.left + droppedWidth / 2 - 10});
+				
+				var copyOffset = shrunkenCopy.offset();
 				
 				if (fromVideoClass.indexOf("searchCellContainer") == -1) {
 					var fromPlaylist = playlistCollection.get("activePlaylist");
@@ -1780,8 +1795,8 @@ $(function() {
 	
 	calculatePlaylistHeight: function() {
 		var pcHeight = $("#playlist-collection").outerHeight(true);
-		var viewHeight = $("#myplaylist").outerHeight(true);
-		$("#playlist-view").css('height', viewHeight - pcHeight - 5);
+		var viewHeight = $("#myPlaylist").outerHeight(true);
+		$("#playlist-view").css('height', viewHeight - pcHeight);
 	},
 	
 	highlightView: function() {
@@ -1806,7 +1821,7 @@ $(function() {
 		$("#browse-videos-list").prepend(this.el);
 	},
 	displaySearch: function() {
-		this.options.playlistCollectionView.showSearch();
+		this.options.browseVideosView.showSearch();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
 		this.options.browseVideosView.activeNonPlaylistNameholder = this;
@@ -1819,7 +1834,6 @@ $(function() {
 		 }
 
 		 $("#previewContainer").css({'top': 0});
-
 		$(this.el).removeClass("selected-non-playlist-nameholder");
 		$(this.el).removeClass("active-playlist-nameholder");
 	}
@@ -1840,7 +1854,7 @@ $(function() {
 		$("#browse-videos-list").prepend(this.el);
 	},
 	displayChannelHistory: function() {
-		this.options.playlistCollectionView.showChannelHistory();
+		this.options.browseVideosView.showChannelHistory();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
 		this.options.browseVideosView.activeNonPlaylistNameholder = this;
@@ -1852,7 +1866,7 @@ $(function() {
 			 }
 
 			 $("#previewContainer").css({'top': 0});
-
+		
 		$(this.el).removeClass("selected-non-playlist-nameholder");
 		$(this.el).removeClass("active-playlist-nameholder");
 	}
@@ -1873,7 +1887,7 @@ $(function() {
 		$("#browse-videos-list").prepend(this.el);
 	},
 	displayLikes: function() {
-		this.options.playlistCollectionView.showLikes();
+		this.options.browseVideosView.showLikes();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
 		this.options.browseVideosView.activeNonPlaylistNameholder = this;
@@ -1941,7 +1955,7 @@ $(function() {
 				window.SurfStreamApp.get("userModel").get("playlistCollection").showDroppable();
 			},
 			sort: function(event, ui) {
-				var yThreshold = $("#playlist-collection").offset().top + $("#playlist-collection").outerHeight() - ui.item.height() * 3 / 4;
+				var yThreshold = $("#playlist-collection").offset().top + $("#playlist-collection").outerHeight() - ui.item.height() / 2;
 				var yPosition = ui.position.top;
 				if (yPosition < yThreshold && !$("#video-list-container").sortable("option", "alreadyShrunk")) {
 					var videoId = $(ui.item).attr('id');
@@ -4141,7 +4155,7 @@ $(function() {
 
 function setSuggestions(suggestions) {
  var suggestionSource = _.pluck(suggestions[1], 0);
- window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.searchView.suggestionHash[suggestions[0]] = suggestionSource;
+ window.SurfStreamApp.get("mainView").sideBarView.browseVideosView.searchView.suggestionHash[suggestions[0]] = suggestionSource;
  $("#youtubeInput").autocomplete("option", "source", suggestionSource);
 };
 
