@@ -19,6 +19,7 @@ if (redisClient) {
 			});
 		}
 	});
+	redisClient.sinterstore("onlineFacebookUsers", "onlineFacebookUsers", "emptySet");
 }
 
 require('jade');
