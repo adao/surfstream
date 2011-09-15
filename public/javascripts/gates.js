@@ -2910,8 +2910,10 @@ $(function() {
   removeUser: function(user) {
    var avatar = this.$("#avatarWrapper_" + user.id);
    var chat = $("#avatarChat_" + user.id);
+	 var name = $("#nameDiv_" + user.id);
    avatar.data("animating", false);
    chat.tipsy('hide');
+   name.tipsy('hide');
    avatar.remove();
   }
 
