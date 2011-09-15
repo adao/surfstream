@@ -61,6 +61,8 @@ app.configure('production', function(){
 
 require('./router.js').setupRoutes(app);
 
+var PROMO_CODES = [];
+
 var adminSUB = redis.createClient();
 
 adminSUB.on('ready', function() {
@@ -91,8 +93,33 @@ adminSUB.on('message', function(channel, message) {
 			if(roomManager.roomMap[message.oldName] && !roomManager.roomMap[message.newName])
 				roomManager.renameRoom(message.oldName, message.newName);
 			break;
+		case 'surfstream:makePromo':
+			if(message.promo) {
+				if (_.indexOf(PROMO_CODES, message.promo) == -1) {
+					PROMO_CODES.push(message.promo);
+					console.log("[PUBSUB][PROMO_TOOLS] add promo " + message.promo + " to the promo code list")
+				} else {
+					console.log("[PUBSUB][PROMO_TOOLS] could not add promo code because it already exists in PROMO_CODES");
+				}
+			} else {
+				console.log("[PUBSUB][PROMO_TOOLS] no promo code sent for addition!");
+			}
+		case 'surfstream:deletePromo':
+			if(message.promo) {
+				var ind = _.indexOf(PROMO_CODES, message.promo);
+				if (ind != -1) {
+					PROMO_CODES.splice(ind, 1); 
+						console.log("[PUBSUB][PROMO_TOOLS] removed " + message.promo + " from promo code list");
+				} else {
+					console.log("[PUBSUB][PROMO_TOOLS] could not delete promo code because it doesn't exist yet in PROMO_CODES");
+				}				
+			} else {
+				console.log("[PUBSUB][PROMO_TOOLS] no promo code sent for deletion!");
+			}
 		default:
 			console.log('\n[PUBSUB] received unknown message type: '+message.type)
+			break;
+
 	}
 })
 
@@ -121,6 +148,19 @@ RoomManager = Backbone.Model.extend({
 						}
 					})
 				});
+			}
+		});
+		redisClient.lrange('promo',0,-1, function(err, codes) {
+			if (err) {
+				console.log("problem fetching error codes");
+			} else {
+				if (codes) {
+					console.log("promo codes received");
+					_.each(codes, function(code){
+						console.log("promo code: " + code);
+						PROMO_CODES.push(code);
+					});
+				}
 			}
 		});
 	},
@@ -289,6 +329,18 @@ io.sockets.on('connection', function(socket) {
 			});
 		}
 	});
+	
+	/* PROMO CODE LOGIC */
+	
+	socket.on("surfstream:validatePromo", function(data){
+		if (redisClient) {
+			if (_.indexOf(PROMO_CODES, data.promo) != -1) {
+				socket.emit("surfstream:promoValid");
+			} else {
+				socket.emit("surfstream:promoBad")
+			}
+		}
+	})
 	
 	socket.on("user:sendUserFBFriends", function(data) {
 		if (redisClient) {

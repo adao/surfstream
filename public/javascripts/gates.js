@@ -11,7 +11,7 @@ window.fbAsyncInit = function() {
  button = document.getElementById('fb-auth');
  button.onclick = function() {
   FB.login(function(response) {}, {
-   scope: 'email,read_stream,user_about_me,read_friendlists'
+   scope: 'email,read_stream'
   });
  };
 
