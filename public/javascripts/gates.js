@@ -4104,9 +4104,85 @@ function setSuggestions(suggestions) {
 };
 
 function nextFDVideo() {
-	console.log("SUPPPP");
+	ranNum = Math.floor(Math.random()*16);
+	while(ranNum == window.lastPlayedRan){
+		ranNum = Math.floor(Math.random()*16);
+		console.log("inside");
+	}
+	console.log(ranNum);
+
+	var videoArray = {
+		"videos": [
+			{
+				"videoId": "SDTZ7iX4vTQ",
+				"startTime": 30
+			},
+			{
+				"videoId": "DYWIVLDaP6U",
+				"startTime": 4
+			},
+			{
+				"videoId": "lI7H7ForuwA",
+				"startTime": 75
+			},
+			{
+				"videoId": "Z7vXP3tHzhA",
+				"startTime": 4
+			},
+			{
+				"videoId": "B8ISzf2pryI",
+				"startTime": 40
+			},
+			{
+				"videoId": "YQ1LI-NTa2s",
+				"startTime": 23
+			},
+			{
+				"videoId": "9i1MXHGB8g0",
+				"startTime": 75
+			},
+			{
+				"videoId": "N2bCc0EGP6U",
+				"startTime": 124
+			},
+			{
+				"videoId": "zE0IzAsIVWk",
+				"startTime": 560
+			},
+			{
+				"videoId": "btuxO-C2IzE",
+				"startTime": 58
+			},
+			{
+				"videoId": "k8w-qZEiNsY",
+				"startTime": 38
+			},
+			{
+				"videoId": "txqiwrbYGrs",
+				"startTime": 16
+			},
+			{
+				"videoId": "5x82FAuoHGM",
+				"startTime": 150
+			},
+			{
+				"videoId": "Xe0gIFxYhrk",
+				"startTime": 30
+			},
+			{
+				"videoId": "qDZZElrSluA",
+				"startTime": 1
+			},
+			{
+				"videoId": "p3tZPH5my-0",
+				"startTime": 47
+			}
+		]
+	};
 	window.fdplayer = document.getElementById("YouTubePlayer-fd");
-	window.fdplayer.nextVideo();
+	window.fdplayer.loadVideoById(videoArray.videos[ranNum].videoId, videoArray.videos[ranNum].startTime);
+	window.lastPlayedRan = ranNum;
+	console.log(videoArray);
 };
 
 function onYouTubePlayerReady(playerId) {
@@ -4118,10 +4194,11 @@ function onYouTubePlayerReady(playerId) {
  if (playerId == "YouTubePlayer-fd") {
 	 console.log("suckkkk");
  	 window.fdplayer = document.getElementById("YouTubePlayer-fd");
-	 window.fdplayer.loadPlaylist("DDDC4DFF26DF10ED");
-	 window.fdplayer.playVideo();
-	
-	 window.ss_fdLoop = setInterval("nextFDVideo()", 8000);
+	 nextFDVideo();
+	 //window.fdplayer.loadPlaylist("C38A7792DA219F52");
+	 //window.fdplayer.playVideo();
+	 //window.fdplayer.loadVideoById("1XB_E8w0nqQ", 8);
+	 window.ss_fdLoop = setInterval("nextFDVideo()", 12000);
  }
 
  if (!window.YTPlayer) {
