@@ -100,29 +100,33 @@ adminSUB.on('message', function(channel, message) {
 			if(roomManager.roomMap[message.oldName] && !roomManager.roomMap[message.newName])
 				roomManager.renameRoom(message.oldName, message.newName);
 			break;
-		case 'surfstream:makePromo':
+		case 'promo:make':
 			if(message.promo) {
 				if (_.indexOf(PROMO_CODES, message.promo) == -1) {
 					PROMO_CODES.push(message.promo);
 					console.log("[PUBSUB][PROMO_TOOLS] add promo " + message.promo + " to the promo code list")
+					console.log("[PUBSUB][PROMO_TOOLS] PROMO_CODES is now " + PROMO_CODES);
 				} else {
 					console.log("[PUBSUB][PROMO_TOOLS] could not add promo code because it already exists in PROMO_CODES");
 				}
 			} else {
 				console.log("[PUBSUB][PROMO_TOOLS] no promo code sent for addition!");
 			}
-		case 'surfstream:deletePromo':
+			break;
+		case 'promo:delete':
 			if(message.promo) {
 				var ind = _.indexOf(PROMO_CODES, message.promo);
 				if (ind != -1) {
 					PROMO_CODES.splice(ind, 1); 
 						console.log("[PUBSUB][PROMO_TOOLS] removed " + message.promo + " from promo code list");
+						console.log("[PUBSUB][PROMO_TOOLS] PROMO_CODES is now " + PROMO_CODES);
 				} else {
 					console.log("[PUBSUB][PROMO_TOOLS] could not delete promo code because it doesn't exist yet in PROMO_CODES");
 				}				
 			} else {
 				console.log("[PUBSUB][PROMO_TOOLS] no promo code sent for deletion!");
 			}
+			break;
 		default:
 			console.log('\n[PUBSUB] received unknown message type: '+message.type)
 			break;
@@ -339,12 +343,12 @@ io.sockets.on('connection', function(socket) {
 	
 	/* PROMO CODE LOGIC */
 	
-	socket.on("surfstream:validatePromo", function(data){
+	socket.on("promo:validate", function(data){
 		if (redisClient) {
 			if (_.indexOf(PROMO_CODES, data.promo) != -1) {
-				socket.emit("surfstream:promoValid");
+				socket.emit("promo:valid");
 			} else {
-				socket.emit("surfstream:promoBad")
+				socket.emit("promo:bad")
 			}
 		}
 	})
