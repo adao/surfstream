@@ -15,6 +15,18 @@ window.fbAsyncInit = function() {
   });
  };
 
+ var params = {
+  wmode: "opaque",
+  allowScriptAccess: "always",
+  modestbranding: 1,
+  iv_load_policy: 3
+ };
+ var atts = {
+  id: "YouTubePlayer-fd"
+ };
+ swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
+
+
  function proceed_to_site(response) {
   console.log(response);
   if (response.authResponse) {
@@ -1218,7 +1230,7 @@ $(function() {
     var atts = {
      id: "YouTubePlayer"
     };
-    swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
+    swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "video-container", "640", "390", "8", null, null, params, atts);
     setInterval(updateTime, 300);
    }
   }
@@ -2634,7 +2646,7 @@ $(function() {
    $("#mute").bind("click", {
     button: $("#mute")
    }, mute);
-   $("#rooms, #logo").bind("click", {
+   $("#rooms, #logo-header").bind("click", {
     modal: this.options.modal
    }, function(e) {
     $("#room-modal").css("display") == "none" ? e.data.modal.show() : e.data.modal.hide()
@@ -4123,10 +4135,25 @@ function setSuggestions(suggestions) {
  $("#youtubeInput").autocomplete("option", "source", suggestionSource);
 };
 
+function nextFDVideo() {
+	console.log("SUPPPP");
+	ytplayer = document.getElementById("YouTubePlayer-fd");
+	ytplayer.nextVideo();
+};
+
 function onYouTubePlayerReady(playerId) {
  if (playerId == "YouTubePlayerTwo") {
   window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
   return;
+ }
+
+ if (playerId == "YouTubePlayer-fd") {
+	 console.log("suckkkk");
+ 	 ytplayer = document.getElementById("YouTubePlayer-fd");
+	 ytplayer.loadPlaylist("DDDC4DFF26DF10ED");
+	 ytplayer.playVideo();
+	
+	 setInterval("nextFDVideo()", 8000);
  }
 
  if (!window.YTPlayer) {
@@ -4143,6 +4170,7 @@ function onYouTubePlayerReady(playerId) {
   }
  }
 }
+
 
 function setToTime() {
  window.YTPlayer = document.getElementById('YouTubePlayer');
