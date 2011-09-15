@@ -32,6 +32,13 @@ io.configure(function () {
 	io.set('log level', 2); 
 })
 
+process.on('uncaughtException', function (err) {
+  console.log('\n****			CRASH REPORT			****');
+	console.log(new Date())
+	console.error(err)
+	console.log('Stack trace: '+err.stack)
+  console.log("Node NOT Exiting...\n\n");
+});
 
 // Configuration
 app.configure(function(){
