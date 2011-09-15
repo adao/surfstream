@@ -3271,7 +3271,7 @@ $(function() {
 	settingsTemplate: _.template($("#settings-template").html()),
 	
 	events: {
-		"mouseover #settings-text": "showSettings",
+		"click #settings": "showSettings",
 		"mouseout": "hideSettings",
 		"click #logout": "logout"
 	},
@@ -3288,37 +3288,16 @@ $(function() {
 	},
 	
 	showSettings: function(event) {
-		if (!this.showingDropdown) {
-			if (event.fromElement) {
-				if (event.fromElement.id == "settings-dropdown" && event.fromElement.id == "settings-arrow")
-					return;
-			}
-			console.log("Showing settings");
 			$("#settings-dropdown").show();
 			this.showingDropdown = true;
-		}
 	},
 	
 	hideSettings: function(event) {
-		console.log("HERERERE");
-		console.log(event);
-		if (event.toElement) {
-			if (event.toElement.id == "settings-arrow" || event.toElement.id == "settings-dropdown" || event.toElement.id == "settings" || event.fromElement.id == "settings-arrow" || event.toElement.id == "logout-button") {
-				console.log(event.toElement.id);
-				return;
-			}
-		}
-		console.log("Hiding settings");
 		$("#settings-dropdown").hide();
 		this.showingDropdown = false;
 	},
 	
-	logout: function(e) {
-		console.log("logoutttt");
-		window.YTPlayer = null;
-		userLoggedOut = true;
-		e.data.settings.userModel.logout();
-	}
+	
  });
 
  window.MainView = Backbone.View.extend({
@@ -3327,12 +3306,14 @@ $(function() {
   soundTemplate: _.template($('#audio-tag-template').html()),
 
   initialize: function() {
-   this.soundOn = true;
+   this.soundOn = true; 
+	 this.userModel = this.options.userModel;
    $('#getOff').live('click', function() {
     $("#playlist-notification-container").slideUp();
     $("#stepDown").remove();
     $('#getOff').remove();
     $("#skipContainer").remove();
+		
     SocketManagerModel.stepDownFromDJ();
    });
 
@@ -3345,45 +3326,24 @@ $(function() {
    });
 
 	/* SETTINGS HAX */
-	$("#settings").hover(
-		function() {
-			$("#change-avatar").show();
-			$("#edit-profile").show();
-			$("#logout").show();
-	}, function(e) {
-			if (e.toElement.id != "change-avatar" && e.toElement.id != "change-avatar-text"){
-				$("#change-avatar").hide();	
-				$("#edit-profile").hide();	
-				$("#logout").hide();		
-			}
-		}
-	);
-	
-	$('#change-avatar').bind('mouseout', function (e) {
-		if (e.toElement.id != "settings" && e.toElement.id != "settings-text" && e.toElement.id != "edit-profile" && e.toElement.id !="edit-profile-text" && e.fromElement.id != "change-avatar-text" && e.toElement.id != "change-avatar-text"){
-			$("#change-avatar").hide();	
-			$("#edit-profile").hide();	
-			$("#logout").hide();
-		}
-		 
+	this.settingsDropped = false;
+	$("#settings").click({mainView:this},
+		function(e) {
+			if (!e.data.mainView.settingsDropped) {
+				$("#change-avatar").show();
+				$("#edit-profile").show();
+				$("#logout").show();
+				e.data.mainView.settingsDropped = true;
+			} else {
+				$("#change-avatar").hide();
+				$("#edit-profile").hide();
+				$("#logout").hide();
+				e.data.mainView.settingsDropped = false;
+			}			
 	});
 	
-	$('#edit-profile').bind('mouseout', function (e) {
-		if (e.toElement.id != "change-avatar" && e.toElement.id != "change-avatar-text" && e.toElement.id != "logout" && e.toElement.id !="edit-profile-text" && e.toElement.id !="logout-text" && e.fromElement.id !="edit-profile-text"){
-			$("#change-avatar").hide();	
-			$("#edit-profile").hide();	
-			$("#logout").hide();
-		}
-		 
-	});
-	
-	$('#logout').bind('mouseout', function (e) {
-		if (e.toElement.id != "edit-profile" && e.toElement.id !="edit-profile-text" &&  e.toElement.id !="logout-text" &&  e.toElement.id !="logout"){
-			$("#change-avatar").hide();	
-			$("#edit-profile").hide();	
-			$("#logout").hide();
-		}		 
-	});
+	$("#logout").click({mainView: this}, this.logout);
+
 	
 	$('#change-avatar').click(function () {
 		new AvatarPickerView();
@@ -3393,12 +3353,18 @@ $(function() {
    this.maxAudioChannels = 15;
   },
 
+	logout: function(e) {
+		console.log("logoutttt");
+		window.YTPlayer = null;
+		userLoggedOut = true;
+		e.data.mainView.userModel.logout();
+	},
+
   initializeTopBarView: function() {
    this.roomInfoView = new RoomInfoView(({
     roomName: 'Placeholder'
    }));
    this.shareBarView = new ShareBarView();
-	 this.settingsView = new SettingsView({userModel: this.options.userModel});
   },
 
   initializeChatView: function(chatCollection, userModel) {
