@@ -11,7 +11,7 @@ window.fbAsyncInit = function() {
  button = document.getElementById('fb-auth');
  button.onclick = function() {
   FB.login(function(response) {}, {
-   scope: 'read_stream'
+   scope: 'email,read_stream,user_about_me,read_friendlists'
   });
  };
 
@@ -964,42 +964,18 @@ $(function() {
 
   initialize: function() {
    this.render();
-	 this.options.playlistCollection.sideBarView = this;
    this.playlistCollectionView = new PlaylistCollectionView({
-		playlistCollection: this.options.playlistCollection
-	 });
-	 this.browseVideosView = new BrowseVideosView({
-		sideBarView: this,
+    playlistCollection: this.options.playlistCollection,
 		searchBarModel: this.options.searchBarModel,
-		likesCollection: this.options.likesCollection,
-		channelHistoryCollection: this.options.channelHistoryCollection
-	 });
-	 this.playlistActive = true;
+		channelHistoryCollection: this.options.channelHistoryCollection,
+		likesCollection: this.options.likesCollection
+   });
   },
 
   render: function() {
    $(this.el).html(this.sidebarTemplate());
    return this;
-  },
-	
-	hidePlaylistView: function() {
-		if (!this.playlistActive) {
-			return;
-		}
-		$(".active-playlist-nameholder").removeClass("active-playlist-nameholder");
-		$("#playlist-view").hide();
-		this.playlistActive = false;
-	},
-	
-	showPlaylistView: function() {
-		if (this.playlistActive) {
-			return;
-		}
-		$("#playlist-view").show();
-		this.browseVideosView.activeNonPlaylistNameholder.deactivateNameholder();
-		this.browseVideosView.searchView.hide();
-		this.playlistActive = true;
-	}
+  }
 
  });
 
@@ -1062,34 +1038,22 @@ $(function() {
   },
 
   render: function() {
-   $(".browse-videos-container").append($(this.el).html(this.searchViewTemplate()));
+   $(".videoView").append($(this.el).html(this.searchViewTemplate()));
    return this;
   },
 
-  hide: function(originalHeight) {
-	 $("#searchBar").slideUp();
-   $("#search-view").slideUp();
+  hide: function() {
+   $("#search-view").hide();
   },
 
   show: function(withSearchBar) {
-	 var height = $("#playlist-view").height();
-	 var inputBox = $("#searchBar");
-	 $("#search-view").slideDown();
+   $("#search-view").show();
 	 if (withSearchBar) {
-		inputBox.slideDown(250, function() {
-			
-		});
-		$("#searchContainer").animate({"height": height - 36}, function() {
-			
-		});
-//		$("#searchContainer").animate({"height": height - inputBox.height()}, function() {
-			
-//		});
+		$("#searchBar").show();
+		$("#searchContainer").css("height", 257);
 	 } else {
-		inputBox.slideUp();
-		$("#searchContainer").animate({"height": height}, function() {
-			
-		});
+		$("#searchBar").hide();
+		$("#searchContainer").css("height", 293);
 	 }
   },
 
@@ -1401,7 +1365,7 @@ $(function() {
 		if (previouslySelected) {
 			$(playlistCollection.idToPlaylistNameholder[previouslySelected.get("playlistId")].el).removeClass("selected-playlist-nameholder").removeClass("active-playlist-nameholder");
 		}
-		this.sideBarView.showPlaylistView();
+		this.playlistCollectionView.showPlaylistView();
 		SocketManagerModel.choosePlaylist(playlistId);
 		playlistCollection.set({activePlaylist: playlistCollection.getPlaylistById(playlistId)});
 		window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.playlistView.setPlaylist(playlistCollection.get("activePlaylist"));
@@ -1525,8 +1489,30 @@ $(function() {
 	playlistCollectionTemplate: _.template($("#playlist-collection-template").html()),
 	
 	initialize: function() {
+		this.options.channelHistoryCollection.bind("add", this.addChannelHistoryView, this);
+		this.options.likesCollection.bind("add", this.addLikesView, this);
 		this.render();
+		this.options.playlistCollection.playlistCollectionView = this;
+		this.playlistActive = true;
+		this.searchActive = false;
+		this.channelHistoryActive = false;
+		this.likesActive = false;
+		this.activeNonPlaylistNameholder;
+		this.likesNameholderView = new LikesNameholderView({
+			playlistCollectionView: this
+		});
+		this.channelHistoryNameholderView = new ChannelHistoryNameholderView({
+			playlistCollectionView: this
+		});
+		this.youtubeNameholderView = new YoutubeNameholderView({
+			playlistCollectionView: this
+		});
 		this.playlistView = new PlaylistView();
+		this.searchView = new SearchView({
+			searchBarModel: this.options.searchBarModel,
+			playlistCollection: this.options.playlistCollection
+	  });
+		this.searchView.hide();
 		$("#playlist-collection-input").bind("keyup", {playlistCollectionView: this}, this.addPlaylist);
 	},
 	
@@ -1547,56 +1533,33 @@ $(function() {
 		$("#playlist-collection-input").val("");
 	},
 	
+	hidePlaylistView: function() {
+		if (!this.playlistActive) {
+			return;
+		}
+		$(".active-playlist-nameholder").removeClass("active-playlist-nameholder");
+		$("#playlist-view").hide();
+		this.playlistActive = false;
+	},
 	
-
-
-  render: function() {
-   $(this.el).html(this.playlistCollectionTemplate());
-   $(".videoView").append(this.el);
-   return this;
-  }
- });
- window.BrowseVideosView = Backbone.View.extend({
-	el: ".browse-videos-container",
-	
-	browseVideosTemplate: _.template($("#browse-videos-template").html()),
-	
-	initialize: function() {
-		this.options.channelHistoryCollection.bind("add", this.addChannelHistoryView, this);
-		this.options.likesCollection.bind("add", this.addLikesView, this);
-		this.render();
-		this.searchActive = false;
-		this.channelHistoryActive = false;
-		this.likesActive = false;
-		this.activeNonPlaylistNameholder;
-		this.likesNameholderView = new LikesNameholderView({
-			browseVideosView: this
-		});
-		this.channelHistoryNameholderView = new ChannelHistoryNameholderView({
-			browseVideosView: this
-		});
-		this.youtubeNameholderView = new YoutubeNameholderView({
-			browseVideosView: this
-		});
-		this.searchView = new SearchView({
-			searchBarModel: this.options.searchBarModel,
-			playlistCollection: this.options.playlistCollection
-	  });
+	showPlaylistView: function() {
+		if (this.playlistActive) {
+			return;
+		}
+		$("#playlist-view").show();
+		this.activeNonPlaylistNameholder.deactivateNameholder();
 		this.searchView.hide();
+		this.playlistActive = true;
 	},
-	
-	render: function() {
-		$(this.el).html(this.browseVideosTemplate());
-	},
-	
-	showSearch: function() {
+
+  showSearch: function() {
 		if (this.activeNonPlaylistNameholder) {
 			this.activeNonPlaylistNameholder.deactivateNameholder();
 		}
 		this.searchActive = true;
 		this.channelHistoryActive = false;
 		this.likesActive = false;
-		this.options.sideBarView.hidePlaylistView();
+		this.hidePlaylistView();
 		this.searchView.show(true);
 		this.resetSearchResults();
   },
@@ -1608,7 +1571,7 @@ $(function() {
 		this.searchActive = false;
 		this.channelHistoryActive = true;
 		this.likesActive = false;
-		this.options.sideBarView.hidePlaylistView();
+		this.hidePlaylistView();
 		this.searchView.show(false);
 		this.resetChannelHistory();
 	},
@@ -1620,7 +1583,7 @@ $(function() {
 		this.searchActive = false;
 		this.channelHistoryActive = false;
 		this.likesActive = true;
-		this.options.sideBarView.hidePlaylistView();
+		this.hidePlaylistView();
 		this.searchView.show(false);
 		this.resetLikes();
 	},
@@ -1691,8 +1654,15 @@ $(function() {
 			var searchResultModel = new SearchResultModel(attributes);
 			new SearchCellView({video: searchResultModel, toTop: true});
 		}
-	}
+	},
+
+  render: function() {
+   $(this.el).html(this.playlistCollectionTemplate());
+   $(".videoView").append(this.el);
+   return this;
+  }
  });
+
  window.PlaylistNameholderView = Backbone.View.extend({
 	className: "playlist-nameholder",
 	tagName: "li",
@@ -1718,13 +1688,8 @@ $(function() {
 				$(this).addClass("dropped-playlist-nameholder");
 				var shrunkenCopy = $(ui.helper).clone();
 				$("body").append(shrunkenCopy);
-				var droppedOffset = $(this).offset();
-				var droppedWidth = $(this).width();
-	 			var fromVideoClass = $(ui.draggable).attr("class");
-				
-				shrunkenCopy.offset({top: droppedOffset.top - 125, left: droppedOffset.left + droppedWidth / 2 - 10});
-				
 				var copyOffset = shrunkenCopy.offset();
+	 			var fromVideoClass = $(ui.draggable).attr("class");
 				
 				if (fromVideoClass.indexOf("searchCellContainer") == -1) {
 					var fromPlaylist = playlistCollection.get("activePlaylist");
@@ -1795,8 +1760,8 @@ $(function() {
 	
 	calculatePlaylistHeight: function() {
 		var pcHeight = $("#playlist-collection").outerHeight(true);
-		var viewHeight = $("#myPlaylist").outerHeight(true);
-		$("#playlist-view").css('height', viewHeight - pcHeight);
+		var viewHeight = $("#myplaylist").outerHeight(true);
+		$("#playlist-view").css('height', viewHeight - pcHeight - 5);
 	},
 	
 	highlightView: function() {
@@ -1818,13 +1783,13 @@ $(function() {
 	},
 	render: function() {
 		$(this.el).html(this.youtubeNameholderTemplate());
-		$("#browse-videos-list").prepend(this.el);
+		$("#playlist-collection-display").prepend(this.el);
 	},
 	displaySearch: function() {
-		this.options.browseVideosView.showSearch();
+		this.options.playlistCollectionView.showSearch();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
-		this.options.browseVideosView.activeNonPlaylistNameholder = this;
+		this.options.playlistCollectionView.activeNonPlaylistNameholder = this;
 	},
 	
 	deactivateNameholder: function() {
@@ -1834,6 +1799,7 @@ $(function() {
 		 }
 
 		 $("#previewContainer").css({'top': 0});
+
 		$(this.el).removeClass("selected-non-playlist-nameholder");
 		$(this.el).removeClass("active-playlist-nameholder");
 	}
@@ -1851,13 +1817,13 @@ $(function() {
 	},
 	render: function() {
 		$(this.el).html(this.channelHistoryNameholderTemplate());
-		$("#browse-videos-list").prepend(this.el);
+		$("#playlist-collection-display").prepend(this.el);
 	},
 	displayChannelHistory: function() {
-		this.options.browseVideosView.showChannelHistory();
+		this.options.playlistCollectionView.showChannelHistory();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
-		this.options.browseVideosView.activeNonPlaylistNameholder = this;
+		this.options.playlistCollectionView.activeNonPlaylistNameholder = this;
 	},
 	
 	deactivateNameholder: function() {
@@ -1866,7 +1832,7 @@ $(function() {
 			 }
 
 			 $("#previewContainer").css({'top': 0});
-		
+
 		$(this.el).removeClass("selected-non-playlist-nameholder");
 		$(this.el).removeClass("active-playlist-nameholder");
 	}
@@ -1884,13 +1850,13 @@ $(function() {
 	},
 	render: function() {
 		$(this.el).html(this.likesNameholderTemplate());
-		$("#browse-videos-list").prepend(this.el);
+		$("#playlist-collection-display").prepend(this.el);
 	},
 	displayLikes: function() {
-		this.options.browseVideosView.showLikes();
+		this.options.playlistCollectionView.showLikes();
 		$(this.el).addClass("selected-non-playlist-nameholder");
 		$(this.el).addClass("active-playlist-nameholder");
-		this.options.browseVideosView.activeNonPlaylistNameholder = this;
+		this.options.playlistCollectionView.activeNonPlaylistNameholder = this;
 	},
 	
 	deactivateNameholder: function() {
@@ -1955,7 +1921,7 @@ $(function() {
 				window.SurfStreamApp.get("userModel").get("playlistCollection").showDroppable();
 			},
 			sort: function(event, ui) {
-				var yThreshold = $("#playlist-collection").offset().top + $("#playlist-collection").outerHeight() - ui.item.height() / 2;
+				var yThreshold = $("#playlist-collection").offset().top + $("#playlist-collection").outerHeight() - ui.item.height() * 3 / 4;
 				var yPosition = ui.position.top;
 				if (yPosition < yThreshold && !$("#video-list-container").sortable("option", "alreadyShrunk")) {
 					var videoId = $(ui.item).attr('id');
@@ -4155,7 +4121,7 @@ $(function() {
 
 function setSuggestions(suggestions) {
  var suggestionSource = _.pluck(suggestions[1], 0);
- window.SurfStreamApp.get("mainView").sideBarView.browseVideosView.searchView.suggestionHash[suggestions[0]] = suggestionSource;
+ window.SurfStreamApp.get("mainView").sideBarView.playlistCollectionView.searchView.suggestionHash[suggestions[0]] = suggestionSource;
  $("#youtubeInput").autocomplete("option", "source", suggestionSource);
 };
 

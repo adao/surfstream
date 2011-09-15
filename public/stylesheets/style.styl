@@ -154,7 +154,7 @@ div#outer
 				height: 413px
 				.viewBar
 					height: 30px
-					.viewBarHeader
+					.playlist
 						vertical-align: top
 						background-color: #c0c0c0
 						color: white
@@ -188,12 +188,13 @@ div#outer
 					#searchContainer
 						overflow-y: scroll
 						overflow-x: hidden
+						height: 256px
 						width: 300px
 					#searchBar
-						display: none
 						height: 36px;
 						.inputBox
 							z-index: 5
+							position: absolute;
 							background-color: #666
 							background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
 							background: -moz-linear-gradient(top,  #666,  #434343)
@@ -725,7 +726,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .videoView
 	font-family: FontFamily
 	color: #D4D4D4
-	height: 329px
+	height: 383px
 	width: 300px
 	overflow-x: hidden 
 	overflow-y: hidden
@@ -1254,6 +1255,7 @@ div#top-video-name
 	vertical-align: top
 	margin-top: 1px
 	
+	
 .playlist-nameholder.selected-non-playlist-nameholder
 	background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#eee))
 	background: -moz-linear-gradient(top, silver, #eee)
@@ -1266,45 +1268,20 @@ div#top-video-name
 	background: #34C8FF
 	background: -moz-linear-gradient(top, #34C8FF, #008AB8)
 	background: -webkit-gradient(linear, left top, left bottom, from(#34C8FF), to(#008AB8))
-
-.browse-videos-container
-	color: #D4D4D4
-	background: #666
-	position: relative
-	.browse-videos-header
-		margin-left: 0px
-		padding-left: 5px
-		padding-top: 2px
-		font-size: 17px
-	#browse-videos-list
-		list-style-type: none
-		display: inline-block
-		margin-left: -36px
-		font-family: "Arial"
-		height: 16px
-		margin-top: 7px
-		margin-bottom: 2px
+	
+#playlist-collection-display
+	border: none
+	background: transparent
+	margin-left: -36px;
+	display: inline-block
 	
 #playlist-collection
-	#playlist-collection-display
-		width: 296px
-		max-height: 91px
-		font-size: 10px
-		background-color: #313131
-		overflow-y: scroll
-		overflow-x: hidden
-		border-bottom: 1px solid #666
-		border: none
-		background: transparent
-		margin-left: -36px
-		margin-bottom: -5px
-		margin-top: 4px
-		display: inline-block
-	.playlist-collection-header
-		font-size: 17px
-		color: #666
-		padding-left: 5px
-		padding-top: 4px
+	max-height: 91px
+	font-size: 10px
+	background-color: #313131
+	overflow-y: scroll
+	overflow-x: hidden
+	border-bottom: 1px solid #666
 	
 .playlist-collection-active
   background-color: #4C4C4C!important
@@ -1345,7 +1322,7 @@ div#top-video-name
 #playlist-view
 	overflow-y: scroll
 	overflow-x: hidden
-	max-height: 272px
+	max-height: 293px
 	z-index: -1
 	.playlistCellButtonText
 		font-size: 18px

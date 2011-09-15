@@ -184,7 +184,7 @@ div#outer {
 #outer #coolshit #right-side .sidebarContainer .viewBar {
   height: 30px;
 }
-#outer #coolshit #right-side .sidebarContainer .viewBar .viewBarHeader {
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist {
   vertical-align: top;
   background-color: #c0c0c0;
   color: #fff;
@@ -202,14 +202,14 @@ div#outer {
   -moz-border-top-right-radius: 2px !important;
   -webkit-border-top-right-radius: 2px !important;
 }
-#outer #coolshit #right-side .sidebarContainer .viewBar .viewBarHeader #playlist-icon {
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist #playlist-icon {
   display: inline-block;
   float: left;
   margin-top: 2px;
   margin-left: 3px;
 margin
 }
-#outer #coolshit #right-side .sidebarContainer .viewBar .viewBarHeader #playlistTitle {
+#outer #coolshit #right-side .sidebarContainer .viewBar .playlist #playlistTitle {
   float: left;
   font-size: 16px;
   font-weight: bold;
@@ -222,14 +222,15 @@ margin
 #outer #coolshit #right-side .sidebarContainer #search-view #searchContainer {
   overflow-y: scroll;
   overflow-x: hidden;
+  height: 256px;
   width: 300px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar {
-  display: none;
   height: 36px;
 }
 #outer #coolshit #right-side .sidebarContainer #search-view #searchBar .inputBox {
   z-index: 5;
+  position: absolute;
   background-color: #666;
   background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
   background: -moz-linear-gradient(top, #666, #434343);
@@ -816,7 +817,7 @@ button.search.active {
 .videoView {
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #d4d4d4;
-  height: 329px;
+  height: 383px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -1453,46 +1454,19 @@ background-color: green,
   background: -moz-linear-gradient(top, #34c8ff, #008ab8);
   background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
 }
-.browse-videos-container {
-  color: #d4d4d4;
-  background: #666;
-  position: relative;
-}
-.browse-videos-container .browse-videos-header {
-  margin-left: 0px;
-  padding-left: 5px;
-  padding-top: 2px;
-  font-size: 17px;
-}
-.browse-videos-container #browse-videos-list {
-  list-style-type: none;
-  display: inline-block;
+#playlist-collection-display {
+  border: none;
+  background: transparent;
   margin-left: -36px;
-  font-family: "Arial";
-  height: 16px;
-  margin-top: 7px;
-  margin-bottom: 2px;
+  display: inline-block;
 }
-#playlist-collection #playlist-collection-display {
-  width: 296px;
+#playlist-collection {
   max-height: 91px;
   font-size: 10px;
   background-color: #313131;
   overflow-y: scroll;
   overflow-x: hidden;
   border-bottom: 1px solid #666;
-  border: none;
-  background: transparent;
-  margin-left: -36px;
-  margin-bottom: -5px;
-  margin-top: 4px;
-  display: inline-block;
-}
-#playlist-collection .playlist-collection-header {
-  font-size: 17px;
-  color: #666;
-  padding-left: 5px;
-  padding-top: 4px;
 }
 .playlist-collection-active,
 background-color: #4C4C4C,
@@ -1531,7 +1505,7 @@ background-color: #4C4C4C,
 #playlist-view {
   overflow-y: scroll;
   overflow-x: hidden;
-  max-height: 272px;
+  max-height: 293px;
   z-index: -1;
 }
 #playlist-view .playlistCellButtonText {
