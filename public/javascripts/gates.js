@@ -15,24 +15,15 @@ window.fbAsyncInit = function() {
   });
  };
 
- var params = {
-  wmode: "opaque",
-  allowScriptAccess: "always",
-  modestbranding: 1,
-  iv_load_policy: 3
- };
- var atts = {
-  id: "YouTubePlayer-fd"
- };
- swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
-
-
  function proceed_to_site(response) {
   console.log(response);
   if (response.authResponse) {
    //user is already logged in and connected
    FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
 	 if (!userLoggedOut) {
+		if(window.ss_fdLoop){
+			clearTimeout(window.ss_fdLoop);
+		}
 	  window.SurfStreamApp = new SurfStreamModel({
 	   socket: socket_init,
 		fbId: response.authResponse.userID
@@ -43,6 +34,15 @@ window.fbAsyncInit = function() {
    document.getElementById('outer').style.display = 'block';
   } else {
    // yeah right
+	 var params = {
+	  wmode: "opaque",
+	  allowScriptAccess: "always",
+	  iv_load_policy: 3
+	 };
+	 var atts = {
+	  id: "YouTubePlayer-fd"
+	 };
+	 swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
    document.getElementById('loadingScreen').style.display = 'none';
    document.getElementById('outer').style.display = 'none';
    document.getElementById('frontdoor').style.display = 'inline-block';
@@ -4137,8 +4137,8 @@ function setSuggestions(suggestions) {
 
 function nextFDVideo() {
 	console.log("SUPPPP");
-	ytplayer = document.getElementById("YouTubePlayer-fd");
-	ytplayer.nextVideo();
+	window.fdplayer = document.getElementById("YouTubePlayer-fd");
+	window.fdplayer.nextVideo();
 };
 
 function onYouTubePlayerReady(playerId) {
@@ -4149,11 +4149,11 @@ function onYouTubePlayerReady(playerId) {
 
  if (playerId == "YouTubePlayer-fd") {
 	 console.log("suckkkk");
- 	 ytplayer = document.getElementById("YouTubePlayer-fd");
-	 ytplayer.loadPlaylist("DDDC4DFF26DF10ED");
-	 ytplayer.playVideo();
+ 	 window.fdplayer = document.getElementById("YouTubePlayer-fd");
+	 window.fdplayer.loadPlaylist("DDDC4DFF26DF10ED");
+	 window.fdplayer.playVideo();
 	
-	 setInterval("nextFDVideo()", 8000);
+	 window.ss_fdLoop = setInterval("nextFDVideo()", 8000);
  }
 
  if (!window.YTPlayer) {
