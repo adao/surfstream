@@ -1230,7 +1230,7 @@ $(function() {
     var atts = {
      id: "YouTubePlayer"
     };
-    swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "video-container", "640", "390", "8", null, null, params, atts);
+    swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
     setInterval(updateTime, 300);
    }
   }
