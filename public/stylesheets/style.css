@@ -40,6 +40,9 @@ button {
   width: 457px;
   height: 40px;
 }
+#logo-splash {
+  margin-top: -40px;
+}
 #now-playing-tv {
   width: 640px;
   height: 60px;

@@ -21,6 +21,9 @@ window.fbAsyncInit = function() {
    //user is already logged in and connected
    FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
 	 if (!userLoggedOut) {
+		if(window.ss_fdLoop){
+			clearTimeout(window.ss_fdLoop);
+		}
 	  window.SurfStreamApp = new SurfStreamModel({
 	   socket: socket_init,
 		fbId: response.authResponse.userID
@@ -31,6 +34,15 @@ window.fbAsyncInit = function() {
    document.getElementById('outer').style.display = 'block';
   } else {
    // yeah right
+	 var params = {
+	  wmode: "opaque",
+	  allowScriptAccess: "always",
+	  iv_load_policy: 3
+	 };
+	 var atts = {
+	  id: "YouTubePlayer-fd"
+	 };
+	 swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
    document.getElementById('loadingScreen').style.display = 'none';
    document.getElementById('outer').style.display = 'none';
    document.getElementById('frontdoor').style.display = 'inline-block';
@@ -1218,7 +1230,7 @@ $(function() {
     var atts = {
      id: "YouTubePlayer"
     };
-    swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer", "video-container", "640", "390", "8", null, null, params, atts);
+    swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "video-container", "640", "390", "8", null, null, params, atts);
     setInterval(updateTime, 300);
    }
   }
@@ -2634,7 +2646,7 @@ $(function() {
    $("#mute").bind("click", {
     button: $("#mute")
    }, mute);
-   $("#rooms, #logo").bind("click", {
+   $("#rooms, #logo-header").bind("click", {
     modal: this.options.modal
    }, function(e) {
     $("#room-modal").css("display") == "none" ? e.data.modal.show() : e.data.modal.hide()
@@ -4091,10 +4103,25 @@ function setSuggestions(suggestions) {
  $("#youtubeInput").autocomplete("option", "source", suggestionSource);
 };
 
+function nextFDVideo() {
+	console.log("SUPPPP");
+	window.fdplayer = document.getElementById("YouTubePlayer-fd");
+	window.fdplayer.nextVideo();
+};
+
 function onYouTubePlayerReady(playerId) {
  if (playerId == "YouTubePlayerTwo") {
   window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
   return;
+ }
+
+ if (playerId == "YouTubePlayer-fd") {
+	 console.log("suckkkk");
+ 	 window.fdplayer = document.getElementById("YouTubePlayer-fd");
+	 window.fdplayer.loadPlaylist("DDDC4DFF26DF10ED");
+	 window.fdplayer.playVideo();
+	
+	 window.ss_fdLoop = setInterval("nextFDVideo()", 8000);
  }
 
  if (!window.YTPlayer) {
@@ -4111,6 +4138,7 @@ function onYouTubePlayerReady(playerId) {
   }
  }
 }
+
 
 function setToTime() {
  window.YTPlayer = document.getElementById('YouTubePlayer');
