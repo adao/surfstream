@@ -346,8 +346,10 @@ io.sockets.on('connection', function(socket) {
 	socket.on("promo:validate", function(data){
 		if (redisClient) {
 			if (_.indexOf(PROMO_CODES, data.promo) != -1) {
+				console.log("Good promo submitted!")
 				socket.emit("promo:valid");
 			} else {
+				console.log("Bad promo tried!")
 				socket.emit("promo:bad")
 			}
 		}

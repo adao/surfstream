@@ -8,15 +8,61 @@ window.fbAsyncInit = function() {
   oauth: true
  });
 
- button = document.getElementById('fb-auth');
- button.onclick = function() {
+ $('#fb-auth').click(function() {
   FB.login(function(response) {}, {
    scope: 'email,read_stream'
   });
- };
+ });
+
+ $('#fb-auth-new').click(function() {
+	if (window.promoApproved) {
+		FB.login(function(response) {}, {
+	   scope: 'email,read_stream'
+	  });
+	}
+  return false;
+ });
+ 
+ var input = $("#promoBox");
+ input.keyup(function(e){
+	
+	if(window.promoLoop) {
+	 clearTimeout(window.promoLoop);	 
+	}
+	console.log("New setTimout...")
+	window.promoLoop = setTimeout(function() {
+		console.log("validating promo"); 
+		socket_init.emit('promo:validate', {promo: $("#promoBox").val()})
+		}, 800);
+ });
+
+	socket_init.on("promo:valid", function(){
+		console.log("GOOD PROMO!");
+		window.promoApproved = true;
+		input.keyup(function(){});
+	});
+	socket_init.on("promo:bad", function() {
+		console.log("BAD PROMO!");
+		window.promoApproved = false;
+	});
+
+ var form = $("#promoForm");
+ form.submit(function(){
+	return false;
+ });
+ function hideSplash() {
+	document.getElementById('frontdoor').style.display = 'none';
+	document.getElementById('loadingScreen').style.display = 'none';
+	document.getElementById('outer').style.display = 'block';
+ }
+
+ function showSplash() {
+	document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('outer').style.display = 'none';
+  document.getElementById('frontdoor').style.display = 'inline-block';
+ }
 
  function proceed_to_site(response) {
-  console.log(response);
   if (response.authResponse) {
    //user is already logged in and connected
    FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
@@ -29,9 +75,7 @@ window.fbAsyncInit = function() {
 		fbId: response.authResponse.userID
 	  });
 	 }  	
-   document.getElementById('frontdoor').style.display = 'none';
-   document.getElementById('loadingScreen').style.display = 'none';
-   document.getElementById('outer').style.display = 'block';
+   hideSplash();
   } else {
    // yeah right
 	 var params = {
@@ -42,10 +86,8 @@ window.fbAsyncInit = function() {
 	 var atts = {
 	  id: "YouTubePlayer-fd"
 	 };
-	 swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
-   document.getElementById('loadingScreen').style.display = 'none';
-   document.getElementById('outer').style.display = 'none';
-   document.getElementById('frontdoor').style.display = 'inline-block';
+	 //swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
+   showSplash();
    FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
   }
  }
