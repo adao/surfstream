@@ -40,10 +40,12 @@ window.fbAsyncInit = function() {
 		console.log("GOOD PROMO!");
 		window.promoApproved = true;
 		input.keyup(function(){});
+		$("#check-box").show();
 	});
 	socket_init.on("promo:bad", function() {
 		console.log("BAD PROMO!");
 		window.promoApproved = false;
+		$("#check-box").hide();
 	});
 
  var form = $("#promoForm");
