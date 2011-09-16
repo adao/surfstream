@@ -807,20 +807,9 @@
 			return false;
 		},
 		
-		//returns the first Video, and moves the Video
-		//to the end of the playlist 
+		//returns the first Video
 		playFirstVideo: function() {
-			// if(this.get("videos").length == 0) {
-			// 				return null;
-			// 			}
-			// 			var first = this.get("videos").at(0);
-			// 			this.get("videos").remove(first);
-			// 			this.get("videos").add(first);	//adds video to the end;
-			// 			return first;
 			var firstVideo = this.popVideo();
-			if(firstVideo) {
-				this.get("videos").add(firstVideo);
-			}
 			return firstVideo;
 		},
 		
@@ -878,11 +867,10 @@
 		
 		setPlaylists: function(userPlaylists) {
 			this.playlists = userPlaylists;
+			this.playlist = this.playlists[0];
 		},
 		
 		setPlaylist: function(playlistId) {
-			this.playlistId = playlistId;
-			this.playlist = this.playlists[playlistId];
 			var userId = this.get("userId");
 			redisClient.set("user:" + userId + ":activePlaylist", playlistId, function(err, reply) {
 				if (err) {
@@ -957,7 +945,7 @@
 		},
 		
 		saveActivePlaylist: function() {
-			this.savePlaylist(this.playlistId);
+			this.savePlaylist(0);
 		},
 		
 		hasPlaylist: function(playlistName) {
@@ -1028,7 +1016,7 @@
 			var thisUser = this;
 			socket.on('playlists:choosePlaylist', function(data) {
 				//console.log("!playlists[data.playlistId] = " + !playlists[data.playlistId] + " ... thisUser.playlist == playlists[data.playlistId]" + (thisUser.playlist == playlists[data.playlistId]))
-				if (!playlists[data.playlistId] || thisUser.playlist == playlists[data.playlistId]) {
+				if (!playlists[data.playlistId]) {
 					return;
 				} else {
 					thisUser.setPlaylist(data.playlistId);
