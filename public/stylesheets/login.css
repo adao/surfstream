@@ -45,6 +45,9 @@ h1 {
   width: 300px;
   height: 80px;
 }
+#submit-email #email-form-text {
+  padding-top: 6px;
+}
 #submit-email #email-form {
   margin-top: 8px;
 }
