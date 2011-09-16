@@ -1703,6 +1703,7 @@ $(function() {
    return this;
   }
  });
+ 
  window.BrowseVideosView = Backbone.View.extend({
 	el: "#browseVideosContainer",
 	
@@ -1728,12 +1729,8 @@ $(function() {
 	  });
 		this.activeNonPlaylistNameholder = this.likesNameholderView;
 	},
-	
-	render: function() {
-		$(this.el).html(this.browseVideosTemplate());
-	},
-	
-	showSearch: function() {
+
+  showSearch: function() {
 		if (this.activeNonPlaylistNameholder) {
 			this.deactivateNameholder();
 		}
@@ -1779,6 +1776,7 @@ $(function() {
 	},
 	
 	resetSearchResults: function() {
+		$("#searchContainer").empty();
 		this.options.searchBarModel.get("searchResultsCollection").each(function(searchResult) {
 			new SearchCellView({video: searchResult, toTop: false});
 		});
@@ -1849,8 +1847,13 @@ $(function() {
 	deactivateNameholder: function() {
 		this.activeNonPlaylistNameholder.removeClass("selected-non-playlist-nameholder");
 		this.activeNonPlaylistNameholder.removeClass("active-playlist-nameholder");
-	}
+	},
+
+  render: function() {
+   $(this.el).html(this.browseVideosTemplate());
+  }
  });
+
  window.PlaylistNameholderView = Backbone.View.extend({
 	className: "playlist-nameholder",
 	tagName: "li",
@@ -1876,13 +1879,12 @@ $(function() {
 				$(this).addClass("dropped-playlist-nameholder");
 				var shrunkenCopy = $(ui.helper).clone();
 				$("body").append(shrunkenCopy);
+				
 				var droppedOffset = $(this).offset();
 				var droppedWidth = $(this).width();
-	 			var fromVideoClass = $(ui.draggable).attr("class");
-				
 				shrunkenCopy.offset({top: droppedOffset.top - 125, left: droppedOffset.left + droppedWidth / 2 - 10});
-				
 				var copyOffset = shrunkenCopy.offset();
+	 			var fromVideoClass = $(ui.draggable).attr("class");
 				
 				if (fromVideoClass.indexOf("searchCellContainer") == -1) {
 					var fromPlaylist = playlistCollection.get("activePlaylist");
@@ -1952,9 +1954,9 @@ $(function() {
 	},
 	
 	calculatePlaylistHeight: function() {
-		var pcHeight = $("#playlist-collection").outerHeight(true);
-		var viewHeight = $("#myPlaylist").outerHeight(true);
-		$("#playlist-view").css('height', viewHeight - pcHeight);
+		var pcHeight = $("#playlist-collection-display").outerHeight(true);
+		var viewHeight = $("#myVideosContainer").outerHeight(true);
+		$("#playlist-display").css('height', viewHeight - pcHeight - 7);
 	},
 	
 	highlightView: function() {
@@ -2228,7 +2230,7 @@ $(function() {
    this.render();
 	 this.messages = $(this.el).find("#messages");
    $(this.el).find(".soundToggler").live("click", {
-    "this": this
+    sound: this
    }, this.toggleSound);
    this.options.chatCollection.bind("add", this.makeNewChatMsg, this);
    this.options.chatCollection.bind("reset", this.clearChat);
@@ -2271,10 +2273,10 @@ $(function() {
 
   toggleSound: function(event) {
    if (window.SurfStreamApp.get("mainView").soundOn) {
-    $(event.data.this.el).find(".soundToggler").text("Sound Off");
+    $(event.data.sound.el).find(".soundToggler").text("Sound Off");
     window.SurfStreamApp.get("mainView").soundOn = false;
    } else {
-    $(event.data.this.el).find(".soundToggler").text("Sound On");
+    $(event.data.sound.el).find(".soundToggler").text("Sound On");
     window.SurfStreamApp.get("mainView").soundOn = true;
    }
   },
@@ -2422,9 +2424,9 @@ $(function() {
 			
 			var recentVids = roomModel.get("recentVids");
 			$($("#roomsTable tbody:first")[0]).append(this.el);
-			var recentVidLimit = 4;
+			var recentVidLimit = 2;
 			if (!curVidTitle)
-				recentVidLimit = 5;
+				recentVidLimit = 3;
 			if (recentVids) {
 				var numRecentVids = recentVids.length;
 				for (var i = 0; i < numRecentVids && i < recentVidLimit; i++) {
@@ -2445,7 +2447,7 @@ $(function() {
 			}
 			
 			if (!curVidTitle && !recentVids)
-				$(this.el).find(".room-history-container").prepend("No videos have been played yet. Be the first!");
+				$(this.el).find(".lastPlayedVideoTitle").prepend("No videos have been played yet. Be the first!");
 			return this;
 		},
 		
@@ -2500,7 +2502,6 @@ $(function() {
 				return;
 			//this.channelHistory.stop().slideDown(500);
 			this.channelHistoryDisplayed = true;
-			this.videoTitle.css("margin-top", "10px");
 			this.channelHistory.show();
 		},
 		
@@ -2509,7 +2510,6 @@ $(function() {
 				return;
 			//this.channelHistory.stop().slideUp(500);
 			this.channelHistoryDisplayed = false;
-			this.videoTitle.css("margin-top", "0px");
 			this.channelHistory.hide();
 		}
  });

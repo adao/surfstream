@@ -76,18 +76,21 @@
 			var numVideos = this.room.history.recentVids.length;
 			if(numVideos == HIST_NUM_RECENT) {	//history is full, ok to repeat self
 				var videoFromHistory = this.room.history.recentVids.at(numVideos - 1);
-				videoFromHistory.set({ dj: 'VAL' });	
-				this.room.vm.play(videoFromHistory);
+				if(videoFromHistory) {
+					videoFromHistory.set({ dj: 'VAL' });	
+					this.room.vm.play(videoFromHistory);
+				} else {
+					this.fetchYouTubeVideo();
+				}
 			} else {
 				this.fetchYouTubeVideo();
 			}
 		},
 	
-		playVideo: function() {
+		playVideo: function(onStart) {
 			var roomName = this.room.get('name');
 			console.log('['+roomName+'][VAL] playVideo(): num users --> '+this.room.users.length);
-			//if(this.room.users.length == 0 && !this.autoplay) return
-			if(this.room.users.length == 0 && !this.autoplay) { //play from history
+			if(this.room.users.length == 0 && !this.autoplay && !onStart) { //play from history
 				console.log('['+roomName+'][VAL] playVideo(): no users and not autoplay, playing from history');
 				return this.playFromHistory();	
 			}	
@@ -366,6 +369,8 @@
 			this.currVideo = null;
 			this.history = new models.History(this);
 			this.sockM = new models.SocketManager(this);
+			
+			this.VAL.playVideo(true);
 		},
 		
 		clearVideo: function() {
