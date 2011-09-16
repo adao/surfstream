@@ -40,12 +40,14 @@ window.fbAsyncInit = function() {
 		console.log("GOOD PROMO!");
 		window.promoApproved = true;
 		input.keyup(function(){});
-		$("#check-box").show();
+		$("#promoBox").css("background", "#A5F2AA")
+		//$("#check-box").show();
 	});
 	socket_init.on("promo:bad", function() {
 		console.log("BAD PROMO!");
 		window.promoApproved = false;
-		$("#check-box").hide();
+		$("#promoBox").css("background", "#FAAFAF");
+		//$("#check-box").hide();
 	});
 
  var form = $("#promoForm");
@@ -3924,6 +3926,8 @@ $(function() {
 	
 	socket.on("noEntry:promo", function(){
 		alert("SORRY NO PROMO BUD! WOULD YOU LIKE US TO EMAIL YOU A PROMO CODE?")
+		$("#beta-user-text").css("display", "none");
+		$("#or-text").css("display", "none")
 	});
 	
 	socket.on("noEntry:perms", function(){

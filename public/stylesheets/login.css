@@ -38,6 +38,36 @@ h1 {
   border: none;
   background: url("/images/room/newicons/fb-connect.png") 50% 50% no-repeat;
 }
+#submit-email {
+  margin-top: 8px;
+  width: 300px;
+  height: 80px;
+}
+#submit-email #email-form {
+  margin-top: 8px;
+}
+#submit-email #email-form #emailBox {
+  display: inline-block;
+  margin: 0px;
+  width: 170px;
+  color: #000;
+}
+#submit-email #email-form .submit-email {
+  background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
+  border: none;
+  height: 26px;
+  vertical-align: middle;
+  border-radius: 4px;
+  color: #c0c0c0;
+  margin-left: 5px;
+  margin-top: -2px;
+}
+#submit-email #email-form .submit-email:hover {
+  color: #fff;
+}
+#submit-email #email-form .submit-email:active {
+  background: -webkit-gradient(linear, left top, left bottom, from(#434343), to(#666));
+}
 #check-box {
   display: none;
   position: absolute;
