@@ -32,6 +32,13 @@ io.configure(function () {
 	io.set('log level', 2); 
 })
 
+process.on('uncaughtException', function (err) {
+  console.log('\n****			CRASH REPORT			****');
+	console.log(new Date())
+	console.error(err)
+	console.log('Stack trace: '+err.stack)
+  console.log("Node NOT Exiting...\n\n");
+});
 
 // Configuration
 app.configure(function(){
@@ -60,6 +67,8 @@ app.configure('production', function(){
 });
 
 require('./router.js').setupRoutes(app);
+
+var PROMO_CODES = [];
 
 var adminSUB = redis.createClient();
 
@@ -91,8 +100,37 @@ adminSUB.on('message', function(channel, message) {
 			if(roomManager.roomMap[message.oldName] && !roomManager.roomMap[message.newName])
 				roomManager.renameRoom(message.oldName, message.newName);
 			break;
+		case 'promo:make':
+			if(message.promo) {
+				if (_.indexOf(PROMO_CODES, message.promo) == -1) {
+					PROMO_CODES.push(message.promo);
+					console.log("[PUBSUB][PROMO_TOOLS] add promo " + message.promo + " to the promo code list")
+					console.log("[PUBSUB][PROMO_TOOLS] PROMO_CODES is now " + PROMO_CODES);
+				} else {
+					console.log("[PUBSUB][PROMO_TOOLS] could not add promo code because it already exists in PROMO_CODES");
+				}
+			} else {
+				console.log("[PUBSUB][PROMO_TOOLS] no promo code sent for addition!");
+			}
+			break;
+		case 'promo:delete':
+			if(message.promo) {
+				var ind = _.indexOf(PROMO_CODES, message.promo);
+				if (ind != -1) {
+					PROMO_CODES.splice(ind, 1); 
+						console.log("[PUBSUB][PROMO_TOOLS] removed " + message.promo + " from promo code list");
+						console.log("[PUBSUB][PROMO_TOOLS] PROMO_CODES is now " + PROMO_CODES);
+				} else {
+					console.log("[PUBSUB][PROMO_TOOLS] could not delete promo code because it doesn't exist yet in PROMO_CODES");
+				}				
+			} else {
+				console.log("[PUBSUB][PROMO_TOOLS] no promo code sent for deletion!");
+			}
+			break;
 		default:
 			console.log('\n[PUBSUB] received unknown message type: '+message.type)
+			break;
+
 	}
 })
 
@@ -121,6 +159,19 @@ RoomManager = Backbone.Model.extend({
 						}
 					})
 				});
+			}
+		});
+		redisClient.lrange('promo',0,-1, function(err, codes) {
+			if (err) {
+				console.log("problem fetching error codes");
+			} else {
+				if (codes) {
+					console.log("promo codes received");
+					_.each(codes, function(code){
+						console.log("promo code: " + code);
+						PROMO_CODES.push(code);
+					});
+				}
 			}
 		});
 	},
@@ -289,6 +340,20 @@ io.sockets.on('connection', function(socket) {
 			});
 		}
 	});
+	
+	/* PROMO CODE LOGIC */
+	
+	socket.on("promo:validate", function(data){
+		if (redisClient) {
+			if (_.indexOf(PROMO_CODES, data.promo) != -1) {
+				console.log("Good promo submitted!")
+				socket.emit("promo:valid");
+			} else {
+				console.log("Bad promo tried!")
+				socket.emit("promo:bad")
+			}
+		}
+	})
 	
 	socket.on("user:sendUserFBFriends", function(data) {
 		if (redisClient) {
