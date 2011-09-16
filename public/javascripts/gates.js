@@ -68,10 +68,10 @@ window.fbAsyncInit = function() {
   if (response.authResponse) {
    //user is already logged in and connected
    FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
+	 if(window.ss_fdLoop){
+	 	clearTimeout(window.ss_fdLoop);
+	 }
 	 if (!userLoggedOut) {
-		if(window.ss_fdLoop){
-			clearTimeout(window.ss_fdLoop);
-		}
 	  window.SurfStreamApp = new SurfStreamModel({
 	   socket: socket_init,
 		fbId: response.authResponse.userID
@@ -88,7 +88,7 @@ window.fbAsyncInit = function() {
 	 var atts = {
 	  id: "YouTubePlayer-fd"
 	 };
-	 //swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
+	 swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
    showSplash();
    FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
   }
@@ -4148,13 +4148,7 @@ function setSuggestions(suggestions) {
 };
 
 function nextFDVideo() {
-	ranNum = Math.floor(Math.random()*16);
-	while(ranNum == window.lastPlayedRan){
-		ranNum = Math.floor(Math.random()*16);
-		console.log("inside");
-	}
-	console.log(ranNum);
-
+	console.log("next fd");
 	var videoArray = {
 		"videos": [
 			{
@@ -4224,9 +4218,22 @@ function nextFDVideo() {
 		]
 	};
 	window.fdplayer = document.getElementById("YouTubePlayer-fd");
-	window.fdplayer.loadVideoById(videoArray.videos[ranNum].videoId, videoArray.videos[ranNum].startTime);
-	window.lastPlayedRan = ranNum;
-	console.log(videoArray);
+	console.log(window.ss_loopOrder);
+	console.log(window.ss_loopIndex);
+	window.fdplayer.loadVideoById(videoArray.videos[window.ss_loopOrder[window.ss_loopIndex]].videoId, videoArray.videos[window.ss_loopOrder[window.ss_loopIndex]].startTime);
+	window.ss_loopIndex = window.ss_loopIndex + 1;
+};
+
+function fisherYates ( myArray ) {
+  var i = myArray.length;
+  if ( i == 0 ) return false;
+  while ( --i ) {
+     var j = Math.floor( Math.random() * ( i + 1 ) );
+     var tempi = myArray[i];
+     var tempj = myArray[j];
+     myArray[i] = tempj;
+     myArray[j] = tempi;
+   }
 };
 
 function onYouTubePlayerReady(playerId) {
@@ -4238,10 +4245,11 @@ function onYouTubePlayerReady(playerId) {
  if (playerId == "YouTubePlayer-fd") {
 	 console.log("suckkkk");
  	 window.fdplayer = document.getElementById("YouTubePlayer-fd");
+	 window.ss_loopOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+	 console.log(window.ss_loopOrder);
+	 fisherYates(window.ss_loopOrder);
+	 window.ss_loopIndex = 0;
 	 nextFDVideo();
-	 //window.fdplayer.loadPlaylist("C38A7792DA219F52");
-	 //window.fdplayer.playVideo();
-	 //window.fdplayer.loadVideoById("1XB_E8w0nqQ", 8);
 	 window.ss_fdLoop = setInterval("nextFDVideo()", 12000);
  }
 
@@ -4259,7 +4267,6 @@ function onYouTubePlayerReady(playerId) {
   }
  }
 }
-
 
 function setToTime() {
  window.YTPlayer = document.getElementById('YouTubePlayer');
