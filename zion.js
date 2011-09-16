@@ -244,16 +244,22 @@ var StagingUsers = {};
 
 io.sockets.on('connection', function(socket) {
 	
-	socket.on("user:sendFBId", function(fbId) {
+	socket.on("user:sendFBId", function(signInPayload) {
 		if (redisClient) {
-			redisClient.get("user:fb_id:" + fbId + ":profile", function(err, reply) {
+			var promoCode = signInPayload.promo;
+			redisClient.get("user:fb_id:" + signInPayload.fbId + ":profile", function(err, reply) {
 				if (err) {
 					console.log("[   zion   ] [socket][user:sendFBId]: Error trying to fetch user by Facebook id on initial login");
 				} else {
 					var ssUser = JSON.parse(reply);
+					var promoCandidate = promoCode;
 					if (ssUser == null || ssUser == 'undefined') {
 						//socket.emit("playlist:showFBImport");
-						socket.emit("user:sendFBProfile");
+						if (_.indexOf(PROMO_CODES, promoCandidate) == -1) {
+							socket.emit("noEntry:promo");
+						} else {
+							socket.emit("user:sendFBProfile");
+						}					
 					} else {
 						redisClient.get("user:" + ssUser.ssId + ":fb_import_date", function(err, reply) {
 							if (err) {

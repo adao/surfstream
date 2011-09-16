@@ -71,11 +71,11 @@ window.fbAsyncInit = function() {
 			clearTimeout(window.ss_fdLoop);
 		}
 	  window.SurfStreamApp = new SurfStreamModel({
-	   socket: socket_init,
-		fbId: response.authResponse.userID
+	   socket: socket_init
 	  });
+		//trigger first communication
+		SocketManagerModel.sendFBId(response.authResponse.userID, $("#promoBox").val());
 	 }  	
-   hideSplash();
   } else {
    // yeah right
 	 var params = {
@@ -92,6 +92,7 @@ window.fbAsyncInit = function() {
   }
  }
 
+ showSplash();
  // run once with current status and whenever the status changes
  FB.getLoginStatus(proceed_to_site);
 };
@@ -228,7 +229,7 @@ $(function() {
 		//this.showFBButton = false;
 	},
 
-  getFBUserData: function() {
+  getFBUserDataForRegistration: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
    }
@@ -423,8 +424,7 @@ $(function() {
    mainView.initializeChatView(roomModel.get("chatCollection"), this.get("userModel"));
    mainView.initializeSounds();
 
-	 //trigger first communication
-	 SocketManagerModel.sendFBId(this.get("fbId"));
+	
   }
  });
 
@@ -2283,11 +2283,7 @@ $(function() {
 		
    $(this.el).html(this.roomListTemplate());
    this.bindButtonEvents();
-	 if (this.options.app.showModalOnLoad == true && typeof(this.options.app.inRoom) == 'undefined') {
-	  //Don't show them a way out 
-		$("#hideRoomsList").css({display: "none"});
-		this.options.app.closeRoomModalIsHidden = true;	
-	 }
+	 this.hide();
    return this;
   },
 
@@ -3716,7 +3712,13 @@ $(function() {
 	 });
 	 
 	 socket.on("user:sendFBProfile", function(data) {
-		app.get("userModel").getFBUserData();
+		app.get("userModel").getFBUserDataForRegistration();
+		hideSplash();
+		if (SurfStreamApp.showModalOnLoad == true && typeof(SurfStreamApp.inRoom) == 'undefined') {
+		  //Don't show them a way out 
+			$("#hideRoomsList").css({display: "none"});
+			SurfStreamApp.closeRoomModalIsHidden = true;	
+		 }
 	 });
 	 
 	 socket.on("user:sendFBFriends", function(data) {
@@ -3917,6 +3919,14 @@ $(function() {
 	socket.on("playlist:importFacebook", function() {
 		app.get("userModel").importFacebook = true;
 	});
+	
+	socket.on("noEntry:promo", function(){
+		alert("SORRY NO PROMO BUD! WOULD YOU LIKE US TO EMAIL YOU A PROMO CODE?")
+	});
+	
+	socket.on("noEntry:perms", function(){
+		alert("SORRY BRO, WE JUST NEED YOU TO LET US FIND YOUR YOUTUBE VIDEOS ON YOUR FACEBOOK");
+	});
 
   }
 
@@ -3924,10 +3934,9 @@ $(function() {
   socket: socket_init,
 
   /* Outgoing Socket Events*/
-  sendFBId: function(id) {
-   SocketManagerModel.socket.emit("user:sendFBId", id);
+  sendFBId: function(id, promocode) {
+   SocketManagerModel.socket.emit("user:sendFBId", {fbId: id, promo: promocode});
   },
-
 
 	sendFBUser: function(user) {
 		SocketManagerModel.socket.emit("user:sendFBData", user);
