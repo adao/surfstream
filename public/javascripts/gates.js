@@ -1050,9 +1050,9 @@ $(function() {
 
   initialize: function() {
    this.render();
-	 this.valVoteView = new ValVoteView({
-		sideBarView: this
-	 });
+	// this.valVoteView = new ValVoteView({
+	//	sideBarView: this
+	// });
 	 this.videoManagerView = new VideoManagerView({
 		sideBarView: this,
 		searchBarModel: this.options.searchBarModel,
