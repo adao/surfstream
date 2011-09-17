@@ -1259,7 +1259,7 @@ $(function() {
 	events: {
 		"click #videoManagerHeader": "toggleVideoManager"
 	},
-	
+
 	initialize: function() {
 		this.sideBarView = this.options.sideBarView;
 		this.options.playlistCollection.videoManagerView = this;
