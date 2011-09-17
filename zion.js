@@ -354,7 +354,7 @@ io.sockets.on('connection', function(socket) {
 					+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
 					
 				StagingUsers[socket.id] = currUser;
-				var queue = new models.Playlist({name: "Queue", videos: new models.VideoCollection()});
+				var queue = new models.Playlist({name: "My Queue", videos: new models.VideoCollection()});
 				var facebookPlaylist = new models.Playlist({name: "My Facebook Videos", videos: new models.VideoCollection()});
 				var firstPlaylist = new models.Playlist({name: "New Playlist", videos: new models.VideoCollection()});
 				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 0, JSON.stringify(queue), 1, JSON.stringify(facebookPlaylist), 2, JSON.stringify(firstPlaylist), function(err, reply) {

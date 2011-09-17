@@ -76,15 +76,13 @@ window.fbAsyncInit = function() {
 	});
 	socket_init.on("email:receivedWithFBID", function() {
 		//alert("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + "as soon as we can! Not " + window.logged_in_fb_user.id + "? LOGOUT BUTTON");
+		showSplash();
 		$("#email-form-text").html("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + " as soon as we can!");
 		$("#email-form-text").css("font-size", "14px");
 		$("#submit-email").css("height", "110px");
 	}); 
 	
-	
-	
-	socket_init.on("surfstream:gate", function(response) {
-		
+	socket_init.on("surfstream:gate", function(response) {		
 		switch(response.details) {
 			case "approved":
 				if(window.ss_fdLoop){
@@ -150,7 +148,6 @@ window.fbAsyncInit = function() {
   if (response.authResponse) {
    //user is already logged in and connected
    var auth = response;
-   FB.Event.subscribe('auth.authResponseChange', send_fb_login_status);
 	 FB.api('/me', function(profile) {
 		socket_init.emit("surfstream:login", {fbId: auth.authResponse.userID, promo: $("#promoBox").val(), email: profile.email});
 		 window.logged_in_fb_user = profile;
@@ -161,11 +158,10 @@ window.fbAsyncInit = function() {
    // yeah right
 	 initFDPlayer();
    showSplash();
-   FB.Event.subscribe('auth.authResponseChange', send_fb_login_status);
   }
  }
 
- showSplash();
+
  // run once with current status and whenever the status changes
  FB.getLoginStatus(send_fb_login_status);
 };
@@ -419,6 +415,7 @@ $(function() {
 	
 	logout: function() {
 		FB.logout();
+		showLoggedOut();
 	}
 	
 });
@@ -751,12 +748,18 @@ $(function() {
 			info.ss_name = SurfStreamApp.get("userModel").get("displayName");
 			info.avatarSettings = newAvatarSettings;
 			SocketManagerModel.initializeProfile(info);
+			SurfStreamApp.waitForTutorialEnd = true;
 			$("#tutorial").fadeIn();
 			$("#tutorialStart").fadeIn();
 			this.showModal = window.SurfStreamApp.stickRoomModal;
 			$("#tutorialStart").click({picker: this}, function(e){
 				e.data.picker.closePicker();
+				Backbone.history.start({
+			   	pushState: true,
+			   	silent: e.data.picker.showModal
+			   });
 				if (e.data.picker.showModal) {
+					
 					SurfStreamApp.get("mainView").roomModal.show();
 				}
 				
@@ -1480,7 +1483,7 @@ $(function() {
    });
 
    $("#previewContainer").animate({
-    'top': -187
+    'top': 273
    });
     $("#searchContainer").animate({
      "scrollTop": 0 + (this.offsetTop - 211)
@@ -1617,7 +1620,7 @@ $(function() {
 	      }
 	
    //$("#searchContainer").animate({'height': 320, "margin-top":0}, 500);
-	 $("#previewContainer").animate({'top': 0}, 500);
+	 $("#previewContainer").animate({'top': 462}, 500);
 
   }
  });
@@ -2073,7 +2076,7 @@ $(function() {
 	calculatePlaylistHeight: function() {
 		var pcHeight = $("#playlist-collection-display").outerHeight(true);
 		var viewHeight = $("#myVideosContainer").outerHeight(true);
-		$("#playlist-display").css('height', viewHeight - pcHeight - 7);
+		$("#playlist-display").css('height', viewHeight - pcHeight - 13);
 	},
 	
 	highlightView: function() {
@@ -3860,14 +3863,17 @@ $(function() {
 		hideSplash();
 		console.log("ROUTING ON " + ss_getPath(window.location));
 		
-		Backbone.history.start({
-	   	pushState: true,
-	   	silent: window.SurfStreamApp.stickRoomModal
-	   });
-	
-	  if(window.SurfStreamApp.stickRoomModal) {		  
-			SurfStreamApp.get("mainView").roomModal.show();
-		} 
+		if(!SurfStreamApp.waitForTutorialEnd) {
+			Backbone.history.start({
+		   	pushState: true,
+		   	silent: window.SurfStreamApp.stickRoomModal
+		   });
+
+		  if(window.SurfStreamApp.stickRoomModal) {		  
+				SurfStreamApp.get("mainView").roomModal.show();
+			}
+		}
+		
 	 });
 	 
 	 socket.on("playlist:showFBImport", function(data) {
@@ -4300,6 +4306,12 @@ $(function() {
 	document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('outer').style.display = 'none';
   document.getElementById('frontdoor').style.display = 'inline-block';
+ }
+
+ 
+ function showLoggedOut() {
+	$("#outer").hide();
+	$("#goodBye").show();
  }
 
  window.playerLoaded = false;

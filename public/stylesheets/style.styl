@@ -5,7 +5,7 @@
 	font-family: "custom"
 	src: url(/resources/candarabold.ttf) format("truetype");
 	font-weight: bold
-FontFamily = "Arial", "custom", "Segoe UI", "Bitstream Vera Sans","DejaVu Sans","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
+FontFamily = "custom", "Segoe UI", "Bitstream Vera Sans","DejaVu Sans","Bitstream Vera Sans","Trebuchet MS",Verdana,"Verdana Ref",sans-serif
 .tipsy
 	font-family: FontFamily
 body
@@ -206,10 +206,25 @@ div#outer
 	#videoManagerHeader
 		color: white
 		font-size: 18px
-		height: 20px
+		height: 30px
 		background: #5C5C5C
+		background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
+		background-image: -o-linear-gradient(top, #666, #434343)
+		.videoManagerIcon
+			vertical-align: top
+			margin: 1px 0 0 4px
+		#videoManagerTitle
+			margin-top: 7px;
+			font-size: 16px;
+			font-weight: bold;
+			text-indent: 10px;
+			vertical-align: top;
+			display: inline-block;
+			color: white;
+			height: 18px;
+			width: 36px;
 	#videoManagerBody
-		height: 393px
+		height: 383px
 		background: #808080
 	
 //Chat Box
@@ -222,14 +237,11 @@ div#outer
 	display: block
 	position: absolute
 	z-index:5
-	.chatHeader {
+	.chatHeader
 		width: 300px
 		height: 30px
 		background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
-		background: -moz-linear-gradient(top,  #666,  #434343)
-		background-image: -o-linear-gradient(top, #666, #434343)
-	}		
-		img.chatIcon
+		.chatIcon
 			vertical-align: top
 			margin: 3px 0 0 4px
 		.chatTitle
@@ -546,6 +558,8 @@ div.historyContainer
 					color: white
 .searchCellContainer:nth-child(odd)
 	background-color: #313131
+.searchCellContainer:nth-child(even)
+	background-color: #373737
 .searchCellContainer:hover
 	background-color: #666
 
@@ -1127,7 +1141,8 @@ div#top-video-name
 	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRFQTMzQUNBQjAxMUUwOTU2MEYzM0IyMzIyODZCQSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRFQTMzQkNBQjAxMUUwOTU2MEYzM0IyMzIyODZCQSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEVBMzM4Q0FCMDExRTA5NTYwRjMzQjIzMjI4NkJBIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEVBMzM5Q0FCMDExRTA5NTYwRjMzQjIzMjI4NkJBIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+38WtwAAAAHxJREFUeNp8j00KgCAQhUd3HqG6RREkiEeMjlTRrmV3qBvoLnvGGLNK+Hzy5lcVQmiIqDbG7CROjLGDXBpXBUYYXgQdZMqFlFIidPFgARYMYM5ejr0JnJQDB2OLr8XYm1XJXUq147aWWb4RePRgLYbYaQOt+vlmCzkfAQYAjl1/OnNCpMYAAAAASUVORK5CYII=') 50% 50% no-repeat
 	
 .queuePlaylist
-	background-color: teal
+	background-color: #21A9DB
+	color: black
 	text-indent: 6px
 	margin: 0 2px 6px 2px
 	display: inline-block
@@ -1187,9 +1202,9 @@ div#top-video-name
 	background-color: silver
 	
 .active-playlist-nameholder, .active-playlist-nameholder:hover
-	-moz-box-shadow: 0 0 6px #00FFFB;
-	-webkit-box-shadow: 0 0 6px #00FFFB;
-	box-shadow: 0 0 6px #00FFFB;
+	-moz-box-shadow: 0 0 6px #34c8ff;
+	-webkit-box-shadow: 0 0 6px #34c8ff;
+	box-shadow: 0 0 6px #34c8ff;
 
 #playlist-collection-input::-webkit-input-placeholder
 		color: #141414
@@ -1226,6 +1241,7 @@ div#top-video-name
 	color: #D4D4D4
 	background: #666
 	position: relative
+	background-color: #373737
 	#browseVideosButtons
 		list-style-type: none
 		margin: 0px 0px 0px -27px
@@ -1736,7 +1752,8 @@ div#top-video-name
 	
 #previewContainer
 	height: 213px;
-	position: relative;
+	top: 462px
+	position: absolute;
 	z-index: 4;
 	border-top: 1px solid grey;
 .default
@@ -2874,7 +2891,7 @@ a#fdbk_tab
 #pickerselection
 	float: left;
 	height: 450px;
-	width: 575px;
+	width: 600px;
 	margin-top: 30px;
 	margin-left: 30px;
 	text-align: left;
@@ -3002,3 +3019,24 @@ a#fdbk_tab
 	z-index: 1000;
 	background: black;
 	opacity: .6;
+
+#goodBye
+	display:none
+	color: white
+	#avatarBye
+		float: left
+		margin-left: 111px
+		margin-top: 40px
+	#byeMessage
+		float:right
+		margin-top:200px
+		position: absolute
+		margin-left: 595px;
+		width:50%
+	#byeTitle
+		text-align:center
+		font-size: 72px
+		font-weight: bold
+	#byeSubtitle
+		text-align:center
+		font-size: 40px
