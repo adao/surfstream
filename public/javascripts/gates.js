@@ -1133,9 +1133,9 @@ $(function() {
 		expandSize: 537,
 		shrinkSize: 154
 	 });
-	 this.chatExpanded = false;
+	 this.chatExpanded = true;
 	 this.valVoteExpanded = false;
-	 this.videoManagerExpanded = true;
+	 this.videoManagerExpanded = false;
 	 this.sideBarHeight = 633;
   },
 
@@ -1257,7 +1257,7 @@ $(function() {
 	videoManagerTemplate: _.template($("#video-manager-template").html()),
 	
 	events: {
-		"click #videoManagerHeader": "toggleVideoManager"
+		"click .collapseBody": "toggleVideoManager"
 	},
 	
 	initialize: function() {
@@ -1266,6 +1266,8 @@ $(function() {
 		this.render();
 		this.videoManagerHeader = $(this.el).find("#videoManagerHeader");
 		this.videoManagerBody = $(this.el).find("#videoManagerBody");
+		this.collapseBodyButton = $(this.el).find(".collapseBody");
+		this.videoManagerBody.hide();
 		this.browseVideosView = new BrowseVideosView({
 			videoManagerView: this,
 			searchBarModel: this.options.searchBarModel,
@@ -1285,8 +1287,10 @@ $(function() {
 	toggleVideoManager: function(event) {
 		if (this.sideBarView.videoManagerExpanded) {
 			this.sideBarView.hideVideoManagerView();
+			this.collapseBodyButton.text("Open");
 		} else {
 			this.sideBarView.showVideoManagerView();
+			this.collapseBodyButton.text("Close");
 		}
 	},
 	
@@ -2480,6 +2484,7 @@ $(function() {
 	 this.shrinkSize = this.options.shrinkSize;
    this.render();
 	 this.messages = $(this.el).find("#messages");
+	 this.expandChatView();
    $(this.el).find(".soundToggler").live("click", {
     sound: this
    }, this.toggleSound);
