@@ -8,36 +8,95 @@ window.fbAsyncInit = function() {
   oauth: true
  });
 
- button = document.getElementById('fb-auth');
- button.onclick = function() {
+ $('#fb-auth').click(function() {
   FB.login(function(response) {}, {
-   scope: 'read_stream'
+   scope: 'email,read_stream'
   });
- };
+ });
+
+ $('#fb-auth-new').click(function() {
+	if (window.promoApproved) {
+		FB.login(function(response) {}, {
+	   scope: 'email,read_stream'
+	  });
+	}
+  return false;
+ });
+ 
+ var input = $("#promoBox");
+ input.keyup(function(e){
+	
+	if(window.promoLoop) {
+	 clearTimeout(window.promoLoop);	 
+	}
+	console.log("New setTimout...")
+	window.promoLoop = setTimeout(function() {
+		console.log("validating promo"); 
+		socket_init.emit('promo:validate', {promo: $("#promoBox").val()})
+		}, 800);
+ });
+
+	socket_init.on("promo:valid", function(){
+		console.log("GOOD PROMO!");
+		window.promoApproved = true;
+		input.keyup(function(){});
+		$("#promoBox").css("background", "#A5F2AA")
+		//$("#check-box").show();
+	});
+	socket_init.on("promo:bad", function() {
+		console.log("BAD PROMO!");
+		window.promoApproved = false;
+		$("#promoBox").css("background", "#FAAFAF");
+		//$("#check-box").hide();
+	});
+
+ var form = $("#promoForm");
+ form.submit(function(){
+	return false;
+ });
+ function hideSplash() {
+	document.getElementById('frontdoor').style.display = 'none';
+	document.getElementById('loadingScreen').style.display = 'none';
+	document.getElementById('outer').style.display = 'block';
+ }
+
+ function showSplash() {
+	document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('outer').style.display = 'none';
+  document.getElementById('frontdoor').style.display = 'inline-block';
+ }
 
  function proceed_to_site(response) {
-  console.log(response);
   if (response.authResponse) {
    //user is already logged in and connected
    FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
+	 if(window.ss_fdLoop){
+	 	clearTimeout(window.ss_fdLoop);
+	 }
 	 if (!userLoggedOut) {
 	  window.SurfStreamApp = new SurfStreamModel({
-	   socket: socket_init,
-		fbId: response.authResponse.userID
+	   socket: socket_init
 	  });
+		//trigger first communication
+		SocketManagerModel.sendFBId(response.authResponse.userID, $("#promoBox").val());
 	 }  	
-   document.getElementById('frontdoor').style.display = 'none';
-   document.getElementById('loadingScreen').style.display = 'none';
-   document.getElementById('outer').style.display = 'block';
   } else {
    // yeah right
-   document.getElementById('loadingScreen').style.display = 'none';
-   document.getElementById('outer').style.display = 'none';
-   document.getElementById('frontdoor').style.display = 'inline-block';
+	 var params = {
+	  wmode: "opaque",
+	  allowScriptAccess: "always",
+	  iv_load_policy: 3
+	 };
+	 var atts = {
+	  id: "YouTubePlayer-fd"
+	 };
+	 swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
+   showSplash();
    FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
   }
  }
 
+ showSplash();
  // run once with current status and whenever the status changes
  FB.getLoginStatus(proceed_to_site);
 };
@@ -174,7 +233,7 @@ $(function() {
 		//this.showFBButton = false;
 	},
 
-  getFBUserData: function() {
+  getFBUserDataForRegistration: function() {
    if (this.get("is_main_user")) {
     FB.api('/me', this.setUserData);
    }
@@ -369,8 +428,7 @@ $(function() {
    //mainView.initializeChatView(roomModel.get("chatCollection"), this.get("userModel"));
    mainView.initializeSounds();
 
-	 //trigger first communication
-	 SocketManagerModel.sendFBId(this.get("fbId"));
+	
   }
  });
 
@@ -2332,11 +2390,7 @@ $(function() {
 		
    $(this.el).html(this.roomListTemplate());
    this.bindButtonEvents();
-	 if (this.options.app.showModalOnLoad == true && typeof(this.options.app.inRoom) == 'undefined') {
-	  //Don't show them a way out 
-		$("#hideRoomsList").css({display: "none"});
-		this.options.app.closeRoomModalIsHidden = true;	
-	 }
+	 this.hide();
    return this;
   },
 
@@ -2737,7 +2791,7 @@ $(function() {
    $("#mute").bind("click", {
     button: $("#mute")
    }, mute);
-   $("#rooms, #logo").bind("click", {
+   $("#rooms, #logo-header").bind("click", {
     modal: this.options.modal
    }, function(e) {
     $("#room-modal").css("display") == "none" ? e.data.modal.show() : e.data.modal.hide()
@@ -3013,8 +3067,10 @@ $(function() {
   removeUser: function(user) {
    var avatar = this.$("#avatarWrapper_" + user.id);
    var chat = $("#avatarChat_" + user.id);
+	 var name = $("#nameDiv_" + user.id);
    avatar.data("animating", false);
    chat.tipsy('hide');
+   name.tipsy('hide');
    avatar.remove();
   }
 
@@ -3372,7 +3428,7 @@ $(function() {
 	settingsTemplate: _.template($("#settings-template").html()),
 	
 	events: {
-		"mouseover #settings-text": "showSettings",
+		"click #settings": "showSettings",
 		"mouseout": "hideSettings",
 		"click #logout": "logout"
 	},
@@ -3389,37 +3445,16 @@ $(function() {
 	},
 	
 	showSettings: function(event) {
-		if (!this.showingDropdown) {
-			if (event.fromElement) {
-				if (event.fromElement.id == "settings-dropdown" && event.fromElement.id == "settings-arrow")
-					return;
-			}
-			console.log("Showing settings");
 			$("#settings-dropdown").show();
 			this.showingDropdown = true;
-		}
 	},
 	
 	hideSettings: function(event) {
-		console.log("HERERERE");
-		console.log(event);
-		if (event.toElement) {
-			if (event.toElement.id == "settings-arrow" || event.toElement.id == "settings-dropdown" || event.toElement.id == "settings" || event.fromElement.id == "settings-arrow" || event.toElement.id == "logout-button") {
-				console.log(event.toElement.id);
-				return;
-			}
-		}
-		console.log("Hiding settings");
 		$("#settings-dropdown").hide();
 		this.showingDropdown = false;
 	},
 	
-	logout: function(e) {
-		console.log("logoutttt");
-		window.YTPlayer = null;
-		userLoggedOut = true;
-		e.data.settings.userModel.logout();
-	}
+	
  });
 
  window.MainView = Backbone.View.extend({
@@ -3428,12 +3463,14 @@ $(function() {
   soundTemplate: _.template($('#audio-tag-template').html()),
 
   initialize: function() {
-   this.soundOn = true;
+   this.soundOn = true; 
+	 this.userModel = this.options.userModel;
    $('#getOff').live('click', function() {
     $("#playlist-notification-container").slideUp();
     $("#stepDown").remove();
     $('#getOff').remove();
     $("#skipContainer").remove();
+		
     SocketManagerModel.stepDownFromDJ();
    });
 
@@ -3446,45 +3483,24 @@ $(function() {
    });
 
 	/* SETTINGS HAX */
-	$("#settings").hover(
-		function() {
-			$("#change-avatar").show();
-			$("#edit-profile").show();
-			$("#logout").show();
-	}, function(e) {
-			if (e.toElement.id != "change-avatar" && e.toElement.id != "change-avatar-text"){
-				$("#change-avatar").hide();	
-				$("#edit-profile").hide();	
-				$("#logout").hide();		
-			}
-		}
-	);
-	
-	$('#change-avatar').bind('mouseout', function (e) {
-		if (e.toElement.id != "settings" && e.toElement.id != "settings-text" && e.toElement.id != "edit-profile" && e.toElement.id !="edit-profile-text" && e.fromElement.id != "change-avatar-text" && e.toElement.id != "change-avatar-text"){
-			$("#change-avatar").hide();	
-			$("#edit-profile").hide();	
-			$("#logout").hide();
-		}
-		 
+	this.settingsDropped = false;
+	$("#settings").click({mainView:this},
+		function(e) {
+			if (!e.data.mainView.settingsDropped) {
+				$("#change-avatar").show();
+				$("#edit-profile").show();
+				$("#logout").show();
+				e.data.mainView.settingsDropped = true;
+			} else {
+				$("#change-avatar").hide();
+				$("#edit-profile").hide();
+				$("#logout").hide();
+				e.data.mainView.settingsDropped = false;
+			}			
 	});
 	
-	$('#edit-profile').bind('mouseout', function (e) {
-		if (e.toElement.id != "change-avatar" && e.toElement.id != "change-avatar-text" && e.toElement.id != "logout" && e.toElement.id !="edit-profile-text" && e.toElement.id !="logout-text" && e.fromElement.id !="edit-profile-text"){
-			$("#change-avatar").hide();	
-			$("#edit-profile").hide();	
-			$("#logout").hide();
-		}
-		 
-	});
-	
-	$('#logout').bind('mouseout', function (e) {
-		if (e.toElement.id != "edit-profile" && e.toElement.id !="edit-profile-text" &&  e.toElement.id !="logout-text" &&  e.toElement.id !="logout"){
-			$("#change-avatar").hide();	
-			$("#edit-profile").hide();	
-			$("#logout").hide();
-		}		 
-	});
+	$("#logout").click({mainView: this}, this.logout);
+
 	
 	$('#change-avatar').click(function () {
 		new AvatarPickerView();
@@ -3494,12 +3510,18 @@ $(function() {
    this.maxAudioChannels = 15;
   },
 
+	logout: function(e) {
+		console.log("logoutttt");
+		window.YTPlayer = null;
+		userLoggedOut = true;
+		e.data.mainView.userModel.logout();
+	},
+
   initializeTopBarView: function() {
    this.roomInfoView = new RoomInfoView(({
     roomName: 'Placeholder'
    }));
    this.shareBarView = new ShareBarView();
-	 this.settingsView = new SettingsView({userModel: this.options.userModel});
   },
 
   initializeChatView: function(chatCollection, userModel) {
@@ -3792,7 +3814,13 @@ $(function() {
 	 });
 	 
 	 socket.on("user:sendFBProfile", function(data) {
-		app.get("userModel").getFBUserData();
+		app.get("userModel").getFBUserDataForRegistration();
+		hideSplash();
+		if (SurfStreamApp.showModalOnLoad == true && typeof(SurfStreamApp.inRoom) == 'undefined') {
+		  //Don't show them a way out 
+			$("#hideRoomsList").css({display: "none"});
+			SurfStreamApp.closeRoomModalIsHidden = true;	
+		 }
 	 });
 	 
 	 socket.on("user:sendFBFriends", function(data) {
@@ -3993,6 +4021,16 @@ $(function() {
 	socket.on("playlist:importFacebook", function() {
 		app.get("userModel").importFacebook = true;
 	});
+	
+	socket.on("noEntry:promo", function(){
+		alert("SORRY NO PROMO BUD! WOULD YOU LIKE US TO EMAIL YOU A PROMO CODE?")
+		$("#beta-user-text").css("display", "none");
+		$("#or-text").css("display", "none")
+	});
+	
+	socket.on("noEntry:perms", function(){
+		alert("SORRY BRO, WE JUST NEED YOU TO LET US FIND YOUR YOUTUBE VIDEOS ON YOUR FACEBOOK");
+	});
 
   }
 
@@ -4000,10 +4038,9 @@ $(function() {
   socket: socket_init,
 
   /* Outgoing Socket Events*/
-  sendFBId: function(id) {
-   SocketManagerModel.socket.emit("user:sendFBId", id);
+  sendFBId: function(id, promocode) {
+   SocketManagerModel.socket.emit("user:sendFBId", {fbId: id, promo: promocode});
   },
-
 
 	sendFBUser: function(user) {
 		SocketManagerModel.socket.emit("user:sendFBData", user);
@@ -4221,10 +4258,110 @@ function setSuggestions(suggestions) {
  $("#youtubeInput").autocomplete("option", "source", suggestionSource);
 };
 
+function nextFDVideo() {
+	console.log("next fd");
+	var videoArray = {
+		"videos": [
+			{
+				"videoId": "SDTZ7iX4vTQ",
+				"startTime": 30
+			},
+			{
+				"videoId": "DYWIVLDaP6U",
+				"startTime": 4
+			},
+			{
+				"videoId": "lI7H7ForuwA",
+				"startTime": 75
+			},
+			{
+				"videoId": "Z7vXP3tHzhA",
+				"startTime": 4
+			},
+			{
+				"videoId": "B8ISzf2pryI",
+				"startTime": 40
+			},
+			{
+				"videoId": "YQ1LI-NTa2s",
+				"startTime": 23
+			},
+			{
+				"videoId": "9i1MXHGB8g0",
+				"startTime": 75
+			},
+			{
+				"videoId": "N2bCc0EGP6U",
+				"startTime": 124
+			},
+			{
+				"videoId": "zE0IzAsIVWk",
+				"startTime": 560
+			},
+			{
+				"videoId": "btuxO-C2IzE",
+				"startTime": 58
+			},
+			{
+				"videoId": "k8w-qZEiNsY",
+				"startTime": 38
+			},
+			{
+				"videoId": "txqiwrbYGrs",
+				"startTime": 16
+			},
+			{
+				"videoId": "5x82FAuoHGM",
+				"startTime": 150
+			},
+			{
+				"videoId": "Xe0gIFxYhrk",
+				"startTime": 30
+			},
+			{
+				"videoId": "qDZZElrSluA",
+				"startTime": 1
+			},
+			{
+				"videoId": "p3tZPH5my-0",
+				"startTime": 47
+			}
+		]
+	};
+	window.fdplayer = document.getElementById("YouTubePlayer-fd");
+	console.log(window.ss_loopOrder);
+	console.log(window.ss_loopIndex);
+	window.fdplayer.loadVideoById(videoArray.videos[window.ss_loopOrder[window.ss_loopIndex]].videoId, videoArray.videos[window.ss_loopOrder[window.ss_loopIndex]].startTime);
+	window.ss_loopIndex = window.ss_loopIndex + 1;
+};
+
+function fisherYates ( myArray ) {
+  var i = myArray.length;
+  if ( i == 0 ) return false;
+  while ( --i ) {
+     var j = Math.floor( Math.random() * ( i + 1 ) );
+     var tempi = myArray[i];
+     var tempj = myArray[j];
+     myArray[i] = tempj;
+     myArray[j] = tempi;
+   }
+};
+
 function onYouTubePlayerReady(playerId) {
  if (playerId == "YouTubePlayerTwo") {
   window.YTPlayerTwo = document.getElementById('YouTubePlayerTwo');
   return;
+ }
+
+ if (playerId == "YouTubePlayer-fd") {
+	 console.log("suckkkk");
+ 	 window.fdplayer = document.getElementById("YouTubePlayer-fd");
+	 window.ss_loopOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+	 console.log(window.ss_loopOrder);
+	 fisherYates(window.ss_loopOrder);
+	 window.ss_loopIndex = 0;
+	 nextFDVideo();
+	 window.ss_fdLoop = setInterval("nextFDVideo()", 12000);
  }
 
  if (!window.YTPlayer) {

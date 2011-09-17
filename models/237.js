@@ -20,7 +20,7 @@
 	permSockEvents['playlist:delete'] = true;
 	permSockEvents['playlist:moveVideo'] = true;
 	permSockEvents['avatar:update'] = true;
-
+	permSockEvents['promo:validate'] = true;
 
 	/*************************/
 	/*      		VAL			     */
