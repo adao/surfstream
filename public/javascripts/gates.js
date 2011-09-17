@@ -75,11 +75,13 @@ window.fbAsyncInit = function() {
 		$("#email-form-text").html("Email added to the list");
 	});
 	socket_init.on("email:receivedWithFBID", function() {
-		//alert("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + "as soon as we can! Not " + window.logged_in_fb_user.id + "? LOGOUT BUTTON");
 		showSplash();
-		$("#email-form-text").html("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + " as soon as we can!");
+		var name =  window.logged_in_fb_user.name;
+		$("#email-form-text").html("<img src=\'http://graph.facebook.com/" + window.logged_in_fb_user.id + "/picture\', id='fd-fb-photo' > <div id='email-message'> <span id='hi-message' >Hi " + window.logged_in_fb_user.name + "!</span> <span id='email-message-text'>" + "We'll send a promo code to</span> <span id='user-email'>" + window.logged_in_fb_user.email + "</span> <span id='email-message-text-2'> as soon as we can!</span> <span id='sig'> --Surfstream Team </sig></div>");
+		console.log(name);
 		$("#email-form-text").css("font-size", "14px");
 		$("#submit-email").css("height", "110px");
+		$("#email-form").hide();
 	}); 
 	
 	socket_init.on("surfstream:gate", function(response) {		
@@ -148,9 +150,20 @@ window.fbAsyncInit = function() {
   if (response.authResponse) {
    //user is already logged in and connected
    var auth = response;
+   
 	 FB.api('/me', function(profile) {
+		var year;
 		socket_init.emit("surfstream:login", {fbId: auth.authResponse.userID, promo: $("#promoBox").val(), email: profile.email});
 		 window.logged_in_fb_user = profile;
+		 if (typeof(mpq) !== 'undefined'){
+			 mpq.name_tag(profile.name);
+			 mpq.identify(auth.authResponse.userID);
+			 var super_props = {};
+			 if (profile.gender) super_props.gender = profile.gender;
+			 if (profile.locale) super_props.locale = profile.locale;
+			 mpq.register(super_props);
+		 }
+		
 	 });
 	 
 	 
@@ -416,6 +429,7 @@ $(function() {
 	logout: function() {
 		FB.logout();
 		showLoggedOut();
+		if (typeof(mpq) !== 'undefined') mpq.track("Logout", {});
 	}
 	
 });
@@ -765,6 +779,8 @@ $(function() {
 				
 			});
 		} else {
+			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
+			window.avatar_picker_open_start_time = new Date().getTime();
 			SocketManagerModel.updateAvatar();
 			this.closePicker();		
 		}
@@ -1097,7 +1113,7 @@ $(function() {
 	 this.chatView = new ChatView({
 		chatCollection: this.options.chatCollection,
 		userModel: this.options.userModel,
-		expandSize: 515,
+		expandSize: 537,
 		shrinkSize: 154
 	 });
 	 this.chatExpanded = false;
@@ -1120,14 +1136,14 @@ $(function() {
 		}
 		this.valVoteExpanded = true;
 		this.hideVideoManagerView();
-		this.valVoteView.valVoteBody.slideDown(700);
+		this.valVoteView.valVoteBody.slideDown(300);
 	},
 	
 	hideValVoteView: function()  {
 		if (!this.valVoteExpanded) {
 			return;
 		}
-		this.valVoteView.valVoteBody.slideUp(700);
+		this.valVoteView.valVoteBody.slideUp(300);
 		this.valVoteExpanded = false;
 		if (!this.videoManagerExpanded) {
 			this.expandChatView();
@@ -1143,18 +1159,19 @@ $(function() {
 		}
 		this.videoManagerExpanded = true;
 		this.hideValVoteView();
-		this.videoManagerView.videoManagerBody.slideDown(700);
+		this.videoManagerView.videoManagerBody.slideDown(300);
 	},
 	
 	hideVideoManagerView: function() {
 		if (!this.videoManagerExpanded) {
 			return;
 		}
-		this.videoManagerView.videoManagerBody.slideUp(700);
+		this.videoManagerView.videoManagerBody.slideUp(300);
 		this.videoManagerExpanded = false;
 		if (!this.valVoteExpanded) {
 			this.expandChatView();
 		}
+		
 	},
 	
 	expandChatView: function() {
@@ -1274,13 +1291,13 @@ $(function() {
 			return;
 		}
 		this.playlistExpanded = true;
-		$(this.playlistCollectionView.playlistView.el).slideDown(700);
+		$(this.playlistCollectionView.playlistView.el).slideDown(300);
 		this.hideBrowseVideosView();
 	},
 	
 	hidePlaylistCollectionView: function() {
 		$(".active-playlist-nameholder").removeClass("active-playlist-nameholder");
-		$(this.playlistCollectionView.playlistView.el).slideUp(700);
+		$(this.playlistCollectionView.playlistView.el).slideUp(300);
 	}
  });
  window.SearchView = Backbone.View.extend({
@@ -1347,8 +1364,8 @@ $(function() {
   },
 
   hide: function(originalHeight) {
-	 $("#searchBar").slideUp(700);
-   $("#searchContainer").animate({"height": 0}, 700, function() {
+	 $("#searchBar").slideUp(300);
+   $("#searchContainer").animate({"height": 0}, 300, function() {
 		});
   },
 
@@ -1356,15 +1373,15 @@ $(function() {
 	 var height = $("#playlist-display").height();
 	 var inputBox = $("#searchBar");
 	 if (withSearchBar) {
-		inputBox.slideDown(700, function() {
+		inputBox.slideDown(300, function() {
 			
 		});
-		$("#searchContainer").animate({"height": height - 36}, 700, function() {
+		$("#searchContainer").animate({"height": height - 36}, 300, function() {
 			
 		});
 	 } else {
-		inputBox.slideUp(700);
-		$("#searchContainer").animate({"height": height}, 700, function() {
+		inputBox.slideUp(300);
+		$("#searchContainer").animate({"height": height}, 300, function() {
 			
 		});
 	 }
@@ -2406,11 +2423,11 @@ $(function() {
   },
 	
 	expandChatView: function() {
-		this.messages.animate({"height": this.expandSize + "px"}, 700);
+		this.messages.animate({"height": this.expandSize + "px"}, 300);
 	},
 	
 	shrinkChatView: function() {
-		this.messages.animate({"height": this.shrinkSize + "px"}, 700);
+		this.messages.animate({"height": this.shrinkSize + "px"}, 300);
 	}
  });
 
@@ -2867,6 +2884,9 @@ $(function() {
    $("#ch-up").click({
     theatre: this
    }, function(e) {
+		if (typeof(mpq) !== 'undefined') mpq.track("Channel Flip", {
+	    mp_note: "Flipped Up"
+	   });
     var curRoom = SurfStreamApp.inRoom;
     e.data.theatre.flipChannel(curRoom, true);
    });
@@ -2874,6 +2894,9 @@ $(function() {
    $("#ch-down").click({
     theatre: this
    }, function(e) {
+		if (typeof(mpq) !== 'undefined') mpq.track("Channel Flip", {
+	    mp_note: "Flipped Down"
+	   });
     var curRoom = SurfStreamApp.inRoom;
     e.data.theatre.flipChannel(curRoom, false);
    });
@@ -3455,6 +3478,7 @@ $(function() {
   },
 
   fbDialog: function() {
+		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {});
    FB.ui({
     method: 'feed',
     display: 'popup',
@@ -3463,7 +3487,10 @@ $(function() {
     caption: 'Come watch videos with me',
     description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
    }, function(response) {
-   });
+    if (response.post_id) {
+			if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Made", {});
+		}
+	});
   },
 
   tweetDialog: function() {
@@ -3475,7 +3502,7 @@ $(function() {
        opts = 'status=1' + ',width=' + width + ',height=' + height + ',top=' + top + ',left=' + left;
 
    window.open(url, 'twitter', opts);
-
+		if (typeof(mpq) !== 'undefined') mpq.track("Twitter Share Clicked", {});
   },
 
   openEmail: function() {
@@ -3566,6 +3593,8 @@ $(function() {
 
 	
 	$('#change-avatar').click(function () {
+		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Opened", {});
+		window.avatar_picker_open_start_time = new Date().getTime();
 		new AvatarPickerView();
 	});
 	/* END SETTINGS HAX */
@@ -3681,11 +3710,6 @@ $(function() {
 		console.log('video announced');
 		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, reelRotationDegs, isdj, skipX, skipY;
 		SurfStreamApp.curDJ = video.dj;
-		if (typeof(mpq) !== 'undefined') mpq.track("Video Started", {
-     DJ: video.dj,
-     fullscreen: SurfStreamApp.fullscreen,
-     mp_note: "Video '" + video.title + "' played by " + video.dj + "(fullscreen: " + SurfStreamApp.fullscreen + ")"
-    });
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title+' and time start: '+video.time);	//debugging
 		$("#fullTitle").html(video.title);
@@ -4094,7 +4118,6 @@ $(function() {
 
 	initializeProfile: function(user) {
 		SocketManagerModel.socket.emit("user:initializeProfile", user);
-		if (typeof(mpq) !== 'undefined') mpq.name_tag(user.name);
 	},
 	
 	sendUserFBFriends: function(friendIdList) {
@@ -4234,9 +4257,10 @@ $(function() {
    if (typeof(mpq) !== 'undefined') {
     mpq.track("Room Joined", {
      wasDJ: isDJ,
-     rID: rID,
+     roomName: roomName,
      mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"
     });
+		mpq.register_once({room: roomName})
    }
    var payload = {
     rID: rID
