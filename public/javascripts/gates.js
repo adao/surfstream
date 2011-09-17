@@ -76,9 +76,12 @@ window.fbAsyncInit = function() {
 	});
 	socket_init.on("email:receivedWithFBID", function() {
 		//alert("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + "as soon as we can! Not " + window.logged_in_fb_user.id + "? LOGOUT BUTTON");
-		$("#email-form-text").html("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + " as soon as we can!");
+		var name =  window.logged_in_fb_user.name;
+		$("#email-form-text").html("<img src=\'http://graph.facebook.com/" + window.logged_in_fb_user.id + "/picture\', id='fd-fb-photo' > <div id='email-message'> <span id='hi-message' >Hi " + window.logged_in_fb_user.name + "!</span> <span id='email-message-text'>" + "We'll send a promo code to</span> <span id='user-email'>" + window.logged_in_fb_user.email + "</span> <span id='email-message-text-2'> as soon as we can!</span> <span id='sig'> --Surfstream Team </sig></div>");
+		console.log(name);
 		$("#email-form-text").css("font-size", "14px");
 		$("#submit-email").css("height", "110px");
+		$("#email-form").hide();
 	}); 
 	
 	
