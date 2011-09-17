@@ -1808,7 +1808,6 @@ $(function() {
 				}
 			}
 		}
-
 		$("#playlist-collection-input").hide();
 	},
 	
@@ -1820,7 +1819,7 @@ $(function() {
 				}
 			}
 		}
-
+		$("#browseVideosButtons").css("visibility", "visible");
 		$("#playlist-collection-input").show();
 	}
  });
@@ -1870,6 +1869,7 @@ $(function() {
 	},
 	
 	initialize: function() {
+		//$(".youtube-nameholder")['0'].attr('id', 'youtube-pill');
 		this.videoManagerView = this.options.videoManagerView;
 		this.options.channelHistoryCollection.bind("add", this.addChannelHistoryView, this);
 		this.options.likesCollection.bind("add", this.addLikesView, this);
