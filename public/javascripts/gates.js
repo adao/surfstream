@@ -1257,7 +1257,7 @@ $(function() {
 	videoManagerTemplate: _.template($("#video-manager-template").html()),
 	
 	events: {
-		"click .collapseBody": "toggleVideoManager"
+		"click #videoManagerHeader": "toggleVideoManager"
 	},
 	
 	initialize: function() {
@@ -1287,10 +1287,10 @@ $(function() {
 	toggleVideoManager: function(event) {
 		if (this.sideBarView.videoManagerExpanded) {
 			this.sideBarView.hideVideoManagerView();
-			this.collapseBodyButton.text("Open");
+			this.collapseBodyButton.css("background", "url('/images/room/newicons/expandable.png') 50% 50% no-repeat");
 		} else {
 			this.sideBarView.showVideoManagerView();
-			this.collapseBodyButton.text("Close");
+			this.collapseBodyButton.css("background", "url('/images/room/newicons/expanded.png') 50% 50% no-repeat");
 		}
 	},
 	
