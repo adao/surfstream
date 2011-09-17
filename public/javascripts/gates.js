@@ -575,6 +575,22 @@ $(function() {
 
 	initialize: function() {
    $("#modalBG").show();
+	 if(this.options.justTutorial) {
+		$(this.el).html(this.make('img', {id:'tutorial', src:"/images/room/val-info.png"}));
+		$(this.el).fadeIn();
+		$("#tutorial").fadeIn();
+		$("#modalBG").click({
+	    modal: this
+	   }, function(e) {
+		  if (e.data.modal.options.isFirstVisit) return;
+			e.data.modal.remove();
+			$("#roomsList").after("<div id=avatar-picker-modal></div>")
+			$("#change-avatar").hide();	
+			$("#modalBG").hide();	
+			$("#logout").hide();
+	  });
+		return;
+	 }
    $("#modalBG").click({
     modal: this
    }, function(e) {
@@ -584,8 +600,9 @@ $(function() {
 		$("#change-avatar").hide();	
 		$("#edit-profile").hide();	
 		$("#logout").hide();
+		$("#modalBG").hide();	
    });
-	
+	 
    this.render();
  	 $("#name-change-input").val(SurfStreamApp.get("userModel").get("displayName"))
 	 $(".picker-el").click({picker: this}, this.handlePickerElClick);
@@ -2972,6 +2989,22 @@ $(function() {
    }, function(e) {
     $("#room-modal").css("display") == "none" ? e.data.modal.show() : e.data.modal.hide()
    });
+
+	 $("#share-video-button").click(function(){
+		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "remote"});
+   	FB.ui({
+	    method: 'feed',
+	    display: 'popup',
+	    name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
+	    link: this.link,
+	    caption: 'Come watch videos with me',
+	    description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
+	   }, function(response) {
+	    if (response.post_id) {
+				if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Made", {source: "remote"});
+			}
+		 });
+	 });
 	 this.options.modal.hide();
    this.options.userCollection.bind("add", this.placeUser, this);
    this.options.userCollection.bind("remove", this.removeUser, this);
@@ -3562,10 +3595,13 @@ $(function() {
    $('#shareEmail').css('background-image', '/images/email_small.png');
    //$('#copy-button-container').html("<button id=\"copy-button\"></div>");
    this.link = document.URL;
-   var clip = new ZeroClipboard.Client();
+   window.clip = new ZeroClipboard.Client();
    clip.setHandCursor(true);
    clip.setText(this.link);
-   clip.glue('copy-button-container');
+   //clip.glue('copy-button', 'copy-button-container');
+	 $("#question-button-container").click(function(){
+			new AvatarPickerView({justTutorial: true});	
+	 });
   },
 
   events: {
@@ -3575,7 +3611,7 @@ $(function() {
   },
 
   fbDialog: function() {
-		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {});
+		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "topbar"});
    FB.ui({
     method: 'feed',
     display: 'popup',
@@ -3585,7 +3621,7 @@ $(function() {
     description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
    }, function(response) {
     if (response.post_id) {
-			if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Made", {});
+			if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Made", {source: "topbar"});
 		}
 	});
   },
