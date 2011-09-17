@@ -94,9 +94,9 @@ adminSUB.on('message', function(channel, message) {
 			}
 			break;
 		case 'room:rename':
-			console.log('\n[PUBSUB] received request to rename room: '+message.oldName+ ' --> '+message.newName)
-			if(roomManager.roomMap[message.oldName] && !roomManager.roomMap[message.newName])
-				roomManager.renameRoom(message.oldName, message.newName);
+			console.log('\n[PUBSUB] received request to rename room: '+message.oldName+ ' --> '+message.newName + ' with roomId: '+message.roomId)
+			if(roomManager.roomMap[message.oldName] && !roomManager.roomMap[message.roomId])
+				roomManager.renameRoom(message.oldName, message.newName, message.roomId);
 			break;
 		default:
 			console.log('\n[PUBSUB] received unknown message type: '+message.type)
@@ -170,11 +170,11 @@ RoomManager = Backbone.Model.extend({
 		});
 	},
 	
-	renameRoom: function(oldName, newName) {
-		console.log('[   zion   ][RoomMgr] renameRoom(): trying to rename room, ?'+this.roomMap[newName])
-		if(this.roomMap[oldName] && !this.roomMap[newName]) {
-			this.roomMap[newName] = this.roomMap[oldName];
-			this.roomMap[newName].set({ name: newName });
+	renameRoom: function(oldName, newName, roomId) {
+		console.log('[   zion   ][RoomMgr] renameRoom(): trying to rename room, room doesn\'t exist? '+!this.roomMap[roomId])
+		if(this.roomMap[oldName] && !this.roomMap[roomId]) {
+			this.roomMap[roomId] = this.roomMap[oldName];
+			this.roomMap[roomId].set({ name: newName });
 			delete this.roomMap[oldName];
 			console.log('[   zion   ][RoomMgr] renameRoom(): successfully renamed room to '+newName)
 		}
