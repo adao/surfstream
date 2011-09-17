@@ -1,4 +1,4 @@
-#playlist-cell-template(style="display:none;")
+#playlist-cell-template-two(style="display:none;")
 	img.thumbContainer
 	.cellInfo(id='vid_{{ vid_id }}')
 		.videoInfo
@@ -6,4 +6,4 @@
 			.duration {{ duration }}
 		.cellButtons
 			button.remove(id ='remove_video_{{ vid_id }}', title = 'Remove Video') 
-			button.toTheTop(id = 'send_to_top_{{ vid_id }}', title = 'To The Top')
+			button.addToQueue(id = 'add_to_queue_{{ vid_id }}', title = 'Add to Queue')
