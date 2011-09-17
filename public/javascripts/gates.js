@@ -40,6 +40,7 @@ window.fbAsyncInit = function() {
 	  var mail = $("#emailBox").val();
 		var validEmail = validateEmail(mail);
 		if(validEmail){
+			$("#emailBox").css("background", "white")
 			if (window.logged_in_user){
 				var fbID = window.logged_in_user.userID;
 					socket_init.emit("surfstream:requestPromo", {email: mail, fbId: fbID});
@@ -47,7 +48,7 @@ window.fbAsyncInit = function() {
 					socket_init.emit("surfstream:requestPromo", {email: mail});
 			}
 		} else {
-			alert("BAD EMAIL!");
+			$("#emailBox").css("background", "#FAAFAF")
 		}
 		return false;
   });
@@ -71,10 +72,13 @@ window.fbAsyncInit = function() {
 		//$("#check-box").hide();
 	});
 	socket_init.on("email:received", function() {
-		alert("Email added to list!");
+		$("#email-form-text").html("Email added to the list");
 	});
 	socket_init.on("email:receivedWithFBID", function() {
-		alert("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + "as soon as we can! Not " + window.logged_in_fb_user.id + "? LOGOUT BUTTON");
+		//alert("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + "as soon as we can! Not " + window.logged_in_fb_user.id + "? LOGOUT BUTTON");
+		$("#email-form-text").html("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + " as soon as we can!");
+		$("#email-form-text").css("font-size", "14px");
+		$("#submit-email").css("height", "110px");
 	}); 
 	
 	
