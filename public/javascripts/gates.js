@@ -35,17 +35,26 @@ window.fbAsyncInit = function() {
 		socket_init.emit('promo:validate', {promo: $("#promoBox").val()})
 		}, 800);
  });
+ 
+ 	$("#submitEmail").bind("click", function() {
+		var validEmail = true;
+		if(validEmail){
+			alert("Your email address has been added to the waiting list");
+		}
+  });
 
 	socket_init.on("promo:valid", function(){
 		console.log("GOOD PROMO!");
 		window.promoApproved = true;
 		input.keyup(function(){});
-		$("#check-box").show();
+		$("#promoBox").css("background", "#A5F2AA")
+		//$("#check-box").show();
 	});
 	socket_init.on("promo:bad", function() {
 		console.log("BAD PROMO!");
 		window.promoApproved = false;
-		$("#check-box").hide();
+		$("#promoBox").css("background", "#FAAFAF");
+		//$("#check-box").hide();
 	});
 	
 	socket_init.on("surfstream:gate", function(response) {
@@ -2826,7 +2835,7 @@ $(function() {
      window.mmTimeoutID = setTimeout(function() {
       $("#nowPlayingFull").fadeOut(300);
       $("#fullscreenIcon").fadeOut(300);
-     }, 100000)
+     }, 5000)
     });
    } else {
     SurfStreamApp.fullscreen = false;
@@ -4275,7 +4284,7 @@ function onYouTubePlayerReady(playerId) {
  }
 
  if (playerId == "YouTubePlayer-fd") {
-	 console.log("suckkkk");
+	 console.log("SUOPPP");
  	 window.fdplayer = document.getElementById("YouTubePlayer-fd");
 	 window.ss_loopOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
 	 console.log(window.ss_loopOrder);
