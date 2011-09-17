@@ -1291,6 +1291,7 @@ $(function() {
 		} else {
 			this.sideBarView.showVideoManagerView();
 			this.collapseBodyButton.css("background", "url('/images/room/newicons/expanded.png') 50% 50% no-repeat");
+			this.calculatePlaylistHeight();
 		}
 	},
 	
@@ -1319,6 +1320,12 @@ $(function() {
 	hidePlaylistCollectionView: function() {
 		$(".active-playlist-nameholder").removeClass("active-playlist-nameholder");
 		$(this.playlistCollectionView.playlistView.el).slideUp(300);
+	},
+	
+	calculatePlaylistHeight: function() {
+		var pcHeight = $("#playlist-collection-display").outerHeight(true);
+		var viewHeight = $("#myVideosContainer").outerHeight(true);
+		$("#playlist-display").css('height', viewHeight - pcHeight - 7);
 	}
  });
  window.SearchView = Backbone.View.extend({
@@ -2098,8 +2105,8 @@ $(function() {
 		if (this.options.playlist_nameholder_value == facebookPlaylistId || this.options.playlist_nameholder_value == queueId) {
 			$(this.el).find(".delete-nameholder").remove();
 		}
-		this.calculatePlaylistHeight();
 	},
+	
 	render: function() {
 		$(this.el).prepend(this.playlistNameholderTemplate({playlist_name: this.options.playlist_nameholder_name}));
 		$(this.el).val(this.options.playlist_nameholder_value);
@@ -2129,14 +2136,8 @@ $(function() {
 	
 	removeNameholder: function() {
 		$(this.el).remove();
-		this.calculatePlaylistHeight();
+		this.options.playlistCollection.videoManagerView.calculatePlaylistHeight();
 		this.options.playlistCollection.deletePlaylist(this.options.playlist_nameholder_value);
-	},
-	
-	calculatePlaylistHeight: function() {
-		var pcHeight = $("#playlist-collection-display").outerHeight(true);
-		var viewHeight = $("#myVideosContainer").outerHeight(true);
-		$("#playlist-display").css('height', viewHeight - pcHeight - 7);
 	},
 	
 	highlightView: function() {
