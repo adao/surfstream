@@ -832,14 +832,6 @@
 				return true;
 			}
 			return false;
-		},
-		
-		xport: function() {
-			var videoExport = [];
-			this.get("videos").each(function(video) {
-				videoExport.push(video.xport());
-			});
-			return JSON.stringify(videoExport);
 		}
 		
 	});
