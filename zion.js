@@ -68,6 +68,8 @@ app.configure('production', function(){
 
 require('./router.js').setupRoutes(app);
 
+var PROMO_CODES = [];
+
 var adminSUB = redis.createClient();
 
 adminSUB.on('ready', function() {
@@ -98,10 +100,38 @@ adminSUB.on('message', function(channel, message) {
 			if(roomManager.roomMap[message.oldName] && !roomManager.roomMap[message.roomId])
 				roomManager.renameRoom(message.oldName, message.newName, message.roomId);
 			break;
+		case 'promo:make':
+			if(message.promo) {
+				if (_.indexOf(PROMO_CODES, message.promo) == -1) {
+					PROMO_CODES.push(message.promo);
+					console.log("[PUBSUB][PROMO_TOOLS] add promo " + message.promo + " to the promo code list")
+					console.log("[PUBSUB][PROMO_TOOLS] PROMO_CODES is now " + PROMO_CODES);
+				} else {
+					console.log("[PUBSUB][PROMO_TOOLS] could not add promo code because it already exists in PROMO_CODES");
+				}
+			} else {
+				console.log("[PUBSUB][PROMO_TOOLS] no promo code sent for addition!");
+			}
+			break;
+		case 'promo:delete':
+			if(message.promo) {
+				var ind = _.indexOf(PROMO_CODES, message.promo);
+				if (ind != -1) {
+					PROMO_CODES.splice(ind, 1); 
+						console.log("[PUBSUB][PROMO_TOOLS] removed " + message.promo + " from promo code list");
+						console.log("[PUBSUB][PROMO_TOOLS] PROMO_CODES is now " + PROMO_CODES);
+				} else {
+					console.log("[PUBSUB][PROMO_TOOLS] could not delete promo code because it doesn't exist yet in PROMO_CODES");
+				}				
+			} else {
+				console.log("[PUBSUB][PROMO_TOOLS] no promo code sent for deletion!");
+			}
+			break;
 		default:
-			console.log('\n[PUBSUB] received unknown message type: '+message.type)
+			console.log('\n[PUBSUB] received unknown message type: '+message.type);
+			break;
 	}
-})
+});
 
 RoomManager = Backbone.Model.extend({
 	initialize: function() {
@@ -128,6 +158,19 @@ RoomManager = Backbone.Model.extend({
 						}
 					})
 				});
+			}
+		});
+		redisClient.lrange('promo',0,-1, function(err, codes) {
+			if (err) {
+				console.log("problem fetching error codes");
+			} else {
+				if (codes) {
+					console.log("promo codes received");
+					_.each(codes, function(code){
+						console.log("promo code: " + code);
+						PROMO_CODES.push(code);
+					});
+				}
 			}
 		});
 	},
@@ -200,16 +243,51 @@ var StagingUsers = {};
 
 io.sockets.on('connection', function(socket) {
 	
-	socket.on("user:sendFBId", function(fbId) {
+	socket.on('surfstream:login', function(loginAttemptData) {
 		if (redisClient) {
-			redisClient.get("user:fb_id:" + fbId + ":profile", function(err, reply) {
+			var promoCode = loginAttemptData.promo;
+			var facebookID = loginAttemptData.fbId;
+			var email = loginAttemptData.email;
+			redisClient.get("user:fb_id:" + loginAttemptData.fbId + ":profile", function(err, reply) {
 				if (err) {
-					console.log("[   zion   ] [socket][user:sendFBId]: Error trying to fetch user by Facebook id on initial login");
+					console.log("[   zion   ] [socket][surfstream:login]: Error trying to fetch user by Facebook id on initial login");
+				} else {
+					var ssUser = JSON.parse(reply);
+					var promoCandidate = promoCode;
+					var fbId = facebookID;
+					if (ssUser == null || ssUser == 'undefined') {
+						if (_.indexOf(PROMO_CODES, promoCandidate) == -1) {
+							console.log("[   zion   ] [socket][surfstream:login]: This user needs a promo to get in");
+							redisClient.hset("fbIDPromoRequests", fbId, email, function(err, reply) {
+								if (err) {
+									console.log("[   zion   ] [socket][surfstream:login]: Problem setting fbID to promo invite list");
+								} else {
+									console.log("[   zion   ] [socket][surfstream:login]: FBid with email received!");
+					 				socket.emit("email:receivedWithFBID");
+								}
+							})
+						} else {
+							console.log("[   zion   ] [socket][surfstream:login]: This user is signing up for the first time");
+							socket.emit("surfstream:gate", {details: "approved", fbId: fbId, firstTime: true});
+						}
+					} else {
+						console.log("[   zion   ] [socket][surfstream:login]: This user is signing in as a returning user");
+					  socket.emit("surfstream:gate", {details: "approved", fbId: fbId, firstTime: false});	
+					}
+				}
+			});
+		}
+	});
+	
+	socket.on("user:startApp", function(signInPayload) {
+		if (redisClient) {
+			redisClient.get("user:fb_id:" + signInPayload.fbId + ":profile", function(err, reply) {
+				if (err) {
+					console.log("[   zion   ] [socket][user:startApp]: Error trying to fetch user by Facebook id on initial login");
 				} else {
 					var ssUser = JSON.parse(reply);
 					if (ssUser == null || ssUser == 'undefined') {
-						//socket.emit("playlist:showFBImport");
-						socket.emit("user:sendFBProfile");
+						console.log("[   zion   ] [socket][user:startApp]: Error! User should be found if startApp event was sent" )		
 					} else {
 						redisClient.get("user:" + ssUser.ssId + ":fb_import_date", function(err, reply) {
 							if (err) {
@@ -220,7 +298,7 @@ io.sockets.on('connection', function(socket) {
 								}
 							}
 						});
-						roomManager.sendRoomsInfo(socket, ssUser.ssId);
+						socket.emit("user:profile", ssUser);
 						var name = ssUser.ss_name;
 						var currUser = new models.User({
 							name: name, 
@@ -233,22 +311,21 @@ io.sockets.on('connection', function(socket) {
 						currUser.sendLikes(socket);
 						StagingUsers[socket.id] = currUser; 
 						console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
-							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>')
-						socket.emit("user:profile", ssUser);
+							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>');
+						
 					}
 				}
 			});
 		}
 	});
 	
-	socket.on('user:sendFBData', function(fbUser) {
+	socket.on('user:initializeProfile', function(fbUser) {
 		if(redisClient) {
 			redisClient.incr("userId", function(err, reply){
 				var ssUser = fbUser;
 				var newAvatarSettings = fbUser.avatarSettings;
 				ssUser.ssId = reply;
 				socket.emit("user:profile", ssUser);
-				roomManager.sendRoomsInfo(socket, ssUser.ssId);
 				var stringSSUser = JSON.stringify(ssUser);
 				redisClient.set('user:'+ssUser.ssId+':avatar', newAvatarSettings.toString(), function(err, reply) {
 					if (err) {
@@ -273,13 +350,14 @@ io.sockets.on('connection', function(socket) {
 					fbId: ssUser.fbId, 
 					socket: socket
 			  });
-				console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
+				console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on for the first time <name,ss_id,fb_id>: '
 					+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
 					
 				StagingUsers[socket.id] = currUser;
+				var queue = new models.Playlist({name: "Queue", videos: new models.VideoCollection()});
 				var facebookPlaylist = new models.Playlist({name: "My Facebook Videos", videos: new models.VideoCollection()});
 				var firstPlaylist = new models.Playlist({name: "New Playlist", videos: new models.VideoCollection()});
-				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 1, JSON.stringify(facebookPlaylist), 2, JSON.stringify(firstPlaylist), function(err, reply) {
+				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 0, JSON.stringify(queue), 1, JSON.stringify(facebookPlaylist), 2, JSON.stringify(firstPlaylist), function(err, reply) {
 					if (err) {
 						console.log("Error writing ss user's default playlists " + ssUser.ssId + " to Redis");
 					} else {
@@ -296,6 +374,33 @@ io.sockets.on('connection', function(socket) {
 			});
 		}
 	});
+	
+	/* PROMO CODE LOGIC */
+	
+	socket.on("promo:validate", function(data){
+		if (redisClient) {
+			if (_.indexOf(PROMO_CODES, data.promo) != -1) {
+				console.log("Good promo submitted!")
+				socket.emit("promo:valid");
+			} else {
+				console.log("Bad promo tried!")
+				socket.emit("promo:bad")
+			}
+		}
+	})
+	
+	socket.on("surfstream:requestPromo", function(data){
+		if (data.email) {
+			redisClient.sadd("emailPromoRequests", data.email, function(err, reply) {
+				if (err) {
+					console.log("[   zion   ] [socket][surfstream:requestPromo]: Problem adding email to request list");
+				} else {
+					console.log("[   zion   ] [socket][surfstream:requestPromo]: Email received!");
+	 				socket.emit("email:received");
+				}				
+			});
+		}
+	})
 	
 	socket.on("user:sendUserFBFriends", function(data) {
 		if (redisClient) {
