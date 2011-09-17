@@ -67,7 +67,6 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 				#funroom
 				#right-side
 					#sidebar
-					#chat
 			#footer
 				span © 2011 surfstream.tv
 				a(href='http://surfstream.posterous.com/', target="_blank") Blog
@@ -91,10 +90,9 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		#avatar-picker-modal
 		include audiotag
 		include avatarpicker
-		include channelhistorynameholder
+		include browsevideos
 		include chat
 		include chatcell
-		include likesnameholder
 		include noresults
 		include sidebar
 		include roominfo
@@ -123,7 +121,8 @@ html(lang="en", xmlns="http://www.w3.org/1999/xhtml", xmlns:fb="http://www.faceb
 		include viewmorecell
 		include roomlistvideothumbnail
 		include nowPlayingChat
-		include youtubenameholder
+		include valvote
+		include videomanager
 		#getOff(display="none")
 		script
 			var is_ssl = ("https:" == document.location.protocol);
