@@ -242,7 +242,7 @@ margin
   background: #5c5c5c;
 }
 #videoManagerContainer #videoManagerBody {
-  height: 361px;
+  height: 393px;
   background: #808080;
 }
 #chatContainer {
@@ -1476,7 +1476,7 @@ background-color: green,
 #myVideosContainer {
   font-family: "Arial", "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   color: #d4d4d4;
-  height: 327px;
+  height: 359px;
   width: 300px;
   overflow-x: hidden;
   overflow-y: hidden;
