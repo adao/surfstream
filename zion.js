@@ -128,11 +128,10 @@ adminSUB.on('message', function(channel, message) {
 			}
 			break;
 		default:
-			console.log('\n[PUBSUB] received unknown message type: '+message.type)
+			console.log('\n[PUBSUB] received unknown message type: '+message.type);
 			break;
-
 	}
-})
+});
 
 RoomManager = Backbone.Model.extend({
 	initialize: function() {
@@ -244,22 +243,55 @@ var StagingUsers = {};
 
 io.sockets.on('connection', function(socket) {
 	
-	socket.on("user:sendFBId", function(signInPayload) {
+	socket.on('surfstream:login', function(loginAttemptData) {
 		if (redisClient) {
-			var promoCode = signInPayload.promo;
-			redisClient.get("user:fb_id:" + signInPayload.fbId + ":profile", function(err, reply) {
+			var promoCode = loginAttemptData.promo;
+			var facebookID = loginAttemptData.fbId;
+			redisClient.get("user:fb_id:" + loginAttemptData.fbId + ":profile", function(err, reply) {
 				if (err) {
-					console.log("[   zion   ] [socket][user:sendFBId]: Error trying to fetch user by Facebook id on initial login");
+					console.log("[   zion   ] [socket][surfstream:login]: Error trying to fetch user by Facebook id on initial login");
 				} else {
 					var ssUser = JSON.parse(reply);
 					var promoCandidate = promoCode;
+					var details;
+					var fbId = facebookID;
 					if (ssUser == null || ssUser == 'undefined') {
-						//socket.emit("playlist:showFBImport");
 						if (_.indexOf(PROMO_CODES, promoCandidate) == -1) {
-							socket.emit("noEntry:promo");
+							redisClient.get("user:fb_id:" + loginAttemptData.fbId + ":promoSent", function(err, reply) {
+								if (err) {
+									console.log("[   zion   ] [socket][surfstream:login]: Error trying to fetch user by Facebook id on initial login");
+								} else {
+									if (reply == null) {
+										console.log("[   zion   ] [socket][surfstream:login]: This user needs a promo to get in");
+										socket.emit("surfstream:gate", {details: "promoNeeded", fbId: fbId});
+									} else {
+										console.log("[   zion   ] [socket][surfstream:login]: This user was sent a promo but hasn't provided it yet");
+										socket.emit("surfstream:gate", {details: "promoWaiting", fbId: fbId});
+									}
+								}
+							});							
 						} else {
-							socket.emit("user:sendFBProfile");
-						}					
+							console.log("[   zion   ] [socket][surfstream:login]: This user is signing up for the first time");
+							socket.emit("surfstream:gate", {details: "approved", fbId: fbId, firstTime: true});
+						}
+					} else {
+						console.log("[   zion   ] [socket][surfstream:login]: This user is signing in as a returning user");
+					  socket.emit("surfstream:gate", {details: "approved", fbId: fbId, firstTime: false});	
+					}
+				}
+			});
+		}
+	});
+	
+	socket.on("user:startApp", function(signInPayload) {
+		if (redisClient) {
+			redisClient.get("user:fb_id:" + signInPayload.fbId + ":profile", function(err, reply) {
+				if (err) {
+					console.log("[   zion   ] [socket][user:startApp]: Error trying to fetch user by Facebook id on initial login");
+				} else {
+					var ssUser = JSON.parse(reply);
+					if (ssUser == null || ssUser == 'undefined') {
+						console.log("[   zion   ] [socket][user:startApp]: Error! User should be found if startApp event was sent" )		
 					} else {
 						redisClient.get("user:" + ssUser.ssId + ":fb_import_date", function(err, reply) {
 							if (err) {
@@ -270,7 +302,7 @@ io.sockets.on('connection', function(socket) {
 								}
 							}
 						});
-						roomManager.sendRoomsInfo(socket, ssUser.ssId);
+						socket.emit("user:profile", ssUser);
 						var name = ssUser.ss_name;
 						var currUser = new models.User({
 							name: name, 
@@ -283,22 +315,21 @@ io.sockets.on('connection', function(socket) {
 						currUser.sendLikes(socket);
 						StagingUsers[socket.id] = currUser; 
 						console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
-							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>')
-						socket.emit("user:profile", ssUser);
+							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>');
+						
 					}
 				}
 			});
 		}
 	});
 	
-	socket.on('user:sendFBData', function(fbUser) {
+	socket.on('user:initializeProfile', function(fbUser) {
 		if(redisClient) {
 			redisClient.incr("userId", function(err, reply){
 				var ssUser = fbUser;
 				var newAvatarSettings = fbUser.avatarSettings;
 				ssUser.ssId = reply;
 				socket.emit("user:profile", ssUser);
-				roomManager.sendRoomsInfo(socket, ssUser.ssId);
 				var stringSSUser = JSON.stringify(ssUser);
 				redisClient.set('user:'+ssUser.ssId+':avatar', newAvatarSettings.toString(), function(err, reply) {
 					if (err) {
@@ -323,7 +354,7 @@ io.sockets.on('connection', function(socket) {
 					fbId: ssUser.fbId, 
 					socket: socket
 			  });
-				console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
+				console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on for the first time <name,ss_id,fb_id>: '
 					+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
 					
 				StagingUsers[socket.id] = currUser;

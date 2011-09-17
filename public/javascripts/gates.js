@@ -47,11 +47,48 @@ window.fbAsyncInit = function() {
 		window.promoApproved = false;
 		$("#check-box").hide();
 	});
+	
+	socket_init.on("surfstream:gate", function(response) {
+		
+		switch(response.details) {
+			case "approved":
+				if(window.ss_fdLoop){
+				 	clearTimeout(window.ss_fdLoop);
+				 }
+				if (!userLoggedOut) {
+				  window.SurfStreamApp = new SurfStreamModel({
+				   socket: socket_init,
+				   firstTime: response.firstTime
+				  });
+					//trigger first communication
+					if (!response.firstTime) {
+						SocketManagerModel.startApp(response.fbId);
+					} else {
+						window.SurfStreamApp.get("userModel").getFBUserDataForRegistration();
+						hideSplash();						
+					}
+				}
+			  break;
+			case "promoNeeded":
+				alert("SORRY NO PROMO BUD! WOULD YOU LIKE US TO EMAIL YOU A PROMO CODE?");
+				break;
+			case "promoWaiting":
+				alert("YOU SHOULD BE GETTING A PROMO CODE SOON! LOOK OUT!");
+				break;
+			case "permsNotGiven":
+				alert("AWWW COME ON MAN GIVE US PERMISSION WE JUST WANT TO GET YOU YOUR YOUTUBE VIDEOS");
+				break;
+			default:
+				mpq.track("error", {mp_note: "Gate problem: response was " + response + ", details were " + response.details});
+				break;
+		}
+	});
 
  var form = $("#promoForm");
  form.submit(function(){
 	return false;
  });
+ 
  function hideSplash() {
 	document.getElementById('frontdoor').style.display = 'none';
 	document.getElementById('loadingScreen').style.display = 'none';
@@ -64,20 +101,14 @@ window.fbAsyncInit = function() {
   document.getElementById('frontdoor').style.display = 'inline-block';
  }
 
- function proceed_to_site(response) {
+ function send_fb_login_status(response) {
   if (response.authResponse) {
    //user is already logged in and connected
-   FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
-	 if(window.ss_fdLoop){
-	 	clearTimeout(window.ss_fdLoop);
-	 }
-	 if (!userLoggedOut) {
-	  window.SurfStreamApp = new SurfStreamModel({
-	   socket: socket_init
-	  });
-		//trigger first communication
-		SocketManagerModel.sendFBId(response.authResponse.userID, $("#promoBox").val());
-	 }  	
+   FB.Event.subscribe('auth.authResponseChange', send_fb_login_status);
+	 
+	 socket_init.emit("surfstream:login", {fbId: response.authResponse.userID, promo: $("#promoBox").val()});
+	 window.logged_in_fb_user = response;
+	 
   } else {
    // yeah right
 	 var params = {
@@ -90,13 +121,13 @@ window.fbAsyncInit = function() {
 	 };
 	 swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
    showSplash();
-   FB.Event.subscribe('auth.authResponseChange', proceed_to_site);
+   FB.Event.subscribe('auth.authResponseChange', send_fb_login_status);
   }
  }
 
  showSplash();
  // run once with current status and whenever the status changes
- FB.getLoginStatus(proceed_to_site);
+ FB.getLoginStatus(send_fb_login_status);
 };
 
 $(function() {
@@ -239,10 +270,10 @@ $(function() {
   },
 
   setUserData: function(info) {
-	SurfStreamApp.get("userModel").set({profile: info});
-	SurfStreamApp.get("mainView").roomModal.hide();
-	SurfStreamApp.get("userModel").set({displayName: info.name})
-  new AvatarPickerView({isFirstVisit: true});
+		SurfStreamApp.get("userModel").set({profile: info});
+		SurfStreamApp.get("mainView").roomModal.hide();
+		SurfStreamApp.get("userModel").set({displayName: info.name})
+	  new AvatarPickerView({isFirstVisit: true});
   },
 	
 	initializePlaylists: function(userPlaylists, activePlaylistId) {
@@ -413,20 +444,12 @@ $(function() {
    roomModel = this.get("roomModel");
    mainView.initializeTopBarView();
 
-	 this.showModalOnLoad = (ss_getPath(window.location) == "/");
+	 this.stickRoomModal = (ss_getPath(window.location) == "/");
    mainView.initializeRoomListView(roomModel.get("roomListCollection"), this);
-	 if (!this.showModalOnLoad) {
-  		mainView.roomModal.hide();
-		}
-   
-   
-
    mainView.initializePlayerView(roomModel.get("playerModel"), roomModel.get("userCollection"), this.get("userModel"), mainView.roomModal);
    mainView.initializeSidebarView(this.get("searchBarModel"), this.get("userModel").get("playlistCollection"), roomModel.get("channelHistoryCollection"), this.get("userModel").get("likesCollection"));
    mainView.initializeChatView(roomModel.get("chatCollection"), this.get("userModel"));
-   mainView.initializeSounds();
-
-	
+   mainView.initializeSounds();	
   }
  });
 
@@ -683,20 +706,19 @@ $(function() {
 		newAvatarSettings.push(this.hatID);
 		SurfStreamApp.currentAvatarSettings = newAvatarSettings;
 		SurfStreamApp.get("userModel").set({displayName: $("#name-change-input").val()});
-		
+
 		if(this.options.isFirstVisit) {
 			var info = SurfStreamApp.get("userModel").get("profile");
 			info.ss_name = SurfStreamApp.get("userModel").get("displayName");
 			info.avatarSettings = newAvatarSettings;
-			SocketManagerModel.sendFBUser(info);
+			SocketManagerModel.initializeProfile(info);
 			$("#tutorial").fadeIn();
 			$("#tutorialStart").fadeIn();
-			this.showModal = window.SurfStreamApp.showModalOnLoad;
-			window.SurfStreamApp.showModalOnLoad = false;
+			this.showModal = window.SurfStreamApp.stickRoomModal;
 			$("#tutorialStart").click({picker: this}, function(e){
 				e.data.picker.closePicker();
 				if (e.data.picker.showModal) {
-					SurfStreamApp.get("mainView").roomModal.show()
+					SurfStreamApp.get("mainView").roomModal.show();
 				}
 				
 			});
@@ -2257,9 +2279,9 @@ $(function() {
   initialize: function() {
    var modal;
    this.options.roomlistCollection.bind("reset", this.addRooms, this);
-   this.options.roomlistCollection.bind("sort", this.addRooms, this);
-   this.render();
-	 
+	 if (this.options.app.stickRoomModal) {
+   	this.render();
+ 	 }
   },
 
   hide: function() {
@@ -2267,7 +2289,7 @@ $(function() {
    $("#modalBG").hide();
   },
 
-	//this is only called when the use manually clicks to close the room modal
+	//this is only called when the user manually clicks to close the room modal
 	hideByClick: function(e) {
 		if (typeof(SurfStreamApp.inRoom) == 'undefined') return;
 		SurfStreamApp.get("mainRouter").navigate("/" + SurfStreamApp.inRoom, false);
@@ -2277,15 +2299,12 @@ $(function() {
   show: function() {
    $("#room-modal").show();
    $("#modalBG").show();
-   SurfStreamApp.showModalOnLoad = true;
    SocketManagerModel.loadRoomsInfo();
   },
 
-  render: function() {
-		
+  render: function() {		
    $(this.el).html(this.roomListTemplate());
    this.bindButtonEvents();
-	 this.hide();
    return this;
   },
 
@@ -2316,16 +2335,19 @@ $(function() {
   },
 
   addRooms: function(roomListCollection) {
-   this.render();
-   roomListCollection.each(function(roomListCellModel) {
+    this.render()
+		roomListCollection.each(function(roomListCellModel) {
     new RoomListCellView({
      roomListCellModel: roomListCellModel
     })
    });
-   if (!SurfStreamApp.showModalOnLoad) {
-    SurfStreamApp.get("mainView").roomModal.hide();
-   }
+   if (SurfStreamApp.stickRoomModal) {
+    $("#hideRoomsList").css({display: "none"});
+		SurfStreamApp.stickRoomModal = false;
+		SurfStreamApp.closeRoomModalIsHidden = true;
+	 }
   }
+
  });
 
  window.RoomListCellView = Backbone.View.extend({		
@@ -2691,6 +2713,7 @@ $(function() {
    }, function(e) {
     $("#room-modal").css("display") == "none" ? e.data.modal.show() : e.data.modal.hide()
    });
+	 this.options.modal.hide();
    this.options.userCollection.bind("add", this.placeUser, this);
    this.options.userCollection.bind("remove", this.removeUser, this);
    this.chats = [];
@@ -3447,13 +3470,10 @@ $(function() {
   },
 
   initializeRoomListView: function(roomListCollection, app) {
-   //HACK
-   $("#ListRooms").bind("click", SocketManagerModel.loadRoomsInfo);
    this.roomModal = new RoomListView({
     roomlistCollection: roomListCollection,
 		app: app
    });
-   //ENDHACK
   },
 
   initializeSounds: function() {
@@ -3700,27 +3720,22 @@ $(function() {
 			ssId: profile.ssId
 		});
 		
+		hideSplash();
 		console.log("ROUTING ON " + ss_getPath(window.location));
 		
 		Backbone.history.start({
 	   	pushState: true,
-	   	silent: window.SurfStreamApp.showModalOnLoad
+	   	silent: window.SurfStreamApp.stickRoomModal
 	   });
+	
+	  if(window.SurfStreamApp.stickRoomModal) {		  
+			SurfStreamApp.get("mainView").roomModal.show();
+		} 
 	 });
 	 
 	 socket.on("playlist:showFBImport", function(data) {
 		//app.get("userModel").showFBButton = true;
 		console.log("IGOT CALLED IGOT CALLED");
-	 });
-	 
-	 socket.on("user:sendFBProfile", function(data) {
-		app.get("userModel").getFBUserDataForRegistration();
-		hideSplash();
-		if (SurfStreamApp.showModalOnLoad == true && typeof(SurfStreamApp.inRoom) == 'undefined') {
-		  //Don't show them a way out 
-			$("#hideRoomsList").css({display: "none"});
-			SurfStreamApp.closeRoomModalIsHidden = true;	
-		 }
 	 });
 	 
 	 socket.on("user:sendFBFriends", function(data) {
@@ -3806,7 +3821,7 @@ $(function() {
 
 	socket.on("rooms:announce", function(roomList) {
 		var roomlistCollection = app.get("roomModel").get("roomListCollection");
-		roomlistCollection.reset();
+		roomlistCollection.reset([], {silent: true});
 		for (var i = 0; i < roomList.rooms.length; i++) {
 			roomlistCollection.add(new RoomlistCellModel(roomList.rooms[i]));
 		}
@@ -3922,13 +3937,7 @@ $(function() {
 		app.get("userModel").importFacebook = true;
 	});
 	
-	socket.on("noEntry:promo", function(){
-		alert("SORRY NO PROMO BUD! WOULD YOU LIKE US TO EMAIL YOU A PROMO CODE?")
-	});
-	
-	socket.on("noEntry:perms", function(){
-		alert("SORRY BRO, WE JUST NEED YOU TO LET US FIND YOUR YOUTUBE VIDEOS ON YOUR FACEBOOK");
-	});
+
 
   }
 
@@ -3936,12 +3945,12 @@ $(function() {
   socket: socket_init,
 
   /* Outgoing Socket Events*/
-  sendFBId: function(id, promocode) {
-   SocketManagerModel.socket.emit("user:sendFBId", {fbId: id, promo: promocode});
+  startApp: function(id, promocode) {
+   SocketManagerModel.socket.emit("user:startApp", {fbId: id});
   },
 
-	sendFBUser: function(user) {
-		SocketManagerModel.socket.emit("user:sendFBData", user);
+	initializeProfile: function(user) {
+		SocketManagerModel.socket.emit("user:initializeProfile", user);
 		if (typeof(mpq) !== 'undefined') mpq.name_tag(user.name);
 	},
 	
@@ -4073,7 +4082,7 @@ $(function() {
 
 	//Hack to keep people stuck to rooms list on first load (need to re-show close now.)
 	if (SurfStreamApp.closeRoomModalIsHidden) {
-		$("hideRoomsList").css({display: "block"});
+		$("#hideRoomsList").css({display: "block"});
 		SurfStreamApp.closeRoomModalIsHidden = false;
 	}
 
@@ -4140,7 +4149,21 @@ $(function() {
 			SocketManagerModel.loadRoomsInfo();
 		}
 	}
+	
+	
  });
+
+ function hideSplash() {
+	document.getElementById('frontdoor').style.display = 'none';
+	document.getElementById('loadingScreen').style.display = 'none';
+	document.getElementById('outer').style.display = 'block';
+ }
+
+ function showSplash() {
+	document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('outer').style.display = 'none';
+  document.getElementById('frontdoor').style.display = 'inline-block';
+ }
 
  window.playerLoaded = false;
 
