@@ -9,14 +9,14 @@ window.fbAsyncInit = function() {
  });
 
  $('#fb-auth').click(function() {
-  FB.login(function(response) {}, {
+  FB.login(send_fb_login_status, {
    scope: 'email,read_stream'
   });
  });
 
  $('#fb-auth-new').click(function() {
 	if (window.promoApproved) {
-		FB.login(function(response) {}, {
+		FB.login(send_fb_login_status, {
 	   scope: 'email,read_stream'
 	  });
 	}
@@ -37,11 +37,25 @@ window.fbAsyncInit = function() {
  });
  
  	$("#submitEmail").bind("click", function() {
-		var validEmail = true;
+	  var mail = $("#emailBox").val();
+		var validEmail = validateEmail(mail);
 		if(validEmail){
-			alert("Your email address has been added to the waiting list");
+			if (window.logged_in_user){
+				var fbID = window.logged_in_user.userID;
+					socket_init.emit("surfstream:requestPromo", {email: mail, fbId: fbID});
+			} else {
+					socket_init.emit("surfstream:requestPromo", {email: mail});
+			}
+		} else {
+			alert("BAD EMAIL!");
 		}
+		return false;
   });
+
+	function validateEmail(email) { 
+	 var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
+	 return email.match(re) 
+	}
 
 	socket_init.on("promo:valid", function(){
 		console.log("GOOD PROMO!");
@@ -56,6 +70,14 @@ window.fbAsyncInit = function() {
 		$("#promoBox").css("background", "#FAAFAF");
 		//$("#check-box").hide();
 	});
+	socket_init.on("email:received", function() {
+		alert("Email added to list!");
+	});
+	socket_init.on("email:receivedWithFBID", function() {
+		alert("Hi Facebook User " + window.logged_in_fb_user.id + "! We'll send you an email to " + window.logged_in_fb_user.email + "as soon as we can! Not " + window.logged_in_fb_user.id + "? LOGOUT BUTTON");
+	}); 
+	
+	
 	
 	socket_init.on("surfstream:gate", function(response) {
 		
@@ -79,13 +101,8 @@ window.fbAsyncInit = function() {
 				}
 			  break;
 			case "promoNeeded":
-				alert("SORRY NO PROMO BUD! WOULD YOU LIKE US TO EMAIL YOU A PROMO CODE?");
-				break;
-			case "promoWaiting":
-				alert("YOU SHOULD BE GETTING A PROMO CODE SOON! LOOK OUT!");
-				break;
-			case "permsNotGiven":
-				alert("AWWW COME ON MAN GIVE US PERMISSION WE JUST WANT TO GET YOU YOUR YOUTUBE VIDEOS");
+				alert("SORRY NO PROMO BUD! WOULD YOU LIKE US TO EMAIL YOU A PROMO CODE TO " + response.email + "?");
+				initFDPlayer();
 				break;
 			default:
 				mpq.track("error", {mp_note: "Gate problem: response was " + response + ", details were " + response.details});
@@ -93,11 +110,26 @@ window.fbAsyncInit = function() {
 		}
 	});
 
- var form = $("#promoForm");
+ var form = $("#promoForm, #email-form");
  form.submit(function(){
 	return false;
  });
  
+ function initFDPlayer() {
+	if (!window.fdPlayerLoading){ 
+		var params = {
+	  wmode: "opaque",
+	  allowScriptAccess: "always",
+	  iv_load_policy: 3
+	 	};
+	 	var atts = {
+		  id: "YouTubePlayer-fd"
+		 };
+	 	swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
+    window.fdPlayerLoading = true;
+	}
+ }
+
  function hideSplash() {
 	document.getElementById('frontdoor').style.display = 'none';
 	document.getElementById('loadingScreen').style.display = 'none';
@@ -113,22 +145,17 @@ window.fbAsyncInit = function() {
  function send_fb_login_status(response) {
   if (response.authResponse) {
    //user is already logged in and connected
+   var auth = response;
    FB.Event.subscribe('auth.authResponseChange', send_fb_login_status);
+	 FB.api('/me', function(profile) {
+		socket_init.emit("surfstream:login", {fbId: auth.authResponse.userID, promo: $("#promoBox").val(), email: profile.email});
+		 window.logged_in_fb_user = profile;
+	 });
 	 
-	 socket_init.emit("surfstream:login", {fbId: response.authResponse.userID, promo: $("#promoBox").val()});
-	 window.logged_in_fb_user = response;
 	 
   } else {
    // yeah right
-	 var params = {
-	  wmode: "opaque",
-	  allowScriptAccess: "always",
-	  iv_load_policy: 3
-	 };
-	 var atts = {
-	  id: "YouTubePlayer-fd"
-	 };
-	 swfobject.embedSWF("http://www.youtube.com/apiplayer?version=3&enablejsapi=1&playerapiid=YouTubePlayer-fd", "ytfd", "640", "390", "8", null, null, params, atts);
+	 initFDPlayer();
    showSplash();
    FB.Event.subscribe('auth.authResponseChange', send_fb_login_status);
   }

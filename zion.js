@@ -247,29 +247,25 @@ io.sockets.on('connection', function(socket) {
 		if (redisClient) {
 			var promoCode = loginAttemptData.promo;
 			var facebookID = loginAttemptData.fbId;
+			var email = loginAttemptData.email;
 			redisClient.get("user:fb_id:" + loginAttemptData.fbId + ":profile", function(err, reply) {
 				if (err) {
 					console.log("[   zion   ] [socket][surfstream:login]: Error trying to fetch user by Facebook id on initial login");
 				} else {
 					var ssUser = JSON.parse(reply);
 					var promoCandidate = promoCode;
-					var details;
 					var fbId = facebookID;
 					if (ssUser == null || ssUser == 'undefined') {
 						if (_.indexOf(PROMO_CODES, promoCandidate) == -1) {
-							redisClient.get("user:fb_id:" + loginAttemptData.fbId + ":promoSent", function(err, reply) {
+							console.log("[   zion   ] [socket][surfstream:login]: This user needs a promo to get in");
+							redisClient.hset("fbIDPromoRequests", fbId, email, function(err, reply) {
 								if (err) {
-									console.log("[   zion   ] [socket][surfstream:login]: Error trying to fetch user by Facebook id on initial login");
+									console.log("[   zion   ] [socket][surfstream:login]: Problem setting fbID to promo invite list");
 								} else {
-									if (reply == null) {
-										console.log("[   zion   ] [socket][surfstream:login]: This user needs a promo to get in");
-										socket.emit("surfstream:gate", {details: "promoNeeded", fbId: fbId});
-									} else {
-										console.log("[   zion   ] [socket][surfstream:login]: This user was sent a promo but hasn't provided it yet");
-										socket.emit("surfstream:gate", {details: "promoWaiting", fbId: fbId});
-									}
+									console.log("[   zion   ] [socket][surfstream:login]: FBid with email received!");
+					 				socket.emit("email:receivedWithFBID");
 								}
-							});							
+							})
 						} else {
 							console.log("[   zion   ] [socket][surfstream:login]: This user is signing up for the first time");
 							socket.emit("surfstream:gate", {details: "approved", fbId: fbId, firstTime: true});
@@ -389,6 +385,19 @@ io.sockets.on('connection', function(socket) {
 				console.log("Bad promo tried!")
 				socket.emit("promo:bad")
 			}
+		}
+	})
+	
+	socket.on("surfstream:requestPromo", function(data){
+		if (data.email) {
+			redisClient.sadd("emailPromoRequests", data.email, function(err, reply) {
+				if (err) {
+					console.log("[   zion   ] [socket][surfstream:requestPromo]: Problem adding email to request list");
+				} else {
+					console.log("[   zion   ] [socket][surfstream:requestPromo]: Email received!");
+	 				socket.emit("email:received");
+				}				
+			});
 		}
 	})
 	
