@@ -2093,7 +2093,7 @@ $(function() {
 	calculatePlaylistHeight: function() {
 		var pcHeight = $("#playlist-collection-display").outerHeight(true);
 		var viewHeight = $("#myVideosContainer").outerHeight(true);
-		$("#playlist-display").css('height', viewHeight - pcHeight - 13);
+		$("#playlist-display").css('height', viewHeight - pcHeight - 7);
 	},
 	
 	highlightView: function() {
