@@ -484,7 +484,6 @@ div.historyContainer
 .searchCellContainer
 	width: 285px
 	height: 80px
-	cursor: move
 	.thumbContainer
 		float: left
 		width: 75px
@@ -497,19 +496,20 @@ div.historyContainer
 		z-index:3
 		cursor: pointer
 	.cellInfo
+		cursor: move
 		display: inline-block
-		width: 205px
+		width: 160px
 		height: 60px
 		.videoInfo
 			float: left
-			width: 193px
+			width: 155px
 			height: 60px
 			font-size: 13px
 			padding-left: 7px
 			.title
 				overflow-y: hidden
 				margin-top: 10px
-				width: 192px
+				width: 145px
 				height: 38px
 				font-weight: bold
 				font-size: 10px
@@ -541,22 +541,24 @@ div.historyContainer
 				top: -36px
 				font-size: 11px 
 				float: left
-		.cellButtons
-			float: right
-			width: 30px
-			height: 80px
-			margin-left: -13px
-			button.previewVideo
-				display: none
-				font-size: 9px
-				background: transparent
-				margin-top: 4px
-				margin-bottom: 2px
-				border: none
-				color: #D4D4D4
-				cursor: pointer
-			button.previewVideo:hover
-					color: white
+	.cellButtons
+		cursor: pointer
+		float: right
+		width: 30px
+		height: 80px
+		margin-left: -13px
+		button.addToQueue
+			font-size: 9px
+			height: 50px
+			width: 20px
+			margin-top: 4px
+			margin-bottom: 2px
+			border: none
+			color: #D4D4D4
+		button.addToQueue:hover
+			color: white
+			cursor: pointer
+			
 .searchCellContainer:nth-child(odd)
 	background-color: #313131
 .searchCellContainer:nth-child(even)
@@ -1151,7 +1153,7 @@ div#top-video-name
 	-webkit-border-radius: 9px
 	-moz-border-radius: 9px
 	border-radius: 9px
-	color: black
+	color: white
 	padding-right: 6px
 	cursor: pointer
 

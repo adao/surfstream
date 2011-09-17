@@ -532,7 +532,6 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer {
   width: 285px;
   height: 80px;
-  cursor: move;
 }
 .searchCellContainer .thumbContainer {
   float: left;
@@ -547,13 +546,14 @@ div.historyContainer .history .videoHistory {
   cursor: pointer;
 }
 .searchCellContainer .cellInfo {
+  cursor: move;
   display: inline-block;
-  width: 205px;
+  width: 160px;
   height: 60px;
 }
 .searchCellContainer .cellInfo .videoInfo {
   float: left;
-  width: 193px;
+  width: 155px;
   height: 60px;
   font-size: 13px;
   padding-left: 7px;
@@ -561,7 +561,7 @@ div.historyContainer .history .videoHistory {
 .searchCellContainer .cellInfo .videoInfo .title {
   overflow-y: hidden;
   margin-top: 10px;
-  width: 192px;
+  width: 145px;
   height: 38px;
   font-weight: bold;
   font-size: 10px;
@@ -600,24 +600,25 @@ div.historyContainer .history .videoHistory {
   font-size: 11px;
   float: left;
 }
-.searchCellContainer .cellInfo .cellButtons {
+.searchCellContainer .cellButtons {
+  cursor: pointer;
   float: right;
   width: 30px;
   height: 80px;
   margin-left: -13px;
 }
-.searchCellContainer .cellInfo .cellButtons button.previewVideo {
-  display: none;
+.searchCellContainer .cellButtons button.addToQueue {
   font-size: 9px;
-  background: transparent;
+  height: 50px;
+  width: 20px;
   margin-top: 4px;
   margin-bottom: 2px;
   border: none;
   color: #d4d4d4;
-  cursor: pointer;
 }
-.searchCellContainer .cellInfo .cellButtons button.previewVideo:hover {
+.searchCellContainer .cellButtons button.addToQueue:hover {
   color: #fff;
+  cursor: pointer;
 }
 .searchCellContainer:nth-child(odd) {
   background-color: #313131;
@@ -1325,7 +1326,7 @@ background-color: green,
   -webkit-border-radius: 9px;
   -moz-border-radius: 9px;
   border-radius: 9px;
-  color: #000;
+  color: #fff;
   padding-right: 6px;
   cursor: pointer;
 }
