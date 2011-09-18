@@ -524,7 +524,7 @@ div.historyContainer .history .videoHistory {
   height: 60px;
 }
 #viewMoreCellContainer .viewMoreCellText {
-  padding: 14px 0px 0px 66px;
+  padding: 20px 0px 0px 66px;
   font-size: 18px;
   cursor: pointer;
 }
@@ -1538,6 +1538,7 @@ background-color: #4C4C4C,
   display: block;
 }
 #playlist-collection-input {
+  font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif !important;
   text-indent: 3px;
   font-size: 10px;
   background: transparent;
