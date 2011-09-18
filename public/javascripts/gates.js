@@ -446,6 +446,7 @@ $(function() {
    this.curDJ = "__none__";
    this.sofaUsers = [];
    this.rotateRemoteSign = true;
+	 this.chatMap = {};
    $("#feedbackSpan").click(function() {
     feedback_widget.show();
    })
@@ -2695,7 +2696,8 @@ $(function() {
 
   render: function(nowPlayingMsg) {
    $(this.el).html(this.chatCellVideoTemplate({
-    title: this.options.videoTitle
+    title: this.options.videoTitle,
+		vidID: this.options.videoID
    }));
 	 this.$(".videoChatImg").attr("src",ss_idToImg(this.options.videoID));
    return this;
@@ -2895,13 +2897,16 @@ $(function() {
 
 	 $("#share-video-button").click(function(){
 		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "remote"});
+		var nowPlaying = window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid");
    	FB.ui({
 	    method: 'feed',
 	    display: 'popup',
-	    name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
-	    link: this.link,
-	    caption: 'Come watch videos with me',
-	    description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
+	    name: nowPlaying.title,
+	    link: "www.youtube.com/watch?v="+nowPlaying.videoId,
+	    description: "Watch videos with me in the " + SurfStreamApp.inRoomName+  " channel on surfstream",
+			picture: ss_idToImg(nowPlaying.videoId),
+		  properties: {"Join Now! Spots limited. Promo Code FBFRIEND": {text: "www.surfstream.tv", href: document.location + SurfStreamApp.inRoom}},
+		 	actions: [{name: "Surf With Me", link: document.URL}]
 	   }, function(response) {
 	    if (response.post_id) {
 				if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Made", {source: "remote"});
@@ -2914,6 +2919,24 @@ $(function() {
    this.chats = [];
    this.full = false;
 
+	 $(".chatShare").live("click", function(){
+		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "chat"});
+		var nowPlaying = {videoId: $(this.parentElement).children().filter(".nowPlayingYTID").html(), title: $(this.parentElement).children().filter(".nowPlayingHiddenTitle").html()};
+   	FB.ui({
+	    method: 'feed',
+	    display: 'popup',
+	    name: nowPlaying.title,
+	    link: "www.youtube.com/watch?v="+nowPlaying.videoId,
+	    description: "Watch videos with me in the " + SurfStreamApp.inRoomName+  " channel on surfstream",
+			picture: ss_idToImg(nowPlaying.videoId),
+		  properties: {"Join Now! Spots limited. Promo Code FBFRIEND": {text: "www.surfstream.tv", href: document.location + SurfStreamApp.inRoom}},
+		 	actions: [{name: "Surf With Me", link: document.URL}]
+	   }, function(response) {
+	    if (response.post_id) {
+				if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Made", {source: "chat"});
+			}
+		 });
+	 });
    $("#ch-up").click({
     theatre: this
    }, function(e) {
@@ -3200,7 +3223,10 @@ $(function() {
    var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
-   setTimeout(function() {
+   if (SurfStreamApp.chatMap[fbid]) {
+		clearTimeout(SurfStreamApp.chatMap[fbid]);
+	 }
+   SurfStreamApp.chatMap[fbid] = setTimeout(function() {
     if ($("#avatarChat_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
@@ -3519,7 +3545,7 @@ $(function() {
     method: 'feed',
     display: 'popup',
     name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
-    link: this.link,
+    link: document.URL,
     caption: 'Come watch videos with me',
     description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
    }, function(response) {

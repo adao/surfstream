@@ -138,7 +138,7 @@ button {
   position: absolute;
   width: 60px;
   height: 80px;
-  z-index: 999;
+  z-index: 1;
 }
 div#loadingScreen {
   background-color: color;
@@ -322,6 +322,10 @@ margin
   padding-top: 2px;
   padding-bottom: 2px;
   display: inline;
+}
+#chatContainer #messages div.messageContainer .nowPlayingYTID,
+#chatContainer #messages div.messageContainer .nowPlayingHiddenTitle {
+  display: none;
 }
 #chatContainer #messages div.messageContainer:nth-child(odd) {
   background-color: #313131;
@@ -2536,9 +2540,9 @@ a#fdbk_tab {
   margin: 2px 0 2px 2px;
 }
 .videoChatCell .videoChatInfo {
-  float: right;
-  margin: 2px 0 0 7px;
-  width: 202px;
+  float: left;
+  margin: 2px 0px 0 7px;
+  width: 151px;
   padding: 0 !important;
 }
 .videoChatCell .videoChatInfo .videoChatNowPlaying {
@@ -2550,6 +2554,20 @@ a#fdbk_tab {
 .videoChatCell .videoChatInfo .videoChatCellText {
   padding: 0 !important;
   display: inline;
+}
+.videoChatCell .chatShare {
+  float: right;
+  margin-top: 17px;
+  background-color: #e5e5e5;
+  border-radius: 4px;
+  border: 1px solid #000;
+  text-shadow: 2px 2px 2px #d6d6d6;
+  cursor: pointer;
+  font-weight: bold;
+}
+.videoChatCell .chatShare:hover {
+  color: #008ab8;
+  background-color: #fff;
 }
 .video-div-proxy {
   z-index: 32;
