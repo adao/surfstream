@@ -1461,10 +1461,11 @@ background-color: green,
 }
 #browseVideosContainer #browseVideosVideosContainer #searchBar .inputBox {
   z-index: 5;
-  width: 300px;
+  width: 290px;
   height: 36px;
   text-indent: 5px;
   font-size: 14px;
+  float: left;
 }
 #browseVideosContainer #browseVideosVideosContainer #searchBar .inputBox input {
   border-radius: 4px;
@@ -1493,6 +1494,8 @@ background-color: green,
   background: url("/images/room/newicons/clearsearch.png") 50% 50% no-repeat;
   vertical-align: top;
   margin-top: 10px;
+  margin-right: 10px;
+  float: right;
 }
 #myVideosContainer {
   font-family: "Arial", "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
