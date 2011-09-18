@@ -245,8 +245,9 @@ margin
   color: #fff;
   font-size: 18px;
   height: 30px;
-  background: #5c5c5c;
+  background: #666;
   background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
+  background: -moz-linear-gradient(top, #666, #434343);
   background-image: -o-linear-gradient(top, #666, #434343);
 }
 #videoManagerContainer #videoManagerHeader .videoManagerIcon {
@@ -286,6 +287,8 @@ margin
   width: 300px;
   height: 30px;
   background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343));
+  background: -moz-linear-gradient(top, #666, #434343);
+  background-image: -o-linear-gradient(top, #666, #434343);
 }
 #chatContainer .chatHeader .chatIcon {
   vertical-align: top;
