@@ -1555,6 +1555,9 @@ $(function() {
 		}
 		var playlistItemModel = new PlaylistItemModel(attributes);
 		playlistCollection.addVideoToPlaylist(queueId, playlistItemModel);
+		if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
+	    mp_note: "From search cell view from the button"
+	   });
 	},
 
   render: function(searchResult) {
@@ -2081,6 +2084,13 @@ $(function() {
 					if (toPlaylistId != queueId) {
 						ui.draggable.remove();
 						fromPlaylist.removeFromPlaylist(fromVideoId);
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to playlist", {
+					    mp_note: "From another playlist from drag n drop"
+			 	    });
+					} else {
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
+					    mp_note: "From another playlist from drag n drop"
+			 	    });
 					}
 				} else {
 					var attributes = {
@@ -2096,6 +2106,15 @@ $(function() {
 						$(this).remove();
 					});
 					ui.draggable.remove();
+					if (toPlaylistId != queueId) {
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to playlist", {
+					    mp_note: "From search result from drag n drop"
+			 	    });
+					} else {
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
+					    mp_note: "From search result from drag n drop"
+			 	    });
+					}
 				}
 				$(this).animate({"background": "white"}, 500, function() {
 					$(this).removeClass("dropped-playlist-nameholder");
@@ -2431,6 +2450,9 @@ $(function() {
    var copyPlaylistItemModel = new PlaylistItemModel(event.data.videoModel.attributes);
 	 playlistCollection.addVideoToPlaylist(queueId, copyPlaylistItemModel);
    window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
+	 if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
+	    mp_note: "From another playlist through the button"
+	   });
   },
 
   render: function() {
