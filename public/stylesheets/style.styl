@@ -563,9 +563,15 @@ div.historyContainer
 			margin-bottom: 2px
 			border: none
 			color: #D4D4D4
+			background: url('/images/room/add.png') 50% 50% no-repeat
 		button.addToQueue:hover
-			color: white
+			background: url('/images/room/add_hover.png') 50% 50% no-repeat
 			cursor: pointer
+		div
+			font-size: 10px
+			text-align: center
+			margin-left: -10px
+			margin-top: -9px
 			
 .searchCellContainer:nth-child(odd)
 	background-color: #313131
@@ -1145,13 +1151,14 @@ div#top-video-name
 	width: 10px
 	border: none
 	float: right
-	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRFQTMzNkNBQjAxMUUwOTU2MEYzM0IyMzIyODZCQSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRFQTMzN0NBQjAxMUUwOTU2MEYzM0IyMzIyODZCQSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjMwRUM2MDU3Q0FBRjExRTA5NTYwRjMzQjIzMjI4NkJBIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjMwRUM2MDU4Q0FBRjExRTA5NTYwRjMzQjIzMjI4NkJBIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+NKqBAwAAAIhJREFUeNpikZGRkWZgYJB6/PjxaQYkICsrawyknjMBCUkg7gMK2CFJ2gCpCSCNjP///2eASjYDcQUQ/wfiDiCuA5p6CKwAqssCSM2GGpIGlDwOYjAhWfsPSjMiu4UJyc4ukE4gTgVZAXcT0BemQHwIiO1A1oEwiA3ER4DYiBGPN42A1DOAAAMA63ktulIFOSMAAAAASUVORK5CYII=') 50% 50% no-repeat
+	background: url('/images/room/newicons/delete-playlist-new.png') 50% 50% no-repeat
 	margin-top: 5.5px
 	margin-left: 4px
 .delete-nameholder:hover
 	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRFQTMzQUNBQjAxMUUwOTU2MEYzM0IyMzIyODZCQSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRFQTMzQkNBQjAxMUUwOTU2MEYzM0IyMzIyODZCQSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjBDNEVBMzM4Q0FCMDExRTA5NTYwRjMzQjIzMjI4NkJBIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBDNEVBMzM5Q0FCMDExRTA5NTYwRjMzQjIzMjI4NkJBIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+38WtwAAAAHxJREFUeNp8j00KgCAQhUd3HqG6RREkiEeMjlTRrmV3qBvoLnvGGLNK+Hzy5lcVQmiIqDbG7CROjLGDXBpXBUYYXgQdZMqFlFIidPFgARYMYM5ejr0JnJQDB2OLr8XYm1XJXUq147aWWb4RePRgLYbYaQOt+vlmCzkfAQYAjl1/OnNCpMYAAAAASUVORK5CYII=') 50% 50% no-repeat
 	
 .queuePlaylist
+	border:1px solid #21A9DB
 	background-color: #21A9DB
 	color: black
 	text-indent: 6px
@@ -1166,9 +1173,9 @@ div#top-video-name
 	cursor: pointer
 
 .playlist-nameholder:hover 
-	-moz-box-shadow:inset 0 0 1px #000000;
-	-webkit-box-shadow:inset 0 0 1px #000000;
-	box-shadow:inset 0 0 1px #000000;
+	// -moz-box-shadow:inset 0 0 1px #000000;
+	// -webkit-box-shadow:inset 0 0 1px #000000;
+	// box-shadow:inset 0 0 1px #000000;
 
 .playlist-nameholder
 	text-indent: 6px
@@ -1178,23 +1185,16 @@ div#top-video-name
 	-webkit-border-radius: 9px
 	-moz-border-radius: 9px
 	border-radius: 9px
-	background-color: silver
-	background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#8D8D8D))
-	background: -moz-linear-gradient(top,  silver,  #8D8D8D)
-	background-image: -o-linear-gradient(top, silver, #8D8D8D)
-	color: black
+	border: 1px solid gray
+	color: silver
 	padding-right: 6px
 	cursor: pointer
 	height: 20px
 	
 .droppable-playlist-nameholder, .dropped-playlist-nameholder
-	background-color: white
-	background: -webkit-gradient(linear, left top, left bottom, from(white), to(silver))
-	background: -moz-linear-gradient(top,  white,  silver)
-	background-image: -o-linear-gradient(top, white, silver)
-	-moz-box-shadow: 0 0 6px white;
-	-webkit-box-shadow: 0 0 6px white;
-	box-shadow: 0 0 6px white;
+	background: rgba(255, 255, 255, .2)
+	border: 1px solid gray
+	color: white
 .nameholder-input
 	vertical-align: top
 	display: inline-block
@@ -1208,38 +1208,37 @@ div#top-video-name
 .delete-nameholder
 	vertical-align: middle
 	line-height: 20px
-
-#playlist-collection-input
-	background-color: silver
 	
 .active-playlist-nameholder, .active-playlist-nameholder:hover
-	-moz-box-shadow: 0 0 6px #34c8ff;
-	-webkit-box-shadow: 0 0 6px #34c8ff;
-	box-shadow: 0 0 6px #34c8ff;
-
+	// -moz-box-shadow: 0 0 6px #34c8ff;
+	// -webkit-box-shadow: 0 0 6px #34c8ff;
+	// box-shadow: 0 0 6px #34c8ff;
+	background: rgba(255, 255, 255, .2)
 #playlist-collection-input::-webkit-input-placeholder
-		color: #141414
-		
+	color: silver
+#playlist-collection-input::-moz-input-placeholder
+	color: silver
 .selected-playlist-nameholder, .selected-playlist-nameholder:hover
-	border-color: #008AB8
-	background-color: white
-	background: -webkit-gradient(linear, left top, left bottom, from(white), to(silver))
-	background: -moz-linear-gradient(top,  white,  silver)
-	background-image: -o-linear-gradient(top, white, silver)
-	color: #008AB8
+	background: rgba(255, 255, 255, 0.2)
+	// background: -webkit-gradient(linear, left top, left bottom, from(gray), to(silver))
+	// background: -moz-linear-gradient(top,  gray,  silver)
+	// background-image: -o-linear-gradient(top, gray, silver)
+	border: 1px solid gray
+	color: white
 	vertical-align: top
 	font-weight: bold
 	button
-		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowQzRFQTMzNkNBQjAxMUUwOTU2MEYzM0IyMzIyODZCQSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDowQzRFQTMzN0NBQjAxMUUwOTU2MEYzM0IyMzIyODZCQSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjMwRUM2MDU3Q0FBRjExRTA5NTYwRjMzQjIzMjI4NkJBIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjMwRUM2MDU4Q0FBRjExRTA5NTYwRjMzQjIzMjI4NkJBIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+NKqBAwAAAIhJREFUeNpikZGRkWZgYJB6/PjxaQYkICsrawyknjMBCUkg7gMK2CFJ2gCpCSCNjP///2eASjYDcQUQ/wfiDiCuA5p6CKwAqssCSM2GGpIGlDwOYjAhWfsPSjMiu4UJyc4ukE4gTgVZAXcT0BemQHwIiO1A1oEwiA3ER4DYiBGPN42A1DOAAAMA63ktulIFOSMAAAAASUVORK5CYII=') 50% 50% no-repeat
+		background: url('/images/room/newicons/delete-playlist-new.png') 50% 50% no-repeat
 .selected-playlist-nameholder
 	button:hover
-		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoyREI2N0MxMEQ0QjQxMUUwQkRCODkzOEFGNTg1NUEyMyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoyREI2N0MxMUQ0QjQxMUUwQkRCODkzOEFGNTg1NUEyMyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjJEQjY3QzBFRDRCNDExRTBCREI4OTM4QUY1ODU1QTIzIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjJEQjY3QzBGRDRCNDExRTBCREI4OTM4QUY1ODU1QTIzIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+xaS+PwAAAI5JREFUeNpiYejaIc3AwCD1v9T9NAMSYOzeaQyknjMBCUkg7gMK2CFJ2gCpCSCNjP///2eASjYDcQUQ/wfiDiCuA5p6CKwAqssCSM2GGpIGlDwOYjAhWfsPZgOyW5iQ7OwC6QTiVJAVMDcxAn1hCqR7gbgGZCdUA0iyDYjzQCY8A+JimCQIQNl5IDmAAAMAr/4xtpXaifoAAAAASUVORK5CYII=') 50% 50% no-repeat
-	
+		background: url('/images/room/newicons/delete-playlist-hover.png') 50% 50% no-repeat
+		
+.youtube-nameholder:hover, .channel-history-nameholder:hover, .likes-nameholder:hover
+	background: rgba(255, 255, 255, .1)
+
 .playlist-nameholder.selected-non-playlist-nameholder
-	background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#eee))
-	background: -moz-linear-gradient(top, silver, #eee)
-	background-image: -o-linear-gradient(top, silver, #eee)
-	color: black
+	color: silver
+	border: 1px solid silver
 	vertical-align: top
 	
 .playlist-hover-highlight
@@ -1255,12 +1254,12 @@ div#top-video-name
 	background-color: #373737
 	#browseVideosButtons
 		list-style-type: none
-		margin: 0px 0px 0px -27px
+		margin: 0px 0px 0px -22px
 		color: black
 		height: 34px
 		.youtube-nameholder, .channel-history-nameholder, .likes-nameholder
-			background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(silver))
-			background: -moz-linear-gradient(top, #eee, silver)
+			cursor: pointer
+			color: silver
 			-webkit-border-radius: 2px
 			-moz-border-radius: 2px
 			border-radius: 2px
@@ -1275,6 +1274,7 @@ div#top-video-name
 				float: right
 				padding: 4px 6px 0px 6px
 	#browseVideosVideosContainer
+		border-top: 1px solid gray
 		#searchContainer
 			overflow-y: scroll
 			overflow-x: hidden
@@ -1285,10 +1285,6 @@ div#top-video-name
 			height: 36px;
 			.inputBox
 				z-index: 5
-				background-color: #666
-				background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#434343))
-				background: -moz-linear-gradient(top,  #666,  #434343)
-				background-image: -o-linear-gradient(top, #666, #434343)
 				width: 300px
 				height: 36px
 				text-indent: 5px
@@ -1350,7 +1346,7 @@ div#top-video-name
 	display: block
 	
 #playlist-collection-input
-	text-indent: 6px
+	text-indent: 3px
 	font-size: 10px
 	background: transparent
 	width: 72px
@@ -1360,19 +1356,17 @@ div#top-video-name
 	-moz-border-radius: 9px
 	border-radius: 9px
 	border: none
-	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#dcdcdc))
-	background: -moz-linear-gradient(top,  #eee,  #dcdcdc)
-	background-image: -o-linear-gradient(top, #eee, #dcdcdc) 
-	color: black
+	color: silver
+	border: 1px solid gray
 	cursour: default
 	height: 20px
 	outline: none
 	padding: 0px
 	
 #playlist-collection-input:hover
-	-moz-box-shadow:inset 0 0 1px #000000;
-	-webkit-box-shadow:inset 0 0 1px #000000;
-	box-shadow:inset 0 0 1px #000000;
+	// -moz-box-shadow:inset 0 0 1px #000000;
+	// -webkit-box-shadow:inset 0 0 1px #000000;
+	// box-shadow:inset 0 0 1px #000000;
 	
 	                  
 #playlist-display
