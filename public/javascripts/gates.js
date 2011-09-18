@@ -1896,9 +1896,9 @@ $(function() {
 	browseVideosTemplate: _.template($("#browse-videos-template").html()),
 	
 	events: {
-		"click .youtube-nameholder": "showSearch",
-		"click .channel-history-nameholder": "showChannelHistory",
-		"click .likes-nameholder": "showLikes"
+		"click #ytnh": "showSearch",
+		"click #chnh": "showChannelHistory",
+		"click #lvnh": "showLikes"
 	},
 	
 	initialize: function() {
@@ -1926,7 +1926,7 @@ $(function() {
 		this.likesActive = false;
 		this.searchView.show(true);
 		this.videoManagerView.showBrowseVideosView();
-		this.activeNonPlaylistNameholder = $(this.el).find(".youtube-nameholder");
+		this.activeNonPlaylistNameholder = $(this.el).find("#ytnh");
 		this.activeNonPlaylistNameholder.addClass("selected-non-playlist-nameholder");
 		this.activeNonPlaylistNameholder.addClass("active-playlist-nameholder");
 		this.resetSearchResults();
@@ -1941,7 +1941,7 @@ $(function() {
 		this.likesActive = false;
 		this.searchView.show(false);
 		this.videoManagerView.showBrowseVideosView();
-		this.activeNonPlaylistNameholder = $(this.el).find(".channel-history-nameholder");
+		this.activeNonPlaylistNameholder = $(this.el).find("#chnh");
 		this.activeNonPlaylistNameholder.addClass("selected-non-playlist-nameholder");
 		this.activeNonPlaylistNameholder.addClass("active-playlist-nameholder");
 		this.resetChannelHistory();
@@ -1956,7 +1956,7 @@ $(function() {
 		this.likesActive = true;
 		this.searchView.show(false);
 		this.videoManagerView.showBrowseVideosView();
-		this.activeNonPlaylistNameholder = $(this.el).find(".likes-nameholder");
+		this.activeNonPlaylistNameholder = $(this.el).find("#lvnh");
 		this.activeNonPlaylistNameholder.addClass("selected-non-playlist-nameholder");
 		this.activeNonPlaylistNameholder.addClass("active-playlist-nameholder");
 		this.resetLikes();
@@ -2124,6 +2124,7 @@ $(function() {
 		if (this.options.playlist_nameholder_value == facebookPlaylistId || this.options.playlist_nameholder_value == queueId) {
 			$(this.el).find(".delete-nameholder").remove();
 		}
+		this.options.playlistCollection.videoManagerView.calculatePlaylistHeight();
 	},
 	
 	render: function() {
