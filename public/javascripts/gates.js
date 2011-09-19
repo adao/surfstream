@@ -2328,7 +2328,7 @@ $(function() {
 	
 	setNotificationText: function(text) {
 		if (SurfStreamApp.get("userModel").get("playlistCollection").getPlaylistById(queueId).get("videos").length == 0) {
-			$("#playlist-notification-text").text("Add videos to your playlist or your turn will be skipped");
+			$("#playlist-notification-text").text("Up next: Your queue is currently empty");
 		} else {
 			$("#playlist-notification-text").text("Up next: " + SurfStreamApp.get("userModel").get("playlistCollection").getPlaylistById(queueId).get("videos").at(0).get("title"));
 		}
@@ -3359,11 +3359,14 @@ $(function() {
   },
 
   toggleDJStatus: function(event) {
+		$("#playlist-notification-container").slideDown();
    if (event.data.playlistCollection.getPlaylistById(queueId).get("videos").length == 0) {
+		SurfStreamApp.get("mainView").sideBarView.showVideoManagerView();
+		SurfStreamApp.get("mainView").sideBarView.videoManagerView.showPlaylistCollectionView();
+		SurfStreamApp.get("userModel").get("playlistCollection").setActivePlaylist(queueId);
     event.data.theatreView.valChat("You can't play a video without any videos in your queue");
     return;
    }
-   $("#playlist-notification-container").slideDown();
    SocketManagerModel.becomeDJ();
   },
 
