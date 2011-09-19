@@ -528,7 +528,7 @@ div.historyContainer
 				width: 145px
 				height: 38px
 				font-weight: bold
-				font-size: 10px
+				font-size: 11px
 				overflow: hidden
 				pointer-events: none
 			.duration, .viewCount
@@ -925,8 +925,16 @@ button.playlist, button.playlist.active, button.search, button.search.active
 		border-top-left-radius: 2px
 		-moz-border-top-left-radius: 2px
 		-webkit-border-top-left-radius: 2px
+		h3
+			font-size: 36px
+			display: inline-block
+			vertical-align: top
+			margin-top: 7px
+			text-indent: 8px
+			color: white
 		form.roomSearch
 			display: inline-block
+			display: none
 			width: 960px
 			height: 54px
 			input
@@ -957,7 +965,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 			width: 945px
 			border-collapse: collapse
 			tr.table-header
-				background-color: black
+				background-color: #141414
 				color: white
 				height: 30px
 				th.room-name-hd
@@ -996,9 +1004,11 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						margin-left: 8px
 						display: inline-block
 						width: 264px
-						height: 50px
+						max-height: 50px
 						vertical-align: top
-						margin-top: 15px
+						margin-top: 8px
+						font-size: 14px
+						margin-bottom: 5px
 				td
 					border-right: 1px solid #585858
 					.num-viewers
@@ -1008,6 +1018,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						font-weight: bold
 						text-align: center
 						height: 28px
+						margin-top: -8px
 					.num-djs           
 						font-size: 14px
 						height: 14px
@@ -1025,6 +1036,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 							word-wrap: break-word
 						.listed-room-name
 							font-size: 16px
+							margin-top: -1px
 						.listed-video-name
 							font-size: 14px
 						.true-room-name
@@ -1032,11 +1044,10 @@ button.playlist, button.playlist.active, button.search, button.search.active
 					.room-history-container
 						display: inline-block!important
 						list-style-type: none
-						margin-top: -1px
 						float: right
-						height: 54px
+						height: 46px
 						vertical-align: top
-						margin-top: 11px
+						margin: 7px 0 2px 0
 			tr.room-row:nth-child(odd)
 				background-color: #313131
 			tr.room-row:nth-child(odd)
@@ -1097,11 +1108,17 @@ button.playlist, button.playlist.active, button.search, button.search.active
 .videoThumbnailContainer
 	display: inline-block
 	position: relative
+	height: 40px
+	width: 70px
+	overflow: hidden
+	margin-right: 5px
+	-webkit-border-radius: 4px
+	-moz-border-radius: 4px
+	border-radius: 4px
 	.videoThumbnail
 		width: 72px
 		height: 54px
-		margin-right: 4px
-		border-radius: 2px
+		margin-top: -7px
 			
 #video-div
 	-webkit-border-top-left-radius: 2px
@@ -1335,12 +1352,13 @@ div#top-video-name
 					padding: 0
 					border: 0
 					outline: 0
-					background-color: #292929
-					text-indent: 4px
-					color: silver
-				input:focus
 					background-color: #E7E7E7
-					color: black
+					text-indent: 4px
+					color: #373737
+				input::-webkit-input-placeholder
+					color: #373737
+				input::-moz-input-placeholder
+					color: #373737
 #clearsearch
 	display: inline-block 
 	margin-left: -23px
@@ -1471,7 +1489,7 @@ div#top-video-name
 						width: 150px
 						height: 50px
 						font-weight: bold
-						font-size: 10px
+						font-size: 11px
 						text-wrap: suppress
 						overflow: hidden
 						text-overflow: ellipsis
@@ -1807,6 +1825,7 @@ div#top-video-name
 	margin-top: 5px
 	background-color: #E7E7E7
 	font-family: FontFamily
+	color: #373737
 	li.ui-menu-item
 		margin-left: -40px
 		width: 290px
@@ -2132,7 +2151,7 @@ div#top-video-name
 	position: absolute
 	margin-left: 2px
 	z-index: 10000
-	margin-top: 14px
+	margin-top: 23px
 	margin-left: 605px
 	width: 30px
 	padding: 3px
@@ -2387,7 +2406,7 @@ a#fdbk_tab
 #slider-ball
 	position: absolute
 	margin-left: 66px
-	margin-top: 2px
+	margin-top: 4px
 	cursor: pointer
 	pointer-events: none
 	z-index: 4

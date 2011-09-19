@@ -582,7 +582,7 @@ div.historyContainer .history .videoHistory {
   width: 145px;
   height: 38px;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 11px;
   overflow: hidden;
   pointer-events: none;
 }
@@ -1052,8 +1052,17 @@ button
   -moz-border-top-left-radius: 2px;
   -webkit-border-top-left-radius: 2px;
 }
+#room-modal #searchbar h3 {
+  font-size: 36px;
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 7px;
+  text-indent: 8px;
+  color: #fff;
+}
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
+  display: none;
   width: 960px;
   height: 54px;
 }
@@ -1089,7 +1098,7 @@ button
   border-collapse: collapse;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header {
-  background-color: #000;
+  background-color: #141414;
   color: #fff;
   height: 30px;
 }
@@ -1141,9 +1150,11 @@ button
   margin-left: 8px;
   display: inline-block;
   width: 264px;
-  height: 50px;
+  max-height: 50px;
   vertical-align: top;
-  margin-top: 15px;
+  margin-top: 8px;
+  font-size: 14px;
+  margin-bottom: 5px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;
@@ -1157,6 +1168,7 @@ button
   font-weight: bold;
   text-align: center;
   height: 28px;
+  margin-top: -8px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .num-djs {
   font-size: 14px;
@@ -1180,6 +1192,7 @@ button
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-room-name {
   font-size: 16px;
+  margin-top: -1px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-video-name {
   font-size: 14px;
@@ -1190,11 +1203,10 @@ button
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-history-container {
   display: inline-block !important;
   list-style-type: none;
-  margin-top: -1px;
   float: right;
-  height: 54px;
+  height: 46px;
   vertical-align: top;
-  margin-top: 11px;
+  margin: 7px 0 2px 0;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #313131;
@@ -1265,12 +1277,18 @@ button
 .videoThumbnailContainer {
   display: inline-block;
   position: relative;
+  height: 40px;
+  width: 70px;
+  overflow: hidden;
+  margin-right: 5px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .videoThumbnailContainer .videoThumbnail {
   width: 72px;
   height: 54px;
-  margin-right: 4px;
-  border-radius: 2px;
+  margin-top: -7px;
 }
 #video-div {
   -webkit-border-top-left-radius: 2px;
@@ -1533,13 +1551,15 @@ background-color: green,
   padding: 0;
   border: 0;
   outline: 0;
-  background-color: #292929;
-  text-indent: 4px;
-  color: #c0c0c0;
-}
-#browseVideosContainer #browseVideosVideosContainer #searchBar .inputBox input:focus {
   background-color: #e7e7e7;
-  color: #000;
+  text-indent: 4px;
+  color: #373737;
+}
+#browseVideosContainer #browseVideosVideosContainer #searchBar .inputBox input::-webkit-input-placeholder {
+  color: #373737;
+}
+#browseVideosContainer #browseVideosVideosContainer #searchBar .inputBox input::-moz-input-placeholder {
+  color: #373737;
 }
 #clearsearch {
   display: inline-block;
@@ -1676,7 +1696,7 @@ background-color: #4C4C4C,
   width: 150px;
   height: 50px;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 11px;
   text-wrap: suppress;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2071,6 +2091,7 @@ background-color: #4C4C4C,
   margin-top: 5px;
   background-color: #e7e7e7;
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  color: #373737;
 }
 .ui-autocomplete li.ui-menu-item {
   margin-left: -40px;
@@ -2453,7 +2474,7 @@ background-color: #4C4C4C,
   position: absolute;
   margin-left: 2px;
   z-index: 10000;
-  margin-top: 14px;
+  margin-top: 23px;
   margin-left: 605px;
   width: 30px;
   padding: 3px;
@@ -2749,7 +2770,7 @@ a#fdbk_tab {
 #slider-ball {
   position: absolute;
   margin-left: 66px;
-  margin-top: 2px;
+  margin-top: 4px;
   cursor: pointer;
   pointer-events: none;
   z-index: 4;
