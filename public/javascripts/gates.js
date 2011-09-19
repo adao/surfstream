@@ -63,7 +63,7 @@ window.fbAsyncInit = function() {
 		window.promoApproved = true;
 		input.keyup(function(){});
 		$("#promoBox").css("background", "#A5F2AA")
-		setTimeout(function(){$("#promoBox").fadeOut(function(){setTimeout(function(){$("#fb-auth-new").fadeIn()}, 300)})}, 600);
+		setTimeout(function(){$("#promoBox").fadeOut(function(){setTimeout(function(){$("#fb-auth-new").fadeIn()}, 300)})}, 600); 
 		//$("#check-box").show();
 	});
 	socket_init.on("promo:bad", function() {
@@ -4540,7 +4540,7 @@ function nextFDVideo() {
 			},
 			{
 				"videoId": "-BrDlrytgm8",
-				"startTime": 0
+				"startTime": 30
 			},
 			{
 				"videoId": "lI7H7ForuwA",
@@ -4583,16 +4583,16 @@ function nextFDVideo() {
 				"startTime": 3
 			},
 			{
-				"videoId": "5x82FAuoHGM",
-				"startTime": 150
+				"videoId": "PQMJCOT2wlQ",
+				"startTime": 55
 			},
 			{
 				"videoId": "Xe0gIFxYhrk",
 				"startTime": 30
 			},
 			{
-				"videoId": "qDZZElrSluA",
-				"startTime": 1
+				"videoId": "_8yGGtVKrD8",
+				"startTime": 230
 			},
 			{
 				"videoId": "p3tZPH5my-0",
@@ -4659,12 +4659,8 @@ function nextFDVideo() {
 				"startTime": 27
 			},
 			{
-				"videoId": "QjWJHEmFfPA",
-				"startTime": 35
-			},
-			{
-				"videoId": "UnJX2FiW",
-				"startTime": 178
+				"videoId": "RsnQxdPhskI",
+				"startTime": 39
 			},
 			{
 				"videoId": "l3m9kBzdA34",
@@ -4691,7 +4687,7 @@ function nextFDVideo() {
 				"startTime": 14
 			},
 			{
-				"videoId": "YyqEjatCSe0",
+				"videoId": "YyqEjatCSe0", 
 				"startTime": 10
 			},
 			{
@@ -4732,11 +4728,11 @@ function nextFDVideo() {
 	console.log(window.ss_loopOrder);
 	console.log(window.ss_loopIndex);
 	window.fdplayer.loadVideoById(videoArray.videos[window.ss_loopOrder[window.ss_loopIndex]].videoId, videoArray.videos[window.ss_loopOrder[window.ss_loopIndex]].startTime);
-	//if(window.ss_loopIndex < videoArray.length - 1){
+	if(window.ss_loopIndex < videoArray.videos.length - 1){
 		window.ss_loopIndex = window.ss_loopIndex + 1;
-	//} else {
-	//	window.ss_loopIndex = 0;
-	//}
+	} else {
+		window.ss_loopIndex = 0;
+	}
 };
 
 function fisherYates ( myArray ) {
@@ -4758,14 +4754,16 @@ function onYouTubePlayerReady(playerId) {
  }
 
  if (playerId == "YouTubePlayer-fd") {
-	 console.log("SUOPPP");
+	 var numFdVideos = 46;
  	 window.fdplayer = document.getElementById("YouTubePlayer-fd");
-	 window.ss_loopOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
-	 console.log(window.ss_loopOrder);
-	 //fisherYates(window.ss_loopOrder);
+	 window.ss_loopOrder = new Array(); 
+	 for(var i = 0; i < numFdVideos + 1; i++){
+	 	window.ss_loopOrder[i] = i;
+	 }
+	fisherYates(window.ss_loopOrder);
 	 window.ss_loopIndex = 0;
 	 nextFDVideo();
-	 window.ss_fdLoop = setInterval("nextFDVideo()", 12000);
+	 window.ss_fdLoop = setInterval("nextFDVideo()", 14000);
  }
 
  if (!window.YTPlayer) {
