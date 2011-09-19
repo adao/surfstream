@@ -63,6 +63,7 @@ window.fbAsyncInit = function() {
 		window.promoApproved = true;
 		input.keyup(function(){});
 		$("#promoBox").css("background", "#A5F2AA")
+		setTimeout(function(){$("#promoBox").fadeOut(function(){setTimeout(function(){$("#fb-auth-new").fadeIn()}, 300)})}, 600); 
 		//$("#check-box").show();
 	});
 	socket_init.on("promo:bad", function() {
@@ -75,6 +76,7 @@ window.fbAsyncInit = function() {
 		$("#email-form-text").html("Email added to the list");
 	});
 	socket_init.on("email:receivedWithFBID", function() {
+		initFDPlayer();
 		showSplash();
 		var name =  window.logged_in_fb_user.name;
 		$("#email-form-text").html("<img src=\'http://graph.facebook.com/" + window.logged_in_fb_user.id + "/picture\', id='fd-fb-photo' > <div id='email-message'> <span id='hi-message' >Hi " + window.logged_in_fb_user.name + "!</span> <span id='email-message-text'>" + "We'll send a promo code to</span> <span id='user-email'>" + window.logged_in_fb_user.email + "</span> <span id='email-message-text-2'> as soon as we can!</span> <span id='sig'> --Surfstream Team </sig></div>");
@@ -104,10 +106,6 @@ window.fbAsyncInit = function() {
 					}
 				}
 			  break;
-			case "promoNeeded":
-				alert("SORRY NO PROMO BUD! WOULD YOU LIKE US TO EMAIL YOU A PROMO CODE TO " + response.email + "?");
-				initFDPlayer();
-				break;
 			default:
 				mpq.track("error", {mp_note: "Gate problem: response was " + response + ", details were " + response.details});
 				break;
@@ -446,6 +444,7 @@ $(function() {
    this.curDJ = "__none__";
    this.sofaUsers = [];
    this.rotateRemoteSign = true;
+	 this.chatMap = {};
    $("#feedbackSpan").click(function() {
     feedback_widget.show();
    })
@@ -1519,6 +1518,10 @@ $(function() {
    this.$(".thumbContainer").click({
     cell: this.options
    }, this.previewVideo);
+
+	$(".addToQueue").tipsy({
+    gravity: 'w',
+   });
   },
 
 
@@ -2868,7 +2871,8 @@ $(function() {
 
   render: function(nowPlayingMsg) {
    $(this.el).html(this.chatCellVideoTemplate({
-    title: this.options.videoTitle
+    title: this.options.videoTitle,
+		vidID: this.options.videoID
    }));
 	 this.$(".videoChatImg").attr("src",ss_idToImg(this.options.videoID));
    return this;
@@ -3068,13 +3072,16 @@ $(function() {
 
 	 $("#share-video-button").click(function(){
 		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "remote"});
+		var nowPlaying = window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid");
    	FB.ui({
 	    method: 'feed',
 	    display: 'popup',
-	    name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
-	    link: this.link,
-	    caption: 'Come watch videos with me',
-	    description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
+	    name: nowPlaying.title,
+	    link: "www.youtube.com/watch?v="+nowPlaying.videoId,
+	    description: "Watch videos with me in the " + SurfStreamApp.inRoomName+  " channel on surfstream",
+			picture: ss_idToImg(nowPlaying.videoId),
+		  properties: {"Join Now! Spots limited. Promo Code FBFRIEND": {text: "www.surfstream.tv", href: document.location.toString()}},
+		 	actions: [{name: "Surf With Me", link: document.URL}]
 	   }, function(response) {
 	    if (response.post_id) {
 				if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Made", {source: "remote"});
@@ -3087,6 +3094,24 @@ $(function() {
    this.chats = [];
    this.full = false;
 
+	 $(".chatShare").live("click", function(e){
+		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "chat"});
+		var nowPlaying = {videoId: $(e.target.parentNode).children().filter(".nowPlayingYTID").html(), title: $(e.target.parentNode).children().filter(".nowPlayingHiddenTitle").html()};
+   	FB.ui({
+	    method: 'feed',
+	    display: 'popup',
+	    name: nowPlaying.title,
+	    link: "www.youtube.com/watch?v="+nowPlaying.videoId,
+	    description: "Watch videos with me in the " + SurfStreamApp.inRoomName+  " channel on surfstream",
+			picture: ss_idToImg(nowPlaying.videoId),
+		  properties: {"Join Now! Spots limited. Promo Code FBFRIEND": {text: "www.surfstream.tv", href: document.location.toString()}},
+		 	actions: [{name: "Surf With Me", link: document.URL}]
+	   }, function(response) {
+	    if (response.post_id) {
+				if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Made", {source: "chat"});
+			}
+		 });
+	 });
    $("#ch-up").click({
     theatre: this
    }, function(e) {
@@ -3373,7 +3398,10 @@ $(function() {
    var fbID = fbid;
    userPic.attr('latest_txt', text);
    userPic.tipsy("show");
-   setTimeout(function() {
+   if (SurfStreamApp.chatMap[fbid]) {
+		clearTimeout(SurfStreamApp.chatMap[fbid]);
+	 }
+   SurfStreamApp.chatMap[fbid] = setTimeout(function() {
     if ($("#avatarChat_" + fbID).length > 0) userPic.tipsy("hide");
    }, 3000);
   }
@@ -3692,7 +3720,7 @@ $(function() {
     method: 'feed',
     display: 'popup',
     name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
-    link: this.link,
+    link: document.URL,
     caption: 'Come watch videos with me',
     description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
    }, function(response) {
@@ -4518,7 +4546,12 @@ $(function() {
    ":rID": "joinRoom"
   },
 
-  joinRoom: function(rID) {
+  joinRoom: function(locationFragment) {
+	  var trueURL = $.url(window.location);
+		var rID = trueURL.segment(1);
+		var params = trueURL.param();
+		console.log(rID + " is the rID, extras are " + trueURL.param().toString());
+		this.navigate(rID, false);
 		if (rID != "") {
    		SocketManagerModel.joinRoom(rID, false, rID.replace(/-+/g, ' '));
   	} else {
@@ -4566,12 +4599,12 @@ function nextFDVideo() {
 	var videoArray = {
 		"videos": [
 			{
-				"videoId": "SDTZ7iX4vTQ",
-				"startTime": 30
+				"videoId": "bzE-IMaegzQ",
+				"startTime": 77
 			},
 			{
-				"videoId": "DYWIVLDaP6U",
-				"startTime": 4
+				"videoId": "-BrDlrytgm8",
+				"startTime": 30
 			},
 			{
 				"videoId": "lI7H7ForuwA",
@@ -4582,52 +4615,176 @@ function nextFDVideo() {
 				"startTime": 4
 			},
 			{
-				"videoId": "B8ISzf2pryI",
-				"startTime": 40
+				"videoId": "wC6DuckeJUM",
+				"startTime": 24
 			},
 			{
-				"videoId": "YQ1LI-NTa2s",
-				"startTime": 23
+				"videoId": "ess9bRJ0bPw",
+				"startTime": 7
 			},
 			{
-				"videoId": "9i1MXHGB8g0",
-				"startTime": 75
+				"videoId": "L64c5vT3NBw",
+				"startTime": 37
 			},
 			{
-				"videoId": "N2bCc0EGP6U",
-				"startTime": 124
+				"videoId": "AEPvSo8bE2I",
+				"startTime": 2
 			},
 			{
 				"videoId": "zE0IzAsIVWk",
 				"startTime": 560
 			},
 			{
-				"videoId": "btuxO-C2IzE",
-				"startTime": 58
+				"videoId": "CwmtkFPYXsg",
+				"startTime": 30
 			},
 			{
 				"videoId": "k8w-qZEiNsY",
 				"startTime": 38
 			},
 			{
-				"videoId": "txqiwrbYGrs",
-				"startTime": 16
+				"videoId": "n9APqLA2YKs",
+				"startTime": 3
 			},
 			{
-				"videoId": "5x82FAuoHGM",
-				"startTime": 150
+				"videoId": "PQMJCOT2wlQ",
+				"startTime": 55
 			},
 			{
 				"videoId": "Xe0gIFxYhrk",
 				"startTime": 30
 			},
 			{
-				"videoId": "qDZZElrSluA",
-				"startTime": 1
+				"videoId": "_8yGGtVKrD8",
+				"startTime": 230
 			},
 			{
 				"videoId": "p3tZPH5my-0",
 				"startTime": 47
+			},
+			{
+				"videoId": "Vw4KVoEVcr0",
+				"startTime": 28
+			},
+			{
+				"videoId": "quwebVjAEJA",
+				"startTime": 42
+			},
+			{
+				"videoId": "d6Vqp6UveIU",
+				"startTime": 188
+			},
+			{
+				"videoId": "JnCiTSzYHRM",
+				"startTime": 20
+			},
+			{
+				"videoId": "8WPtEGOp5rI",
+				"startTime": 16
+			},
+			{
+				"videoId": "kYSoy71ib7A",
+				"startTime": 13
+			},
+			{
+				"videoId": "NEmDHO9rLGY",
+				"startTime": 0
+			},
+			{
+				"videoId": "cFAGUAl8lxE",
+				"startTime": 124
+			},
+			{
+				"videoId": "6PKQE8FM2Uw",
+				"startTime": 28
+			},
+			{
+				"videoId": "XKcChGsDqnU",
+				"startTime": 8
+			},
+			{
+				"videoId": "o0oHlX8Kmxk",
+				"startTime": 22
+			},
+			{
+				"videoId": "miaAC3d4RDU",
+				"startTime": 5
+			},
+			{
+				"videoId": "JOl4vwhwkW8",
+				"startTime": 60
+			},
+			{
+				"videoId": "T36A-H8dPhI",
+				"startTime": 80
+			},
+			{
+				"videoId": "WEh0JoSki-Y",
+				"startTime": 27
+			},
+			{
+				"videoId": "RsnQxdPhskI",
+				"startTime": 39
+			},
+			{
+				"videoId": "l3m9kBzdA34",
+				"startTime": 8
+			},
+			{
+				"videoId": "dPLWKBWkn3s",
+				"startTime": 108
+			},
+			{
+				"videoId": "yoOwCSgvNs0",
+				"startTime": 10
+			},
+			{
+				"videoId": "JhlfT-x6Ys0",
+				"startTime": 14
+			},
+			{
+				"videoId": "vwy47ZzR780",
+				"startTime": 4
+			},
+			{
+				"videoId": "cMkimxS_swA",
+				"startTime": 14
+			},
+			{
+				"videoId": "YyqEjatCSe0", 
+				"startTime": 10
+			},
+			{
+				"videoId": "0-1D_MJzsNU",
+				"startTime": 8
+			},
+			{
+				"videoId": "U8vvhGixWQQ",
+				"startTime": 18
+			},
+			{
+				"videoId": "dTHWBSluUjU",
+				"startTime": 85
+			},
+			{
+				"videoId": "RgFVlkGw7XY",
+				"startTime": 20
+			},
+			{
+				"videoId": "uSEZ8cgGHgo",
+				"startTime": 25
+			},
+			{
+				"videoId": "j2odOu0Oguo",
+				"startTime": 5
+			},
+			{
+				"videoId": "XkclYFNBbpA",
+				"startTime": 0
+			},
+			{
+				"videoId": "YZEbBZ2IrXE",
+				"startTime": 5
 			}
 		]
 	};
@@ -4635,7 +4792,11 @@ function nextFDVideo() {
 	console.log(window.ss_loopOrder);
 	console.log(window.ss_loopIndex);
 	window.fdplayer.loadVideoById(videoArray.videos[window.ss_loopOrder[window.ss_loopIndex]].videoId, videoArray.videos[window.ss_loopOrder[window.ss_loopIndex]].startTime);
-	window.ss_loopIndex = window.ss_loopIndex + 1;
+	if(window.ss_loopIndex < videoArray.videos.length - 1){
+		window.ss_loopIndex = window.ss_loopIndex + 1;
+	} else {
+		window.ss_loopIndex = 0;
+	}
 };
 
 function fisherYates ( myArray ) {
@@ -4657,14 +4818,16 @@ function onYouTubePlayerReady(playerId) {
  }
 
  if (playerId == "YouTubePlayer-fd") {
-	 console.log("SUOPPP");
+	 var numFdVideos = 46;
  	 window.fdplayer = document.getElementById("YouTubePlayer-fd");
-	 window.ss_loopOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
-	 console.log(window.ss_loopOrder);
-	 fisherYates(window.ss_loopOrder);
+	 window.ss_loopOrder = new Array(); 
+	 for(var i = 0; i < numFdVideos + 1; i++){
+	 	window.ss_loopOrder[i] = i;
+	 }
+	fisherYates(window.ss_loopOrder);
 	 window.ss_loopIndex = 0;
 	 nextFDVideo();
-	 window.ss_fdLoop = setInterval("nextFDVideo()", 12000);
+	 window.ss_fdLoop = setInterval("nextFDVideo()", 14000);
  }
 
  if (!window.YTPlayer) {

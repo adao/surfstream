@@ -305,14 +305,16 @@ io.sockets.on('connection', function(socket) {
 							socketId: socket.id, 
 							userId: ssUser.ssId,
 							fbId: ssUser.id, 
-							socket: socket
+							socket: socket,
+							avatar: ssUser.avatarSettings
 					  });
+						
 						currUser.initializeAndSendPlaylists(socket, roomManager, userManager);
 						currUser.sendLikes(socket);
 						StagingUsers[socket.id] = currUser; 
-						console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
-							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>');
-						
+						console.log('\n\n[   zion   ] [socket][user:startApp]: User has logged on <name,ss_id,fb_id>: '
+							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>'); 
+								
 					}
 				}
 			});
@@ -348,14 +350,13 @@ io.sockets.on('connection', function(socket) {
 					socketId: socket.id,
 					userId: ssUser.ssId,
 					fbId: ssUser.fbId, 
-					socket: socket
+					socket: socket,
+					avatar: newAvatarSettings
 			  });
-				console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on for the first time <name,ss_id,fb_id>: '
-					+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
-					
+				
 				StagingUsers[socket.id] = currUser;
 				var queue = new models.Playlist({name: "My Queue", videos: new models.VideoCollection()});
-				var facebookPlaylist = new models.Playlist({name: "My Facebook Videos", videos: new models.VideoCollection()});
+				var facebookPlaylist = new models.Playlist({name: "Facebook Videos", videos: new models.VideoCollection()});
 				var firstPlaylist = new models.Playlist({name: "New Playlist", videos: new models.VideoCollection()});
 				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 0, JSON.stringify(queue), 1, JSON.stringify(facebookPlaylist), 2, JSON.stringify(firstPlaylist), function(err, reply) {
 					if (err) {
@@ -367,10 +368,13 @@ io.sockets.on('connection', function(socket) {
 							} else {
 								socket.emit("playlist:importFacebook");
 								currUser.initializeAndSendPlaylists(socket, roomManager, userManager);
+								console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on for the first time <name,ss_id,fb_id>: '
+									+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
 							}
 						});
 					}
-				});
+				}); 
+			
 			});
 		}
 	});
