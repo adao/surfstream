@@ -1520,6 +1520,10 @@ $(function() {
    this.$(".thumbContainer").click({
     cell: this.options
    }, this.previewVideo);
+
+	$(".addToQueue").tipsy({
+    gravity: 'w',
+   });
   },
 
 
