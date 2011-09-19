@@ -586,7 +586,7 @@ $(function() {
 	   }, function(e) {
 		  if (e.data.modal.options.isFirstVisit) return;
 			e.data.modal.remove();
-			if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
+			if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 			$("#roomsList").after("<div id=avatar-picker-modal></div>")
 			$("#change-avatar").hide();	
 			$("#modalBG").hide();	
@@ -598,7 +598,7 @@ $(function() {
     modal: this
    }, function(e) {
 	  if (e.data.modal.options.isFirstVisit) return;
-		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
+		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 		e.data.modal.remove();
 		$("#roomsList").after("<div id=avatar-picker-modal></div>")
 		$("#change-avatar").hide();	
@@ -799,9 +799,9 @@ $(function() {
 				}
 				
 			});
-			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
+			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 		} else {
-			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
+			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Save and Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000)  });
 			SocketManagerModel.updateAvatar();
 			this.closePicker();		
 		}
@@ -815,6 +815,7 @@ $(function() {
 		$("#change-avatar").hide();	
 		$("#edit-profile").hide();	
 		$("#logout").hide();
+		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 	},
 
 	handlePickerElClick: function(e) {
