@@ -1089,7 +1089,7 @@ button
   border-collapse: collapse;
 }
 #room-modal #roomsWrapper table#roomsTable tr.table-header {
-  background-color: #000;
+  background-color: #141414;
   color: #fff;
   height: 30px;
 }
@@ -1141,9 +1141,11 @@ button
   margin-left: 8px;
   display: inline-block;
   width: 264px;
-  height: 50px;
+  max-height: 50px;
   vertical-align: top;
-  margin-top: 15px;
+  margin-top: 8px;
+  font-size: 14px;
+  margin-bottom: 5px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td {
   border-right: 1px solid #585858;
@@ -1157,6 +1159,7 @@ button
   font-weight: bold;
   text-align: center;
   height: 28px;
+  margin-top: -8px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .num-djs {
   font-size: 14px;
@@ -1180,6 +1183,7 @@ button
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-room-name {
   font-size: 16px;
+  margin-top: -1px;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-name-container .listed-video-name {
   font-size: 14px;
@@ -1190,11 +1194,10 @@ button
 #room-modal #roomsWrapper table#roomsTable tr.room-row td .room-history-container {
   display: inline-block !important;
   list-style-type: none;
-  margin-top: -1px;
   float: right;
-  height: 54px;
+  height: 46px;
   vertical-align: top;
-  margin-top: 11px;
+  margin: 7px 0 2px 0;
 }
 #room-modal #roomsWrapper table#roomsTable tr.room-row:nth-child(odd) {
   background-color: #313131;
@@ -1265,12 +1268,18 @@ button
 .videoThumbnailContainer {
   display: inline-block;
   position: relative;
+  height: 40px;
+  width: 70px;
+  overflow: hidden;
+  margin-right: 5px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
 }
 .videoThumbnailContainer .videoThumbnail {
   width: 72px;
   height: 54px;
-  margin-right: 4px;
-  border-radius: 2px;
+  margin-top: -7px;
 }
 #video-div {
   -webkit-border-top-left-radius: 2px;
@@ -1710,14 +1719,16 @@ background-color: #4C4C4C,
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .cellButtons .remove,
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .cellButtons .remove:hover {
   margin-top: 10px;
-  height: 15px;
-  width: 15px;
+  height: 18px;
+  width: 19px;
   border: none;
   cursor: pointer;
   display: block;
   background: transparent;
   font-size: 10px;
   color: #c0c0c0;
+  margin-left: -2px;
+  margin-top: 10px;
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCQjlCMTUzNERBQTMxMUUwQjI2ODk0Rjg0NURBN0IzQSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCQjlCMTUzNURBQTMxMUUwQjI2ODk0Rjg0NURBN0IzQSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkJCOUIxNTMyREFBMzExRTBCMjY4OTRGODQ1REE3QjNBIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkJCOUIxNTMzREFBMzExRTBCMjY4OTRGODQ1REE3QjNBIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+nrGYRAAAAU1JREFUeNqE088rhEEYwPE1Uf4D3Byc2LUHJzchHBwdkJAiEfInOHJQ0pKUkB+HLWcUvRdcnFY2bo5rlYMcHH2fet56GjNr6rNvM+88z+zMM29dkiQZbWu4x1Xm/7aAHxzU60APRtCLN7zWCJY5c/jGgyRYxzDadUIRY3gOBA/iCE3a33H83OLTTMrhDFkveAiHJlhaxemeZ1EyLzpxgg7tD8h+0WzmXGLFaecF43gyE/LYxzz20GLeyaLTqDozKHse9f5JN3bR6gVP4l06zttnWQ/wLlKBC0zJyumAC0wq6yGGWiFduVYCObDVSIINvzouUOdjtEUSdOFcq/QnQajOsud+PJqxrJY4lyZoQF+kzou4wYxXYgk+lafTl4VInSval+AJ73pLkm1J0IiPWJ1NK+lls0mq8jFt4Vo+DF1x2UvoJ5HLtokvLP0KMADu5Uph6pTaegAAAABJRU5ErkJggg==") 50% 50% no-repeat;
 }
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .cellButtons .remove:hover {

@@ -2838,8 +2838,8 @@ $(function() {
 		
 		displayVideoTitle: function(event) {
 			console.log("HRM!");
-			$(event.currentTarget).parent().parent().find(".lastPlayedVideo").removeClass("lastPlayedVideo").css({border: "0px solid white"});
-			$(event.currentTarget).addClass("lastPlayedVideo").css({border: "1px solid white"});
+			//$(event.currentTarget).parent().parent().find(".lastPlayedVideo").removeClass("lastPlayedVideo").css({border: "0px solid white"});
+			//$(event.currentTarget).addClass("lastPlayedVideo").css({border: "1px solid white"});
 			$(event.currentTarget).parent().parent().parent().find(".lastPlayedVideoTitle").text(event.data.videoTitle);
 		},
 		
