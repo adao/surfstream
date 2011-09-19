@@ -1732,7 +1732,7 @@ $(function() {
 			at: 0
 		});
 		var playlistCount = this.get("videos").length;
-		$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[this.get("playlistId")].el).find(".playlist-nameholder-count").text(playlistCount);
+		$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[this.get("playlistId")].el).find(".playlist-nameholder-count").html("&nbsp;" + playlistCount + "&nbsp;");
 	},
 	
 	removeFromPlaylist: function(videoId) {
@@ -1740,7 +1740,7 @@ $(function() {
 	 	var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 	 	this.get("videos").remove(playlistItemModel);
 		var playlistCount = this.get("videos").length;
-		$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[this.get("playlistId")].el).find(".playlist-nameholder-count").text(playlistCount);
+		$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[this.get("playlistId")].el).find(".playlist-nameholder-count").html("&nbsp;" + playlistCount + "&nbsp;");
 		window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
 		SocketManagerModel.deleteFromPlaylist(this.get("playlistId"), videoId);
 	},
@@ -2162,7 +2162,7 @@ $(function() {
 	render: function() {
 		$(this.el).prepend(this.playlistNameholderTemplate({
 			playlist_name: this.options.playlist_nameholder_name,
-			playlist_count: this.options.playlist_count
+			playlist_count: "&nbsp;" + this.options.playlist_count + "&nbsp;"
 		}));
 		$(this.el).val(this.options.playlist_nameholder_value);
 		if (this.options.playlist_nameholder_value == queueId) {
@@ -3135,19 +3135,13 @@ $(function() {
    $("#ch-up").click({
     theatre: this
    }, function(e) {
-		if (typeof(mpq) !== 'undefined') mpq.track("Channel Flip", {
-	    mp_note: "Flipped Up"
-	   });
     var curRoom = SurfStreamApp.inRoom;
     e.data.theatre.flipChannel(curRoom, true);
    });
 
    $("#ch-down").click({
     theatre: this
-   }, function(e) {
-		if (typeof(mpq) !== 'undefined') mpq.track("Channel Flip", {
-	    mp_note: "Flipped Down"
-	   });
+   }, function(e) {		
     var curRoom = SurfStreamApp.inRoom;
     e.data.theatre.flipChannel(curRoom, false);
    });
