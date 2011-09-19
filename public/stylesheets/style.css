@@ -582,7 +582,7 @@ div.historyContainer .history .videoHistory {
   width: 145px;
   height: 38px;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 11px;
   overflow: hidden;
   pointer-events: none;
 }
@@ -1676,7 +1676,7 @@ background-color: #4C4C4C,
   width: 150px;
   height: 50px;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 11px;
   text-wrap: suppress;
   overflow: hidden;
   text-overflow: ellipsis;
