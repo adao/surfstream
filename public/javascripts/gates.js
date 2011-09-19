@@ -3364,6 +3364,7 @@ $(function() {
 		SurfStreamApp.get("mainView").sideBarView.showVideoManagerView();
 		SurfStreamApp.get("mainView").sideBarView.videoManagerView.showPlaylistCollectionView();
 		SurfStreamApp.get("userModel").get("playlistCollection").setActivePlaylist(queueId);
+		SurfStreamApp.get("mainView").sideBarView.videoManagerView.calculatePlaylistHeight();
     event.data.theatreView.valChat("You can't play a video without any videos in your queue");
     return;
    }
