@@ -1052,8 +1052,17 @@ button
   -moz-border-top-left-radius: 2px;
   -webkit-border-top-left-radius: 2px;
 }
+#room-modal #searchbar h3 {
+  font-size: 36px;
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 7px;
+  text-indent: 8px;
+  color: #fff;
+}
 #room-modal #searchbar form.roomSearch {
   display: inline-block;
+  display: none;
   width: 960px;
   height: 54px;
 }
