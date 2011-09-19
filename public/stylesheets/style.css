@@ -1,8 +1,8 @@
-font-face {
+@font-face {
   font-family: "custom";
   src: url("/resources/candara.ttf") format("truetype");
 }
-font-face {
+@font-face {
   font-family: "custom";
   src: url("/resources/candarabold.ttf") format("truetype");
   font-weight: bold;
@@ -594,7 +594,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -82px;
   margin-top: 10px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 75px;
   text-align: left;
   text-indent: 1px;
@@ -701,7 +701,7 @@ div.historyContainer .history .videoHistory {
   margin-left: -41px;
   margin-top: 6px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   width: 37px;
   text-align: left;
   text-indent: 0.5px;
@@ -1400,7 +1400,7 @@ background-color: green,
 }
 .droppable-playlist-nameholder,
 .dropped-playlist-nameholder {
-  background: rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.2);
   border: 1px solid #808080;
   color: #fff;
 }
@@ -1415,7 +1415,7 @@ background-color: green,
 .active-playlist-nameholder,
 .active-playlist-nameholder:hover,
 .bv-nameholder.active-playlist-nameholder:hover {
-  background: rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.2);
 }
 #playlist-collection-input::-webkit-input-placeholder {
   color: #c0c0c0;
@@ -1454,7 +1454,7 @@ background-color: green,
   padding: 2px;
 }
 .bv-nameholder:hover {
-  background: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.1);
 }
 .playlist-nameholder.selected-non-playlist-nameholder {
   color: #c0c0c0;
@@ -1687,7 +1687,7 @@ background-color: #4C4C4C,
   text-align: left;
   text-indent: 1px;
   font-size: 10px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .videoInfo .views {
@@ -1793,7 +1793,7 @@ background-color: #4C4C4C,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 #playlist-display #video-list-container .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -1877,7 +1877,7 @@ background-color: #4C4C4C,
   text-align: left;
   text-indent: 0.5px;
   font-size: 5px;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.8);
   font-weight: bold;
 }
 .shrunken-playlist-cell .cellInfo .videoInfo .views {
@@ -2281,7 +2281,7 @@ background-color: #4C4C4C,
   line-height: 50%;
 }
 #fullscreen.fully {
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: 0;
@@ -2291,7 +2291,7 @@ background-color: #4C4C4C,
   margin-top: 0px;
 }
 #fullscreen.fully:hover {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .nametip {
   width: 70px;
@@ -2310,7 +2310,7 @@ background-color: #4C4C4C,
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
   left: 50%;
   margin-left: -225px;
-  background: rgba(50,50,50,0.70);
+  background: rgba(50,50,50,0.7);
   box-shadow: 0px 0px 10px #000;
   text-align: center;
 }
@@ -2392,7 +2392,7 @@ background-color: #4C4C4C,
 #nowPlayingFull .chFS:hover,
 #nowPlayingFull .voteContainerFS:hover {
   background-color: #34b7fe;
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.6);
 }
 .chFS,
 .voteContainerFS,
@@ -2449,7 +2449,7 @@ background-color: #4C4C4C,
 }
 #fullscreenIcon.fully {
   background-color: #fff;
-  background: rgba(255,255,255,0.30);
+  background: rgba(255,255,255,0.3);
   position: fixed;
   margin-left: 0px;
   bottom: -13px;
@@ -2468,6 +2468,11 @@ background-color: #4C4C4C,
   position: absolute;
   display: none;
   z-index: 5;
+}
+@-moz-document url-prefix() {
+	#tutorial {
+	  margin-left: -50%;
+	}
 }
 #tutorialStart {
   position: absolute;
