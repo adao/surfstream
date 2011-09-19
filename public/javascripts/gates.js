@@ -1286,10 +1286,10 @@ $(function() {
 	toggleVideoManager: function(event) {
 		if (this.sideBarView.videoManagerExpanded) {
 			this.sideBarView.hideVideoManagerView();
-			this.collapseBodyButton.css("background", "url('/images/room/newicons/expandable.png') 50% 50% no-repeat");
+			this.collapseBodyButton.animate({rotate: "0deg"}, 'linear', 300);
 		} else {
 			this.sideBarView.showVideoManagerView();
-			this.collapseBodyButton.css("background", "url('/images/room/newicons/expanded.png') 50% 50% no-repeat");
+			this.collapseBodyButton.animate({rotate: "90deg"}, 'linear', 300);
 			this.calculatePlaylistHeight();
 		}
 	},
