@@ -1367,7 +1367,7 @@ $(function() {
     $("#youtubeInput").autocomplete("close");
    });
 
-   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
+   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(event, cell) {
     if (event.type == "mouseover") {
      if (cell.currentTarget.className == "videoInfo") {
       $(cell.currentTarget.parentNode.parentNode.children[1]).show();
@@ -2172,7 +2172,7 @@ $(function() {
 	
 	setActivePlaylist: function(event) {
 		if (event) {
-			if (event.srcElement.className == "delete-nameholder") {
+			if (event.currentTarget.className == "delete-nameholder") {
 				return;
 			}
 		}
@@ -2916,10 +2916,23 @@ $(function() {
    $("#fullscreenIcon").bind("click", {
     theatre: this
    }, this.fullscreenToggle);
+
+	 $("#lightSwitch").addClass("up");
+	 $("#lightSwitch").click( function(){
+		if(this.className == "up") {
+			this.className = "down";
+			$("#dimRoom").fadeIn();
+			if (typeof(mpq) !== 'undefined') mpq.track("Light Turned Off");
+		} else {
+			this.className = "up";
+			$("#dimRoom").fadeOut();
+			if (typeof(mpq) !== 'undefined') mpq.track("Light Turned On");
+		}
+	 });
    $(".video-div-proxy").hover(
    //onmousein
 
-
+	 
    function(e) {
     $("#fullscreenIcon").stop()
     $("#now-playing-tv").stop()
