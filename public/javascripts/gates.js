@@ -318,6 +318,7 @@ $(function() {
 
   setUserData: function(info) {
 		SurfStreamApp.get("userModel").set({profile: info});
+		SurfStreamApp.get("userModel").set({fbId: info.id});
 		SurfStreamApp.get("mainView").roomModal.hide();
 		SurfStreamApp.get("userModel").set({displayName: info.name})
 	  new AvatarPickerView({isFirstVisit: true});
@@ -2838,8 +2839,8 @@ $(function() {
 		
 		displayVideoTitle: function(event) {
 			console.log("HRM!");
-			$(event.currentTarget).parent().parent().find(".lastPlayedVideo").removeClass("lastPlayedVideo").css({border: "0px solid white"});
-			$(event.currentTarget).addClass("lastPlayedVideo").css({border: "1px solid white"});
+			//$(event.currentTarget).parent().parent().find(".lastPlayedVideo").removeClass("lastPlayedVideo").css({border: "0px solid white"});
+			//$(event.currentTarget).addClass("lastPlayedVideo").css({border: "1px solid white"});
 			$(event.currentTarget).parent().parent().parent().find(".lastPlayedVideoTitle").text(event.data.videoTitle);
 		},
 		
@@ -4171,7 +4172,8 @@ $(function() {
 		app.get("userModel").set({
 			displayName: profile.ss_name,
 			avatarImage: 'https://graph.facebook.com/' + profile.id + '/picture',
-			ssId: profile.ssId
+			ssId: profile.ssId,
+			fbId: profile.id
 		});
 		
 		hideSplash();
@@ -4877,7 +4879,7 @@ function onYouTubePlayerReady(playerId) {
 	 for(var i = 0; i < numFdVideos + 1; i++){
 	 	window.ss_loopOrder[i] = i;
 	 }
-	fisherYates(window.ss_loopOrder);
+	 fisherYates(window.ss_loopOrder);
 	 window.ss_loopIndex = 0;
 	 nextFDVideo();
 	 window.ss_fdLoop = setInterval("nextFDVideo()", 14000);
