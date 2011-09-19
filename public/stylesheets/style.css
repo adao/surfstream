@@ -22,7 +22,7 @@ button {
 #header {
   z-index: 40;
 }
-#header img#logo {
+#header img {
   margin-top: -4px;
   cursor: pointer;
 }
