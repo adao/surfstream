@@ -321,6 +321,8 @@ $(function() {
 		SurfStreamApp.get("mainView").roomModal.hide();
 		SurfStreamApp.get("userModel").set({displayName: info.name})
 	  new AvatarPickerView({isFirstVisit: true});
+		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration", {});
+		window.avatar_picker_open_start_time = new Date().getTime();
   },
 	
 	initializePlaylists: function(userPlaylists, activePlaylistId) {
@@ -578,11 +580,13 @@ $(function() {
 		$(this.el).html(this.make('img', {id:'tutorial', src:"/images/room/val-info.png"}));
 		$(this.el).fadeIn();
 		$("#tutorial").fadeIn();
+		if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Opened", {});
 		$("#modalBG").click({
 	    modal: this
 	   }, function(e) {
 		  if (e.data.modal.options.isFirstVisit) return;
 			e.data.modal.remove();
+			if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 			$("#roomsList").after("<div id=avatar-picker-modal></div>")
 			$("#change-avatar").hide();	
 			$("#modalBG").hide();	
@@ -594,6 +598,7 @@ $(function() {
     modal: this
    }, function(e) {
 	  if (e.data.modal.options.isFirstVisit) return;
+		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 		e.data.modal.remove();
 		$("#roomsList").after("<div id=avatar-picker-modal></div>")
 		$("#change-avatar").hide();	
@@ -794,9 +799,9 @@ $(function() {
 				}
 				
 			});
+			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 		} else {
-			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
-			window.avatar_picker_open_start_time = new Date().getTime();
+			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Save and Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000)  });
 			SocketManagerModel.updateAvatar();
 			this.closePicker();		
 		}
@@ -810,6 +815,7 @@ $(function() {
 		$("#change-avatar").hide();	
 		$("#edit-profile").hide();	
 		$("#logout").hide();
+		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 	},
 
 	handlePickerElClick: function(e) {
@@ -1286,10 +1292,10 @@ $(function() {
 	toggleVideoManager: function(event) {
 		if (this.sideBarView.videoManagerExpanded) {
 			this.sideBarView.hideVideoManagerView();
-			this.collapseBodyButton.css("background", "url('/images/room/newicons/expandable.png') 50% 50% no-repeat");
+			this.collapseBodyButton.animate({rotate: "0deg"}, 300, 'linear');
 		} else {
 			this.sideBarView.showVideoManagerView();
-			this.collapseBodyButton.css("background", "url('/images/room/newicons/expanded.png') 50% 50% no-repeat");
+			this.collapseBodyButton.animate({rotate: "90deg"}, 300, 'linear');
 			this.calculatePlaylistHeight();
 		}
 	},
@@ -1578,8 +1584,9 @@ $(function() {
 		}
 		var playlistItemModel = new PlaylistItemModel(attributes);
 		playlistCollection.addVideoToPlaylist(queueId, playlistItemModel);
-		if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
-	    mp_note: "From search cell view from the button"
+		if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
+	    mp_note: "From search cell view from the button",
+			source: "Search - Button"
 	   });
 	},
 
@@ -2116,12 +2123,14 @@ $(function() {
 					if (toPlaylistId != queueId) {
 						ui.draggable.remove();
 						fromPlaylist.removeFromPlaylist(fromVideoId);
-						if (typeof(mpq) !== 'undefined') mpq.track("Add to playlist", {
-					    mp_note: "From another playlist from drag n drop"
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to Playlist", {
+					    mp_note: "From another playlist from drag n drop",
+							source: "Playlist - Drag and Drop"
 			 	    });
 					} else {
-						if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
-					    mp_note: "From another playlist from drag n drop"
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
+					    mp_note: "From another playlist from drag n drop",
+							source: "Playlist - Drag and Drop"
 			 	    });
 					}
 				} else {
@@ -2139,12 +2148,14 @@ $(function() {
 					});
 					ui.draggable.remove();
 					if (toPlaylistId != queueId) {
-						if (typeof(mpq) !== 'undefined') mpq.track("Add to playlist", {
-					    mp_note: "From search result from drag n drop"
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to Playlist", {
+					    mp_note: "From search result from drag n drop",
+							source: "Search - Drag and Drop"
 			 	    });
 					} else {
-						if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
-					    mp_note: "From search result from drag n drop"
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
+					    mp_note: "From search result from drag n drop",
+							source: "Search - Drag and Drop"
 			 	    });
 					}
 				}
@@ -2367,6 +2378,7 @@ $(function() {
     context: this
    }, this.toTheTop);
    this.options.playlistItemModel.bind("remove", this.removeFromList, this);
+	 
   },
 	
 	initializeViewToTopAndGrow: function() {
@@ -2472,6 +2484,9 @@ $(function() {
 		playlistCell: this
 	 }, this.addToQueue);
    this.options.playlistItemModel.bind("remove", this.removeFromList, this);
+	 this.$(".addToQueue, .remove").tipsy({
+    gravity: 'w'
+   });
   },
 
   removeFromPlaylist: function(event) {
@@ -2509,7 +2524,8 @@ $(function() {
 	 playlistCollection.addVideoToPlaylist(queueId, copyPlaylistItemModel);
    window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
 	 if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
-	    mp_note: "From another playlist through the button"
+	    mp_note: "From another playlist through the button",
+		  source: "Playlist - Button"
 	   });
   },
 
@@ -2691,6 +2707,11 @@ $(function() {
    if (roomName == "") return false;
    var rID = $.trim(roomName).replace(/\s+/g, '-');
    SocketManagerModel.joinRoom(rID, true, roomName);
+	 if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
+			mp_note: "Created",
+			source: "Created Room",
+			roomName: roomName
+	 });
    window.SurfStreamApp.get("mainRouter").navigate("/" + rID, false);
    e.data.modal.hide();
    return false;
@@ -2804,7 +2825,13 @@ $(function() {
 	  clickJoinRoom: function(el) {
 			var rID = $(this).find(".true-room-name").html();
 			if (rID == SurfStreamApp.inRoom) return;
-			SocketManagerModel.joinRoom(rID, false, $(this).find(".listed-room-name").html());
+			var roomName =  $(this).find(".listed-room-name").html();
+			SocketManagerModel.joinRoom(rID, false, roomName);
+			if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
+					mp_note: "Picked From Modal",
+					source: "Modal",
+					roomName: roomName
+			 });
 			window.SurfStreamApp.get("mainRouter").navigate("/" + rID, false);
 			window.SurfStreamApp.get("mainView").roomModal.hide();
 		},
@@ -2923,8 +2950,8 @@ $(function() {
    $("#fullscreenIcon").bind("click", {
     theatre: this
    }, this.fullscreenToggle);
-
-	 $("#lightSwitch").addClass("up");
+	 $("#lightSwitch").removeClass("down");
+	 setTimeout(function(){$("#lightSwitch").addClass("up");}, 200);
 	 $("#lightSwitch").click( function(){
 		if(this.className == "up") {
 			this.className = "down";
@@ -3206,9 +3233,9 @@ $(function() {
    })
    var curIndex = _.indexOf(rIDArray, rID);
    if (up) {
-    curIndex = curIndex + 1;
-   } else {
     curIndex = curIndex - 1;
+   } else {
+    curIndex = curIndex + 1;
    }
 
    if (curIndex < 0) curIndex = rIDArray.length - 1;
@@ -3217,6 +3244,11 @@ $(function() {
 	 var roomName = rIDArray[curIndex].replace(/-+/g, ' ');
 	 SurfStreamApp.get("mainRouter").navigate("/" + rIDArray[curIndex], false);
    SocketManagerModel.joinRoom(rIDArray[curIndex], false, roomName );
+	 if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
+		mp_note: "Flipped Channel " + up ? "Up" : "Down",
+		source: "Remote Ch-" + up ? "Up" : "Down",
+		roomName: roomName
+	 });
   },
 
   fullscreenToggle: function(e) {
@@ -3723,6 +3755,7 @@ $(function() {
    //clip.glue('copy-button', 'copy-button-container');
 	 $("#question-button-container").click(function(){
 			new AvatarPickerView({justTutorial: true});	
+			window.avatar_picker_open_start_time = new Date().getTime();
 	 });
   },
 
@@ -4493,7 +4526,7 @@ $(function() {
   },
 
   joinRoom: function(rID, create, roomName) {
-
+   
    var vidsPlayed = SurfStreamApp.vidsPlayed;
    var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
    SurfStreamApp.vidsPlayed = 0;
@@ -4512,11 +4545,6 @@ $(function() {
 
    $("#clock").hide();
    if (typeof(mpq) !== 'undefined') {
-    mpq.track("Room Joined", {
-     wasDJ: isDJ,
-     roomName: roomName,
-     mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"
-    });
 		mpq.register_once({room: roomName})
    }
    var payload = {
@@ -4574,6 +4602,11 @@ $(function() {
 		this.navigate(rID, false);
 		if (rID != "") {
    		SocketManagerModel.joinRoom(rID, false, rID.replace(/-+/g, ' '));
+			if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
+				mp_note: "Landed from web link",
+				source: "Landing",
+				roomName: rID.replace(/-+/g, ' ')
+			 });
   	} else {
 			SocketManagerModel.loadRoomsInfo();
 		}
