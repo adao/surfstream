@@ -1408,7 +1408,7 @@ $(function() {
 	 var inputBox = $("#searchBar");
 	 if (withSearchBar) {
 		inputBox.slideDown(300, function() {
-			
+		$("#youtubeInput").focus();
 		});
 		$("#searchContainer").animate({"height": height - 36}, 300, function() {
 			
