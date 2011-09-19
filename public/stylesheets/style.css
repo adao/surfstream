@@ -626,10 +626,8 @@ div.historyContainer .history .videoHistory {
 }
 .searchCellContainer .cellButtons button.addToQueue {
   font-size: 9px;
-  height: 50px;
+  height: 80px;
   width: 20px;
-  margin-top: 4px;
-  margin-bottom: 2px;
   border: none;
   color: #d4d4d4;
   background: url("/images/room/add.png") 50% 50% no-repeat;
@@ -1682,21 +1680,23 @@ background-color: #4C4C4C,
   background: transparent;
   font-size: 10px;
   color: #c0c0c0;
-  background: url("/images/room/newicons/clearsearch.png") 50% 50% no-repeat;
+  background: url("/images/room/newicons/remove.png") 50% 50% no-repeat;
 }
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .cellButtons .remove:hover {
   color: #fff;
-  background: url("/images/room/newicons/clearsearch-hover.png") 50% 50% no-repeat;
+  background: url("/images/room/newicons/remove-hover.png") 50% 50% no-repeat;
 }
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .cellButtons .addToQueue {
   border: none;
   height: 18px;
   width: 18px;
-  background: url("/images/room/newicons/add-to-q.png") 50% 50% no-repeat;
-  margin-left: -2px;
+  background: url("/images/room/newicons/add-to-q2.png") 50% 50% no-repeat;
+  margin-left: -1px;
+  margin-top: 9px;
+  vertical-align: top;
 }
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .cellButtons .addToQueue:hover {
-  background: url("/images/room/newicons/add-to-q-hover.png") 50% 50% no-repeat;
+  background: url("/images/room/newicons/add-to-q2-hover.png") 50% 50% no-repeat;
 }
 #playlist-display #video-list-container .videoListCellContainer .cellInfo .cellButtons .queue-text {
   display: inline-block;
