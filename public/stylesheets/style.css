@@ -624,6 +624,7 @@ div.historyContainer .history .videoHistory {
   width: 30px;
   height: 80px;
   margin-left: -13px;
+  vertical-align: top;
 }
 .searchCellContainer .cellButtons button.addToQueue {
   font-size: 9px;
@@ -735,6 +736,7 @@ div.historyContainer .history .videoHistory {
   margin-top: -4px;
   margin-right: 2px;
   padding-bottom: 4px;
+  vertical-align: top;
 }
 .shrunkenSearchCellContainer .cellButtons button.addToQueue {
   font-size: 4px;
