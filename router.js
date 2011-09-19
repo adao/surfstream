@@ -11,7 +11,7 @@ function setupRoutes(app) {
 	});
 	
 	app.get('/', function(req, res){
-		res.render('skeleton', {locals: { title: "surfstream.tv", production: app.enabled("production") }});
+		res.render('skeleton', {locals: { title: "surfstream.tv", production: app.enabled("production"), fulljs: app.enabled("production") ? req.param("deebug", false) :  true }});
 	});
 	
 	app.get('/robots.txt', function(req, res) {
@@ -19,13 +19,8 @@ function setupRoutes(app) {
 	});
 	
 	app.get('/:rID', function(req, res) {
-		res.render('skeleton', {locals: { title: "surfstream.tv", production: app.enabled("production") }});
-	});
-	
-	
-
-	
-	
+		res.render('skeleton', {locals: { title: "surfstream.tv", production: app.enabled("production"), fulljs: app.enabled("production") ? req.param("deebug", false) : true }});
+	});	
     
     app.get('/chat', function(req, res){
 	    res.render('chat', { locals: {title: "surfstream.tv"}});
