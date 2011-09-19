@@ -1368,7 +1368,7 @@ $(function() {
    });
 
    $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
-    if (event.type == "mouseover") {
+    if (cell.type == "mouseover") {
      if (cell.currentTarget.className == "videoInfo") {
       $(cell.currentTarget.parentNode.parentNode.children[1]).show();
      } else {
@@ -3720,11 +3720,13 @@ $(function() {
 
   fbDialog: function() {
 		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "topbar"});
+		console.log(window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").videoId);
    FB.ui({
     method: 'feed',
     display: 'popup',
     name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
     link: document.URL,
+		picture: ss_idToImg(window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").videoId),
     caption: 'Come watch videos with me',
     description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
    }, function(response) {
