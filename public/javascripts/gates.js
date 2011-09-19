@@ -2178,7 +2178,7 @@ $(function() {
 	
 	setActivePlaylist: function(event) {
 		if (event) {
-			if (event.srcElement.className == "delete-nameholder") {
+			if (event.target.className == "delete-nameholder") {
 				return;
 			}
 		}
