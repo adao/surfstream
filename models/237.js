@@ -858,7 +858,6 @@
 		
 		initialize: function() {
 			this.id = this.get('socketId');
-			this.getAvatar();
 			this.playlists = {};
 		},
 		
@@ -878,35 +877,6 @@
 			});
 		},
 		
-		// avatar is now defined as an array, as such:
-		// [bodyID, eyeID, eyesizeID, glassesID, smileID, topID]
-		// corresponding range of acceptable values:
-		// [1-5, 1-3, 1-2, 0-5, 1-5, 0-4]
-		getAvatar: function() {
-			var userId = this.get("userId");
-			var userObj = this;
-			redisClient.get('user:'+userId+':avatar', function(err, reply) {
-				var avatarData, newAvatar;
-				if(err) {
-					console.log("\n\nERROR in getting user "+userId+"'s avatar!\n");
-				} else {
-					avatarData = reply;
-				  console.log('getting avatar for user '+userId+', reply: '+reply);
-					if(reply != 'undefined' && reply != null) {
-						avatarData = reply.split(',');
-						userObj.set({avatar: avatarData});
-					} else { //give them a random first default
-						newAvatar = [Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 3), Math.ceil(Math.random() * 2), Math.ceil(Math.random() * 6) - 1, Math.ceil(Math.random() * 5), Math.ceil(Math.random() * 5) - 1];
-						redisClient.set('user:'+userId+':avatar', newAvatar.toString(), function(err, reply) {
-							if (err) {
-								console.log("Error setting random avatar for user " + userId);
-							}
-						});
-						userObj.set({avatar: newAvatar});
-					}
-				} 
-			});
-		},
 		
 		randLoc: function() {
 			var thisX = Math.random()*X_MAX;
@@ -1079,22 +1049,18 @@
 				console.log ("new user name is " + newUserName)
 				thisUser.set({avatar: newAvatarSettings});
 				var roomIn = uManager.ssIdToRoom[thisUser.get('userId')];
-				redisClient.set('user:'+thisUser.get('userId')+':avatar', newAvatarSettings.toString(), function(err, reply) {
-					if (err) {
-						console.log("Error setting new avatar settings for user " + thisUser.get('userId'));
-					}					
-				});
 				redisClient.get("user:" + thisUser.get('userId') + ":profile", function(err, reply) {
 					if (err) {
 						console.log("Error getting new avatar settings for user " + thisUser.get('userId'));
 					}	else {
 						var profile = JSON.parse(reply);
 						profile.ss_name = newUserName;
+						profile.avatarSettings = newAvatarSettings;
 						redisClient.mset("user:" + thisUser.get('userId') + ":profile", JSON.stringify(profile), "user:fb_id:" + thisUser.get('fbId') + ":profile", JSON.stringify(profile), function(err, reply) {
 							if (err) {
 								console.log("Error setting ssid profile for user " + thisUser.get('userId'));
 							} else {
-								thisUser.set({name: newUserName});
+								thisUser.set({name: newUserName, avatar: newAvatarSettings});
 								if(roomIn){
 									rManager.roomMap[roomIn].sockM.announceAvatarChange(thisUser.get('userId'), thisUser.get('name'), newAvatarSettings);									
 								}

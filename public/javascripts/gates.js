@@ -3030,7 +3030,7 @@ $(function() {
 	    link: "www.youtube.com/watch?v="+nowPlaying.videoId,
 	    description: "Watch videos with me in the " + SurfStreamApp.inRoomName+  " channel on surfstream",
 			picture: ss_idToImg(nowPlaying.videoId),
-		  properties: {"Join Now! Spots limited. Promo Code FBFRIEND": {text: "www.surfstream.tv", href: document.location + SurfStreamApp.inRoom}},
+		  properties: {"Join Now! Spots limited. Promo Code FBFRIEND": {text: "www.surfstream.tv", href: document.location.toString()}},
 		 	actions: [{name: "Surf With Me", link: document.URL}]
 	   }, function(response) {
 	    if (response.post_id) {
@@ -3044,9 +3044,9 @@ $(function() {
    this.chats = [];
    this.full = false;
 
-	 $(".chatShare").live("click", function(){
+	 $(".chatShare").live("click", function(e){
 		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "chat"});
-		var nowPlaying = {videoId: $(this.parentElement).children().filter(".nowPlayingYTID").html(), title: $(this.parentElement).children().filter(".nowPlayingHiddenTitle").html()};
+		var nowPlaying = {videoId: $(e.target.parentNode).children().filter(".nowPlayingYTID").html(), title: $(e.target.parentNode).children().filter(".nowPlayingHiddenTitle").html()};
    	FB.ui({
 	    method: 'feed',
 	    display: 'popup',
@@ -3054,7 +3054,7 @@ $(function() {
 	    link: "www.youtube.com/watch?v="+nowPlaying.videoId,
 	    description: "Watch videos with me in the " + SurfStreamApp.inRoomName+  " channel on surfstream",
 			picture: ss_idToImg(nowPlaying.videoId),
-		  properties: {"Join Now! Spots limited. Promo Code FBFRIEND": {text: "www.surfstream.tv", href: document.location + SurfStreamApp.inRoom}},
+		  properties: {"Join Now! Spots limited. Promo Code FBFRIEND": {text: "www.surfstream.tv", href: document.location.toString()}},
 		 	actions: [{name: "Surf With Me", link: document.URL}]
 	   }, function(response) {
 	    if (response.post_id) {
@@ -4496,7 +4496,12 @@ $(function() {
    ":rID": "joinRoom"
   },
 
-  joinRoom: function(rID) {
+  joinRoom: function(locationFragment) {
+	  var trueURL = $.url(window.location);
+		var rID = trueURL.segment(1);
+		var params = trueURL.param();
+		console.log(rID + " is the rID, extras are " + trueURL.param().toString());
+		this.navigate(rID, false);
 		if (rID != "") {
    		SocketManagerModel.joinRoom(rID, false, rID.replace(/-+/g, ' '));
   	} else {

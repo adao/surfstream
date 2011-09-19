@@ -305,14 +305,16 @@ io.sockets.on('connection', function(socket) {
 							socketId: socket.id, 
 							userId: ssUser.ssId,
 							fbId: ssUser.id, 
-							socket: socket
+							socket: socket,
+							avatar: ssUser.avatarSettings
 					  });
+						
 						currUser.initializeAndSendPlaylists(socket, roomManager, userManager);
 						currUser.sendLikes(socket);
 						StagingUsers[socket.id] = currUser; 
-						console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on <name,ss_id,fb_id>: '
-							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>');
-						
+						console.log('\n\n[   zion   ] [socket][user:startApp]: User has logged on <name,ss_id,fb_id>: '
+							+ '<'+name+','+ssUser.ssId+','+ssUser.id+'>'); 
+								
 					}
 				}
 			});
@@ -348,11 +350,10 @@ io.sockets.on('connection', function(socket) {
 					socketId: socket.id,
 					userId: ssUser.ssId,
 					fbId: ssUser.fbId, 
-					socket: socket
+					socket: socket,
+					avatar: newAvatarSettings
 			  });
-				console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on for the first time <name,ss_id,fb_id>: '
-					+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
-					
+				
 				StagingUsers[socket.id] = currUser;
 				var queue = new models.Playlist({name: "My Queue", videos: new models.VideoCollection()});
 				var facebookPlaylist = new models.Playlist({name: "My Facebook Videos", videos: new models.VideoCollection()});
@@ -367,10 +368,13 @@ io.sockets.on('connection', function(socket) {
 							} else {
 								socket.emit("playlist:importFacebook");
 								currUser.initializeAndSendPlaylists(socket, roomManager, userManager);
+								console.log('\n\n[   zion   ] [socket][user:sendFbId]: User has logged on for the first time <name,ss_id,fb_id>: '
+									+ '<'+ssUser.name+','+ssUser.ssId+','+ssUser.id+'>');
 							}
 						});
 					}
-				});
+				}); 
+			
 			});
 		}
 	});
