@@ -2747,7 +2747,9 @@ $(function() {
 			"mouseover .room-friends-container": "displayFriends",
 			"mouseout .room-friends-container": "hideFriends",
 			"mouseover .room-history": "displayChannelHistory",
-			"mouseout .room-history": "hideChannelHistory"
+			"mouseout .room-history": "hideChannelHistory",
+			"mouseover .friends-hover-container": "displayFriends",
+			"mouseout .friends-hover-container": "hideFriends"
 		},
 
 		initialize: function () {
@@ -2848,7 +2850,7 @@ $(function() {
 			if (this.options.roomListCellModel.get("friends").length == 0)
 				return;
 			this.friendsHover.show()
-			var parentOffset = $(event.currentTarget).offset();
+			var parentOffset = this.friendsDisplay.offset();
 			var friendsHoverTop = parentOffset.top + this.friendsDisplay.height() / 2 - this.friendsHover.height() / 2;
 			var friendsHoverLeft = parentOffset.left - this.friendsHover.width();
 			this.friendsHover.offset({top: friendsHoverTop, left: friendsHoverLeft});
@@ -4013,7 +4015,10 @@ $(function() {
 				$("#video-list-container .videoListCellContainer:first").remove();
 			}
 			var playlistItemModel = playlistModel.get("videos").at(0);
-			playlistModel.get("videos").remove(playlistItemModel);
+			playlistModel.get("videos").remove(playlistItemModel, {silent: true});
+			var playlistCount = playlistModel.get("videos").length;
+			$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[playlistModel.get("playlistId")].el).find(".playlist-nameholder-count").html("&nbsp;" + playlistCount + "&nbsp;");
+
 			window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
 		}
 
@@ -4173,7 +4178,8 @@ $(function() {
 			displayName: profile.ss_name,
 			avatarImage: 'https://graph.facebook.com/' + profile.id + '/picture',
 			ssId: profile.ssId,
-			fbId: profile.id
+			fbId: profile.id,
+			profile: profile
 		});
 		
 		hideSplash();
