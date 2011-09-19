@@ -2367,6 +2367,7 @@ $(function() {
     context: this
    }, this.toTheTop);
    this.options.playlistItemModel.bind("remove", this.removeFromList, this);
+	 
   },
 	
 	initializeViewToTopAndGrow: function() {
@@ -2472,6 +2473,9 @@ $(function() {
 		playlistCell: this
 	 }, this.addToQueue);
    this.options.playlistItemModel.bind("remove", this.removeFromList, this);
+	 this.$(".addToQueue, .remove").tipsy({
+    gravity: 'w'
+   });
   },
 
   removeFromPlaylist: function(event) {
