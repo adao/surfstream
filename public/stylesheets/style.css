@@ -163,7 +163,6 @@ div#outer {
   weight: bold;
   font-size: 25px;
   margin: auto;
-  height: 800px;
   width: 960px;
 }
 #outer #header {
@@ -2481,7 +2480,6 @@ a#fdbk_tab {
 #footer {
   position: absolute;
   width: 960px;
-  height: 200px;
   background-color: #141414;
   z-index: 1001;
   text-align: center;
