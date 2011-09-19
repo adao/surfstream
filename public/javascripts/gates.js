@@ -321,6 +321,8 @@ $(function() {
 		SurfStreamApp.get("mainView").roomModal.hide();
 		SurfStreamApp.get("userModel").set({displayName: info.name})
 	  new AvatarPickerView({isFirstVisit: true});
+		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration", {});
+		window.avatar_picker_open_start_time = new Date().getTime();
   },
 	
 	initializePlaylists: function(userPlaylists, activePlaylistId) {
@@ -578,11 +580,13 @@ $(function() {
 		$(this.el).html(this.make('img', {id:'tutorial', src:"/images/room/val-info.png"}));
 		$(this.el).fadeIn();
 		$("#tutorial").fadeIn();
+		if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Opened", {});
 		$("#modalBG").click({
 	    modal: this
 	   }, function(e) {
 		  if (e.data.modal.options.isFirstVisit) return;
 			e.data.modal.remove();
+			if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
 			$("#roomsList").after("<div id=avatar-picker-modal></div>")
 			$("#change-avatar").hide();	
 			$("#modalBG").hide();	
@@ -594,6 +598,7 @@ $(function() {
     modal: this
    }, function(e) {
 	  if (e.data.modal.options.isFirstVisit) return;
+		if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
 		e.data.modal.remove();
 		$("#roomsList").after("<div id=avatar-picker-modal></div>")
 		$("#change-avatar").hide();	
@@ -794,9 +799,9 @@ $(function() {
 				}
 				
 			});
+			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
 		} else {
 			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) + " seconds" });
-			window.avatar_picker_open_start_time = new Date().getTime();
 			SocketManagerModel.updateAvatar();
 			this.closePicker();		
 		}
@@ -1578,8 +1583,9 @@ $(function() {
 		}
 		var playlistItemModel = new PlaylistItemModel(attributes);
 		playlistCollection.addVideoToPlaylist(queueId, playlistItemModel);
-		if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
-	    mp_note: "From search cell view from the button"
+		if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
+	    mp_note: "From search cell view from the button",
+			source: "Search - Button"
 	   });
 	},
 
@@ -2116,12 +2122,14 @@ $(function() {
 					if (toPlaylistId != queueId) {
 						ui.draggable.remove();
 						fromPlaylist.removeFromPlaylist(fromVideoId);
-						if (typeof(mpq) !== 'undefined') mpq.track("Add to playlist", {
-					    mp_note: "From another playlist from drag n drop"
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to Playlist", {
+					    mp_note: "From another playlist from drag n drop",
+							source: "Playlist - Drag and Drop"
 			 	    });
 					} else {
-						if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
-					    mp_note: "From another playlist from drag n drop"
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
+					    mp_note: "From another playlist from drag n drop",
+							source: "Playlist - Drag and Drop"
 			 	    });
 					}
 				} else {
@@ -2139,12 +2147,14 @@ $(function() {
 					});
 					ui.draggable.remove();
 					if (toPlaylistId != queueId) {
-						if (typeof(mpq) !== 'undefined') mpq.track("Add to playlist", {
-					    mp_note: "From search result from drag n drop"
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to Playlist", {
+					    mp_note: "From search result from drag n drop",
+							source: "Search - Drag and Drop"
 			 	    });
 					} else {
-						if (typeof(mpq) !== 'undefined') mpq.track("Add to queue", {
-					    mp_note: "From search result from drag n drop"
+						if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
+					    mp_note: "From search result from drag n drop",
+							source: "Search - Drag and Drop"
 			 	    });
 					}
 				}
@@ -2513,7 +2523,8 @@ $(function() {
 	 playlistCollection.addVideoToPlaylist(queueId, copyPlaylistItemModel);
    window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
 	 if (typeof(mpq) !== 'undefined') mpq.track("Add to Queue", {
-	    mp_note: "From another playlist through the button"
+	    mp_note: "From another playlist through the button",
+		  source: "Playlist - Button"
 	   });
   },
 
@@ -3743,6 +3754,7 @@ $(function() {
    //clip.glue('copy-button', 'copy-button-container');
 	 $("#question-button-container").click(function(){
 			new AvatarPickerView({justTutorial: true});	
+			window.avatar_picker_open_start_time = new Date().getTime();
 	 });
   },
 
