@@ -357,8 +357,7 @@ io.sockets.on('connection', function(socket) {
 				StagingUsers[socket.id] = currUser;
 				var queue = new models.Playlist({name: "My Queue", videos: new models.VideoCollection()});
 				var facebookPlaylist = new models.Playlist({name: "Facebook Videos", videos: new models.VideoCollection()});
-				var firstPlaylist = new models.Playlist({name: "New Playlist", videos: new models.VideoCollection()});
-				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 0, JSON.stringify(queue), 1, JSON.stringify(facebookPlaylist), 2, JSON.stringify(firstPlaylist), function(err, reply) {
+				redisClient.hmset("user:" + ssUser.ssId + ":playlists", 0, JSON.stringify(queue), 1, JSON.stringify(facebookPlaylist), function(err, reply) {
 					if (err) {
 						console.log("Error writing ss user's default playlists " + ssUser.ssId + " to Redis");
 					} else {

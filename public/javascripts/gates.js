@@ -1562,7 +1562,6 @@ $(function() {
 				$(this).remove();
 			});
 		});
-		var copyOffset = shrunkenCopy.offset();
 		var attributes = {
 			thumb: this.options.video.get("thumb"),
 			title: this.options.video.get("title"),
@@ -1726,12 +1725,16 @@ $(function() {
 		this.get("videos").add(playlistItemModel, {
 			at: 0
 		});
+		var playlistCount = this.get("videos").length;
+		$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[this.get("playlistId")].el).find(".playlist-nameholder-count").text(playlistCount);
 	},
 	
 	removeFromPlaylist: function(videoId) {
 		var playlistItemModel = ss_modelWithAttribute(this.get("videos"), "videoId", videoId);
 	 	var copyPlaylistItemModel = new PlaylistItemModel(playlistItemModel.attributes);
 	 	this.get("videos").remove(playlistItemModel);
+		var playlistCount = this.get("videos").length;
+		$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[this.get("playlistId")].el).find(".playlist-nameholder-count").text(playlistCount);
 		window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
 		SocketManagerModel.deleteFromPlaylist(this.get("playlistId"), videoId);
 	},
@@ -1797,7 +1800,12 @@ $(function() {
 		playlistModel.set({playlistId: playlistId, name: name, videos: videos});
 		this.idToPlaylist[playlistId] = playlistModel;
 		
-		var playlistNameholderView = new PlaylistNameholderView({playlist_nameholder_value: playlistId, playlist_nameholder_name: name, playlistCollection: this});
+		var playlistNameholderView = new PlaylistNameholderView({
+			playlist_nameholder_value: playlistId,
+			playlist_nameholder_name: name,
+			playlistCollection: this,
+			playlist_count: videos.length
+		});
 		this.idToPlaylistNameholder[playlistId] = playlistNameholderView;
 		console.log(playlistModel);
 		playlistNameholderView.setActivePlaylist();
@@ -2065,7 +2073,7 @@ $(function() {
 	playlistNameholderTemplate: _.template($("#playlist-nameholder-template").html()),
 	events: {
 		"click .delete-nameholder": "presentDialog",
-		"click .playlist-nameholder-name": "setActivePlaylist"
+		"click": "setActivePlaylist"
 	},
 	initialize: function() {
 		this.render();
@@ -2148,13 +2156,12 @@ $(function() {
 	render: function() {
 		$(this.el).prepend(this.playlistNameholderTemplate({
 			playlist_name: this.options.playlist_nameholder_name,
-			playlist_count: 50
+			playlist_count: this.options.playlist_count
 		}));
 		$(this.el).val(this.options.playlist_nameholder_value);
 		if (this.options.playlist_nameholder_value == queueId) {
 			$(this.el).addClass("queuePlaylist").removeClass("playlist-nameholder");
 		}
-	  //$("#playlist-collection-display").prepend(this.el);
 		var length = $("#playlist-collection-display").children().length;
 		$(this.el).insertBefore($("#playlist-collection-display").children()[length - 1]);
 	  return this;
@@ -2163,7 +2170,12 @@ $(function() {
 		console.log("works");
 	},
 	
-	setActivePlaylist: function() {
+	setActivePlaylist: function(event) {
+		if (event) {
+			if (event.srcElement.className == "delete-nameholder") {
+				return;
+			}
+		}
 		this.options.playlistCollection.setActivePlaylist(this.options.playlist_nameholder_value);
 		$(this.el).addClass("active-playlist-nameholder");
 	},
@@ -2449,7 +2461,8 @@ $(function() {
 		
 	 } else {
 		buttoToQueue.bind("click", {
-		 videoModel: this.options.playlistItemModel
+		 videoModel: this.options.playlistItemModel,
+		 playlistCell: this
 		}, this.addToQueue);
 	 }
    this.options.playlistItemModel.bind("remove", this.removeFromList, this);
@@ -2469,6 +2482,22 @@ $(function() {
 		window.SurfStreamApp.get("mainView").theatreView.valChat("Your queue already has that video.");
 		return;
 	 }
+	 
+	 var shrunkenCopy = $(event.data.playlistCell.el).clone();
+	 $("body").append(shrunkenCopy);
+	 shrunkenCopy.removeClass("videoListCellContainer").addClass("shrunken-playlist-cell");
+	 var droppedOffset = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).offset();
+	 var droppedWidth = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).width();
+	 var droppedHeight = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).height();
+	 shrunkenCopy.offset({top: droppedOffset.top + droppedHeight / 2 - shrunkenCopy.height() / 2 - 58, left: droppedOffset.left + droppedWidth / 2 - 37});
+	 shrunkenCopy.animate({"rotate": -70}, 100, function() {
+	 	var copyOffset = $(this).offset();
+	 	$(this).animate({width: "1px", height: "5px", top: copyOffset.top + 125, left: copyOffset.left + 15}, 500, function() {
+	 		$(this).remove();
+	 	});
+	 });
+	 
+	 
    var copyPlaylistItemModel = new PlaylistItemModel(event.data.videoModel.attributes);
 	 playlistCollection.addVideoToPlaylist(queueId, copyPlaylistItemModel);
    window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
