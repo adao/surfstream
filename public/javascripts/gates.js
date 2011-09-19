@@ -3979,7 +3979,8 @@ $(function() {
 				$("#video-list-container .videoListCellContainer:first").remove();
 			}
 			var playlistItemModel = playlistModel.get("videos").at(0);
-			playlistModel.get("videos").remove(playlistItemModel);
+			playlistModel.get("videos").remove(playlistItemModel, {silent: true});
+			$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).find(".playlist-nameholder-count").html("&nbsp;" + playlistModel.get("videos").length + "&nbsp;");
 			window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
 		}
 
