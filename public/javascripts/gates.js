@@ -1522,9 +1522,11 @@ $(function() {
 	$(".addToQueue").tipsy({
     gravity: 'w'
    });
-	 if (SurfStreamApp.get("userModel").get("playlistCollection").getPlaylistById(queueId).hasVideo(this.options.video.get("videoId"))) {
-		$(this.el).find(".addToQueue").css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
-	 }
+	this.buttonToQueue = $(this.el).find(".addToQueue");
+	if (SurfStreamApp.get("userModel").get("playlistCollection").getPlaylistById(queueId).hasVideo(this.options.video.get("videoId"))) {
+	 this.buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+	 this.buttonToQueue.attr("title", "In your Queue");
+	}
   },
 
 
@@ -1551,7 +1553,8 @@ $(function() {
 			window.SurfStreamApp.get("mainView").theatreView.valChat("Sorry, but your queue already has that video.");
 			return;
 		}
-		$(this.el).find(".addToQueue").css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+		this.buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+		this.buttonToQueue.attr("title", "In your Queue");
 		var shrunkenCopy = $(this.el).clone();
 		$("body").append(shrunkenCopy);
 		shrunkenCopy.removeClass("searchCellContainer").addClass("shrunkenSearchCellContainer");
@@ -2458,12 +2461,13 @@ $(function() {
     videoModel: this.options.playlistItemModel,
     playlistCollection: this.options.playlistItemModel.collection
    }, this.removeFromPlaylist);
-   buttonToQueue = $("#add_to_queue_" + videoID);
+   this.buttonToQueue = $("#add_to_queue_" + videoID);
 	 var playlistCollection = SurfStreamApp.get("userModel").get("playlistCollection");
 	 if (playlistCollection.getPlaylistById(queueId).hasVideo(videoID)) {
-		buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+		this.buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+		this.buttonToQueue.attr("title", "In your Queue");
 	 }
-	 buttonToQueue.bind("click", {
+	 this.buttonToQueue.bind("click", {
 		videoModel: this.options.playlistItemModel,
 		playlistCell: this
 	 }, this.addToQueue);
@@ -2484,8 +2488,8 @@ $(function() {
 		window.SurfStreamApp.get("mainView").theatreView.valChat("Your queue already has that video.");
 		return;
 	 }
-	 
-	 $(event.data.playlistCell.el).find("#add_to_queue_" + event.data.videoModel.get("videoId")).css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+	 event.data.playlistCell.buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+	 event.data.playlistCell.buttonToQueue.attr("title", "In your Queue");
 	 var shrunkenCopy = $(event.data.playlistCell.el).clone();
 	 $("body").append(shrunkenCopy);
 	 shrunkenCopy.removeClass("videoListCellContainer").addClass("shrunken-playlist-cell");
