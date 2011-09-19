@@ -2590,7 +2590,7 @@ a#fdbk_tab {
 .videoChatCell .videoChatInfo {
   float: left;
   margin: 2px 0px 0 7px;
-  width: 150px;
+  width: 129px;
   padding: 0 !important;
 }
 .videoChatCell .videoChatInfo .videoChatNowPlaying {
@@ -2604,18 +2604,22 @@ a#fdbk_tab {
   display: inline;
 }
 .videoChatCell .chatShare {
-  float: right;
+  border: none;
   margin-top: 17px;
-  background-color: #e5e5e5;
-  border-radius: 4px;
-  border: 1px solid #000;
-  text-shadow: 2px 2px 2px #d6d6d6;
   cursor: pointer;
-  font-weight: bold;
+  width: 73px;
+  height: 29px;
+  background: url("/images/room/newicons/fb-share-video.png") 50% 50% no-repeat;
+  position: relative;
+  top: 0;
+  vertical-align: top;
+  margin-top: 10px;
 }
 .videoChatCell .chatShare:hover {
-  color: #008ab8;
-  background-color: #fff;
+  background: url("/images/room/newicons/facebook-connect-buttons-hover.png") 50% 50% no-repeat;
+}
+.videoChatCell .chatShare:active {
+  background: url("/images/room/newicons/facebook-connect-buttons-pressed.png") 50% 50% no-repeat;
 }
 .video-div-proxy {
   z-index: 32;
