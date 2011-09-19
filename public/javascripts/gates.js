@@ -1286,10 +1286,10 @@ $(function() {
 	toggleVideoManager: function(event) {
 		if (this.sideBarView.videoManagerExpanded) {
 			this.sideBarView.hideVideoManagerView();
-			this.collapseBodyButton.animate({rotate: "0deg"}, 'linear', 300);
+			this.collapseBodyButton.animate({rotate: "0deg"}, 300, 'linear');
 		} else {
 			this.sideBarView.showVideoManagerView();
-			this.collapseBodyButton.animate({rotate: "90deg"}, 'linear', 300);
+			this.collapseBodyButton.animate({rotate: "90deg"}, 300, 'linear');
 			this.calculatePlaylistHeight();
 		}
 	},
