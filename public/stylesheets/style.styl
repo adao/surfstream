@@ -584,8 +584,9 @@ div.historyContainer
 	background-color: #666
 
 .shrunkenSearchCellContainer
+	position: absolute
 	background: gray
-	width: 142px
+	width: 120px
 	height: 40px
 	.thumbContainer
 		float: left
@@ -599,8 +600,9 @@ div.historyContainer
 		z-index:3
 		cursor: pointer
 	.cellInfo
+		float: left
 		display: inline-block
-		width: 102px
+		width: 80px
 		height: 30px
 		.videoInfo
 			float: left
@@ -644,22 +646,32 @@ div.historyContainer
 				font-size: 5px
 				cursor: pointer
 				float: left
-		.cellButtons
-			float: right
-			width: 15px
-			height: 40px
-			margin-left: -6px
-			button.previewVideo
-				display: none
-				font-size: 4px
-				background: transparent
-				margin-top: 2px
-				margin-bottom: 1px
-				border: none
-				color: #D4D4D4
-				cursor: pointer
-			button.previewVideo:hover
-					color: white
+	.cellButtons
+		cursor: pointer
+		float: right
+		width: 10px
+		height: 20px
+		margin-left: -6px
+		margin-top: -4px
+		margin-right: 2px
+		padding-bottom: 4px
+		button.addToQueue
+			font-size: 4px
+			height: 12px
+			width: 10px
+			margin-top: 2px
+			margin-bottom: 1px
+			border: none
+			color: #D4D4D4
+			background: url('/images/room/add.png') 50% 50% no-repeat
+		button.addToQueue:hover
+			background: url('/images/room/add_hover.png') 50% 50% no-repeat
+			cursor: pointer
+		div
+			font-size: 5px
+			text-align: center
+			margin-left: -5px
+			margin-top: -4px
 
 .previewVideo
 	margin-left: -54px
@@ -1201,16 +1213,22 @@ div#top-video-name
 	vertical-align: middle
 	line-height: 20px
 
+.playlist-nameholder-count
+	vertical-align: middle
+	line-height: 20px
+
 .delete-nameholder
 	vertical-align: middle
 	line-height: 20px
 	
 .active-playlist-nameholder, .active-playlist-nameholder:hover, .bv-nameholder.active-playlist-nameholder:hover
 	background: rgba(255, 255, 255, .2)
+	
 #playlist-collection-input::-webkit-input-placeholder
 	color: silver
 #playlist-collection-input::-moz-input-placeholder
 	color: silver
+	
 .selected-playlist-nameholder, .selected-playlist-nameholder:hover
 	background: silver
 	border: 1px solid -nameholgray

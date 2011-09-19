@@ -1545,6 +1545,21 @@ $(function() {
 			window.SurfStreamApp.get("mainView").theatreView.valChat("Sorry, but your queue already has that video.");
 			return;
 		}
+		
+		var shrunkenCopy = $(this.el).clone();
+		$("body").append(shrunkenCopy);
+		shrunkenCopy.removeClass("searchCellContainer").addClass("shrunkenSearchCellContainer");
+		var droppedOffset = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).offset();
+		var droppedWidth = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).width();
+		var droppedHeight = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).height();
+		shrunkenCopy.offset({top: droppedOffset.top + droppedHeight / 2 - shrunkenCopy.height() / 2 - 54, left: droppedOffset.left + droppedWidth / 2 - 30});
+		shrunkenCopy.animate({"rotate": -70}, 100, function() {
+			var copyOffset = $(this).offset();
+			$(this).animate({width: "1px", height: "5px", top: copyOffset.top + 115, left: copyOffset.left + 15}, 500, function() {
+				$(this).remove();
+			});
+		});
+		var copyOffset = shrunkenCopy.offset();
 		var attributes = {
 			thumb: this.options.video.get("thumb"),
 			title: this.options.video.get("title"),
@@ -2128,7 +2143,10 @@ $(function() {
 	},
 	
 	render: function() {
-		$(this.el).prepend(this.playlistNameholderTemplate({playlist_name: this.options.playlist_nameholder_name}));
+		$(this.el).prepend(this.playlistNameholderTemplate({
+			playlist_name: this.options.playlist_nameholder_name,
+			playlist_count: 50
+		}));
 		$(this.el).val(this.options.playlist_nameholder_value);
 		if (this.options.playlist_nameholder_value == queueId) {
 			$(this.el).addClass("queuePlaylist").removeClass("playlist-nameholder");
