@@ -36,6 +36,10 @@ h1 {
   width: 105px;
   height: 27px;
   border: none;
+  background: url("/images/room/newicons/fb-sign-in.png") 50% 50% no-repeat;
+}
+#fb-auth-new {
+  display: none;
   background: url("/images/room/newicons/fb-connect.png") 50% 50% no-repeat;
 }
 #submit-email {
@@ -160,6 +164,7 @@ h1 {
   -webkit-border-bottom-right-radius: 2px;
   -moz-border-bottom-right-radius: 2px;
   border-bottom-right-radius: 2px;
+  margin-top: 14px;
 }
 .splash-form form input {
   text-align: center;
