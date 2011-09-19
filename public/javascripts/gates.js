@@ -2934,8 +2934,8 @@ $(function() {
    $("#fullscreenIcon").bind("click", {
     theatre: this
    }, this.fullscreenToggle);
-
-	 $("#lightSwitch").addClass("up");
+	 $("#lightSwitch").removeClass("down");
+	 setTimeout(function(){$("#lightSwitch").addClass("up");}, 200);
 	 $("#lightSwitch").click( function(){
 		if(this.className == "up") {
 			this.className = "down";
@@ -3995,8 +3995,7 @@ $(function() {
 				$("#video-list-container .videoListCellContainer:first").remove();
 			}
 			var playlistItemModel = playlistModel.get("videos").at(0);
-			playlistModel.get("videos").remove(playlistItemModel, {silent: true});
-			$(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).find(".playlist-nameholder-count").html("&nbsp;" + playlistModel.get("videos").length + "&nbsp;");
+			playlistModel.get("videos").remove(playlistItemModel);
 			window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
 		}
 
