@@ -318,6 +318,7 @@ $(function() {
 
   setUserData: function(info) {
 		SurfStreamApp.get("userModel").set({profile: info});
+		SurfStreamApp.get("userModel").set({fbId: info.id});
 		SurfStreamApp.get("mainView").roomModal.hide();
 		SurfStreamApp.get("userModel").set({displayName: info.name})
 	  new AvatarPickerView({isFirstVisit: true});
@@ -4171,7 +4172,8 @@ $(function() {
 		app.get("userModel").set({
 			displayName: profile.ss_name,
 			avatarImage: 'https://graph.facebook.com/' + profile.id + '/picture',
-			ssId: profile.ssId
+			ssId: profile.ssId,
+			fbId: profile.id
 		});
 		
 		hideSplash();
