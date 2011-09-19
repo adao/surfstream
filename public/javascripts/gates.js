@@ -1546,6 +1546,21 @@ $(function() {
 			window.SurfStreamApp.get("mainView").theatreView.valChat("Sorry, but your queue already has that video.");
 			return;
 		}
+		
+		var shrunkenCopy = $(this.el).clone();
+		$("body").append(shrunkenCopy);
+		shrunkenCopy.removeClass("searchCellContainer").addClass("shrunkenSearchCellContainer");
+		var droppedOffset = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).offset();
+		var droppedWidth = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).width();
+		var droppedHeight = $(SurfStreamApp.get("userModel").get("playlistCollection").idToPlaylistNameholder[queueId].el).height();
+		shrunkenCopy.offset({top: droppedOffset.top + droppedHeight / 2 - shrunkenCopy.height() / 2 - 54, left: droppedOffset.left + droppedWidth / 2 - 30});
+		shrunkenCopy.animate({"rotate": -70}, 100, function() {
+			var copyOffset = $(this).offset();
+			$(this).animate({width: "1px", height: "5px", top: copyOffset.top + 115, left: copyOffset.left + 15}, 500, function() {
+				$(this).remove();
+			});
+		});
+		var copyOffset = shrunkenCopy.offset();
 		var attributes = {
 			thumb: this.options.video.get("thumb"),
 			title: this.options.video.get("title"),
@@ -1897,9 +1912,9 @@ $(function() {
 	browseVideosTemplate: _.template($("#browse-videos-template").html()),
 	
 	events: {
-		"click .youtube-nameholder": "showSearch",
-		"click .channel-history-nameholder": "showChannelHistory",
-		"click .likes-nameholder": "showLikes"
+		"click #ytnh": "showSearch",
+		"click #chnh": "showChannelHistory",
+		"click #lvnh": "showLikes"
 	},
 	
 	initialize: function() {
@@ -1927,7 +1942,7 @@ $(function() {
 		this.likesActive = false;
 		this.searchView.show(true);
 		this.videoManagerView.showBrowseVideosView();
-		this.activeNonPlaylistNameholder = $(this.el).find(".youtube-nameholder");
+		this.activeNonPlaylistNameholder = $(this.el).find("#ytnh");
 		this.activeNonPlaylistNameholder.addClass("selected-non-playlist-nameholder");
 		this.activeNonPlaylistNameholder.addClass("active-playlist-nameholder");
 		this.resetSearchResults();
@@ -1942,7 +1957,7 @@ $(function() {
 		this.likesActive = false;
 		this.searchView.show(false);
 		this.videoManagerView.showBrowseVideosView();
-		this.activeNonPlaylistNameholder = $(this.el).find(".channel-history-nameholder");
+		this.activeNonPlaylistNameholder = $(this.el).find("#chnh");
 		this.activeNonPlaylistNameholder.addClass("selected-non-playlist-nameholder");
 		this.activeNonPlaylistNameholder.addClass("active-playlist-nameholder");
 		this.resetChannelHistory();
@@ -1957,7 +1972,7 @@ $(function() {
 		this.likesActive = true;
 		this.searchView.show(false);
 		this.videoManagerView.showBrowseVideosView();
-		this.activeNonPlaylistNameholder = $(this.el).find(".likes-nameholder");
+		this.activeNonPlaylistNameholder = $(this.el).find("#lvnh");
 		this.activeNonPlaylistNameholder.addClass("selected-non-playlist-nameholder");
 		this.activeNonPlaylistNameholder.addClass("active-playlist-nameholder");
 		this.resetLikes();
@@ -2125,10 +2140,14 @@ $(function() {
 		if (this.options.playlist_nameholder_value == facebookPlaylistId || this.options.playlist_nameholder_value == queueId) {
 			$(this.el).find(".delete-nameholder").remove();
 		}
+		this.options.playlistCollection.videoManagerView.calculatePlaylistHeight();
 	},
 	
 	render: function() {
-		$(this.el).prepend(this.playlistNameholderTemplate({playlist_name: this.options.playlist_nameholder_name}));
+		$(this.el).prepend(this.playlistNameholderTemplate({
+			playlist_name: this.options.playlist_nameholder_name,
+			playlist_count: 50
+		}));
 		$(this.el).val(this.options.playlist_nameholder_value);
 		if (this.options.playlist_nameholder_value == queueId) {
 			$(this.el).addClass("queuePlaylist").removeClass("playlist-nameholder");
