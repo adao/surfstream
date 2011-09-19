@@ -1542,13 +1542,15 @@ background-color: green,
   padding: 0;
   border: 0;
   outline: 0;
-  background-color: #292929;
-  text-indent: 4px;
-  color: #c0c0c0;
-}
-#browseVideosContainer #browseVideosVideosContainer #searchBar .inputBox input:focus {
   background-color: #e7e7e7;
-  color: #000;
+  text-indent: 4px;
+  color: #373737;
+}
+#browseVideosContainer #browseVideosVideosContainer #searchBar .inputBox input::-webkit-input-placeholder {
+  color: #373737;
+}
+#browseVideosContainer #browseVideosVideosContainer #searchBar .inputBox input::-moz-input-placeholder {
+  color: #373737;
 }
 #clearsearch {
   display: inline-block;
@@ -2080,6 +2082,7 @@ background-color: #4C4C4C,
   margin-top: 5px;
   background-color: #e7e7e7;
   font-family: "custom", "Segoe UI", "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+  color: #373737;
 }
 .ui-autocomplete li.ui-menu-item {
   margin-left: -40px;
@@ -2462,7 +2465,7 @@ background-color: #4C4C4C,
   position: absolute;
   margin-left: 2px;
   z-index: 10000;
-  margin-top: 14px;
+  margin-top: 23px;
   margin-left: 605px;
   width: 30px;
   padding: 3px;
