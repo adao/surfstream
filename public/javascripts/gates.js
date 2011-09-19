@@ -2691,6 +2691,11 @@ $(function() {
    if (roomName == "") return false;
    var rID = $.trim(roomName).replace(/\s+/g, '-');
    SocketManagerModel.joinRoom(rID, true, roomName);
+	 if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
+			mp_note: "Created",
+			source: "Created Room",
+			roomName: roomName
+	 });
    window.SurfStreamApp.get("mainRouter").navigate("/" + rID, false);
    e.data.modal.hide();
    return false;
@@ -2804,7 +2809,13 @@ $(function() {
 	  clickJoinRoom: function(el) {
 			var rID = $(this).find(".true-room-name").html();
 			if (rID == SurfStreamApp.inRoom) return;
-			SocketManagerModel.joinRoom(rID, false, $(this).find(".listed-room-name").html());
+			var roomName =  $(this).find(".listed-room-name").html();
+			SocketManagerModel.joinRoom(rID, false, roomName);
+			if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
+					mp_note: "Picked From Modal",
+					source: "Modal",
+					roomName: roomName
+			 });
 			window.SurfStreamApp.get("mainRouter").navigate("/" + rID, false);
 			window.SurfStreamApp.get("mainView").roomModal.hide();
 		},
@@ -3206,9 +3217,9 @@ $(function() {
    })
    var curIndex = _.indexOf(rIDArray, rID);
    if (up) {
-    curIndex = curIndex + 1;
-   } else {
     curIndex = curIndex - 1;
+   } else {
+    curIndex = curIndex + 1;
    }
 
    if (curIndex < 0) curIndex = rIDArray.length - 1;
@@ -3217,6 +3228,11 @@ $(function() {
 	 var roomName = rIDArray[curIndex].replace(/-+/g, ' ');
 	 SurfStreamApp.get("mainRouter").navigate("/" + rIDArray[curIndex], false);
    SocketManagerModel.joinRoom(rIDArray[curIndex], false, roomName );
+	 if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
+		mp_note: "Flipped Channel " + up ? "Up" : "Down",
+		source: "Remote Ch-" + up ? "Up" : "Down",
+		roomName: roomName
+	 });
   },
 
   fullscreenToggle: function(e) {
@@ -4493,7 +4509,7 @@ $(function() {
   },
 
   joinRoom: function(rID, create, roomName) {
-
+   
    var vidsPlayed = SurfStreamApp.vidsPlayed;
    var isDJ = (SurfStreamApp.curDJ == SurfStreamApp.get("userModel").get("ssId"));
    SurfStreamApp.vidsPlayed = 0;
@@ -4512,11 +4528,6 @@ $(function() {
 
    $("#clock").hide();
    if (typeof(mpq) !== 'undefined') {
-    mpq.track("Room Joined", {
-     wasDJ: isDJ,
-     roomName: roomName,
-     mp_note: "Joined room " + rID + " (Left Room: " + (SurfStreamApp.inRoom ? SurfStreamApp.inRoom : "") + ", watched " + vidsPlayed + " vids there"
-    });
 		mpq.register_once({room: roomName})
    }
    var payload = {
@@ -4574,6 +4585,11 @@ $(function() {
 		this.navigate(rID, false);
 		if (rID != "") {
    		SocketManagerModel.joinRoom(rID, false, rID.replace(/-+/g, ' '));
+			if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
+				mp_note: "Landed from web link",
+				source: "Landing",
+				roomName: rID.replace(/-+/g, ' ')
+			 });
   	} else {
 			SocketManagerModel.loadRoomsInfo();
 		}
