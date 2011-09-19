@@ -1367,8 +1367,8 @@ $(function() {
     $("#youtubeInput").autocomplete("close");
    });
 
-   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(event, cell) {
-    if (event.type == "mouseover") {
+   $(".searchCellContainer .videoInfo,.searchCellContainer .thumbContainer").live("mouseover mouseout", function(cell) {
+    if (cell.type == "mouseover") {
      if (cell.currentTarget.className == "videoInfo") {
       $(cell.currentTarget.parentNode.parentNode.children[1]).show();
      } else {
@@ -1520,8 +1520,13 @@ $(function() {
    }, this.previewVideo);
 
 	$(".addToQueue").tipsy({
-    gravity: 'w',
+    gravity: 'w'
    });
+	this.buttonToQueue = $(this.el).find(".addToQueue");
+	if (SurfStreamApp.get("userModel").get("playlistCollection").getPlaylistById(queueId).hasVideo(this.options.video.get("videoId"))) {
+	 this.buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+	 this.buttonToQueue.attr("title", "In your Queue");
+	}
   },
 
 
@@ -1548,7 +1553,8 @@ $(function() {
 			window.SurfStreamApp.get("mainView").theatreView.valChat("Sorry, but your queue already has that video.");
 			return;
 		}
-		
+		this.buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+		this.buttonToQueue.attr("title", "In your Queue");
 		var shrunkenCopy = $(this.el).clone();
 		$("body").append(shrunkenCopy);
 		shrunkenCopy.removeClass("searchCellContainer").addClass("shrunkenSearchCellContainer");
@@ -2328,7 +2334,7 @@ $(function() {
 	
 	setNotificationText: function(text) {
 		if (SurfStreamApp.get("userModel").get("playlistCollection").getPlaylistById(queueId).get("videos").length == 0) {
-			$("#playlist-notification-text").text("Add videos to your playlist or your turn will be skipped");
+			$("#playlist-notification-text").text("Up next: Your queue is currently empty");
 		} else {
 			$("#playlist-notification-text").text("Up next: " + SurfStreamApp.get("userModel").get("playlistCollection").getPlaylistById(queueId).get("videos").at(0).get("title"));
 		}
@@ -2441,7 +2447,7 @@ $(function() {
   className: "videoListCellContainer nameholder-droppable",
 
   initializeViewToTop: function(top) {
-   var buttonRemove, buttoToQueue, videoID;
+   var buttonRemove, buttonToQueue, videoID;
    //Hack because of nested view bindings part 2 (events get eaten by Sidebar)
    this.render();
    if (top) {
@@ -2455,16 +2461,16 @@ $(function() {
     videoModel: this.options.playlistItemModel,
     playlistCollection: this.options.playlistItemModel.collection
    }, this.removeFromPlaylist);
-   buttoToQueue = $("#add_to_queue_" + videoID);
+   this.buttonToQueue = $("#add_to_queue_" + videoID);
 	 var playlistCollection = SurfStreamApp.get("userModel").get("playlistCollection");
 	 if (playlistCollection.getPlaylistById(queueId).hasVideo(videoID)) {
-		
-	 } else {
-		buttoToQueue.bind("click", {
-		 videoModel: this.options.playlistItemModel,
-		 playlistCell: this
-		}, this.addToQueue);
+		this.buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+		this.buttonToQueue.attr("title", "In your Queue");
 	 }
+	 this.buttonToQueue.bind("click", {
+		videoModel: this.options.playlistItemModel,
+		playlistCell: this
+	 }, this.addToQueue);
    this.options.playlistItemModel.bind("remove", this.removeFromList, this);
   },
 
@@ -2482,7 +2488,8 @@ $(function() {
 		window.SurfStreamApp.get("mainView").theatreView.valChat("Your queue already has that video.");
 		return;
 	 }
-	 
+	 event.data.playlistCell.buttonToQueue.css("background", 'url("/images/room/checkbox.png") 50% 50% no-repeat');
+	 event.data.playlistCell.buttonToQueue.attr("title", "In your Queue");
 	 var shrunkenCopy = $(event.data.playlistCell.el).clone();
 	 $("body").append(shrunkenCopy);
 	 shrunkenCopy.removeClass("videoListCellContainer").addClass("shrunken-playlist-cell");
@@ -3372,11 +3379,15 @@ $(function() {
   },
 
   toggleDJStatus: function(event) {
+		$("#playlist-notification-container").slideDown();
    if (event.data.playlistCollection.getPlaylistById(queueId).get("videos").length == 0) {
+		SurfStreamApp.get("mainView").sideBarView.showVideoManagerView();
+		SurfStreamApp.get("mainView").sideBarView.videoManagerView.showPlaylistCollectionView();
+		SurfStreamApp.get("userModel").get("playlistCollection").setActivePlaylist(queueId);
+		SurfStreamApp.get("mainView").sideBarView.videoManagerView.calculatePlaylistHeight();
     event.data.theatreView.valChat("You can't play a video without any videos in your queue");
     return;
    }
-   $("#playlist-notification-container").slideDown();
    SocketManagerModel.becomeDJ();
   },
 
@@ -3729,11 +3740,13 @@ $(function() {
 
   fbDialog: function() {
 		if (typeof(mpq) !== 'undefined') mpq.track("Facebook Share Clicked", {source: "topbar"});
+		console.log(window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").videoId);
    FB.ui({
     method: 'feed',
     display: 'popup',
     name: 'I\'m in the ' + SurfStreamApp.inRoomName + ' Channel on surfstream.tv',
     link: document.URL,
+		picture: ss_idToImg(window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").videoId),
     caption: 'Come watch videos with me',
     description: 'Now Watching: ' + window.SurfStreamApp.get("roomModel").get("playerModel").get("curVid").title
    }, function(response) {
