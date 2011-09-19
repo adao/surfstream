@@ -4844,7 +4844,7 @@ function onYouTubePlayerReady(playerId) {
 	 for(var i = 0; i < numFdVideos + 1; i++){
 	 	window.ss_loopOrder[i] = i;
 	 }
-	fisherYates(window.ss_loopOrder);
+	 fisherYates(window.ss_loopOrder);
 	 window.ss_loopIndex = 0;
 	 nextFDVideo();
 	 window.ss_fdLoop = setInterval("nextFDVideo()", 14000);
