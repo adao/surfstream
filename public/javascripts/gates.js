@@ -2489,7 +2489,8 @@ $(function() {
    buttonRemove = $("#remove_video_" + videoID);
    buttonRemove.bind("click", {
     videoModel: this.options.playlistItemModel,
-    playlistCollection: this.options.playlistItemModel.collection
+    playlistCollection: this.options.playlistItemModel.collection,
+		cell: this
    }, this.removeFromPlaylist);
    this.buttonToQueue = $("#add_to_queue_" + videoID);
 	 var playlistCollection = SurfStreamApp.get("userModel").get("playlistCollection");
@@ -2508,6 +2509,7 @@ $(function() {
   },
 
   removeFromPlaylist: function(event) {
+	 event.data.cell.$(".addToQueue, .remove").tipsy("hide");
    $(this).parent().parent().parent().slideUp(500, function() {
 		$(this).remove();
 	 });
@@ -2731,7 +2733,7 @@ $(function() {
    var rID = $.trim(roomName).replace(/\s+/g, '-');
    SocketManagerModel.joinRoom(rID, true, roomName);
 	 if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
-			mp_note: "Created",
+			mp_note: "Created room " + roomName,
 			source: "Created Room",
 			roomName: roomName
 	 });
@@ -2853,7 +2855,7 @@ $(function() {
 			var roomName =  $(this).find(".listed-room-name").html();
 			SocketManagerModel.joinRoom(rID, false, roomName);
 			if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
-					mp_note: "Picked From Modal",
+					mp_note: "Picked From Modal: " + roomName,
 					source: "Modal",
 					roomName: roomName
 			 });
@@ -3279,7 +3281,7 @@ $(function() {
 	 SurfStreamApp.get("mainRouter").navigate("/" + rIDArray[curIndex], false);
    SocketManagerModel.joinRoom(rIDArray[curIndex], false, roomName );
 	 if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
-		mp_note: "Flipped Channel " + up ? "Up" : "Down",
+		mp_note: "Flipped Channel " + (up ? "Up" : "Down") + " into room " + roomName,
 		source: "Remote Ch-" + up ? "Up" : "Down",
 		roomName: roomName
 	 });
@@ -4225,6 +4227,8 @@ $(function() {
 
 		  if(window.SurfStreamApp.stickRoomModal) {		  
 				SurfStreamApp.get("mainView").roomModal.show();
+			} else {
+				SocketManagerModel.loadRoomsInfo(true);
 			}
 		}
 		
@@ -4332,7 +4336,12 @@ $(function() {
 				}
 			}
 		}
-		roomlistCollection.sort();
+		var noEvent = false;
+		if (SurfStreamApp.noDisplayPicker) {
+			noEvent = true;
+			SurfStreamApp.noDisplayPicker = false;
+		}
+		roomlistCollection.sort({silent: noEvent});
 	});
 
    socket.on("room:history", function(roomHistory) {
@@ -4557,11 +4566,13 @@ $(function() {
    });
   },
 
-  loadRoomsInfo: function() {
+  loadRoomsInfo: function(noDisplay) {
    SocketManagerModel.socket.emit('rooms:load', {
     id: window.SurfStreamApp.get("userModel").get("ssId")
    });
-	 
+	 if (noDisplay) {
+		SurfStreamApp.noDisplayPicker = true;
+	 }
    console.log(window.SurfStreamApp.get("userModel").get("ssId"));
    console.log("LOGGED");
   },
