@@ -464,6 +464,7 @@ $(function() {
 	 this.chatMap = {};
    $("#feedbackSpan").click(function() {
     feedback_widget.show();
+		if (typeof(mpq) !== 'undefined') mpq.track("Feedback Clicked", {});
    })
    var roomModel, mainView;
 
@@ -814,7 +815,7 @@ $(function() {
 				}
 				
 			});
-			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
+			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration Done", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 		} else {
 			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Save", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000)  });
 			SocketManagerModel.updateAvatar();
