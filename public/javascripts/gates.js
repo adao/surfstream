@@ -12,6 +12,8 @@ window.fbAsyncInit = function() {
   FB.login(send_fb_login_status, {
    scope: 'email,read_stream'
   });
+	if (typeof(mpq) !== 'undefined') mpq.track("Beta Sign In Clicked", {});
+	window.beta_sign_in_clicked = true;
  });
 
  $('#fb-auth-new').click(function() {
@@ -20,6 +22,8 @@ window.fbAsyncInit = function() {
 	   scope: 'email,read_stream'
 	  });
 	}
+	if (typeof(mpq) !== 'undefined') mpq.track("Promo Sign In Clicked", {});
+	window.promo_sign_in_clicked = true;
   return false;
  });
  
@@ -47,6 +51,7 @@ window.fbAsyncInit = function() {
 			} else {
 					socket_init.emit("surfstream:requestPromo", {email: mail});
 			}
+			if (typeof(mpq) !== 'undefined') mpq.track("Email Promo Request Submitted", {});
 		} else {
 			$("#emailBox").css("background", "#FAAFAF")
 		}
@@ -64,13 +69,11 @@ window.fbAsyncInit = function() {
 		input.keyup(function(){});
 		$("#promoBox").css("background", "#A5F2AA")
 		setTimeout(function(){$("#promoBox").fadeOut(function(){setTimeout(function(){$("#fb-auth-new").fadeIn()}, 300)})}, 600); 
-		//$("#check-box").show();
 	});
 	socket_init.on("promo:bad", function() {
 		console.log("BAD PROMO!");
 		window.promoApproved = false;
 		$("#promoBox").css("background", "#FAAFAF");
-		//$("#check-box").hide();
 	});
 	socket_init.on("email:received", function() {
 		$("#email-form-text").html("Email added to the list");
@@ -101,6 +104,7 @@ window.fbAsyncInit = function() {
 					if (!response.firstTime) {
 						SocketManagerModel.startApp(response.fbId);
 					} else {
+						if (typeof(mpq) !== 'undefined') mpq.track("New User", {});
 						window.SurfStreamApp.get("userModel").getFBUserDataForRegistration();
 						hideSplash();						
 					}
@@ -163,18 +167,28 @@ window.fbAsyncInit = function() {
 		 }
 		
 	 });
-	 
-	 
+ 
   } else {
-   // yeah right
 	 initFDPlayer();
    showSplash();
+	 if (typeof(mpq) !== 'undefined') {
+		if (window.beta_sign_in_clicked) {
+			mpq.track("Beta Sign-In Connect Rejected", {});
+	  }  
+	  if(window.promo_sign_in_clicked) {
+			mpq.track("Promo Sign-In Connect Rejected", {});
+	  }
+	 }
   }
  }
-
-
  // run once with current status and whenever the status changes
  FB.getLoginStatus(send_fb_login_status);
+ if (typeof(mpq) !== 'undefined') mpq.track("Page Loaded", {});
+ window.time_at_load = new Date().getTime();
+ window.vidsWatched = 0;
+ window.onbeforeunload = function() {
+	if (typeof(mpq) !== 'undefined') mpq.track("Page Closing", {timeSpent: Math.floor(((new Date().getTime()) - window.time_at_load) / 1000), videos_consumed: window.vidsWatched });
+ }
 };
 
 $(function() {
@@ -802,7 +816,7 @@ $(function() {
 			});
 			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Registration", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
 		} else {
-			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Save and Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000)  });
+			if (typeof(mpq) !== 'undefined') mpq.track("Avatar Picker Save", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000)  });
 			SocketManagerModel.updateAvatar();
 			this.closePicker();		
 		}
@@ -1200,11 +1214,13 @@ $(function() {
 	expandChatView: function() {
 		this.chatView.expandChatView();
 		this.chatExpanded = true;
+		if (typeof(mpq) !== 'undefined') mpq.track("Video Manager Collapsed");
 	},
 	
 	shrinkChatView: function() {
 		this.chatView.shrinkChatView();
 		this.chatExpanded = false;
+		if (typeof(mpq) !== 'undefined') mpq.track("Video Manager Opened");
 	},
 	
 	hidePlaylistView: function() {
@@ -2666,6 +2682,11 @@ $(function() {
   hide: function() {
    $("#room-modal").hide();
    $("#modalBG").hide();
+	 	if (typeof(mpq) !== 'undefined') {
+			mpq.track("Room Modal Closed", {
+				timeSpent: Math.floor(((new Date().getTime()) - window.channel_modal_open_time) / 1000) 
+			})
+	   }
   },
 
 	//this is only called when the user manually clicks to close the room modal
@@ -3115,7 +3136,16 @@ $(function() {
    $("#rooms, #logo-header").bind("click", {
     modal: this.options.modal
    }, function(e) {
-    $("#room-modal").css("display") == "none" ? e.data.modal.show() : e.data.modal.hide()
+    if ($("#room-modal").css("display") == "none") {
+			e.data.modal.show()
+			if (typeof(mpq) !== 'undefined') {
+				mpq.track("Room Modal Opened")
+				window.channel_modal_open_time = new Date().getTime();
+		   }
+		} else {
+			e.data.modal.hide()
+		}  
+		
    });
 
 	 $("#share-video-button").click(function(){
@@ -4002,6 +4032,7 @@ $(function() {
 		var remoteX, remoteY,curX, curY, djRemote, rotationDegs, reelRotationDegs, isdj, skipX, skipY;
 		SurfStreamApp.curDJ = video.dj;
 		SurfStreamApp.vidsPlayed = SurfStreamApp.vidsPlayed + 1;
+		window.vidsWatched = window.vidsWatched + 1;
 		console.log('received video, the DJ is: '+video.dj+' and has videoid: '+video.id+' and title: '+video.title+' and time start: '+video.time);	//debugging
 		$("#fullTitle").html(video.title);
 		$("#cur-video-name").html(video.title);
@@ -4523,6 +4554,7 @@ $(function() {
    SocketManagerModel.socket.emit('rooms:load', {
     id: window.SurfStreamApp.get("userModel").get("ssId")
    });
+	 
    console.log(window.SurfStreamApp.get("userModel").get("ssId"));
    console.log("LOGGED");
   },
@@ -4600,15 +4632,21 @@ $(function() {
 	  var trueURL = $.url(window.location);
 		var rID = trueURL.segment(1);
 		var params = trueURL.param();
-		console.log(rID + " is the rID, extras are " + trueURL.param().toString());
 		this.navigate(rID, false);
 		if (rID != "") {
    		SocketManagerModel.joinRoom(rID, false, rID.replace(/-+/g, ' '));
 			if (typeof(mpq) !== 'undefined') mpq.track("Room Joined", {
-				mp_note: "Landed from web link",
+				mp_note: "Landed from web link into " + rID.replace(/-+/g, ' '),
 				source: "Landing",
 				roomName: rID.replace(/-+/g, ' ')
 			 });
+			if (params["ref"] == "nf") {
+				if (typeof(mpq) !== 'undefined') mpq.track("Joined from a share", {
+					mp_note: "Came from Facebook into " + rID.replace(/-+/g, ' '),
+					roomName: rID.replace(/-+/g, ' ')
+				 });
+			}
+			
   	} else {
 			SocketManagerModel.loadRoomsInfo();
 		}
