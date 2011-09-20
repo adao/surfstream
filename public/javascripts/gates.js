@@ -2827,7 +2827,7 @@ $(function() {
 				for (var i = 0; i < numRecentVids && i < recentVidLimit; i++) {
 					var videoThumbnail = this.videoThumbnailTemplate();
 					$(this.el).find(".room-history-container").prepend(videoThumbnail);
-					$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(recentVids[i].videoId));
+					$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToImg(recentVids[i].videoId));
 					$(this.el).find(".room-history-container").find(".videoThumbnail:first").mouseenter({videoTitle: recentVids[i].title}, this.displayVideoTitle);
 				}
 			}
@@ -2835,7 +2835,7 @@ $(function() {
 			if (curVidTitle) {
 				var videoThumbnail = this.videoThumbnailTemplate();
 				$(this.el).find(".room-history-container").prepend(videoThumbnail);
-				$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToHDImg(roomModel.get("curVidId")));
+				$(this.el).find(".room-history-container").find(".videoThumbnail:first").attr("src", ss_idToImg(roomModel.get("curVidId")));
 				$(this.el).find(".room-history-container").find(".videoThumbnail:first").mouseenter({videoTitle: curVidTitle}, this.displayVideoTitle);
 				$(this.el).find(".room-history-container .videoThumbnailContainer:first .videoThumbnail").addClass("lastPlayedVideo");
 				$(this.el).find(".room-history .lastPlayedVideoTitle").text(curVidTitle);
