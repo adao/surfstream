@@ -2537,7 +2537,7 @@ background-color: #4C4C4C,
   z-index: 6;
   margin-left: 785px;
   margin-top: 410px;
-  border: none;
+  border: 2px solid #006400;
   border-radius: 4px;
   -moz-radius: 4px;
   -webkit-radius: 4px;
@@ -2547,11 +2547,11 @@ background-color: #4C4C4C,
   background: -moz-linear-gradient(top, #8ccb01, #2a7d00);
   background-image: -o-linear-gradient(top, #8ccb01, #2a7d00);
   color: #fff;
-  height: 100px;
+  height: 60px;
   display: none;
 }
 #tutorialStart:hover {
-  color: #008000;
+  color: #000;
 }
 a#fdbk_tab {
   z-index: 10;
