@@ -2850,7 +2850,7 @@ $(function() {
 			var result = "";
 			var friends = this.options.roomListCellModel.get("friends");
 			if (friends.length == 0)
-				return "0";
+				return "";
 			if (count == 0) {
 				for (var i = 0; i < friends.length; i++) {
 					result += "<li class='" + className + "'</li><img src='http://graph.facebook.com/"+ friends[i] + "/picture' style='width:45px; height:45px;' /></li>"
