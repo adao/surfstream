@@ -2784,8 +2784,6 @@ $(function() {
 		events: {
 			"mouseover .room-friends-container": "displayFriends",
 			"mouseout .room-friends-container": "hideFriends",
-			"mouseover .room-history": "displayChannelHistory",
-			"mouseout .room-history": "hideChannelHistory",
 			"mouseover .friends-hover-container": "displayFriends",
 			"mouseout .friends-hover-container": "hideFriends"
 		},

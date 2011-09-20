@@ -906,7 +906,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	overflow-x: none
 	width: 960px
 	height: 637px
-	background-color: black
+	background-color: #141414
 	z-index: 10000
 	border: 1px solid #666
 	border-radius: 2px
@@ -954,11 +954,29 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				outline: 0
 			input:focus
 				color: black
-				background-color: #E7E7E7  
+				background-color: #E7E7E7
+	.ftable-hd
+		display: inline-block
+		background-color: #141414
+		color: white
+		border-right: 1px solid #585858
+		height: 30px
+		font-weight: bold
+		text-align: center
+		padding-top: 8px
+	#viewers-hd
+		width: 72px
+	#channel-hd
+		width: 289px
+	#history-hd
+		width: 522px
+	#friends-hd
+		width: 73px  
+		border: none
 	#roomsWrapper
 		background-color: #313131
 		width: 960px
-		height: 543px
+		height: 513px
 		overflow-y: scroll
 		overflow-x: hidden
 		table#roomsTable
@@ -968,6 +986,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				background-color: #141414
 				color: white
 				height: 30px
+				display: none
 				th.room-name-hd
 					width: 254px
 				th.room-name-hd, th.room-friends-hd, th.room-viewers-hd, th.room-history-hd
@@ -983,6 +1002,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 				cursor: pointer
 				.room-friends
 					margin-left: 8px
+					width: 56px
 					text-align: center
 					position: relative
 					.friends-hover-container
@@ -1003,7 +1023,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 					.lastPlayedVideoTitle
 						margin-left: 8px
 						display: inline-block
-						width: 264px
+						width: 247px
 						max-height: 50px
 						vertical-align: top
 						margin-top: 8px
@@ -1042,12 +1062,14 @@ button.playlist, button.playlist.active, button.search, button.search.active
 						.true-room-name
 							display: none
 					.room-history-container
-						display: inline-block!important
+						display: inline-block
 						list-style-type: none
-						float: right
 						height: 46px
+						width: 225px
 						vertical-align: top
-						margin: 7px 0 2px 0
+						margin-top: 0px
+						margin-bottom: 0px
+						padding-top: 5px
 			tr.room-row:nth-child(odd)
 				background-color: #313131
 			tr.room-row:nth-child(odd)
@@ -1918,7 +1940,7 @@ div#top-video-name
 
 .getOff
 	cursor: s-resize
-	margin-top: 40px
+	margin-top: 50px
 	width: 91px!important
 #skip
 	cursor: pointer
