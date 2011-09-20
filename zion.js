@@ -349,7 +349,7 @@ io.sockets.on('connection', function(socket) {
 					name: ssUser.ss_name, 
 					socketId: socket.id,
 					userId: ssUser.ssId,
-					fbId: ssUser.fbId, 
+					fbId: ssUser.id, 
 					socket: socket,
 					avatar: newAvatarSettings
 			  });
