@@ -41,6 +41,7 @@ window.fbAsyncInit = function() {
  });
  
  	$("#submitEmail").bind("click", function() {
+		console.log("supppppp")
 	  var mail = $("#emailBox").val();
 		var validEmail = validateEmail(mail);
 		if(validEmail){
@@ -76,7 +77,8 @@ window.fbAsyncInit = function() {
 		$("#promoBox").css("background", "#FAAFAF");
 	});
 	socket_init.on("email:received", function() {
-		$("#email-form-text").html("Email added to the list");
+		$("#email-form-text").css("font-size", "14px");
+		$("#email-form-text").html("We'll send a promo code <br> to you as soon as we can!");
 	});
 	socket_init.on("email:receivedWithFBID", function() {
 		initFDPlayer();
