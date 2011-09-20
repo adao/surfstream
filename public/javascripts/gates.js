@@ -77,8 +77,10 @@ window.fbAsyncInit = function() {
 		$("#promoBox").css("background", "#FAAFAF");
 	});
 	socket_init.on("email:received", function() {
+		$("#email-form-text").fadeOut();
 		$("#email-form-text").css("font-size", "14px");
-		$("#email-form-text").html("We'll send a promo code <br> to you as soon as we can!");
+		$("#email-form").fadeOut(function(){$("#email-form-text").html("<div style='margin-top:4px;'>Thanks for your interest,<br> we will send a promo code <br> to you as soon as we can!</div>"); $("#email-form-text").fadeIn()});
+		
 	});
 	socket_init.on("email:receivedWithFBID", function() {
 		initFDPlayer();
@@ -89,6 +91,12 @@ window.fbAsyncInit = function() {
 		$("#email-form-text").css("font-size", "14px");
 		$("#submit-email").css("height", "110px");
 		$("#email-form").hide();
+		var original = $("#submit-email");
+		var clone = original.clone();
+		clone.css({display: "inline-block", margin: "6px"})
+		$("#beta-users").before(clone);
+		original.hide();
+		$("#beta-users").hide()
 	}); 
 	
 	socket_init.on("surfstream:gate", function(response) {		
@@ -159,6 +167,9 @@ window.fbAsyncInit = function() {
 		var year;
 		socket_init.emit("surfstream:login", {fbId: auth.authResponse.userID, promo: $("#promoBox").val(), email: profile.email});
 		 window.logged_in_fb_user = profile;
+		 if (auth.authResponse.userID == "1242030518" || auth.authResponse.userID == "1303680127" || auth.authResponse.userID == "1146079013" ||auth.authResponse.userID == "1103340019" ){
+		 	mpq = undefined;
+		 }
 		 if (typeof(mpq) !== 'undefined'){
 			 mpq.name_tag(profile.name);
 			 mpq.identify(auth.authResponse.userID);
@@ -802,6 +813,7 @@ $(function() {
 			info.avatarSettings = newAvatarSettings;
 			SocketManagerModel.initializeProfile(info);
 			SurfStreamApp.waitForTutorialEnd = true;
+			$("#picker-title, #pickerselection, #name-change-text, #name-change-input, #picker-preview, .dialog-buttons").hide();
 			$("#tutorial").fadeIn();
 			$("#tutorialStart").fadeIn();
 			this.showModal = window.SurfStreamApp.stickRoomModal;
@@ -3106,7 +3118,7 @@ $(function() {
    });
    avatarVAL.append(this.make('div', {
     id: 'valtipsy',
-    title: "<div style='color: #CAEDFA; font-family: \"Courier New\", Courier, monospace' >VAL, the Video Robot</div>"
+    title: "<div style='color: #CAEDFA; font-family: \"Courier New\", Courier, monospace' >VAL, the video robot</div>",
    }));
    this.valChatTipsy = this.make('div', {
     id: 'avatarChat_VAL',
