@@ -2924,11 +2924,12 @@ $(function() {
   },
 
   render: function(nowPlayingMsg) {
+	 //if (this.options.username == "VAL") $(this.el).css({"background-color":"teal"});
    $(this.el).html(this.chatCellTemplate({
     username: this.options.username,
     msg: this.options.msg
    }));
-   return this;
+	 return this;
   }
  });
 
@@ -2939,7 +2940,13 @@ $(function() {
   className: "messageContainer",
   initialize: function() {
    $("#messages").append(this.render().el);
-   window.SurfStreamApp.get("mainView").playSound("chat_video_sound");
+	 if (SurfStreamApp.playSkipSound) {
+		window.SurfStreamApp.get("mainView").playSound("skip_video");
+		SurfStreamApp.playSkipSound = false;
+	} else {
+		window.SurfStreamApp.get("mainView").playSound("channel_click");
+	}
+   
   },
 
   render: function(nowPlayingMsg) {
@@ -4003,8 +4010,12 @@ $(function() {
     audio_src: "/sounds/chat.wav"
    }));
    $(document.body).append(this.soundTemplate({
-    audio_tag_id: "chat_video_sound",
+    audio_tag_id: "channel_click",
     audio_src: "/sounds/click1.wav"
+   }));
+	 $(document.body).append(this.soundTemplate({
+    audio_tag_id: "skip_video",
+    audio_src: "/sounds/whoosh.wav"
    }));
   },
 
@@ -4067,6 +4078,12 @@ $(function() {
 
 			window.SurfStreamApp.get("mainView").sideBarView.videoManagerView.playlistCollectionView.playlistView.setNotificationText();
 		}
+		
+		if (video.reason == "downvote"){
+			SurfStreamApp.playSkipSound = true;
+			window.SurfStreamApp.get("mainView").theatreView.valChat( window.SurfStreamApp.currentTitle + " was downvoted and skipped!");
+		} 
+		window.SurfStreamApp.currentTitle = video.title;
 
     if (!window.playerLoaded) {
      var params = {
@@ -4605,7 +4622,6 @@ $(function() {
 		$("#hideRoomsList").css({display: "block"});
 		SurfStreamApp.closeRoomModalIsHidden = false;
 	}
-
 
    $("#clock").hide();
    if (typeof(mpq) !== 'undefined') {
