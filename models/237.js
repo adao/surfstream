@@ -271,7 +271,7 @@
 			var videoViewCount = videoToPlay.get('viewCount');
 			var author = videoToPlay.get('author');
 			var thumb = videoToPlay.get('thumb');
-
+			var reason = this.room.get("tempReason");
 			var vm = this;
 			this.room.currVideo = new models.Video({ 
 				videoId: videoId, 
@@ -285,7 +285,7 @@
 				thumb: thumb
 			});
 			
-			this.room.sockM.announceVideo(videoId, videoDuration, videoViewCount, author, videoTitle, videoDJ);
+			this.room.sockM.announceVideo(videoId, videoDuration, videoViewCount, author, videoTitle, videoDJ, reason);
 			this.room.meter.reset();
 			
 			var roomName = this.room.get('name');
@@ -518,8 +518,9 @@
 			}
 		},
 
-		announceVideo: function(videoId, duration, viewCount, author, title, dj) {
-			io.sockets.in(this.room.get('name')).emit('video:sendInfo', {id: videoId, time: 0, title: title, dj: dj, duration: duration, viewCount: viewCount, author: author});
+		announceVideo: function(videoId, duration, viewCount, author, title, dj, reason) {
+			io.sockets.in(this.room.get('name')).emit('video:sendInfo', {id: videoId, time: 0, title: title, dj: dj, duration: duration, viewCount: viewCount, author: author, reason: reason});
+			this.room.set({tempReason: null});
 		},
 		
 		announceClients: function() {
@@ -1361,6 +1362,7 @@
 						}
 						meter.room.history.addSkippedVideo(meter.room.currVideo.get("videoId"));
 						meter.room.vm.onVideoEnd();
+						meter.room.set({tempReason: "downvote"});
 					}
 				}
 			});
