@@ -1282,12 +1282,20 @@ button
   width: 120px;
   font-size: 14px;
   font-weight: bold;
-  color: #fff;
+  color: #d9d9d9;
   background-color: #34c8ff;
   background: -webkit-gradient(linear, left top, left bottom, from(#34c8ff), to(#008ab8));
   background: -moz-linear-gradient(top, #34c8ff, #008ab8);
   background-image: -o-linear-gradient(top, #34c8ff, #008ab8);
   margin-right: -46px;
+}
+#room-modal #create-room #CreateRoom:hover {
+  color: #fff;
+}
+#room-modal #create-room #CreateRoom:active {
+  background: -webkit-gradient(linear, left top, left bottom, from(#008ab8), to(#34c8ff));
+  background: -moz-linear-gradient(top, #008ab8, #34c8ff);
+  background-image: -o-linear-gradient(top, #008ab8, #34c8ff);
 }
 #room-modal #create-room button#hideRoomsList {
   height: 40px;
@@ -1296,6 +1304,9 @@ button
   float: right;
   border: none;
   background: transparent;
+  color: #1f1f1f;
+}
+#room-modal #create-room #hideRoomsList:hover {
   color: #000;
 }
 #user-cur-room {
@@ -2548,12 +2559,17 @@ background-color: #4C4C4C,
   background: -webkit-gradient(linear, left top, left bottom, from(#8ccb01), to(#2a7d00));
   background: -moz-linear-gradient(top, #8ccb01, #2a7d00);
   background-image: -o-linear-gradient(top, #8ccb01, #2a7d00);
-  color: #fff;
+  color: #c0c0c0;
   height: 60px;
   display: none;
 }
 #tutorialStart:hover {
-  color: #000;
+  color: #fff;
+}
+#tutorialStart:active {
+  background: -webkit-gradient(linear, left top, left bottom, from(#2a7d00), to(#8ccb01));
+  background: -moz-linear-gradient(top, #2a7d00, #8ccb01);
+  background-image: -o-linear-gradient(top, #2a7d00, #8ccb01);
 }
 a#fdbk_tab {
   z-index: 10;
