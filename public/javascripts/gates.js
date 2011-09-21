@@ -727,6 +727,7 @@ $(function() {
 		$(this.el).html(this.make('img', {id:'tutorial', src:"/images/room/val-info.png"}));
 		$(this.el).fadeIn();
 		$("#tutorial").fadeIn();
+		//$("#closeTutorial").fadeIn();
 		if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Opened", {});
 		$("#modalBG").click({
 	    modal: this
@@ -804,7 +805,7 @@ $(function() {
 	};
 
   },
-
+	
 	highlightCurrents: function(currents) {
 
 		//highlight relevant ones
