@@ -4770,7 +4770,7 @@ $(function() {
    window.SurfStreamApp.get("roomModel").get("userCollection").reset();
    if (window.YTPlayer) {
     window.YTPlayer.stopVideo();
-    window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
+    //window.YTPlayer.loadVideoById(1); // hack because clearVideo FUCKING DOESNT WORK #3hourswasted
    }
    window.SurfStreamApp.get("roomModel").get("playerModel").set({
     curVid: null
