@@ -3120,10 +3120,14 @@ $(function() {
 		if(this.className == "up") {
 			this.className = "down";
 			$("#dimRoom").fadeIn();
+			$("#dimRoomRemote").fadeIn();
+			$("#dimRoomSideBar").fadeIn();
 			if (typeof(mpq) !== 'undefined') mpq.track("Light Turned Off");
 		} else {
 			this.className = "up";
 			$("#dimRoom").fadeOut();
+			$("#dimRoomRemote").fadeOut();
+			$("#dimRoomSideBar").fadeOut();
 			if (typeof(mpq) !== 'undefined') mpq.track("Light Turned On");
 		}
 	 });
