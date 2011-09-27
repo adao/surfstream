@@ -727,7 +727,17 @@ $(function() {
 		$(this.el).html(this.make('img', {id:'tutorial', src:"/images/room/val-info.png"}));
 		$(this.el).fadeIn();
 		$("#tutorial").fadeIn();
+		$("#closeTutorial").fadeIn();
 		if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Opened", {});
+		$("#closeTutorial").bind("click", function(){
+			if (typeof(mpq) !== 'undefined') mpq.track("Tutorial Closed", {timeSpent: Math.floor(((new Date().getTime()) - window.avatar_picker_open_start_time) / 1000) });
+			$('#avatar-picker-modal').hide();
+			$("#roomsList").after("<div id=avatar-picker-modal></div>")
+			$("#change-avatar").hide();	
+			$("#modalBG").hide();	
+			$("#logout").hide();
+			$("#closeTutorial").hide();
+		});
 		$("#modalBG").click({
 	    modal: this
 	   }, function(e) {
@@ -738,6 +748,7 @@ $(function() {
 			$("#change-avatar").hide();	
 			$("#modalBG").hide();	
 			$("#logout").hide();
+			$("#closeTutorial").hide();
 	  });
 		return;
 	 }
@@ -804,7 +815,7 @@ $(function() {
 	};
 
   },
-
+	
 	highlightCurrents: function(currents) {
 
 		//highlight relevant ones

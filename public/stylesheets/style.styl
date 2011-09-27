@@ -905,7 +905,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 	overflow-y: none
 	overflow-x: none
 	width: 960px
-	height: 637px
+	height: 645px
 	background-color: #141414
 	z-index: 10000
 	border: 1px solid #666
@@ -1056,7 +1056,7 @@ button.playlist, button.playlist.active, button.search, button.search.active
 							word-wrap: break-word
 						.listed-room-name
 							font-size: 16px
-							margin-top: -1px
+							vertical-align: middle
 						.listed-video-name
 							font-size: 14px
 						.true-room-name
@@ -1786,6 +1786,9 @@ div#top-video-name
 			background: -webkit-gradient(linear, left top, left bottom, from(silver), to(#8D8D8D))
 			background: -moz-linear-gradient(top,  silver,  #8D8D8D)
 			background-image: -o-linear-gradient(top, silver, #8D8D8D)
+
+
+
 #avatar-picker-modal
 	display: none
 	border: 1px solid #666
@@ -2009,8 +2012,7 @@ div#top-video-name
 	margin-top: 26px;
 	margin-left: 20px;
 	position: absolute;
-	
-	
+
 #tvglowimg
 	margin-top: 114px
 	margin-left: 120px
@@ -2051,6 +2053,17 @@ div#top-video-name
 	margin-left: 660px;
 	top: -413px;
 	
+#closeTutorial
+	z-index: 10000
+	position: absolute
+	top: 580px
+	left: 50%
+	margin-left: 375px
+	background: transparent
+	border: none
+	font-size: 16px
+	display: none
+
 #modalBG
 	background: #000
 	position: fixed
@@ -2468,22 +2481,14 @@ a#fdbk_tab
 	cursor: pointer
 	pointer-events: none
 	z-index: 4
-#slider-ball-dot
-	width: 4px;
-	height: 4px;
-	position: absolute;
-	background: grey;
-	margin-top: 12px;
-	margin-left: 7px;
-	border-radius: 5px;
-	display: none;
+
 #settings
-	margin-top: 3px
+	margin-top: 4px
 	#settings-text
 		vertical-align: top
 		font-size: 14px
 		display: inline-block
-		padding-top: 4px
+		padding-top: 5px
 		width: 56px
 		margin-left: 5px
 		text-align: center
@@ -3192,6 +3197,8 @@ a#fdbk_tab
 			.notoptext
 				font-weight: bold
 				margin-left: 30px
+				
+
 #picker-preview
 	height: 180px
 	margin-top: 40px;
@@ -3206,6 +3213,50 @@ a#fdbk_tab
 		float: left!important
 		margin-left: 55px
 		margin-top: 60px
+		-webkit-animation-name: avatarBounce;
+		-webkit-animation-duration: 1s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-timing-function: linear;
+		-webkit-animation-direction: alternate;
+		-moz-animation-name: avatarBounce;
+		-moz-animation-duration: 1s;
+		-moz-animation-iteration-count: infinite;
+		-moz-animation-timing-function: linear;
+		-moz-animation-direction: alternate;
+		-animation-name: avatarBounce;
+		-animation-duration: 1s;
+		-animation-iteration-count: infinite;
+		-animation-timing-function: linear;
+		-animation-direction: alternate;
+		-animation-name: avatarBounce;
+
+@-webkit-keyframes avatarBounce {
+	0% {
+		margin-top: 60px
+	}
+	100% {
+		margin-top: 50px
+	}
+}
+
+@-moz-keyframes avatarBounce {
+	0% {
+		margin-top: 60px
+	}
+	100% {
+		margin-top: 50px
+	}
+}
+
+@keyframes avatarBounce {
+	0% {
+		margin-top: 60px
+	}
+	100% {
+		margin-top: 50px
+	}
+}
+		
 .picker-select-text
 	text-indent: 10px
 	text-indent: 10px;
