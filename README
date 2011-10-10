@@ -1,9 +1,3 @@
-SS_PROD is production. 
+Surfstream was a project created in the summer of 2011 to explore the ideas of social video watching. Ultimately the team decided to return to finish their last year of school at Stanford University, and decided that we might as well show the GitHub community what we made if we weren't going to maintain the site further. Some copyrighted assets had to be removed, so YMMV if you want to actually run the site locally, but it's on www.surfstream.tv if you want to see what it looks like. The bulk of the interesting code happens in zion.js, 237.js, and gates.js. 
 
-magic_carpet is the dev_branch.
-
-hotfix-* are branches for fixing prod bugs.
-
-merge your feature branches into magic_carpet, merge hotfix branches into your project as they are made to stay up-to-date.
-
-More to come.
+Enjoy! Comments and criticisms welcomed; we're young engineers, so throw caution to any spaghetti you see in the code.
