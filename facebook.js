@@ -10,7 +10,7 @@ function connect(app, express, onUserConnect) {
 	
 	app.configure('production', function(){
 	  app.use(auth( [
-	    auth.Facebook({appId : "163744730365918", appSecret: "800d0250ad831871403fabc3898d23a4", scope: 'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence', callback: "http://ec2-75-101-218-155.compute-1.amazonaws.com/auth/facebook", failedUri: '/noauth' })
+	    auth.Facebook({appId : "163744730365918", appSecret: "800d0250ad831871403fabc3898d23a4", scope: 'email,status_update,publish_stream,read_stream,user_about_me,friends_online_presence', callback: "http://ec2-50-17-195-82.compute-1.amazonaws.com/auth/facebook", failedUri: '/noauth' })
 	  ]) );
 	});
 }
